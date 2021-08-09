@@ -101,7 +101,7 @@ application.mount("/manual",
                       directory=os.path.join(_local_dir, "../manual")),
                   name="manual")
 
-application.include_router(graphql_endpoint.router)
+# application.include_router(graphql_endpoint.router)
 application.include_router(tql_endpoint.router)
 application.include_router(segments_endpoint.router)
 application.include_router(credentials_endpoint.router)
