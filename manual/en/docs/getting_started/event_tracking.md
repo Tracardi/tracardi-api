@@ -66,7 +66,7 @@ Not all data is required. Below you can find only required data.
    "events": [
       {"type":  "purchase-order", "properties":  {"product": "Nike shoes", "quantity": 1}},
       {"type":  "page-view"}
-   ],
+   ]
 } 
 ```
 
