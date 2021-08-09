@@ -11,30 +11,30 @@ from tracardi_graph_runner.domain.work_flow import WorkFlow
 
 from .auth.authentication import get_current_user
 from .grouper import search
-from ..domain.context import Context
-from ..domain.enum.yes_no import YesNo
-from ..domain.flow_meta_data import FlowMetaData
-from ..domain.entity import Entity
-from ..domain.event import Event
-from ..domain.flow import Flow, FlowGraphDataRecord
+from tracardi.domain.context import Context
+from tracardi.domain.enum.yes_no import YesNo
+from tracardi.domain.flow_meta_data import FlowMetaData
+from tracardi.domain.entity import Entity
+from tracardi.domain.event import Event
+from tracardi.domain.flow import Flow, FlowGraphDataRecord
 from tracardi_graph_runner.domain.flow import Flow as GraphFlow
-from ..domain.flow_action_plugin import FlowActionPlugin
-from ..domain.plugin_import import PluginImport
-from ..domain.record.flow_action_plugin_record import FlowActionPluginRecord
-from ..domain.flow_action_plugins import FlowActionPlugins
-from ..domain.flow import FlowRecord
-from ..domain.flows import Flows
+from tracardi.domain.flow_action_plugin import FlowActionPlugin
+from tracardi.domain.plugin_import import PluginImport
+from tracardi.domain.record.flow_action_plugin_record import FlowActionPluginRecord
+from tracardi.domain.flow_action_plugins import FlowActionPlugins
+from tracardi.domain.flow import FlowRecord
+from tracardi.domain.flows import Flows
 
-from ..domain.profile import Profile
-from ..domain.rule import Rule
-from ..domain.session import Session
-from ..domain.settings import Settings
-from ..domain.source import Source
-from ..domain.value_object.bulk_insert_result import BulkInsertResult
-from ..event_server.service.persistence_service import PersistenceService
+from tracardi.domain.profile import Profile
+from tracardi.domain.rule import Rule
+from tracardi.domain.session import Session
+from tracardi.domain.settings import Settings
+from tracardi.domain.source import Source
+from tracardi.domain.value_object.bulk_insert_result import BulkInsertResult
+from tracardi.event_server.service.persistence_service import PersistenceService
 
-from ..service.storage.crud import EntityStorageCrud
-from ..service.storage.elastic_storage import ElasticStorage
+from tracardi.service.storage.crud import EntityStorageCrud
+from tracardi.service.storage.elastic_storage import ElasticStorage
 from ..setup.on_start import add_plugin
 
 router = APIRouter(

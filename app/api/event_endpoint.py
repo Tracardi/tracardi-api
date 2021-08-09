@@ -4,12 +4,12 @@ from fastapi import APIRouter, Depends
 from fastapi import HTTPException
 
 from .auth.authentication import get_current_user
-from ..domain.entity import Entity
-from ..event_server.service.persistence_service import PersistenceService
-from ..service.storage.elastic_storage import ElasticStorage
-from ..domain.event import Event
-from ..domain.events import Events
-from ..domain.profile import Profile
+from tracardi.domain.entity import Entity
+from tracardi.event_server.service.persistence_service import PersistenceService
+from tracardi.service.storage.elastic_storage import ElasticStorage
+from tracardi.domain.event import Event
+from tracardi.domain.events import Events
+from tracardi.domain.profile import Profile
 
 router = APIRouter(
     dependencies=[Depends(get_current_user)]

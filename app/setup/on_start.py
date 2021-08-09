@@ -4,9 +4,9 @@ import os
 
 from tracardi_plugin_sdk.domain.register import Plugin
 
-from app.domain.flow_action_plugin import FlowActionPlugin
-from app.domain.record.flow_action_plugin_record import FlowActionPluginRecord
-from app.process_engine.module_loader import load_callable
+from tracardi.domain.flow_action_plugin import FlowActionPlugin
+from tracardi.domain.record.flow_action_plugin_record import FlowActionPluginRecord
+from tracardi.process_engine.module_loader import load_callable
 
 __local_dir = os.path.dirname(__file__)
 
@@ -39,37 +39,37 @@ async def add_plugin(module, upgrade=False):
 
 async def add_plugins():
     plugins = [
-        'app.process_engine.action.v1.debug_payload_action',
-        'app.process_engine.action.v1.start_action',
-        'app.process_engine.action.v1.end_action',
-        'app.process_engine.action.v1.inject_action',
+        'tracardi.process_engine.action.v1.debug_payload_action',
+        'tracardi.process_engine.action.v1.start_action',
+        'tracardi.process_engine.action.v1.end_action',
+        'tracardi.process_engine.action.v1.inject_action',
 
-        'app.process_engine.action.v1.increase_views_action',
-        'app.process_engine.action.v1.increase_visits_action',
-        'app.process_engine.action.v1.increment_action',
-        'app.process_engine.action.v1.decrement_action',
+        'tracardi.process_engine.action.v1.increase_views_action',
+        'tracardi.process_engine.action.v1.increase_visits_action',
+        'tracardi.process_engine.action.v1.increment_action',
+        'tracardi.process_engine.action.v1.decrement_action',
 
-        'app.process_engine.action.v1.read_session_action',
-        'app.process_engine.action.v1.read_profile_action',
-        'app.process_engine.action.v1.read_event_action',
+        'tracardi.process_engine.action.v1.read_session_action',
+        'tracardi.process_engine.action.v1.read_profile_action',
+        'tracardi.process_engine.action.v1.read_event_action',
 
-        'app.process_engine.action.v1.if_action',
-        'app.process_engine.action.v1.new_visit_action',
-        'app.process_engine.action.v1.new_profile_action',
+        'tracardi.process_engine.action.v1.if_action',
+        'tracardi.process_engine.action.v1.new_visit_action',
+        'tracardi.process_engine.action.v1.new_profile_action',
 
-        'app.process_engine.action.v1.detect_client_agent_action',
+        'tracardi.process_engine.action.v1.detect_client_agent_action',
 
-        'app.process_engine.action.v1.traits.copy_trait_action',
-        'app.process_engine.action.v1.traits.append_trait_action',
-        'app.process_engine.action.v1.traits.cut_out_trait_action',
-        'app.process_engine.action.v1.traits.delete_trait_action',
+        'tracardi.process_engine.action.v1.traits.copy_trait_action',
+        'tracardi.process_engine.action.v1.traits.append_trait_action',
+        'tracardi.process_engine.action.v1.traits.cut_out_trait_action',
+        'tracardi.process_engine.action.v1.traits.delete_trait_action',
 
-        'app.process_engine.action.v1.operations.update_profile_action',
-        'app.process_engine.action.v1.operations.merge_profiles_action',
-        'app.process_engine.action.v1.operations.segment_profile_action',
+        'tracardi.process_engine.action.v1.operations.update_profile_action',
+        'tracardi.process_engine.action.v1.operations.merge_profiles_action',
+        'tracardi.process_engine.action.v1.operations.segment_profile_action',
 
-        # 'app.process_engine.action.new_event_action',
-        # 'app.process_engine.action.remote_call_action',
+        # 'tracardi.process_engine.action.new_event_action',
+        # 'tracardi.process_engine.action.remote_call_action',
     ]
 
     tasks = []

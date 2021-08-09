@@ -4,8 +4,8 @@ from fastapi import APIRouter
 from fastapi import HTTPException, Depends
 from .auth.authentication import get_current_user
 from .grouper import search
-from ..domain.source import SourceRecord, Source
-from ..domain.sources import Sources
+from tracardi.domain.source import SourceRecord, Source
+from tracardi.domain.sources import Sources
 
 router = APIRouter(
     dependencies=[Depends(get_current_user)]

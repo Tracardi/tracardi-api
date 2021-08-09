@@ -2,7 +2,7 @@ from fastapi import APIRouter
 from fastapi import HTTPException, Depends
 
 from .auth.authentication import get_current_user
-from ..domain.profile import Profile
+from tracardi.domain.profile import Profile
 
 router = APIRouter(
     dependencies=[Depends(get_current_user)]

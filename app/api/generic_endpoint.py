@@ -4,11 +4,11 @@ from fastapi import APIRouter
 from fastapi import HTTPException, Depends
 
 from .auth.authentication import get_current_user
-from ..domain.enum.indexes_histogram import IndexesHistogram
-from ..domain.enum.indexes_search import IndexesSearch
-from ..domain.index import Index
-from ..domain.sql_query import SqlQuery
-from ..domain.time_range_query import DatetimeRangePayload
+from tracardi.domain.enum.indexes_histogram import IndexesHistogram
+from tracardi.domain.enum.indexes_search import IndexesSearch
+from tracardi.domain.index import Index
+from tracardi.domain.sql_query import SqlQuery
+from tracardi.domain.time_range_query import DatetimeRangePayload
 
 router = APIRouter(
     dependencies=[Depends(get_current_user)]

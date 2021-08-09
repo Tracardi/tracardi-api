@@ -7,11 +7,12 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI, Request
 from starlette.staticfiles import StaticFiles
 from app.api import token_endpoint, rule_endpoint, source_endpoint, event_endpoint, \
-    profile_endpoint, flow_endpoint, generic_endpoint, project_endpoint, credentials_endpoint, segments_endpoint, \
+    profile_endpoint, flow_endpoint, generic_endpoint, project_endpoint, \
+    credentials_endpoint, segments_endpoint, \
     tql_endpoint, graphql_endpoint, health_endpoint
-from app.domain.flow_action_plugins import FlowActionPlugins
-from app.event_server import event_server_endpoint
-from app.service.storage.elastic import Elastic
+from tracardi.domain.flow_action_plugins import FlowActionPlugins
+from tracardi.event_server import event_server_endpoint
+from tracardi.service.storage.elastic import Elastic
 from app.setup.indices_setup import create_indices
 
 logging.basicConfig(level=logging.INFO)

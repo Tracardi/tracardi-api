@@ -6,14 +6,14 @@ from fastapi import APIRouter
 from fastapi import HTTPException, Depends
 from .auth.authentication import get_current_user
 from .grouper import search
-from ..domain.source import Source, SourceRecord
-from ..domain.entity import Entity
-from ..domain.enum.indexes_source_bool import IndexesSourceBool
-from ..domain.sources import Sources
-from ..domain.storage_result import StorageResult
-from ..domain.value_object.bulk_insert_result import BulkInsertResult
-from ..event_server.service.persistence_service import PersistenceService
-from ..service.storage.elastic_storage import ElasticStorage
+from tracardi.domain.source import Source, SourceRecord
+from tracardi.domain.entity import Entity
+from tracardi.domain.enum.indexes_source_bool import IndexesSourceBool
+from tracardi.domain.sources import Sources
+from tracardi.domain.storage_result import StorageResult
+from tracardi.domain.value_object.bulk_insert_result import BulkInsertResult
+from tracardi.event_server.service.persistence_service import PersistenceService
+from tracardi.service.storage.elastic_storage import ElasticStorage
 
 router = APIRouter(
     dependencies=[Depends(get_current_user)]

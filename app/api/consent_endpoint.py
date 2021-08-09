@@ -2,7 +2,7 @@
 # from fastapi import HTTPException, Depends
 #
 # from .auth.authentication import get_current_user
-# from ..domain.consent import Consent
+# from tracardi.domain.consent import Consent
 #
 # router = APIRouter(
 #     dependencies=[Depends(get_current_user)]

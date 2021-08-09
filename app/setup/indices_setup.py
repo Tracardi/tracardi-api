@@ -1,7 +1,8 @@
 import json
 import os
-from app.service.storage.elastic import Elastic
-from app.service.storage.index import resources, Index
+from tracardi.service.storage.elastic import Elastic
+from tracardi.service.storage.index import resources, Index
+
 from app.setup.on_start import add_plugins
 
 __local_dir = os.path.dirname(__file__)

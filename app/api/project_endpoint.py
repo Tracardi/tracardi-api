@@ -1,9 +1,9 @@
 from fastapi import APIRouter
 from fastapi import HTTPException, Depends
 from .auth.authentication import get_current_user
-from ..domain.project import Project, Projects
-from ..domain.entity import Entity
-from ..domain.value_object.bulk_insert_result import BulkInsertResult
+from tracardi.domain.project import Project, Projects
+from tracardi.domain.entity import Entity
+from tracardi.domain.value_object.bulk_insert_result import BulkInsertResult
 
 router = APIRouter(
     dependencies=[Depends(get_current_user)]
