@@ -1,12 +1,12 @@
 version: "3.7"
 services:
 
-  tracardi:
-    image: tracardi/tracardi:0.5.0.rc-1
-    environment:
-      ELASTIC_HOST: http://elasticsearch:9200
-    ports:
-      - 8686:80
+#  tracardi:
+#    image: tracardi/tracardi-api:0.6.0.rc-1
+#    environment:
+#      ELASTIC_HOST: http://elasticsearch:9200
+#    ports:
+#      - 8686:80
 
   tracardi-gui:
     image: tracardi/tracardi-gui:0.5.0.rc-1
