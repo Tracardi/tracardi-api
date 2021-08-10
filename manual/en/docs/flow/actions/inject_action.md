@@ -10,6 +10,18 @@ triggered in debug mode by clicking debug button.
 
 Type into configuration what you want to see on the output from this node.
 
+Example:
+
+```json
+{
+  "any_value": {
+    "key": "value"
+  }
+}
+```
+
+The defined json will be returned as object.
+
 ## Side effects
 
 This action will not run in deployed workflow. It is debug node. 
