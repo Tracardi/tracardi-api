@@ -27,14 +27,15 @@ async def get_source_types() -> dict:
     """
 
     try:
-        return {"total": 6, "result": [
-            "web-page",
-            "mysql",
-            "rabbitmq",
-            "smtp-server",
-            "discord",
-            "mongodb"
-        ]}
+        return {"total": 6,
+                "result": [
+                    "web-page",
+                    "mysql",
+                    "rabbitmq",
+                    "smtp-server",
+                    "discord",
+                    "mongodb"
+                ]}
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
