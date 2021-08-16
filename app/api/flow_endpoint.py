@@ -1,7 +1,6 @@
 import asyncio
 import hashlib
 from collections import defaultdict
-from time import sleep
 from typing import Optional
 
 from fastapi import APIRouter
@@ -44,7 +43,6 @@ router = APIRouter(
 
 @router.post("/flow/draft", tags=["flow"], response_model=BulkInsertResult)
 async def upsert_flow_draft(draft: Flow):
-    sleep(1)
     try:
 
         # Check if origin flow exists
@@ -73,7 +71,6 @@ async def upsert_flow_draft(draft: Flow):
 
 @router.get("/flow/draft/{id}", tags=["flow"], response_model=Flow)
 async def load_flow_draft(id: str):
-    sleep(1)
     try:
 
         # Check if origin flow exists
@@ -119,7 +116,6 @@ async def get_flows(query: str = None):
 
 @router.get("/flows/by_tag", tags=["flow"])
 async def get_grouped_flows(query: str = None):
-    sleep(1)
     try:
         flows = Flows()
         result = await flows.bulk().load()
@@ -197,7 +193,6 @@ async def upsert_flow(flow: Flow):
 
 @router.post("/flow/metadata", tags=["flow"], response_model=BulkInsertResult)
 async def upsert_flow_details(flow_metadata: FlowMetaData):
-    sleep(1)
     try:
         entity = Entity(id=flow_metadata.id)
         flow_record = await entity.storage("flow").load(FlowRecord)  # type: FlowRecord
@@ -319,7 +314,6 @@ async def debug_flow(flow: GraphFlow):
 #     Debugs flow by reading it from storage
 #     """
 #
-#     sleep(1)
 #     # Load flow
 #     try:
 #         profile = Profile(id="@debug-profile-id")
