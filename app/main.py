@@ -4,14 +4,14 @@ from time import sleep
 
 import elasticsearch
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi import FastAPI, Request
+from fastapi import FastAPI
 from starlette.staticfiles import StaticFiles
 from app.api import token_endpoint, rule_endpoint, source_endpoint, event_endpoint, \
     profile_endpoint, flow_endpoint, generic_endpoint, project_endpoint, \
     credentials_endpoint, segments_endpoint, \
-    tql_endpoint, graphql_endpoint, health_endpoint
+    tql_endpoint, health_endpoint
+from app.api.track import event_server_endpoint
 from tracardi.domain.flow_action_plugins import FlowActionPlugins
-from tracardi.event_server import event_server_endpoint
 from tracardi.service.storage.elastic import Elastic
 from app.setup.indices_setup import create_indices
 
@@ -102,11 +102,11 @@ application.mount("/manual",
                   name="manual")
 
 # application.include_router(graphql_endpoint.router)
+application.include_router(event_server_endpoint.router)
 application.include_router(tql_endpoint.router)
 application.include_router(segments_endpoint.router)
 application.include_router(credentials_endpoint.router)
 application.include_router(project_endpoint.router)
-application.include_router(event_server_endpoint.router)
 application.include_router(source_endpoint.router)
 application.include_router(rule_endpoint.router)
 application.include_router(flow_endpoint.router)

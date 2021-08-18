@@ -13,6 +13,7 @@ __local_dir = os.path.dirname(__file__)
 
 async def add_plugin(module, upgrade=False):
     try:
+
         # loads and installs dependencies
         plugin = load_callable(module, 'register', upgrade)
         plugin_data = plugin()  # type: Plugin
@@ -32,6 +33,7 @@ async def add_plugin(module, upgrade=False):
         action_plugin = FlowActionPlugin(id=action_id, plugin=plugin_data)
         record = FlowActionPluginRecord.encode(action_plugin)
         return await record.storage().save()
+
     except ModuleNotFoundError as e:
         print(str(e))
         # todo log.

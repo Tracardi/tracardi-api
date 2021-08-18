@@ -8,6 +8,9 @@
     <link rel="stylesheet" href="index.css">
     <script>
 
+        const url = new URL(window.location.href);
+        const source = url.searchParams.get("source");
+
         const options = {
             listeners: {
                 onContextReady: ({helpers, context}) => {
@@ -90,7 +93,7 @@
                     api: 'http://localhost:8686'
                 },
                 source: {
-                    id: "3ee63fc6-490a-4fd8-bfb3-bf0c8c8d3387"
+                    id: source
                 }
             }
         }
@@ -119,7 +122,8 @@
 <body>
 <h1><BOLD>TRACARDI</BOLD> <THIN>JavaScript Integration Test Page</THIN></h1>
 <section>
-<p>This page load TRACARDI Javascript to show case how it can be utilized to collect user data.</p>
+<p>This page load TRACARDI Javascript to show-case how it can be utilized to collect user data.</p>
+<p>In order to use this page add source parameter to URL.</p>
 </section>
 <pre style="display: none">
 const options = {
