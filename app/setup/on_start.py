@@ -13,7 +13,6 @@ __local_dir = os.path.dirname(__file__)
 
 async def add_plugin(module, upgrade=False):
     try:
-
         # loads and installs dependencies
         plugin = load_callable(module, 'register', upgrade)
         plugin_data = plugin()  # type: Plugin
@@ -58,7 +57,6 @@ async def add_plugins():
         'tracardi.process_engine.action.v1.if_action',
         'tracardi.process_engine.action.v1.new_visit_action',
         'tracardi.process_engine.action.v1.new_profile_action',
-        'tracardi.process_engine.action.v1.data_mapper_action',
 
         'tracardi.process_engine.action.v1.detect_client_agent_action',
 
@@ -78,7 +76,8 @@ async def add_plugins():
         'tracardi_key_counter.plugin',
         'tracardi.process_engine.action.v1.reshape_payload_action',
         'tracardi.process_engine.action.v1.detect_client_agent_action',
-        'tracardi.process_engine.action.v1.sleep_action'
+        'tracardi.process_engine.action.v1.sleep_action',
+        'tracardi_day_night_split.day_night_split_action',
 
         # Connectors
         'tracardi_rabbitmq_publisher.plugin',
@@ -90,6 +89,7 @@ async def add_plugins():
 
     tasks = []
     for plugin in plugins:
+        print(plugin)
         tasks.append(asyncio.create_task(add_plugin(plugin)))
 
     await asyncio.gather(*tasks)
