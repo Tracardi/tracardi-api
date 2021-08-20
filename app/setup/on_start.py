@@ -73,6 +73,19 @@ async def add_plugins():
 
         # 'tracardi.process_engine.action.new_event_action',
         # 'tracardi.process_engine.action.remote_call_action',
+
+        # Plugins
+        'tracardi_key_counter.plugin',
+        'tracardi.process_engine.action.v1.reshape_payload_action',
+        'tracardi.process_engine.action.v1.detect_client_agent_action',
+        'tracardi.process_engine.action.v1.sleep_action'
+
+        # Connectors
+        'tracardi_rabbitmq_publisher.plugin',
+        'tracardi_weather.plugin',
+        'tracardi_mongodb_connector.plugin',
+        'tracardi_maxmind_geolite2.plugin',
+
     ]
 
     tasks = []

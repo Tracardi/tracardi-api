@@ -1,4 +1,4 @@
-# Data mapper
+# Reshape payload action
 
 This node reshapes data provided in payload, profile, 
 session, or flow into another schema that is returned 
