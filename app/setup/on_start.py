@@ -14,7 +14,7 @@ __local_dir = os.path.dirname(__file__)
 async def add_plugin(module, upgrade=False):
     try:
         # loads and installs dependencies
-        plugin = load_callable(module, 'register', upgrade)
+        plugin = await load_callable(module, 'register', upgrade)
         plugin_data = plugin()  # type: Plugin
 
         if len(plugin_data.spec.inputs) > 1:
@@ -28,7 +28,7 @@ async def add_plugin(module, upgrade=False):
 
         action_id = plugin_data.spec.module + plugin_data.spec.className
         action_id = hashlib.md5(action_id.encode()).hexdigest()
-
+        await asyncio.sleep(0)
         action_plugin = FlowActionPlugin(id=action_id, plugin=plugin_data)
         record = FlowActionPluginRecord.encode(action_plugin)
         return await record.storage().save()
@@ -90,9 +90,5 @@ async def add_plugins():
 
     ]
 
-    tasks = []
     for plugin in plugins:
-        print(plugin)
-        tasks.append(asyncio.create_task(add_plugin(plugin, upgrade=True)))
-
-    await asyncio.gather(*tasks)
+        await add_plugin(plugin, upgrade=True)
