@@ -11,6 +11,7 @@ from app.api import token_endpoint, rule_endpoint, source_endpoint, event_endpoi
     credentials_endpoint, segments_endpoint, \
     tql_endpoint, health_endpoint
 from app.api.track import event_server_endpoint
+from app.setup.on_start import add_plugins
 from tracardi.domain.flow_action_plugins import FlowActionPlugins
 from tracardi.service.storage.elastic import Elastic
 from app.setup.indices_setup import create_indices
@@ -77,8 +78,14 @@ tags_metadata = [
 application = FastAPI(
     title="Tracardi Customer Data Platform Project",
     description="TRACARDI open-source customer data platform offers you excellent control over your customer data with its broad set of features",
-    version="0.4.0",
-    openapi_tags=tags_metadata
+    version="0.6.0",
+    openapi_tags=tags_metadata,
+    contact={
+        "name": "Risto Kowaczewski",
+        "url": "http://github.com/atompie/tracardi",
+        "email": "office@tracardi.com",
+    },
+
 )
 
 application.add_middleware(
@@ -122,6 +129,7 @@ async def app_starts():
     while True:
         try:
             await create_indices()
+            await add_plugins()
             break
         except elasticsearch.exceptions.ConnectionError:
             sleep(5)

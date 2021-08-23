@@ -84,12 +84,15 @@ async def add_plugins():
         'tracardi_weather.plugin',
         'tracardi_mongodb_connector.plugin',
         'tracardi_maxmind_geolite2.plugin',
+        'tracardi_remote_call.plugin',
+        'tracardi_discord_webhook.plugin',
+        'tracardi_zapier_webhook.plugin'
 
     ]
 
     tasks = []
     for plugin in plugins:
         print(plugin)
-        tasks.append(asyncio.create_task(add_plugin(plugin)))
+        tasks.append(asyncio.create_task(add_plugin(plugin, upgrade=True)))
 
     await asyncio.gather(*tasks)

@@ -268,10 +268,10 @@ async def upsert_flow_details(id: str, lock: str):
 
 @router.post("/flow/debug", tags=["flow"])
 async def debug_flow(flow: GraphFlow):
-    """
-        Debugs flow sent in request body
-    """
-    try:
+    # """
+    #     Debugs flow sent in request body
+    # """
+    # try:
 
         profile = Profile(id="@debug-profile-id")
         session = Session(id="@debug-session-id")
@@ -303,8 +303,8 @@ async def debug_flow(flow: GraphFlow):
             "update": profile_save_result
         }
 
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    # except Exception as e:
+    #     raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.get("/flow/action/plugin/{id}", tags=["flow", "action", "plugin"], response_model=FlowActionPlugin)
