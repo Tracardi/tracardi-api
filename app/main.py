@@ -129,7 +129,7 @@ async def app_starts():
     while True:
         try:
             await create_indices()
-            await add_plugins()
+            # await add_plugins()
             break
         except elasticsearch.exceptions.ConnectionError:
             sleep(5)

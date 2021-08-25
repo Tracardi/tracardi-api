@@ -14,7 +14,7 @@ __local_dir = os.path.dirname(__file__)
 async def add_plugin(module, upgrade=False):
     try:
         # loads and installs dependencies
-        plugin = await load_callable(module, 'register', upgrade)
+        plugin = load_callable(module, 'register', upgrade)
         plugin_data = plugin()  # type: Plugin
 
         if len(plugin_data.spec.inputs) > 1:

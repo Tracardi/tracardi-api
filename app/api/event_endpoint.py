@@ -3,6 +3,8 @@ from time import sleep
 from fastapi import APIRouter, Depends
 from fastapi import HTTPException
 
+from tracardi.domain.record.event_debug_record import EventDebugRecord
+from tracardi_graph_runner.domain.debug_info import DebugInfo
 from .auth.authentication import get_current_user
 from tracardi.domain.entity import Entity
 from tracardi.event_server.service.persistence_service import PersistenceService
@@ -67,3 +69,13 @@ async def delete_event(id: str):
         return await event.storage("event").delete()
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/event/debug/{id}", tags=["event", "event server"], response_model=DebugInfo)
+async def get_event_debug_info(id: str):
+    debug_record = EventDebugRecord(id=id)
+    encoded_debug_record = await debug_record.storage().load()
+    if encoded_debug_record is not None:
+        debug_info = EventDebugRecord.decode(encoded_debug_record)  # type: DebugInfo
+        return debug_info
+    return None

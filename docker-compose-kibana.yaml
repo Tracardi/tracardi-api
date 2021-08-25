@@ -2,7 +2,7 @@ version: "3.7"
 services:
 
   kibana:
-    image: docker.elastic.co/kibana/kibana:7.13.3
+    image: docker.elastic.co/kibana/kibana:7.13.1
     hostname: kibana
     ports:
       - 5601:5601
