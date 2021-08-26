@@ -11,6 +11,7 @@ from app.api import token_endpoint, rule_endpoint, source_endpoint, event_endpoi
     credentials_endpoint, segments_endpoint, \
     tql_endpoint, health_endpoint
 from app.api.track import event_server_endpoint
+from app.config import server
 from app.setup.on_start import add_plugins
 from tracardi.domain.flow_action_plugins import FlowActionPlugins
 from tracardi.service.storage.elastic import Elastic
@@ -129,7 +130,9 @@ async def app_starts():
     while True:
         try:
             await create_indices()
-            # await add_plugins()
+            if server.update_plugins_on_start_up is not False:
+                await add_plugins()
+
             break
         except elasticsearch.exceptions.ConnectionError:
             sleep(5)

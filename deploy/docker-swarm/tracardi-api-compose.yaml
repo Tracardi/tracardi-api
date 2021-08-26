@@ -1,0 +1,9 @@
+version: "3.7"
+services:
+
+  tracardi-api:
+    image: tracardi/tracardi-api:0.6.0
+    environment:
+      ELASTIC_HOST: http://192.168.1.103:9200
+    ports:
+      - 8686:80
