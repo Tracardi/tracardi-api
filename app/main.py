@@ -17,7 +17,7 @@ from tracardi.domain.flow_action_plugins import FlowActionPlugins
 from tracardi.service.storage.elastic import Elastic
 from app.setup.indices_setup import create_indices
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.WARN)
 
 _local_dir = os.path.dirname(__file__)
 
