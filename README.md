@@ -29,6 +29,15 @@ a legacy system you can integrate TRACARDI easily. Use TRACARDI for:
 
 Please see [https://github.com/atompie/tracardi](https://github.com/atompie/tracardi) for installation instructions.
 
+## Start Tracardi API
+
+Now pull and run Tracardi backend.
+
+```
+docker run -p 8686:80 -e ELASTIC_HOST=http://<your-laptop-ip>:9200 tracardi/tracardi-api:0.6.0
+```
+
+
 # License
 
 Tracardi is available under MIT with Common Clause license.

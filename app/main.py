@@ -1,10 +1,12 @@
 import logging
 import os
-from time import sleep
+
+import asyncio
+from time import sleep, time
 
 import elasticsearch
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from starlette.staticfiles import StaticFiles
 from app.api import token_endpoint, rule_endpoint, source_endpoint, event_endpoint, \
     profile_endpoint, flow_endpoint, generic_endpoint, project_endpoint, \
@@ -138,6 +140,17 @@ async def app_starts():
             sleep(5)
 
 
+@application.middleware("http")
+async def add_process_time_header(request: Request, call_next):
+    start_time = time()
+    if server.make_slower_responses > 0:
+        await asyncio.sleep(server.make_slower_responses)
+    response = await call_next(request)
+    process_time = time() - start_time
+    response.headers["X-Process-Time"] = str(process_time)
+    return response
+
+
 @application.on_event("shutdown")
 async def app_shutdown():
     elastic = Elastic.instance()
@@ -149,8 +162,8 @@ async def plugins():
     plugins = FlowActionPlugins()
     return await plugins.bulk().load()
 
+
 if __name__ == "__main__":
     import uvicorn
+
     uvicorn.run("app.main:application", host="0.0.0.0", port=8686, log_level="info")
-
-
