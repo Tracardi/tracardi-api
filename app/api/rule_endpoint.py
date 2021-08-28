@@ -34,7 +34,8 @@ async def get_rule(id: str):
 async def upsert_rule(rule: Rule):
     try:
         entity = Entity(id=rule.flow.id)
-        flow = await entity.storage("rule").load(Flow)  # type: Flow
+        flow = await entity.storage("flow").load(Flow)  # type: Flow
+
         add_flow_task = None
         if not flow:
             new_flow = NamedEntity(id=rule.flow.id, name=rule.flow.name)

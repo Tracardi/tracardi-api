@@ -1,12 +1,16 @@
 import asyncio
 import hashlib
 from collections import defaultdict
-from typing import Optional
+from typing import Optional, List
 
 from fastapi import APIRouter
 from fastapi import HTTPException, Depends
+from tracardi.exceptions.exception import StorageException
+
+from tracardi.domain.console import Console, ConsoleLog
 from tracardi_graph_runner.domain.flow_history import FlowHistory
 from tracardi_graph_runner.domain.work_flow import WorkFlow
+from tracardi_plugin_sdk.domain.console import Log
 
 from .auth.authentication import get_current_user
 from .grouper import search
@@ -291,14 +295,39 @@ async def debug_flow(flow: GraphFlow):
             profile,
             event
         )
-        debug_info = await workflow.invoke(flow, debug=True)
+        debug_info, log_list = await workflow.invoke(flow, debug=True)
 
-        if profile.operation.needs_update():
-            profile_save_result = await profile.storage().save()
-        else:
-            profile_save_result = None
+        console_log = ConsoleLog()
+        profile_save_result = None
+        try:
+            if profile.operation.needs_update():
+                profile_save_result = await profile.storage().save()
+
+            # Store logs in one console log
+            for log in log_list:  # type: Log
+                console = Console(
+                        event_id=workflow.event.id,
+                        flow_id=flow.id,
+                        module=log.module,
+                        class_name=log.class_name,
+                        type=log.type,
+                        message=log.message
+                    )
+                console_log.append(console)
+
+        except StorageException as e:
+            console = Console(
+                event_id=workflow.event.id,
+                flow_id=flow.id,
+                module='tracardi_api.flow_endpoint',
+                class_name='log.class_name',
+                type='debug_flow',
+                message=str(e)
+            )
+            console_log.append(console)
 
         return {
+            'consoleLog': [log.dict() for log in console_log],
             "debugInfo": debug_info.dict(),
             "update": profile_save_result
         }
