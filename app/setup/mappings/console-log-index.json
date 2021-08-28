@@ -12,6 +12,9 @@
       "flow_id": {
         "type": "keyword"
       },
+      "origin": {
+        "type": "keyword"
+      },
       "metadata": {
         "properties": {
           "timestamp": {

@@ -300,23 +300,25 @@ async def debug_flow(flow: GraphFlow):
         console_log = ConsoleLog()
         profile_save_result = None
         try:
-            if profile.operation.needs_update():
-                profile_save_result = await profile.storage().save()
-
             # Store logs in one console log
             for log in log_list:  # type: Log
                 console = Console(
-                        event_id=workflow.event.id,
-                        flow_id=flow.id,
-                        module=log.module,
-                        class_name=log.class_name,
-                        type=log.type,
-                        message=log.message
-                    )
+                    origin="node",
+                    event_id=workflow.event.id,
+                    flow_id=flow.id,
+                    module=log.module,
+                    class_name=log.class_name,
+                    type=log.type,
+                    message=log.message
+                )
                 console_log.append(console)
+
+            if profile.operation.needs_update():
+                profile_save_result = await profile.storage().save()
 
         except StorageException as e:
             console = Console(
+                origin="profile",
                 event_id=workflow.event.id,
                 flow_id=flow.id,
                 module='tracardi_api.flow_endpoint',
@@ -325,6 +327,8 @@ async def debug_flow(flow: GraphFlow):
                 message=str(e)
             )
             console_log.append(console)
+
+        # await console_log.bulk().save()
 
         return {
             'consoleLog': [log.dict() for log in console_log],
