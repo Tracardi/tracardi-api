@@ -18,6 +18,9 @@
           }
         }
       },
+      "type": {
+        "type": "keyword"
+      },
       "context": {
         "properties": {}
       },

@@ -2,7 +2,7 @@ import json
 import os
 from tracardi.service.storage.elastic import Elastic
 from tracardi.service.storage.index import resources, Index
-
+import logging
 from app.setup.on_start import add_plugins
 
 __local_dir = os.path.dirname(__file__)
@@ -12,6 +12,8 @@ index_mapping = {
         "on-start": add_plugins  # Callable to fill the index
     }
 }
+
+logger = logging.getLogger('tracardi.create_indices')
 
 
 async def create_indices():
@@ -26,7 +28,14 @@ async def create_indices():
         with open(os.path.join(__local_dir, map_file)) as file:
             map = json.load(file)
             if not await es.exists_index(index.get_write_index()):
-                await es.create_index(index.get_write_index(), map)
+
+                result = await es.create_index(index.get_write_index(), map)
+                if 'acknowledged' not in result or result['acknowledged'] is not True:
+                    logger.log(level=logging.ERROR,
+                               msg="New index `{}` was not created.".format(index.get_write_index()))
+                else:
+                    logger.log(level=logging.INFO, msg="New index `{}` created.".format(index.get_write_index()))
+
                 if key in index_mapping and 'on-start' in index_mapping[key]:
                     if index_mapping[key]['on-start'] is not None:
                         on_start = index_mapping[key]['on-start']
@@ -36,4 +45,5 @@ async def create_indices():
 
 if __name__ == "__main__":
     import asyncio
+
     asyncio.run(create_indices())

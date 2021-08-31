@@ -6,7 +6,7 @@ from fastapi import HTTPException, Depends
 
 from .auth.authentication import get_current_user
 from tracardi.domain.entity import Entity
-from tracardi.domain.flow import Flow
+from tracardi.domain.flow import Flow, FlowRecord
 from tracardi.domain.named_entity import NamedEntity
 from tracardi.domain.rule import Rule
 from tracardi.event_server.service.persistence_service import PersistenceService
@@ -32,12 +32,12 @@ async def get_rule(id: str):
 
 @router.post("/rule", tags=["rule"])
 async def upsert_rule(rule: Rule):
-    try:
+    # try:
         entity = Entity(id=rule.flow.id)
-        flow = await entity.storage("flow").load(Flow)  # type: Flow
+        flow_record = await entity.storage("flow").load(FlowRecord)  # type: FlowRecord
 
         add_flow_task = None
-        if not flow:
+        if flow_record is None:
             new_flow = NamedEntity(id=rule.flow.id, name=rule.flow.name)
             add_flow_task = asyncio.create_task(entity.storage("flow").save(new_flow.dict()))
 
@@ -47,8 +47,8 @@ async def upsert_rule(rule: Rule):
             await add_flow_task
         return await add_rule_task
 
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    # except Exception as e:
+    #     raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.delete("/rule/{id}", tags=["rule"])

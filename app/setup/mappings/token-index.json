@@ -5,8 +5,10 @@
   },
   "mappings": {
     "dynamic": false,
-    "user": {
-      "type": "keyword"
+    "properties": {
+      "user": {
+        "type": "keyword"
+      }
     }
   }
 }

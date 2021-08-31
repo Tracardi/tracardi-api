@@ -21,7 +21,7 @@ router = APIRouter(
 @router.get("/events/metadata/type", tags=["event", "event server"])
 async def event_types():
     events = Events()
-    result = await events.bulk().uniq_field_value("type.keyword")
+    result = await events.bulk().uniq_field_value("type")
     return {
         "total": result.total,
         "result": list(result)
