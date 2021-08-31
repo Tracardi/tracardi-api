@@ -11,7 +11,8 @@ router = APIRouter()
 async def is_tql_valid(request: Request):
     try:
         tql = await request.body()
-        Condition.parse(tql.decode('utf-8'))
+        condition = Condition()
+        condition.parse(tql.decode('utf-8'))
         return True
     except LarkError as e:
         raise HTTPException(status_code=400, detail=str(e))

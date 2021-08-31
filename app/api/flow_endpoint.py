@@ -242,15 +242,23 @@ async def upsert_flow_details(flow_metadata: FlowMetaData):
         if flow_record is None:
             raise ValueError("Flow `{}` does not exist.".format(flow_metadata.id))
 
-        draft = flow_record.decode_draft()
+        flow_record.enabled = flow_metadata.enabled
+        flow_record.name = flow_metadata.name
+        flow_record.description = flow_metadata.description
+        flow_record.projects = flow_metadata.projects
 
-        draft.name = flow_metadata.name
-        draft.description = flow_metadata.description
-        draft.enabled = flow_metadata.enabled
-        draft.projects = flow_metadata.projects
+        if flow_record.draft:
+            draft = flow_record.decode_draft()
 
-        flow_record.encode_draft(draft)
+            draft.name = flow_metadata.name
+            draft.description = flow_metadata.description
+            draft.enabled = flow_metadata.enabled
+            draft.projects = flow_metadata.projects
+
+            flow_record.encode_draft(draft)
+
         return await flow_record.storage().save()
+
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
