@@ -80,6 +80,8 @@ nav:
             - notations/math.md
   - Api:
       - api/index.md
+  - Extending Tracardi:
+      - plugins/index.md
   - support_us.md
   - attribution.md
   - software_license.md

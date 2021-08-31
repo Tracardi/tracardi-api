@@ -8,16 +8,19 @@ on output payload.
 
 In order to reshape the input payload user must provide 
 transformation configuration. Below you can find an 
-example of such configuration. Use dot nottaion to access json 
+example of such configuration. Use dot notation to access json 
 properties from payload, profile, etc.
+
+You can mix regular values with values read from profile, session, etc.
 
 ```json
 {
-  "new.value.from.profile": "profile@id",  // Reads value from profile and saves it in object new.value.from.profile
-  "new.list.0": "payload@data", // Reads data value from payload and saves it as 1st element of list new.value.from.profile
-  "new.list.1": "b", // Saves as 2nd value of new.list
-  "new.objectList.0.a": 1, // Saves object property a as 1st element of list new.objectList
-  "new.objectList.0.b": 2
+  "new": {
+    "key": "value",  // This is static value
+    "value": "profile@id"  // Reads value from profile and saves it in object new.value
+    "list": [1, "payload@data"] // Reads data value from payload and saves it as 2nf element of list
+    "event": "event@..."  // Saves in event all data from event.
+  }
 }
 ```
 
@@ -26,22 +29,14 @@ This configuration will return an object new with the following properties.
 ```json
 {
   "new": {
-    "value": {
-      "from": {
-        "profile": <profile_id>
-      }
+    "key": "value", 
+    "value": <profile_id>
     },
     "list": [
+      1,
       <data_from_payload>,
-      "b"
     ],
-    "objectList": [
-      {
-        "a": 1,
-        "b": 2
-      }
-    ]
-  }
+    "event": <data_from_event>
 }
 ```
 

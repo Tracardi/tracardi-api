@@ -7,3 +7,6 @@ cd tracardi/
 docker build . -t tracardi
 docker run -p 8686:80 -e ELASTIC_HOST=http://<your-laptop-ip>:9200 tracardi
 ```
+
+## SSL Configuration
+
