@@ -2,7 +2,7 @@
 
 ## Connecting the script and configuration
 
-Tracardi comes with Javascript snippet that integrate any webpage with Tracardi. 
+Tracardi comes with Javascript snippet that integrates any webpage with Tracardi. 
 In order to use it you must paste it in your web page header. 
 This is the example of the snippet:
 

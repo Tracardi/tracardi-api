@@ -56,8 +56,6 @@ nav:
   - Configuration:
     - Sources:
         - sources/index.md
-    - Web page integration:
-        - js-integration/index.md
     - Flow:
         - flow/index.md
         - Actions:
@@ -78,6 +76,9 @@ nav:
             - notations/dot_notation.md
             - notations/logic.md
             - notations/math.md
+    - Integration:
+        - integration/js-integration.md
+        - integration/api-integration.md
   - Api:
       - api/index.md
   - Extending Tracardi:

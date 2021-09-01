@@ -70,10 +70,10 @@ tags_metadata = [
     },
     {
         "name": "event server",
-        "description": "Read more about TRACARDI event server in documentation.",
+        "description": "Read more about TRACARDI event server in documentation. http://localhost:8686/manual/en/site/integration",
         "externalDocs": {
             "description": "External docs",
-            "url": "https://github/atompie/docs/en/docs/event_server",
+            "url": "https://github/atompie/docs/en/docs/event_tracking",
         },
     }
 ]
