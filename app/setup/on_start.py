@@ -39,6 +39,7 @@ async def add_plugin(module, upgrade=False):
 
 
 async def add_plugins():
+
     plugins = [
         'tracardi.process_engine.action.v1.debug_payload_action',
         'tracardi.process_engine.action.v1.start_action',
@@ -81,14 +82,18 @@ async def add_plugins():
 
         # Connectors
         'tracardi_rabbitmq_publisher.plugin',
+
         'tracardi_weather.plugin',
-        'tracardi_mongodb_connector.plugin',
         'tracardi_maxmind_geolite2.plugin',
         'tracardi_remote_call.plugin',
         'tracardi_discord_webhook.plugin',
-        'tracardi_zapier_webhook.plugin'
+        'tracardi_zapier_webhook.plugin',
+
+        'tracardi_mongodb_connector.plugin',
+        'tracardi_mysql_connector.plugin',
+        'tracardi_redshift_connector.plugin',
+        'tracardi_postresql_connector.plugin',
 
     ]
-
     for plugin in plugins:
         await add_plugin(plugin, upgrade=True)
