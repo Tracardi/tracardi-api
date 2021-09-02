@@ -27,13 +27,17 @@ async def get_source_types() -> dict:
     """
 
     try:
-        return {"total": 6,
+        return {"total": 10,
                 "result": [
                     "web-page",
                     "mysql",
                     "rabbitmq",
+                    "kafka",
                     "smtp-server",
-                    "discord",
+                    "postgresql",
+                    "redshif",
+                    "twillo",
+                    "redis",
                     "mongodb"
                 ]}
 
