@@ -63,7 +63,7 @@ async def list_sources():
 
 @router.get("/resources/by_tag", tags=["resource"])
 async def list_sources(query: str = None):
-    try:
+    # try:
         resources = Resources()
         result = await resources.bulk().load()
         total = result.total
@@ -92,8 +92,8 @@ async def list_sources(query: str = None):
             "grouped": groups
         }
 
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    # except Exception as e:
+    #     raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.get("/resource/{id}/{type}/on", tags=["resource"], response_model=dict)
@@ -101,7 +101,7 @@ async def set_source_property_on(id: str, type: IndexesSourceBool):
     try:
         entity = Entity(id=id)
 
-        record = await entity.storage("source").load(ResourceRecord)  # type: ResourceRecord
+        record = await entity.storage("resource").load(ResourceRecord)  # type: ResourceRecord
 
         resource = record.decode()
         resource_data = resource.dict()
@@ -120,7 +120,7 @@ async def set_source_property_off(id: str, type: IndexesSourceBool):
     try:
         entity = Entity(id=id)
 
-        record = await entity.storage("source").load(ResourceRecord)  # type: ResourceRecord
+        record = await entity.storage("resource").load(ResourceRecord)  # type: ResourceRecord
 
         resource = record.decode()
         resource_data = resource.dict()
@@ -143,7 +143,7 @@ async def get_source_by_id(id: str) -> Resource:
 
     try:
         entity = Entity(id=id)
-        record = await entity.storage("source").load(ResourceRecord)  # type: ResourceRecord
+        record = await entity.storage("resource").load(ResourceRecord)  # type: ResourceRecord
         return record.decode()
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -163,12 +163,12 @@ async def upsert_source(resource: Resource):
 async def delete_source(id: str):
     try:
         entity = Entity(id=id)
-        return await entity.storage("source").delete()
+        return await entity.storage("resource").delete()
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.get("/resources/refresh", tags=["resource"])
 async def refresh_sources():
-    service = PersistenceService(ElasticStorage(index_key='source'))
+    service = PersistenceService(ElasticStorage(index_key='resource'))
     return await service.refresh()
