@@ -15,7 +15,7 @@ router = APIRouter(
 )
 
 
-@router.post("/{index}/select", tags=["generic", "event", "profile", "source", "rule", "session", "flow", "segment"])
+@router.post("/{index}/select", tags=["generic", "event", "profile", "resource", "rule", "session", "flow", "segment"])
 async def select_by_sql(index: IndexesSearch, query: Optional[SqlQuery] = None):
     try:
         elastic_index = Index(index.value)
@@ -26,7 +26,7 @@ async def select_by_sql(index: IndexesSearch, query: Optional[SqlQuery] = None):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.post("/{index}/select/range", tags=["generic", "event", "profile", "source", "rule", "session", "flow", "segment"])
+@router.post("/{index}/select/range", tags=["generic", "event", "profile", "resource", "rule", "session", "flow", "segment"])
 async def time_range_with_sql(index: IndexesHistogram, query: DatetimeRangePayload):
     try:
         elastic_index = Index(index.value)
@@ -35,7 +35,7 @@ async def time_range_with_sql(index: IndexesHistogram, query: DatetimeRangePaylo
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.post("/{index}/select/histogram", tags=["generic", "event", "profile", "source", "rule", "session", "flow", "segment"])
+@router.post("/{index}/select/histogram", tags=["generic", "event", "profile", "resource", "rule", "session", "flow", "segment"])
 async def histogram_with_sql(index: IndexesHistogram, query: DatetimeRangePayload):
     try:
         elastic_index = Index(index.value)

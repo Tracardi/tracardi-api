@@ -8,7 +8,7 @@ import elasticsearch
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI, Request
 from starlette.staticfiles import StaticFiles
-from app.api import token_endpoint, rule_endpoint, source_endpoint, event_endpoint, \
+from app.api import token_endpoint, rule_endpoint, resource_endpoint, event_endpoint, \
     profile_endpoint, flow_endpoint, generic_endpoint, project_endpoint, \
     credentials_endpoint, segments_endpoint, \
     tql_endpoint, health_endpoint
@@ -117,7 +117,7 @@ application.include_router(tql_endpoint.router)
 application.include_router(segments_endpoint.router)
 application.include_router(credentials_endpoint.router)
 application.include_router(project_endpoint.router)
-application.include_router(source_endpoint.router)
+application.include_router(resource_endpoint.router)
 application.include_router(rule_endpoint.router)
 application.include_router(flow_endpoint.router)
 application.include_router(event_endpoint.router)

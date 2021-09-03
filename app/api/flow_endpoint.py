@@ -178,12 +178,14 @@ async def get_flow(id: str):
     try:
         rule = Entity(id=id)
         flow_record = await rule.storage("flow").load(FlowRecord)
-        if flow_record is None:
-            raise ValueError("Flow does not exist.")
-        result = flow_record.decode()
-        return result
+        result = flow_record.decode() if flow_record is not None else None
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+    if result is not None:
+        return result
+
+    raise HTTPException(status_code=404, detail="Flow id: `{}` does not exist.".format(id))
 
 
 @router.post("/flow", tags=["flow"], response_model=BulkInsertResult)
@@ -264,7 +266,7 @@ async def upsert_flow_details(flow_metadata: FlowMetaData):
 
 
 @router.get("/flow/{id}/lock/{lock}", tags=["flow"], response_model=BulkInsertResult)
-async def upsert_flow_details(id: str, lock: str):
+async def update_flow_lock(id: str, lock: str):
     try:
         entity = Entity(id=id)
         flow_record = await entity.storage("flow").load(FlowRecord)  # type: FlowRecord
@@ -273,6 +275,21 @@ async def upsert_flow_details(id: str, lock: str):
             raise ValueError("Flow `{}` does not exist.".format(id))
 
         flow_record.lock = True if lock.lower() == 'yes' else False
+        return await flow_record.storage().save()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/flow/{id}/enable/{lock}", tags=["flow"], response_model=BulkInsertResult)
+async def update_flow_lock(id: str, lock: str):
+    try:
+        entity = Entity(id=id)
+        flow_record = await entity.storage("flow").load(FlowRecord)  # type: FlowRecord
+
+        if flow_record is None:
+            raise ValueError("Flow `{}` does not exist.".format(id))
+
+        flow_record.enabled = True if lock.lower() == 'yes' else False
         return await flow_record.storage().save()
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

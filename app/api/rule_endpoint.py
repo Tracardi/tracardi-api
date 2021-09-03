@@ -4,6 +4,7 @@ from typing import List
 from fastapi import APIRouter
 from fastapi import HTTPException, Depends
 
+from tracardi.domain.resource import ResourceRecord
 from .auth.authentication import get_current_user
 from tracardi.domain.entity import Entity
 from tracardi.domain.flow import Flow, FlowRecord
@@ -32,10 +33,20 @@ async def get_rule(id: str):
 
 @router.post("/rule", tags=["rule"])
 async def upsert_rule(rule: Rule):
-    # try:
+    try:
+        # Check if source id exists
+        entity = Entity(id=rule.source.id)
+        resource = await entity.storage('resource').load(ResourceRecord)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+    if resource is None:
+        raise HTTPException(status_code=422, detail='Missing source id: `{}`'.format(rule.source.id))
+
+    try:
+
         entity = Entity(id=rule.flow.id)
         flow_record = await entity.storage("flow").load(FlowRecord)  # type: FlowRecord
-
         add_flow_task = None
         if flow_record is None:
             new_flow = NamedEntity(id=rule.flow.id, name=rule.flow.name)
@@ -47,8 +58,8 @@ async def upsert_rule(rule: Rule):
             await add_flow_task
         return await add_rule_task
 
-    # except Exception as e:
-    #     raise HTTPException(status_code=500, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.delete("/rule/{id}", tags=["rule"])
