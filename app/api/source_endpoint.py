@@ -6,10 +6,10 @@ from fastapi import APIRouter
 from fastapi import HTTPException, Depends
 from .auth.authentication import get_current_user
 from .grouper import search
-from tracardi.domain.source import Source, SourceRecord
+from tracardi.domain.source import Source, ResourceRecord
 from tracardi.domain.entity import Entity
 from tracardi.domain.enum.indexes_source_bool import IndexesSourceBool
-from tracardi.domain.sources import Sources
+from tracardi.domain.resources import Resources
 from tracardi.domain.value_object.bulk_insert_result import BulkInsertResult
 from tracardi.event_server.service.persistence_service import PersistenceService
 from tracardi.service.storage.elastic_storage import ElasticStorage
@@ -48,10 +48,10 @@ async def get_source_types() -> dict:
 @router.get("/sources", tags=["source"])
 async def list_sources():
     try:
-        sources = Sources()
-        result = await sources.bulk().load()
+        resources = Resources()
+        result = await resources.bulk().load()
         total = result.total
-        result = [SourceRecord.construct(Source.__fields_set__, **r).decode() for r in result]
+        result = [ResourceRecord.construct(Source.__fields_set__, **r).decode() for r in result]
 
         return {
             "total": total,
@@ -64,10 +64,10 @@ async def list_sources():
 @router.get("/sources/by_tag", tags=["source"])
 async def list_sources(query: str = None):
     try:
-        sources = Sources()
-        result = await sources.bulk().load()
+        resources = Resources()
+        result = await resources.bulk().load()
         total = result.total
-        result = [SourceRecord.construct(Source.__fields_set__, **r).decode() for r in result]
+        result = [ResourceRecord.construct(Source.__fields_set__, **r).decode() for r in result]
 
         # Filtering
         if query is not None and len(query) > 0:
@@ -101,13 +101,13 @@ async def set_source_property_on(id: str, type: IndexesSourceBool):
     try:
         entity = Entity(id=id)
 
-        record = await entity.storage("source").load(SourceRecord)  # type: SourceRecord
+        record = await entity.storage("source").load(ResourceRecord)  # type: ResourceRecord
 
         source = record.decode()
         source_data = source.dict()
         source_data[type.value] = True
         source = Source.construct(_fields_set=source.__fields_set__, **source_data)
-        record = SourceRecord.encode(source)
+        record = ResourceRecord.encode(source)
 
         return await record.storage().save()
 
@@ -120,13 +120,13 @@ async def set_source_property_off(id: str, type: IndexesSourceBool):
     try:
         entity = Entity(id=id)
 
-        record = await entity.storage("source").load(SourceRecord)  # type: SourceRecord
+        record = await entity.storage("source").load(ResourceRecord)  # type: ResourceRecord
 
         source = record.decode()
         source_data = source.dict()
         source_data[type.value] = False
         source = Source.construct(_fields_set=source.__fields_set__, **source_data)
-        record = SourceRecord.encode(source)
+        record = ResourceRecord.encode(source)
 
         return await record.storage().save()
 
@@ -143,7 +143,7 @@ async def get_source_by_id(id: str) -> Source:
 
     try:
         entity = Entity(id=id)
-        record = await entity.storage("source").load(SourceRecord)  # type: SourceRecord
+        record = await entity.storage("source").load(ResourceRecord)  # type: ResourceRecord
         return record.decode()
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -153,7 +153,7 @@ async def get_source_by_id(id: str) -> Source:
 async def upsert_source(source: Source):
     sleep(1)
     try:
-        record = SourceRecord.encode(source)
+        record = ResourceRecord.encode(source)
         return await record.storage().save()
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

@@ -4,8 +4,8 @@ from fastapi import APIRouter
 from fastapi import HTTPException, Depends
 from .auth.authentication import get_current_user
 from .grouper import search
-from tracardi.domain.source import SourceRecord, Source
-from tracardi.domain.sources import Sources
+from tracardi.domain.source import ResourceRecord, Source
+from tracardi.domain.resources import Resources
 
 router = APIRouter(
     dependencies=[Depends(get_current_user)]
@@ -15,10 +15,10 @@ router = APIRouter(
 @router.get("/credentials/by_type", tags=["credential"])
 async def get_credentials(query: str = None):
     try:
-        sources = Sources()
-        result = await sources.bulk().load()
+        resources = Resources()
+        result = await resources.bulk().load()
         total = result.total
-        result = [SourceRecord.construct(Source.__fields_set__, **r).decode() for r in result]
+        result = [ResourceRecord.construct(Source.__fields_set__, **r).decode() for r in result]
 
         # Filtering
         if query is not None and len(query) > 0:
