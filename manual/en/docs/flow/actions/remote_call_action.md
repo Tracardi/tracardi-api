@@ -54,7 +54,6 @@ Valid response has:
 {
   "status": 200,
   "content": {
-    ... response as json
   }
 }
 ```

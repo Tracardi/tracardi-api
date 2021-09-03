@@ -4,7 +4,7 @@ from fastapi import APIRouter
 from fastapi import HTTPException, Depends
 from .auth.authentication import get_current_user
 from .grouper import search
-from tracardi.domain.source import ResourceRecord, Source
+from tracardi.domain.resource import ResourceRecord, Resource
 from tracardi.domain.resources import Resources
 
 router = APIRouter(
@@ -18,7 +18,7 @@ async def get_credentials(query: str = None):
         resources = Resources()
         result = await resources.bulk().load()
         total = result.total
-        result = [ResourceRecord.construct(Source.__fields_set__, **r).decode() for r in result]
+        result = [ResourceRecord.construct(Resource.__fields_set__, **r).decode() for r in result]
 
         # Filtering
         if query is not None and len(query) > 0:
@@ -28,7 +28,7 @@ async def get_credentials(query: str = None):
 
         # Grouping
         groups = defaultdict(list)
-        for source in result:  # type: Source
+        for source in result:  # type: Resource
             if isinstance(source.type, list):
                 for group in source.type:
                     groups[group].append(source)

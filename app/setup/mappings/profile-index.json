@@ -39,26 +39,19 @@
         "dynamic": false,
         "properties": {
           "name": {
-            "type": "text",
-            "ignore_above": 64
+            "type": "text"
           },
           "surname": {
-            "type": "text",
-            "ignore_above": 64
+            "type": "text"
           },
           "birthDate": {
             "type": "date"
           },
           "email": {
-            "type": "keyword",
-            "ignore_above": 64
+            "type": "keyword"
           },
           "telephone": {
-            "type": "keyword",
-            "ignore_above": 64
-          },
-          "other": {
-            "dynamic": true
+            "type": "keyword"
           }
         }
       },

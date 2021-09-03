@@ -32,7 +32,10 @@ async def create_indices():
                 result = await es.create_index(index.get_write_index(), map)
                 if 'acknowledged' not in result or result['acknowledged'] is not True:
                     logger.log(level=logging.ERROR,
-                               msg="New index `{}` was not created.".format(index.get_write_index()))
+                               msg="New index `{}` was not created. The following result was returned {}".format(
+                                   index.get_write_index(),
+                                   result
+                               ))
                 else:
                     logger.log(level=logging.INFO, msg="New index `{}` created.".format(index.get_write_index()))
 

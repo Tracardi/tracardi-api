@@ -13,7 +13,7 @@ properties from payload, profile, etc.
 
 You can mix regular values with values read from profile, session, etc.
 
-```json
+```
 {
   "new": {
     "key": "value",  // This is static value
@@ -26,7 +26,7 @@ You can mix regular values with values read from profile, session, etc.
 
 This configuration will return an object new with the following properties.
 
-```json
+```
 {
   "new": {
     "key": "value", 

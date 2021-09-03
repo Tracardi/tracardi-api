@@ -32,7 +32,7 @@ from tracardi.domain.profile import Profile
 from tracardi.domain.rule import Rule
 from tracardi.domain.session import Session
 from tracardi.domain.settings import Settings
-from tracardi.domain.source import Source
+from tracardi.domain.resource import Resource
 from tracardi.domain.value_object.bulk_insert_result import BulkInsertResult
 from tracardi.event_server.service.persistence_service import PersistenceService
 
@@ -291,7 +291,7 @@ async def debug_flow(flow: GraphFlow):
         event = Event(
             id='@debug-event-id',
             type="@debug-event-type",
-            source=Source(id="@debug-source-id", type="web-page"),
+            source=Resource(id="@debug-source-id", type="web-page"),
             session=session,
             profile=profile,
             context=Context()
