@@ -34,6 +34,7 @@ async def get_source_types() -> dict:
                     "rabbitmq",
                     "kafka",
                     "smtp-server",
+                    "ip-geo-locator",
                     "postgresql",
                     "redshif",
                     "twillo",
