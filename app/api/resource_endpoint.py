@@ -5,7 +5,7 @@ from time import sleep
 
 from fastapi import APIRouter
 from fastapi import HTTPException, Depends
-from tracardi.service.storage.factory import StorageFor, StorageForBulk
+from tracardi.service.storage.factory import StorageFor, StorageForBulk, storage
 
 from .auth.authentication import get_current_user
 from .grouper import search
@@ -13,8 +13,6 @@ from tracardi.domain.resource import Resource, ResourceRecord
 from tracardi.domain.entity import Entity
 from tracardi.domain.enum.indexes_source_bool import IndexesSourceBool
 from tracardi.domain.value_object.bulk_insert_result import BulkInsertResult
-from tracardi.event_server.service.persistence_service import PersistenceService
-from tracardi.service.storage.elastic_storage import ElasticStorage
 
 router = APIRouter(
     dependencies=[Depends(get_current_user)]
@@ -67,7 +65,7 @@ async def list_sources():
 async def list_sources(query: str = None):
     try:
 
-        result = await StorageForBulk.index('resource').load()
+        result = await StorageForBulk().index('resource').load()
         total = result.total
         result = [ResourceRecord.construct(Resource.__fields_set__, **r).decode() for r in result]
 
@@ -184,5 +182,5 @@ async def delete_source(id: str):
 
 @router.get("/resources/refresh", tags=["resource"])
 async def refresh_sources():
-    service = PersistenceService(ElasticStorage(index_key='resource'))
+    service = storage('resource')
     return await service.refresh()

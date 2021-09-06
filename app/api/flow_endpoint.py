@@ -8,7 +8,7 @@ from fastapi import HTTPException, Depends
 from tracardi.exceptions.exception import StorageException
 
 from tracardi.domain.console import Console
-from tracardi.service.storage.factory import StorageFor, StorageForBulk
+from tracardi.service.storage.factory import StorageFor, StorageForBulk, storage
 from tracardi_graph_runner.domain.flow_history import FlowHistory
 from tracardi_graph_runner.domain.work_flow import WorkFlow
 from tracardi_plugin_sdk.domain.console import Log
@@ -33,8 +33,6 @@ from tracardi.domain.session import Session
 from tracardi.domain.settings import Settings
 from tracardi.domain.resource import Resource
 from tracardi.domain.value_object.bulk_insert_result import BulkInsertResult
-from tracardi.event_server.service.persistence_service import PersistenceService
-from tracardi.service.storage.elastic_storage import ElasticStorage
 from ..setup.on_start import add_plugin
 
 router = APIRouter(
@@ -66,7 +64,7 @@ async def upsert_flow_draft(draft: Flow):
         origin.encode_draft(draft)
         flow_record = FlowRecord.encode(origin)
 
-        return await StorageFor(flow_record).index.save()
+        return await StorageFor(flow_record).index().save()
         # return await flow_record.storage().save()
 
     except Exception as e:
@@ -173,8 +171,8 @@ async def delete_flow(id: str):
 @router.get("/flow/{id}", tags=["flow"], response_model=Flow)
 async def get_flow(id: str):
     try:
-        rule = Entity(id=id)
-        flow_record = await StorageFor(rule).index("flow").load(FlowRecord)
+        flow = Entity(id=id)
+        flow_record = await StorageFor(flow).index("flow").load(FlowRecord)
         result = flow_record.decode() if flow_record is not None else None
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -224,13 +222,13 @@ async def upsert_flow_details(flow_metadata: FlowMetaData):
 
 @router.get("/flow/metadata/refresh", tags=["flow"])
 async def flow_refresh():
-    service = PersistenceService(ElasticStorage(index_key='flow'))
+    service = storage('flow')
     return await service.refresh()
 
 
 @router.get("/flow/metadata/flush", tags=["flow"])
 async def flow_refresh():
-    service = PersistenceService(ElasticStorage(index_key='flow'))
+    service = storage('flow')
     return await service.flush()
 
 
@@ -520,7 +518,7 @@ async def register_plugin_by_module(plugin: PluginImport):
 
     try:
         result = await add_plugin(plugin.module, upgrade=plugin.upgrade)
-        service = PersistenceService(ElasticStorage(index_key='action'))
+        service = storage('action')
         await service.refresh()
         return result
     except Exception as e:

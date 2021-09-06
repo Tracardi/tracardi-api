@@ -3,16 +3,14 @@ from typing import List
 
 from fastapi import APIRouter
 from fastapi import HTTPException, Depends
-from tracardi.service.storage.factory import StorageFor
+from tracardi.service.storage.factory import StorageFor, storage
 
 from tracardi.domain.resource import ResourceRecord
 from .auth.authentication import get_current_user
 from tracardi.domain.entity import Entity
-from tracardi.domain.flow import Flow, FlowRecord
+from tracardi.domain.flow import FlowRecord
 from tracardi.domain.named_entity import NamedEntity
 from tracardi.domain.rule import Rule
-from tracardi.event_server.service.persistence_service import PersistenceService
-from tracardi.service.storage.elastic_storage import ElasticStorage
 
 router = APIRouter(
     dependencies=[Depends(get_current_user)]
@@ -76,7 +74,7 @@ async def delete_rule(id: str):
 @router.get("/rules/by_flow/{id}", tags=["rules"], response_model=List[Rule])
 async def get_rules_attached_to_flow(id: str):
     try:
-        rules = PersistenceService(ElasticStorage(index_key='rule'))
+        rules = storage('rule')
 
         rules_attached_to_flow = await rules.load_by('flow.id.keyword', id)
         rules = [Rule(**rule) for rule in rules_attached_to_flow]
@@ -87,5 +85,5 @@ async def get_rules_attached_to_flow(id: str):
 
 @router.get("/rules/refresh", tags=["rules"])
 async def refresh_rules():
-    service = PersistenceService(ElasticStorage(index_key='rule'))
+    service = storage('rule')
     return await service.refresh()

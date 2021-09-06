@@ -1,15 +1,11 @@
-from time import sleep
-
 from fastapi import APIRouter, Depends
 from fastapi import HTTPException
-from tracardi.service.storage.factory import StorageFor, StorageForBulk
+from tracardi.service.storage.factory import StorageFor, StorageForBulk, storage
 
 from tracardi.domain.record.event_debug_record import EventDebugRecord
 from tracardi_graph_runner.domain.debug_info import DebugInfo
 from .auth.authentication import get_current_user
 from tracardi.domain.entity import Entity
-from tracardi.event_server.service.persistence_service import PersistenceService
-from tracardi.service.storage.elastic_storage import ElasticStorage
 from tracardi.domain.event import Event
 from tracardi.domain.profile import Profile
 
@@ -47,7 +43,7 @@ async def get_event(id: str):
             }
         }
 
-        index = PersistenceService(ElasticStorage(index_key="stat-log"))
+        index = storage("stat-log")
         event_result = await index.filter(query)
 
         return {
