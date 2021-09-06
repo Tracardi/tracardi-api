@@ -2,6 +2,7 @@ from time import sleep
 
 from fastapi import APIRouter, Depends
 from fastapi import HTTPException
+from tracardi.service.storage.factory import StorageFor, StorageForBulk
 
 from tracardi.domain.record.event_debug_record import EventDebugRecord
 from tracardi_graph_runner.domain.debug_info import DebugInfo
@@ -10,7 +11,6 @@ from tracardi.domain.entity import Entity
 from tracardi.event_server.service.persistence_service import PersistenceService
 from tracardi.service.storage.elastic_storage import ElasticStorage
 from tracardi.domain.event import Event
-from tracardi.domain.events import Events
 from tracardi.domain.profile import Profile
 
 router = APIRouter(
@@ -20,8 +20,7 @@ router = APIRouter(
 
 @router.get("/events/metadata/type", tags=["event", "event server"])
 async def event_types():
-    events = Events()
-    result = await events.bulk().uniq_field_value("type")
+    result = await StorageForBulk().index('event').uniq_field_value("type")
     return {
         "total": result.total,
         "result": list(result)
@@ -33,12 +32,12 @@ async def get_event(id: str):
     try:
         event = Entity(id=id)
         # Loads TrackerPayload as it has broader data
-        full_event = await event.storage("event").load(Event)  # type: Event
+        full_event = await StorageFor(event).index("event").load(Event)  # type: Event
         if full_event is None:
             raise HTTPException(detail="Event {} does not exist.".format(id), status_code=404)
 
         profile = Entity(id=full_event.profile.id)
-        full_event.profile = await profile.storage("profile").load(Profile)
+        full_event.profile = await StorageFor(profile).index("profile").load(Profile)
 
         query = {
             "query": {
@@ -66,7 +65,7 @@ async def get_event(id: str):
 async def delete_event(id: str):
     try:
         event = Entity(id=id)
-        return await event.storage("event").delete()
+        return await StorageFor(event).index("event").delete()
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -74,7 +73,8 @@ async def delete_event(id: str):
 @router.get("/event/debug/{id}", tags=["event", "event server"], response_model=DebugInfo)
 async def get_event_debug_info(id: str):
     debug_record = EventDebugRecord(id=id)
-    encoded_debug_record = await debug_record.storage().load()
+    encoded_debug_record = await StorageFor(debug_record).index().load()
+    # encoded_debug_record = await debug_record.storage().load()
     if encoded_debug_record is not None:
         debug_info = EventDebugRecord.decode(encoded_debug_record)  # type: DebugInfo
         return debug_info

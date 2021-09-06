@@ -1,13 +1,14 @@
 import asyncio
 import hashlib
 from collections import defaultdict
-from typing import Optional, List
+from typing import Optional
 
 from fastapi import APIRouter
 from fastapi import HTTPException, Depends
 from tracardi.exceptions.exception import StorageException
 
-from tracardi.domain.console import Console, ConsoleLog
+from tracardi.domain.console import Console
+from tracardi.service.storage.factory import StorageFor, StorageForBulk
 from tracardi_graph_runner.domain.flow_history import FlowHistory
 from tracardi_graph_runner.domain.work_flow import WorkFlow
 from tracardi_plugin_sdk.domain.console import Log
@@ -24,9 +25,7 @@ from tracardi_graph_runner.domain.flow import Flow as GraphFlow
 from tracardi.domain.flow_action_plugin import FlowActionPlugin
 from tracardi.domain.plugin_import import PluginImport
 from tracardi.domain.record.flow_action_plugin_record import FlowActionPluginRecord
-from tracardi.domain.flow_action_plugins import FlowActionPlugins
 from tracardi.domain.flow import FlowRecord
-from tracardi.domain.flows import Flows
 
 from tracardi.domain.profile import Profile
 from tracardi.domain.rule import Rule
@@ -35,8 +34,6 @@ from tracardi.domain.settings import Settings
 from tracardi.domain.resource import Resource
 from tracardi.domain.value_object.bulk_insert_result import BulkInsertResult
 from tracardi.event_server.service.persistence_service import PersistenceService
-
-from tracardi.service.storage.crud import EntityStorageCrud
 from tracardi.service.storage.elastic_storage import ElasticStorage
 from ..setup.on_start import add_plugin
 
@@ -52,14 +49,15 @@ async def upsert_flow_draft(draft: Flow):
         # Check if origin flow exists
 
         entity = Entity(id=draft.id)
-        draft_record = await entity.storage('flow').load(FlowRecord)  # type: FlowRecord
+        draft_record = await StorageFor(entity).index('flow').load(FlowRecord)  # type: FlowRecord
 
         if draft_record is None:
             # If not exists create new one
             origin = Flow.new(draft.id)
             origin.description = "Created during workflow draft save."
             record = FlowRecord.encode(origin)
-            await record.storage().save()
+            await StorageFor(record).index().save()
+            # await record.storage().save()
         else:
             # If exists decode origin flow
             origin = draft_record.decode()
@@ -67,7 +65,9 @@ async def upsert_flow_draft(draft: Flow):
         # Append draft
         origin.encode_draft(draft)
         flow_record = FlowRecord.encode(origin)
-        return await flow_record.storage().save()
+
+        return await StorageFor(flow_record).index.save()
+        # return await flow_record.storage().save()
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -80,7 +80,7 @@ async def load_flow_draft(id: str):
         # Check if origin flow exists
 
         entity = Entity(id=id)
-        draft_record = await entity.storage('flow').load(FlowRecord)  # type: FlowRecord
+        draft_record = await StorageFor(entity).index('flow').load(FlowRecord)  # type: FlowRecord
 
         if draft_record is None:
             raise ValueError("Flow `{}` does not exists.".format(id))
@@ -98,8 +98,7 @@ async def load_flow_draft(id: str):
 @router.get("/flows", tags=["flow"])
 async def get_flows(query: str = None):
     try:
-        flows = Flows()
-        result = await flows.bulk().load()
+        result = await StorageForBulk().index('flow').load()
         total = result.total
         result = [FlowRecord(**r) for r in result]
 
@@ -121,8 +120,7 @@ async def get_flows(query: str = None):
 @router.get("/flows/by_tag", tags=["flow"])
 async def get_grouped_flows(query: str = None):
     try:
-        flows = Flows()
-        result = await flows.bulk().load()
+        result = await StorageForBulk().index('flow').load()
         total = result.total
         result = [FlowRecord(**r) for r in result]
 
@@ -157,12 +155,11 @@ async def get_grouped_flows(query: str = None):
 async def delete_flow(id: str):
     try:
         # delete rule before flow
-
-        crud = EntityStorageCrud('rule', Rule)
+        crud = StorageFor.crud('rule', Rule)
         rule_delete_task = asyncio.create_task(crud.delete_by('flow.id.keyword', id))
 
         flow = Entity(id=id)
-        flow_delete_task = asyncio.create_task(flow.storage("flow").delete())
+        flow_delete_task = asyncio.create_task(StorageFor(flow).index("flow").delete())
 
         return {
             "rule": await rule_delete_task,
@@ -177,7 +174,7 @@ async def delete_flow(id: str):
 async def get_flow(id: str):
     try:
         rule = Entity(id=id)
-        flow_record = await rule.storage("flow").load(FlowRecord)
+        flow_record = await StorageFor(rule).index("flow").load(FlowRecord)
         result = flow_record.decode() if flow_record is not None else None
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -192,7 +189,8 @@ async def get_flow(id: str):
 async def upsert_flow(flow: Flow):
     try:
         flow_record = FlowRecord.encode(flow)
-        return await flow_record.storage().save()
+        return await StorageFor(flow_record).index().save()
+        # return await flow_record.storage().save()
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -201,7 +199,7 @@ async def upsert_flow(flow: Flow):
 async def upsert_flow_details(flow_metadata: FlowMetaData):
     try:
         entity = Entity(id=flow_metadata.id)
-        flow_record = await entity.storage("flow").load(FlowRecord)  # type: FlowRecord
+        flow_record = await StorageFor(entity).index("flow").load(FlowRecord)  # type: FlowRecord
         if flow_record:
             flow_record.name = flow_metadata.name
             flow_record.description = flow_metadata.description
@@ -218,7 +216,8 @@ async def upsert_flow_details(flow_metadata: FlowMetaData):
                 projects=flow_metadata.projects
             )
 
-        return await flow_record.storage().save()
+        return await StorageFor(flow_record).index().save()
+        # return await flow_record.storage().save()
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -239,7 +238,7 @@ async def flow_refresh():
 async def upsert_flow_details(flow_metadata: FlowMetaData):
     try:
         entity = Entity(id=flow_metadata.id)
-        flow_record = await entity.storage("flow").load(FlowRecord)  # type: FlowRecord
+        flow_record = await StorageFor(entity).index("flow").load(FlowRecord)  # type: FlowRecord
 
         if flow_record is None:
             raise ValueError("Flow `{}` does not exist.".format(flow_metadata.id))
@@ -259,7 +258,8 @@ async def upsert_flow_details(flow_metadata: FlowMetaData):
 
             flow_record.encode_draft(draft)
 
-        return await flow_record.storage().save()
+        # return await flow_record.storage().save()
+        return await StorageFor(flow_record).index().save()
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -269,13 +269,14 @@ async def upsert_flow_details(flow_metadata: FlowMetaData):
 async def update_flow_lock(id: str, lock: str):
     try:
         entity = Entity(id=id)
-        flow_record = await entity.storage("flow").load(FlowRecord)  # type: FlowRecord
+        flow_record = await StorageFor(entity).index("flow").load(FlowRecord)  # type: FlowRecord
 
         if flow_record is None:
             raise ValueError("Flow `{}` does not exist.".format(id))
 
         flow_record.lock = True if lock.lower() == 'yes' else False
-        return await flow_record.storage().save()
+        return await StorageFor(flow_record).index().save()
+        # return await flow_record.storage().save()
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -284,13 +285,14 @@ async def update_flow_lock(id: str, lock: str):
 async def update_flow_lock(id: str, lock: str):
     try:
         entity = Entity(id=id)
-        flow_record = await entity.storage("flow").load(FlowRecord)  # type: FlowRecord
+        flow_record = await StorageFor(entity).index("flow").load(FlowRecord)  # type: FlowRecord
 
         if flow_record is None:
             raise ValueError("Flow `{}` does not exist.".format(id))
 
         flow_record.enabled = True if lock.lower() == 'yes' else False
-        return await flow_record.storage().save()
+        return await StorageFor(flow_record).index().save()
+        # return await flow_record.storage().save()
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -322,7 +324,7 @@ async def debug_flow(flow: GraphFlow):
         )
         debug_info, log_list = await workflow.invoke(flow, debug=True)
 
-        console_log = ConsoleLog()
+        console_log = []
         profile_save_result = None
         try:
             # Store logs in one console log
@@ -339,7 +341,8 @@ async def debug_flow(flow: GraphFlow):
                 console_log.append(console)
 
             if profile.operation.needs_update():
-                profile_save_result = await profile.storage().save()
+                profile_save_result = await StorageFor(profile).index().save()
+                # profile_save_result = await profile.storage().save()
 
         except StorageException as e:
             console = Console(
@@ -372,7 +375,7 @@ async def get_plugin(id: str):
     """
     try:
         action = Entity(id=id)
-        record = await action.storage("action").load(FlowActionPluginRecord)  # type: FlowActionPluginRecord
+        record = await StorageFor(action).index("action").load(FlowActionPluginRecord)  # type: FlowActionPluginRecord
         return record.decode()
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -387,10 +390,11 @@ async def get_plugin_state(id: str, state: YesNo):
     try:
 
         action = Entity(id=id)
-        record = await action.storage("action").load(FlowActionPluginRecord)  # type: FlowActionPluginRecord
+        record = await StorageFor(action).index("action").load(FlowActionPluginRecord)  # type: FlowActionPluginRecord
         action = record.decode()
         action.settings.hidden = Settings.as_bool(state)
-        return await FlowActionPluginRecord.encode(action).storage().save()
+        # return await FlowActionPluginRecord.encode(action).storage().save()
+        return await StorageFor(FlowActionPluginRecord.encode(action)).index().save()
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -406,10 +410,11 @@ async def get_plugin_enabled(id: str, state: YesNo):
     try:
 
         action = Entity(id=id)
-        record = await action.storage("action").load(FlowActionPluginRecord)  # type: FlowActionPluginRecord
+        record = await StorageFor(action).index("action").load(FlowActionPluginRecord)  # type: FlowActionPluginRecord
         action = record.decode()
         action.settings.enabled = Settings.as_bool(state)
-        return await FlowActionPluginRecord.encode(action).storage().save()
+        # return await FlowActionPluginRecord.encode(action).storage().save()
+        return await StorageFor(FlowActionPluginRecord.encode(action)).index().save()
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -422,7 +427,7 @@ async def get_plugin(id: str):
     """
     try:
         action = Entity(id=id)
-        record = await action.storage("action").load(FlowActionPluginRecord)  # type: FlowActionPluginRecord
+        record = await StorageFor(action).index("action").load(FlowActionPluginRecord)  # type: FlowActionPluginRecord
         return record.decode()
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -435,7 +440,7 @@ async def delete_plugin(id: str):
     """
     try:
         action = Entity(id=id)
-        return await action.storage("action").delete()
+        return await StorageFor(action).index("action").delete()
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -454,7 +459,8 @@ async def upsert_plugin(action: FlowActionPlugin):
 
         record = FlowActionPluginRecord.encode(action)
 
-        return await record.storage().save()
+        return await StorageFor(record).index().save()
+        # return await record.storage().save()
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -467,8 +473,7 @@ async def get_plugins_list(query: Optional[str] = None):
 
     try:
 
-        plugins = FlowActionPlugins()
-        result = await plugins.bulk().load()
+        result = await StorageForBulk().index('action').load()
         _result = [FlowActionPluginRecord(**r).decode() for r in result]
 
         if query is not None and len(query) > 0:

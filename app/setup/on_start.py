@@ -2,6 +2,8 @@ import asyncio
 import hashlib
 import os
 
+from tracardi.service.storage.factory import StorageFor
+
 from tracardi_plugin_sdk.domain.register import Plugin
 
 from tracardi.domain.flow_action_plugin import FlowActionPlugin
@@ -31,7 +33,8 @@ async def add_plugin(module, upgrade=False):
         await asyncio.sleep(0)
         action_plugin = FlowActionPlugin(id=action_id, plugin=plugin_data)
         record = FlowActionPluginRecord.encode(action_plugin)
-        return await record.storage().save()
+        return await StorageFor(record).index().save()
+        # return await record.storage().save()
 
     except ModuleNotFoundError as e:
         print(str(e))

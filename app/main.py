@@ -15,9 +15,9 @@ from app.api import token_endpoint, rule_endpoint, resource_endpoint, event_endp
 from app.api.track import event_server_endpoint
 from app.config import server
 from app.setup.on_start import add_plugins
-from tracardi.domain.flow_action_plugins import FlowActionPlugins
 from tracardi.service.storage.elastic import Elastic
 from app.setup.indices_setup import create_indices
+from tracardi.service.storage.factory import StorageForBulk
 
 logging.basicConfig(level=logging.WARN)
 
@@ -159,8 +159,7 @@ async def app_shutdown():
 
 @application.get("/action/plugins")
 async def plugins():
-    plugins = FlowActionPlugins()
-    return await plugins.bulk().load()
+    return await StorageForBulk().index('action').load()
 
 
 if __name__ == "__main__":

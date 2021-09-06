@@ -3,6 +3,7 @@ from typing import List
 
 from fastapi import APIRouter
 from fastapi import HTTPException, Depends
+from tracardi.service.storage.factory import StorageFor
 
 from tracardi.domain.resource import ResourceRecord
 from .auth.authentication import get_current_user
@@ -26,7 +27,7 @@ async def get_rule(id: str):
 
     try:
         rule = Entity(id=id)
-        return await rule.storage("rule").load(Rule)
+        return await StorageFor(rule).index("rule").load(Rule)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -36,7 +37,7 @@ async def upsert_rule(rule: Rule):
     try:
         # Check if source id exists
         entity = Entity(id=rule.source.id)
-        resource = await entity.storage('resource').load(ResourceRecord)
+        resource = await StorageFor(entity).index('resource').load(ResourceRecord)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -46,13 +47,14 @@ async def upsert_rule(rule: Rule):
     try:
 
         entity = Entity(id=rule.flow.id)
-        flow_record = await entity.storage("flow").load(FlowRecord)  # type: FlowRecord
+        flow_record = await StorageFor(entity).index("flow").load(FlowRecord)  # type: FlowRecord
         add_flow_task = None
         if flow_record is None:
             new_flow = NamedEntity(id=rule.flow.id, name=rule.flow.name)
-            add_flow_task = asyncio.create_task(entity.storage("flow").save(new_flow.dict()))
+            add_flow_task = asyncio.create_task(StorageFor(entity).index("flow").save(new_flow.dict()))
 
-        add_rule_task = asyncio.create_task(rule.storage().save())
+        add_rule_task = asyncio.create_task(StorageFor(rule).index().save())
+        # add_rule_task = asyncio.create_task(rule.storage().save())
 
         if add_flow_task:
             await add_flow_task
@@ -66,7 +68,7 @@ async def upsert_rule(rule: Rule):
 async def delete_rule(id: str):
     try:
         rule = Entity(id=id)
-        return await rule.storage("rule").delete()
+        return await StorageFor(rule).index("rule").delete()
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

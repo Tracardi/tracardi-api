@@ -3,11 +3,12 @@ from time import sleep
 
 from fastapi import APIRouter
 from fastapi import HTTPException, Depends
+from tracardi.service.storage.factory import StorageFor, StorageForBulk
+
 from .auth.authentication import get_current_user
 from .grouper import search
 from tracardi.domain.entity import Entity
 from tracardi.domain.segment import Segment
-from tracardi.domain.segments import Segments
 from tracardi.domain.value_object.bulk_insert_result import BulkInsertResult
 from tracardi.event_server.service.persistence_service import PersistenceService
 from tracardi.service.storage.elastic_storage import ElasticStorage
@@ -21,7 +22,7 @@ router = APIRouter(
 async def get_segment(id: str):
     try:
         entity = Entity(id=id)
-        return await entity.storage('segment').load(Segment)
+        return await StorageFor(entity).index('segment').load(Segment)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -30,7 +31,7 @@ async def get_segment(id: str):
 async def delete_segment(id: str):
     try:
         entity = Entity(id=id)
-        return await entity.storage('segment').delete()
+        return await StorageFor(entity).index('segment').delete()
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -44,8 +45,7 @@ async def refresh_segments():
 @router.get("/segments", tags=["segment"])
 async def get_segments(query: str = None):
     try:
-        sources = Segments()
-        result = await sources.bulk().load()
+        result = await StorageForBulk().index('segment').load()
         total = result.total
         result = [Segment.construct(Segment.__fields_set__, **r) for r in result]
 
@@ -81,8 +81,8 @@ async def get_segments(query: str = None):
 
 @router.post("/segment", tags=["segment"], response_model=BulkInsertResult)
 async def upsert_source(segment: Segment):
-    sleep(2)
     try:
-        return await segment.storage().save()
+        return await StorageFor(segment).index().save()
+        # return await segment.storage().save()
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
