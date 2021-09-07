@@ -115,6 +115,14 @@ async def get_flows(query: str = None):
         raise HTTPException(status_code=500, detail=str(e))
 
 
+@router.get("/flows/refresh", tags=["flow"])
+async def refresh_flows():
+    try:
+        return await storage('flow').refresh()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 @router.get("/flows/by_tag", tags=["flow"])
 async def get_grouped_flows(query: str = None):
     try:

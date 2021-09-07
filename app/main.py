@@ -11,7 +11,7 @@ from starlette.staticfiles import StaticFiles
 from app.api import token_endpoint, rule_endpoint, resource_endpoint, event_endpoint, \
     profile_endpoint, flow_endpoint, generic_endpoint, project_endpoint, \
     credentials_endpoint, segments_endpoint, \
-    tql_endpoint, health_endpoint
+    tql_endpoint, health_endpoint, session_endpoint
 from app.api.track import event_server_endpoint
 from app.config import server
 from app.setup.on_start import add_plugins
@@ -125,6 +125,7 @@ application.include_router(profile_endpoint.router)
 application.include_router(token_endpoint.router)
 application.include_router(generic_endpoint.router)
 application.include_router(health_endpoint.router)
+application.include_router(session_endpoint.router)
 
 
 @application.on_event("startup")
