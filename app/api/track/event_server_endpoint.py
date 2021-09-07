@@ -1,8 +1,13 @@
 import asyncio
 import logging
+from typing import List
 
 from fastapi import APIRouter, Request
 from fastapi import HTTPException
+from tracardi.domain.event import Event
+
+from tracardi.domain.profile import Profile
+
 from app.api.track.service.merging import merge
 from app.api.track.service.segmentation import segment
 from tracardi.domain.session import Session
@@ -28,8 +33,8 @@ logger = logging.getLogger('tracardi.api.event_server')
 router = APIRouter()
 
 
-async def _persist(profile, session, events, tracker_payload) -> CollectResult:
-
+async def _persist(profile: Profile, session: Session, events: List[Event],
+                   tracker_payload: TrackerPayload) -> CollectResult:
     # Save profile
     save_profile_result = await save_profile(profile, True)
 
@@ -85,12 +90,12 @@ async def track(tracker_payload: TrackerPayload, request: Request):
                 tracker_payload.source.id)
 
             # Segment
-            segmentation_result = segment(rules_engine.profile, ran_event_types, load_segment_by_event_type)
+            segmentation_result = await segment(rules_engine.profile, ran_event_types, load_segment_by_event_type)
 
             save_tasks = []
 
             # Merge
-            profiles_to_disable = merge(rules_engine.profile, limit=2000)
+            profiles_to_disable = await merge(rules_engine.profile, limit=2000)
             if profiles_to_disable is not None:
                 task = asyncio.create_task(
                     StorageForBulk(profiles_to_disable).index('profile').save())
