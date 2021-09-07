@@ -14,6 +14,7 @@ index_mapping = {
 }
 
 logger = logging.getLogger('tracardi.create_indices')
+logger.setLevel(logging.INFO)
 
 
 async def create_indices():
@@ -44,7 +45,8 @@ async def create_indices():
                         on_start = index_mapping[key]['on-start']
                         if callable(on_start):
                             await on_start()
-
+            else:
+                logger.log(level=logging.INFO, msg="Index `{}` exists.".format(index.get_write_index()))
 
 if __name__ == "__main__":
     import asyncio

@@ -23,15 +23,18 @@
         }
       },
       "stats": {
-        "dynamic": true
+        "dynamic": true,
+        "type": "object"
       },
       "traits": {
         "properties": {
           "private": {
-            "dynamic": true
+            "dynamic": true,
+            "type": "object"
           },
           "public": {
-            "dynamic": true
+            "dynamic": true,
+            "type": "object"
           }
         }
       },
@@ -60,7 +63,8 @@
         "ignore_above": 64
       },
       "consents": {
-        "dynamic": true
+        "dynamic": true,
+        "type": "object"
       },
       "active": {
         "type": "boolean"
