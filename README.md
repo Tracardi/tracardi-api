@@ -34,7 +34,7 @@ Please see [https://github.com/atompie/tracardi](https://github.com/atompie/trac
 Now pull and run Tracardi backend.
 
 ```
-docker run -p 8686:80 -e ELASTIC_HOST=http://<your-laptop-ip>:9200 tracardi/tracardi-api:0.6.0
+docker run -p 8686:80 -e ELASTIC_HOST=//<your-laptop-ip>:9200 tracardi/tracardi-api:0.6.0
 ```
 
 

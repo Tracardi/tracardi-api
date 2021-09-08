@@ -29,7 +29,7 @@ Tracardi must connect to elastic. To do that you have to set ELASTIC_HOST variab
 Now pull and run Tracardi Graphical User Interface.
 
 ```
-docker run -p 8787:80 -e API_URL=http://127.0.0.1:8686 tracardi/tracardi-gui:0.5.0.rc-1
+docker run -p 8787:80 -e API_URL=//127.0.0.1:8686 tracardi/tracardi-gui:0.5.0.rc-1
 ```
 
 ## Log-in
