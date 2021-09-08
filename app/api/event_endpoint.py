@@ -70,7 +70,6 @@ async def delete_event(id: str):
 async def get_event_debug_info(id: str):
     debug_record = EventDebugRecord(id=id)
     encoded_debug_record = await StorageFor(debug_record).index().load()
-    # encoded_debug_record = await debug_record.storage().load()
     if encoded_debug_record is not None:
         debug_info = EventDebugRecord.decode(encoded_debug_record)  # type: DebugInfo
         return debug_info
