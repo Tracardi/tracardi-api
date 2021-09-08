@@ -83,6 +83,8 @@ nav:
       - api/index.md
   - Extending Tracardi:
       - plugins/index.md
+  - Development:
+      - development/index.md
   - support_us.md
   - attribution.md
   - software_license.md
