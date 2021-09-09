@@ -2,19 +2,22 @@
 
 In order to understand how Tracardi CPD works you will need to learn the following definitions. 
 
-##Source
-In order to kick start your new project with Tracardi you must create a new source. That source will give you an identifier which when attached to your track calls will start collecting data about your users. There are two types of sources. The source that can emit events, e.g. web page. This type of source sends data to tracardi every time something happens. Other examples are SMS gateway, received email, payload from kafka queue.
+##Resource
 
-The second type of source is the source that stores data, e.g. database. You have to query that source for data. It does not send data when something changed. 
+In order to kick start your new project with Tracardi you must create a new resource. That resource will give you an identifier which when attached to your track calls will start collecting data about your users. There are three types of resources. The resource that can emit events, e.g. web page. This type of resource sends data to tracardi every time something happens. Other examples are SMS gateway, received email, payload from kafka queue.
 
-Tracardi can access both types of sources. For example, someone visits your page (first source) tracardi receives an event with profile id then it queries the MySql database for additional data about the user (second source). 
+The second type of resource is the resource that stores data, e.g. database. You have to query that resource for data. It does not send data when something changed. 
 
-Some sources may require user consent to collect data from this source. A web page requires consent from the user to collect and store his or her data. 
+Tracardi can access both types of resources. For example, someone visits your page (first resource) tracardi receives an event with profile id then it queries the MySql database for additional data about the user (second resource). 
+
+Some resources may require user consent to collect data from this resource. A web page requires consent from the user to collect and store his or her data. 
 
 ##Session
+
 Session - an object that remembers the details of the connection with the client on the server for some time. A characteristic feature of the session is that the data assigned to it are usually temporary, volatile. 
 
 ##Event
+
 Events represent something that is happening at a specific time (they are timestamped). They can be used to track visitor behaviour. Examples of events may include a click on a link on a web page, a login, a form submission, a page view or any other action that needs to be tracked, e.g. purchase order. Events can pass additional data such as user name, purchased item, viewed page, etc.
 
 Web page events are raised when a javascript executes on a selected page. As a tracker is inserted on every page it can emit an event. Events and their types are configured by you. Also, you configure what data has to be sent with every event. 
@@ -22,8 +25,9 @@ Web page events are raised when a javascript executes on a selected page. As a t
 Events can be stored inside Tracardi or just passed to workflow to be processed outside Tracardi.  
 
 ##Rule
+
 Rules define which workflow is to be executed when an event comes to the system. 
-Rules consist of a condition and workflow name. If a condition is met then the flow starts to run. The condition has two elements: event type and source.  If the event is of a certain type and comes from a given source then the defined workflow is executed. The source is optional in that equation so it can be set to any source. 
+Rules consist of a condition and workflow name. If a condition is met then the flow starts to run. The condition has two elements: event type and resource.  If the event is of a certain type and comes from a given resource then the defined workflow is executed. The resource is optional in that equation so it can be set to any resource. 
 
 ##Flows (short for workflows)
 

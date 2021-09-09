@@ -1,12 +1,15 @@
 from json import JSONDecodeError
-from fastapi import APIRouter, Request, HTTPException
+from fastapi import APIRouter, Request, HTTPException, Depends
 
+from app.api.auth.authentication import get_current_user
 from app.setup.on_start import register_api_instance
 
-router = APIRouter()
+router = APIRouter(
+    dependencies=[Depends(get_current_user)]
+)
 
 
-@router.post("/healthcheck")
+@router.post("/healthcheck", tags=["health"])
 async def track(r: Request):
     try:
         print(r.headers)
@@ -17,7 +20,7 @@ async def track(r: Request):
         return await r.body()
 
 
-@router.get("/healthcheck")
+@router.get("/healthcheck", tags=["health"])
 async def track(r: Request):
     try:
         return await r.json()
@@ -25,7 +28,7 @@ async def track(r: Request):
         return await r.body()
 
 
-@router.put("/healthcheck")
+@router.put("/healthcheck", tags=["health"])
 async def track(r: Request):
     try:
         return await r.json()
@@ -33,7 +36,7 @@ async def track(r: Request):
         return await r.body()
 
 
-@router.delete("/healthcheck")
+@router.delete("/healthcheck", tags=["health"])
 async def track(r: Request):
     try:
         return await r.json()
@@ -41,9 +44,9 @@ async def track(r: Request):
         return await r.body()
 
 
-@router.get("/health/report/instance")
+@router.get("/health/report/instance", tags=["health"])
 async def register_api_instance_health():
     try:
-        await register_api_instance()
+        return await register_api_instance()
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

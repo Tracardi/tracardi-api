@@ -29,15 +29,15 @@ tags_metadata = [
         "description": "Manage profiles. Read more about core concepts of TRACARDI in documentation.",
         "externalDocs": {
             "description": "Profile external docs",
-            "url": "https://github/atompie/docs/en/docs/core_concepts",
+            "url": "https://github/atompie/docs/en/docs",
         },
     },
     {
-        "name": "source",
-        "description": "Manage data sources. Read more about core concepts of TRACARDI in documentation.",
+        "name": "resource",
+        "description": "Manage data resources. Read more about core concepts of TRACARDI in documentation.",
         "externalDocs": {
-            "description": "Source external docs",
-            "url": "https://github/atompie/docs/en/docs/core_concepts",
+            "description": "Resource external docs",
+            "url": "https://github/atompie/docs/en/docs",
         },
     },
     {
@@ -45,7 +45,7 @@ tags_metadata = [
         "description": "Manage flow rule triggers. Read more about core concepts of TRACARDI in documentation.",
         "externalDocs": {
             "description": "Rule external docs",
-            "url": "https://github/atompie/docs/en/docs/core_concepts",
+            "url": "https://github/atompie/docs/en/docs",
         },
     },
     {
@@ -53,7 +53,7 @@ tags_metadata = [
         "description": "Manage flows. Read more about core concepts of TRACARDI in documentation.",
         "externalDocs": {
             "description": "Flows external docs",
-            "url": "https://github/atompie/docs/en/docs/core_concepts",
+            "url": "https://github/atompie/docs/en/docs",
         },
     },
     {
@@ -61,7 +61,7 @@ tags_metadata = [
         "description": "Manage events. Read more about core concepts of TRACARDI in documentation.",
         "externalDocs": {
             "description": "Events external docs",
-            "url": "https://github/atompie/docs/en/docs/core_concepts",
+            "url": "https://github/atompie/docs/en/docs",
         },
     },
     {
@@ -70,10 +70,10 @@ tags_metadata = [
     },
     {
         "name": "event server",
-        "description": "Read more about TRACARDI event server in documentation. http://localhost:8686/manual/en/site/integration",
+        "description": "Read more about TRACARDI event server in documentation. http://localhost:8686/manual/en/site",
         "externalDocs": {
             "description": "External docs",
-            "url": "https://github/atompie/docs/en/docs/event_tracking",
+            "url": "https://github/atompie/docs/en/docs",
         },
     }
 ]

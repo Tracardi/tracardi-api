@@ -16,7 +16,7 @@ router = APIRouter(
 )
 
 
-@router.get("/segment/{id}")
+@router.get("/segment/{id}", tags=["segment"])
 async def get_segment(id: str):
     try:
         entity = Entity(id=id)
@@ -25,7 +25,7 @@ async def get_segment(id: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.delete("/segment/{id}")
+@router.delete("/segment/{id}", tags=["segment"])
 async def delete_segment(id: str):
     try:
         entity = Entity(id=id)
