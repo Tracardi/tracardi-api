@@ -7,3 +7,18 @@ lark==0.11.3
 
 git+https://github.com/atompie/tracardi.git@0.6.0-dev
 git+https://github.com/atompie/tracardi-wf.git@main
+git+https://github.com/atompie/tracardi-dot-notation.git
+
+git+https://github.com/atompie/tracardi-plugin-sdk.git
+git+https://github.com/atompie/tracardi-day-night-split.git
+git+https://github.com/atompie/tracardi-key-counter.git
+git+https://github.com/atompie/tracardi-url-parser.git
+
+git+https://github.com/atompie/tracardi-discord-webhook.git
+git+https://github.com/atompie/tracardi-mongodb-connector.git
+git+https://github.com/atompie/tracardi-mysql-connector.git
+git+https://github.com/atompie/tracardi-postgresql-connector.git
+git+https://github.com/atompie/tracardi-rabbitmq-publisher.git
+git+https://github.com/atompie/tracardi-remote-call.git
+git+https://github.com/atompie/tracardi-weather.git
+git+https://github.com/atompie/tracardi-zapier-webhook.git

@@ -9,7 +9,7 @@ class AuthConfig:
 
 class ServerConfig:
     def __init__(self, env):
-        self.update_plugins_on_start_up = env['UPDATE_PLUGINS_ON_STARTUP'] if 'UPDATE_PLUGINS_ON_STARTUP' in env else False
+        self.update_plugins_on_start_up = env['UPDATE_PLUGINS_ON_STARTUP'] if 'UPDATE_PLUGINS_ON_STARTUP' in env else True
         self.make_slower_responses = float(env['DEBUG_MAKE_SLOWER_RESPONSES']) if 'DEBUG_MAKE_SLOWER_RESPONSES' in env else 0
 
 

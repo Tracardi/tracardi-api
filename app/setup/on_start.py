@@ -1,14 +1,23 @@
 import asyncio
 import hashlib
 import importlib
+import logging
 import os
+from uuid import uuid4
+
+from tracardi.exceptions.exception import StorageException
+
+from tracardi.domain.api_instance import ApiInstance
+from tracardi.service.storage.factory import StorageFor
 
 from tracardi.service.storage.helpers.plugin_saver import save_plugin
 from tracardi_plugin_sdk.domain.register import Plugin
 
-from .module_loader import load_callable, import_and_install, pip_install
+from .module_loader import load_callable, pip_install
 
 __local_dir = os.path.dirname(__file__)
+logger = logging.getLogger('setup.on_start')
+logger.setLevel(logging.INFO)
 
 
 async def add_plugin(module, install=False, upgrade=False):
@@ -50,12 +59,10 @@ async def add_plugin(module, install=False, upgrade=False):
         return await save_plugin(action_id, plugin_data)
 
     except ModuleNotFoundError as e:
-        print(str(e))
-        # todo log.
+        logger.error(f"Module `{module}` was NOT INSTALLED as it raised an error `{str(e)}`.")
 
 
 async def add_plugins():
-
     plugins = [
         'tracardi.process_engine.action.v1.debug_payload_action',
         'tracardi.process_engine.action.v1.start_action',
@@ -112,3 +119,13 @@ async def add_plugins():
     ]
     for plugin in plugins:
         await add_plugin(plugin, install=False, upgrade=False)
+
+
+async def register_api_instance():
+    api_instance = ApiInstance(id=str(uuid4()), ip='127.0.0.1')
+    try:
+        result = await StorageFor(api_instance).index().save()
+        if result.saved == 1:
+            logger.info(f"This API instance was REGISTERED as `{api_instance.id}`")
+    except StorageException as e:
+        logger.error(f"API instance `{api_instance.id}` was NOT REGISTERED due to ERROR `{str(e)}`")
