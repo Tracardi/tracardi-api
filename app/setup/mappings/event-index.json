@@ -4,10 +4,9 @@
     "number_of_replicas": 1
   },
   "mappings": {
-    "dynamic": true,
+    "dynamic": false,
     "properties": {
       "metadata": {
-        "dynamic": false,
         "properties": {
           "time": {
             "properties": {
@@ -21,11 +20,15 @@
       "type": {
         "type": "keyword"
       },
+      "properties": {
+        "dynamic": true,
+        "type": "object"
+      },
       "context": {
-        "properties": {}
+        "dynamic": true,
+        "type": "object"
       },
       "profile": {
-        "dynamic": false,
         "properties": {
           "id": {
             "type": "keyword"
@@ -34,11 +37,11 @@
             "properties": {
               "private": {
                 "dynamic": true,
-                "properties": {}
+                "type": "object"
               },
               "public": {
                 "dynamic": true,
-                "properties": {}
+                "type": "object"
               }
             }
           },
@@ -47,7 +50,7 @@
           },
           "consents": {
             "dynamic": true,
-            "properties": {}
+            "type": "object"
           }
         }
       }

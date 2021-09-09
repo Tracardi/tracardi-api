@@ -14,3 +14,6 @@ def get_local_ip() -> Optional[str]:
     except OSError as e:
         logger.error(str(e))
         return None
+
+
+local_ip = get_local_ip()

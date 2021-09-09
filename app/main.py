@@ -14,12 +14,14 @@ from app.api import token_endpoint, rule_endpoint, resource_endpoint, event_endp
     tql_endpoint, health_endpoint, session_endpoint
 from app.api.track import event_server_endpoint
 from app.config import server
-from app.setup.on_start import add_plugins, register_api_instance, update_api_instance
+from app.setup.on_start import add_plugins, register_api_instance, update_api_instance, run_tasks_queue
 from tracardi.service.storage.elastic import Elastic
 from app.setup.indices_setup import create_indices
 from tracardi.service.storage.factory import StorageForBulk
 
 logging.basicConfig(level=logging.WARN)
+logger = logging.getLogger('app.main')
+logger.setLevel(logging.INFO)
 
 _local_dir = os.path.dirname(__file__)
 
@@ -69,7 +71,7 @@ tags_metadata = [
         "description": "OAuth authorization.",
     },
     {
-        "name": "event server",
+        "name": "tracker",
         "description": "Read more about TRACARDI event server in documentation. http://localhost:8686/manual/en/site",
         "externalDocs": {
             "description": "External docs",
@@ -142,6 +144,8 @@ async def app_starts():
             await asyncio.sleep(5)
 
     report_i_am_alive()
+    run_tasks()
+    logger.info("START UP exits.")
 
 
 @application.middleware("http")
@@ -168,6 +172,15 @@ def report_i_am_alive():
             await update_api_instance()
 
     asyncio.create_task(heartbeat())
+
+
+def run_tasks():
+    async def get_pending_tasks():
+        while True:
+            await asyncio.sleep(server.tasks_every)
+            await run_tasks_queue()
+
+    asyncio.create_task(get_pending_tasks())
 
 
 @application.get("/action/plugins")
