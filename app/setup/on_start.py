@@ -129,3 +129,4 @@ async def register_api_instance():
             logger.info(f"This API instance was REGISTERED as `{api_instance.id}`")
     except StorageException as e:
         logger.error(f"API instance `{api_instance.id}` was NOT REGISTERED due to ERROR `{str(e)}`")
+        raise e
