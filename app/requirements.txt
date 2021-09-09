@@ -18,6 +18,7 @@ git+https://github.com/atompie/tracardi-discord-webhook.git
 git+https://github.com/atompie/tracardi-mongodb-connector.git
 git+https://github.com/atompie/tracardi-mysql-connector.git
 git+https://github.com/atompie/tracardi-postgresql-connector.git
+git+https://github.com/atompie/tracardi-redshift-connector.git
 git+https://github.com/atompie/tracardi-rabbitmq-publisher.git
 git+https://github.com/atompie/tracardi-remote-call.git
 git+https://github.com/atompie/tracardi-weather.git
