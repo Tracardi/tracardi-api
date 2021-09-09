@@ -3,6 +3,7 @@ import hashlib
 import importlib
 import logging
 import os
+from datetime import datetime
 from uuid import uuid4
 
 from tracardi.exceptions.exception import StorageException
@@ -14,6 +15,7 @@ from tracardi.service.storage.helpers.plugin_saver import save_plugin
 from tracardi_plugin_sdk.domain.register import Plugin
 
 from .module_loader import load_callable, pip_install
+from ..utils.network import get_local_ip
 
 __local_dir = os.path.dirname(__file__)
 logger = logging.getLogger('setup.on_start')
@@ -122,7 +124,7 @@ async def add_plugins():
 
 
 async def register_api_instance():
-    api_instance = ApiInstance(id=str(uuid4()), ip='127.0.0.1')
+    api_instance = ApiInstance(id=str(uuid4()), ip=get_local_ip())
     try:
         result = await StorageFor(api_instance).index().save()
         if result.saved == 1:
@@ -130,4 +132,20 @@ async def register_api_instance():
         return result
     except StorageException as e:
         logger.error(f"API instance `{api_instance.id}` was NOT REGISTERED due to ERROR `{str(e)}`")
+        raise e
+
+
+async def update_api_instance():
+    api_instance = ApiInstance(
+        id=str(uuid4()),
+        ip=get_local_ip(),
+        timestamp=datetime.utcnow()
+    )
+    try:
+        result = await StorageFor(api_instance).index().save()
+        if result.saved == 1:
+            logger.info(f"HEARTBEAT. API instance id `{api_instance.id}` was UPDATED.")
+        return result
+    except StorageException as e:
+        logger.error(f"API instance `{api_instance.id}` was NOT UPDATED due to ERROR `{str(e)}`")
         raise e

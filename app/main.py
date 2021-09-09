@@ -14,7 +14,7 @@ from app.api import token_endpoint, rule_endpoint, resource_endpoint, event_endp
     tql_endpoint, health_endpoint, session_endpoint
 from app.api.track import event_server_endpoint
 from app.config import server
-from app.setup.on_start import add_plugins, register_api_instance
+from app.setup.on_start import add_plugins, register_api_instance, update_api_instance
 from tracardi.service.storage.elastic import Elastic
 from app.setup.indices_setup import create_indices
 from tracardi.service.storage.factory import StorageForBulk
@@ -139,7 +139,9 @@ async def app_starts():
 
             break
         except elasticsearch.exceptions.ConnectionError:
-            sleep(5)
+            await asyncio.sleep(5)
+
+    report_i_am_alive()
 
 
 @application.middleware("http")
@@ -157,6 +159,15 @@ async def add_process_time_header(request: Request, call_next):
 async def app_shutdown():
     elastic = Elastic.instance()
     await elastic.close()
+
+
+def report_i_am_alive():
+    async def heartbeat():
+        while True:
+            await asyncio.sleep(server.heartbeat_every)
+            await update_api_instance()
+
+    asyncio.create_task(heartbeat())
 
 
 @application.get("/action/plugins")

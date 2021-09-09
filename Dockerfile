@@ -1,4 +1,5 @@
 FROM tiangolo/uvicorn-gunicorn-fastapi:python3.8
+MAINTAINER office@tracardi.com
 
 RUN apt-get update
 RUN apt-get install -y git
