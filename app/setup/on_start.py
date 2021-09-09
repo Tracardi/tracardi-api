@@ -1,18 +1,38 @@
 import asyncio
 import hashlib
+import importlib
 import os
 
 from tracardi.service.storage.helpers.plugin_saver import save_plugin
 from tracardi_plugin_sdk.domain.register import Plugin
-from tracardi.process_engine.module_loader import load_callable
+
+from .module_loader import load_callable, import_and_install, pip_install
 
 __local_dir = os.path.dirname(__file__)
 
 
-async def add_plugin(module, upgrade=False):
+async def add_plugin(module, install=False, upgrade=False):
     try:
+
+        # upgrade
+        if install and upgrade:
+            pip_install(module.split(".")[0], upgrade=True)
+
+        try:
+            # import
+            module = importlib.import_module(module)
+        except ImportError as e:
+            # install
+            if install:
+                pip_install(module.split(".")[0])
+                module = importlib.import_module(module)
+            else:
+                raise e
+
+        # module = import_and_install(module, upgrade)
+
         # loads and installs dependencies
-        plugin = load_callable(module, 'register', upgrade)
+        plugin = load_callable(module, 'register')
         plugin_data = plugin()  # type: Plugin
 
         if len(plugin_data.spec.inputs) > 1:
@@ -87,8 +107,8 @@ async def add_plugins():
         'tracardi_mongodb_connector.plugin',
         'tracardi_mysql_connector.plugin',
         'tracardi_redshift_connector.plugin',
-        'tracardi_postresql_connector.plugin',
+        'tracardi_postgresql_connector.plugin',
 
     ]
     for plugin in plugins:
-        await add_plugin(plugin, upgrade=True)
+        await add_plugin(plugin, install=False, upgrade=False)

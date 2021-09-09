@@ -525,7 +525,7 @@ async def register_plugin_by_module(plugin: PluginImport):
     """
 
     try:
-        result = await add_plugin(plugin.module, upgrade=plugin.upgrade)
+        result = await add_plugin(plugin.module, install=True, upgrade=plugin.upgrade)
         service = storage('action')
         await service.refresh()
         return result
