@@ -2,7 +2,7 @@ import logging
 import os
 
 import asyncio
-from time import sleep, time
+from time import time
 
 import elasticsearch
 from fastapi.middleware.cors import CORSMiddleware
@@ -12,9 +12,10 @@ from app.api import token_endpoint, rule_endpoint, resource_endpoint, event_endp
     profile_endpoint, flow_endpoint, generic_endpoint, project_endpoint, \
     credentials_endpoint, segments_endpoint, \
     tql_endpoint, health_endpoint, session_endpoint
+from app.api.scheduler import tasks_endpoint
 from app.api.track import event_server_endpoint
 from app.config import server
-from app.setup.on_start import add_plugins, register_api_instance, update_api_instance, run_tasks_queue
+from app.setup.on_start import add_plugins, register_api_instance, update_api_instance
 from tracardi.service.storage.elastic import Elastic
 from app.setup.indices_setup import create_indices
 from tracardi.service.storage.factory import StorageForBulk
@@ -128,6 +129,7 @@ application.include_router(token_endpoint.router)
 application.include_router(generic_endpoint.router)
 application.include_router(health_endpoint.router)
 application.include_router(session_endpoint.router)
+application.include_router(tasks_endpoint.router)
 
 
 @application.on_event("startup")
@@ -144,7 +146,6 @@ async def app_starts():
             await asyncio.sleep(5)
 
     report_i_am_alive()
-    run_tasks()
     logger.info("START UP exits.")
 
 
@@ -172,15 +173,6 @@ def report_i_am_alive():
             await update_api_instance()
 
     asyncio.create_task(heartbeat())
-
-
-def run_tasks():
-    async def get_pending_tasks():
-        while True:
-            await asyncio.sleep(server.tasks_every)
-            await run_tasks_queue()
-
-    asyncio.create_task(get_pending_tasks())
 
 
 @application.get("/action/plugins")

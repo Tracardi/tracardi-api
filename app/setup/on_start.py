@@ -3,18 +3,11 @@ import hashlib
 import importlib
 import logging
 import os
-import time
 from datetime import datetime
 from uuid import uuid4
-
-from tracardi.domain.time import Time
-from tracardi.domain.metadata import Metadata
-from tracardi.domain.context import Context
-from tracardi.domain.entity import Entity
-from tracardi.domain.task import Task, TaskEvent
 from tracardi.exceptions.exception import StorageException
 from tracardi.domain.api_instance import ApiInstance
-from tracardi.service.storage.factory import StorageFor, storage, StorageForBulk
+from tracardi.service.storage.factory import StorageFor
 from tracardi.service.storage.helpers.plugin_saver import save_plugin
 from tracardi_plugin_sdk.domain.register import Plugin
 
@@ -153,68 +146,3 @@ async def update_api_instance():
     except StorageException as e:
         logger.error(f"API instance `{api_instance.id}` was NOT UPDATED due to ERROR `{str(e)}`")
         raise e
-
-
-async def run_tasks_queue():
-    t = Task(
-        timestamp=time.time() + 13,
-        event=TaskEvent(
-            metadata=Metadata(ip=local_ip, time=Time()),
-            id="1",
-            type="new",
-            properties={"a": 1},
-            source=Entity(id="a4fb18a2-5406-4190-bd91-e1719bb5202c"),
-            session=Entity(id="1"),
-            profile=Entity(id="1"),
-            context=Context(),
-        ),
-        event_type="test",
-        status='pending'
-    )
-    await StorageFor(t).index().save()
-
-    query = {
-        "size": 100,
-        "query": {
-            "bool": {
-                "must": [
-                    {
-                        "range": {
-                            "timestamp": {
-                                "lte": time.time()
-                            }
-                        }
-                    },
-                    {
-                        "term": {
-                            "status": {
-                                "value": "pending"
-                            }
-                        }
-                    }
-                ]
-            }
-        }
-    }
-
-    tasks = await storage('task').filter(query)
-    logger.info("Found {} task to run.".format(len(tasks)))
-    event_tasks = []
-    bulk_tasks = []
-    for task in tasks:
-        task = Task(**task)
-        task_coroutine = task.run()
-        event_tasks.append(task_coroutine)
-        task.status = 'running'
-        bulk_tasks.append(task)
-
-    result = await StorageForBulk(bulk_tasks).index('task').save()
-
-    bulk_tasks = []
-    for task in event_tasks:
-        result, _task = await task
-        if _task.status == 'running':
-            _task.status = 'done'
-        bulk_tasks.append(_task)
-
-    result = await StorageForBulk(bulk_tasks).index('task').save()

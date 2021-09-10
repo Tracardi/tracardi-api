@@ -10,7 +10,7 @@
         "type": "keyword"
       },
       "timestamp": {
-        "type": "float"
+        "type":   "double"
       },
       "event": {
         "properties": {
