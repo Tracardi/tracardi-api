@@ -41,7 +41,7 @@ async def delete_profile(id: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/event/profile/logs/{id}", tags=["profile"], response_model=list)
+@router.get("/profile/logs/{id}", tags=["profile"], response_model=list)
 async def get_profile_logs(id: str):
     log_records = await storage('console-log').load_by("profile_id", id)
     return list(log_records)
