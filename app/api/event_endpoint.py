@@ -1,7 +1,8 @@
+from typing import List
+
 from fastapi import APIRouter, Depends
 from fastapi import HTTPException
 from tracardi.service.storage.factory import StorageFor, StorageForBulk, storage
-
 from tracardi.domain.record.event_debug_record import EventDebugRecord
 from tracardi_graph_runner.domain.debug_info import DebugInfo
 from .auth.authentication import get_current_user
@@ -14,7 +15,7 @@ router = APIRouter(
 )
 
 
-@router.get("/events/metadata/type", tags=["event", "event server"])
+@router.get("/events/metadata/type", tags=["event"])
 async def event_types():
     result = await StorageForBulk().index('event').uniq_field_value("type")
     return {
@@ -23,7 +24,7 @@ async def event_types():
     }
 
 
-@router.get("/event/{id}", tags=["event", "event server"])
+@router.get("/event/{id}", tags=["event"])
 async def get_event(id: str):
     try:
         event = Entity(id=id)
@@ -57,7 +58,7 @@ async def get_event(id: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.delete("/event/{id}", tags=["event", "event server"])
+@router.delete("/event/{id}", tags=["event"])
 async def delete_event(id: str):
     try:
         event = Entity(id=id)
@@ -66,11 +67,17 @@ async def delete_event(id: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/event/debug/{id}", tags=["event", "event server"], response_model=DebugInfo)
+@router.get("/event/debug/{id}", tags=["event"], response_model=List[DebugInfo])
 async def get_event_debug_info(id: str):
-    debug_record = EventDebugRecord(id=id)
-    encoded_debug_record = await StorageFor(debug_record).index().load()
-    if encoded_debug_record is not None:
-        debug_info = EventDebugRecord.decode(encoded_debug_record)  # type: DebugInfo
+    encoded_debug_records = await storage('debug-info').load_by("id", id)
+    if encoded_debug_records is not None:
+        debug_info = [EventDebugRecord.decode(record, from_dict=True)
+                      for record in encoded_debug_records]  # type: List[DebugInfo]
         return debug_info
     return None
+
+
+@router.get("/event/logs/{id}", tags=["event"], response_model=list)
+async def get_event_logs(id: str):
+    log_records = await storage('console-log').load_by("event_id", id)
+    return list(log_records)

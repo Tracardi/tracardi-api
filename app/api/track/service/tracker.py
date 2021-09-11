@@ -2,6 +2,8 @@ import asyncio
 import logging
 from typing import List
 
+from tracardi.domain.console import Console
+
 from tracardi.domain.event import Event
 from tracardi.domain.profile import Profile
 from app.api.track.service.merging import merge
@@ -26,8 +28,8 @@ from tracardi.service.storage.helpers.session_saver import save_session
 logger = logging.getLogger('app.api.track.service.tracker')
 
 
-async def _persist(profile: Profile, session: Session, events: List[Event],
-                   tracker_payload: TrackerPayload) -> CollectResult:
+async def _persist(session: Session, events: List[Event],
+                   tracker_payload: TrackerPayload, profile: Profile = None) -> CollectResult:
     # Save profile
     save_profile_result = await save_profile(profile, True)
 
@@ -47,7 +49,6 @@ async def _persist(profile: Profile, session: Session, events: List[Event],
 
 
 async def track_event(tracker_payload: TrackerPayload, ip: str):
-
     tracker_payload.metadata.ip = ip
     source = await source_cache.validate_source(source_id=tracker_payload.source.id)
 
@@ -66,14 +67,16 @@ async def track_event(tracker_payload: TrackerPayload, ip: str):
 
     debug_info_by_event_type_and_rule_name = None
     segmentation_result = None
+
     console_log = []
+    rules_engine = RulesEngine(
+        session,
+        profile,
+        events_rules=load_rules(events),
+        console_log=console_log
+    )
+
     try:
-        rules_engine = RulesEngine(
-            session,
-            profile,
-            events_rules=load_rules(events),
-            console_log=console_log
-        )
 
         # Invoke rules engine
         debug_info_by_event_type_and_rule_name, ran_event_types, console_log = await rules_engine.invoke(
@@ -83,22 +86,61 @@ async def track_event(tracker_payload: TrackerPayload, ip: str):
         # Segment
         segmentation_result = await segment(rules_engine.profile, ran_event_types, load_segment_by_event_type)
 
-        save_tasks = []
+    except Exception as e:
+        message = 'Rules engine or segmentation returned an error `{}`'.format(str(e))
+        console_log.append(
+            Console(
+                profile_id=rules_engine.profile.id,
+                origin='profile',
+                class_name='RulesEngine',
+                module='tracker',
+                type='error',
+                message=message
+            )
+        )
+        logger.error(message)
 
+    save_tasks = []
+    try:
         # Merge
         profiles_to_disable = await merge(rules_engine.profile, limit=2000)
         if profiles_to_disable is not None:
             task = asyncio.create_task(
                 StorageForBulk(profiles_to_disable).index('profile').save())
             save_tasks.append(task)
+    except Exception as e:
+        message = 'Profile merging returned an error `{}`'.format(str(e))
+        logger.error(message)
+        console_log.append(
+            Console(
+                profile_id=rules_engine.profile.id,
+                origin='profile',
+                class_name='merge',
+                module='app.api.track.service',
+                type='error',
+                message=message
+            )
+        )
 
-        # Must be the last operation
+    # Must be the last operation
+    try:
         if rules_engine.profile.operation.needs_update():
-            save_tasks.append(asyncio.create_task(StorageFor(rules_engine.profile).index().save()))
+            await StorageFor(rules_engine.profile).index().save()
+    except Exception as e:
+        message = "Profile update returned an error: `{}`".format(str(e))
+        console_log.append(
+            Console(
+                profile_id=rules_engine.profile.id,
+                origin='profile',
+                class_name='tracker',
+                module='tracker',
+                type='error',
+                message=message
+            )
+        )
+        logger.error(message)
 
-        # Save console log
-        if console_log:
-            save_tasks.append(asyncio.create_task(StorageForBulk(console_log).index('console-log').save()))
+    try:
 
         # Save debug info
         save_tasks.append(asyncio.create_task(save_debug_info(debug_info_by_event_type_and_rule_name)))
@@ -107,12 +149,28 @@ async def track_event(tracker_payload: TrackerPayload, ip: str):
         await asyncio.gather(*save_tasks)
 
     except Exception as e:
-        logger.error(str(e))
+        message = "Error during debug info or disabling profiles.: `{}`".format(str(e))
+        logger.error(message)
+        console_log.append(
+            Console(
+                profile_id=rules_engine.profile.id,
+                origin='profile',
+                class_name='tracker',
+                module='tracker',
+                type='error',
+                message=message
+            )
+        )
 
     finally:
-        # todo maybe persisting profile is not necessary - it is persisted later after workflow
+        # todo maybe persisting profile is not necessary - it is persisted right after workflow - see above
+        # TODO notice that profile is saved only when it's new change it when it need update
         # Save profile, session, events
-        collect_result = await _persist(profile, session, events, tracker_payload)
+        collect_result = await _persist(session, events, tracker_payload, profile)
+
+        # Save console log
+        if console_log:
+            save_tasks.append(asyncio.create_task(StorageForBulk(console_log).index('console-log').save()))
 
     # Prepare response
     result = {}

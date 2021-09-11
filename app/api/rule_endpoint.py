@@ -40,7 +40,7 @@ async def upsert_rule(rule: Rule):
         raise HTTPException(status_code=500, detail=str(e))
 
     if resource is None:
-        raise HTTPException(status_code=422, detail='Missing source id: `{}`'.format(rule.source.id))
+        raise HTTPException(status_code=422, detail='Incorrect source id: `{}`'.format(rule.source.id))
 
     try:
 
@@ -52,7 +52,6 @@ async def upsert_rule(rule: Rule):
             add_flow_task = asyncio.create_task(StorageFor(entity).index("flow").save(new_flow.dict()))
 
         add_rule_task = asyncio.create_task(StorageFor(rule).index().save())
-        # add_rule_task = asyncio.create_task(rule.storage().save())
 
         if add_flow_task:
             await add_flow_task

@@ -9,6 +9,9 @@
       "event_id": {
         "type": "keyword"
       },
+      "profile_id": {
+        "type": "keyword"
+      },
       "flow_id": {
         "type": "keyword"
       },
