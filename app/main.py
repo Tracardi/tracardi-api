@@ -20,7 +20,7 @@ from tracardi.service.storage.elastic import Elastic
 from app.setup.indices_setup import create_indices
 from tracardi.service.storage.factory import StorageForBulk
 
-logging.basicConfig(level=logging.WARN)
+logging.basicConfig(level=logging.ERROR)
 logger = logging.getLogger('app.main')
 logger.setLevel(logging.INFO)
 

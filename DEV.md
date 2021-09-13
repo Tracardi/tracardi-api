@@ -17,3 +17,6 @@ docker run -p 9200:9200 -p 9600:9600 -e "discovery.type=single-node" opensearchp
 
 # Run local API
 docker run -p 8686:80 -e ELASTIC_HOST=http://192.168.1.103:9200 tracardi/tracardi-api:0.6.0
+
+# Run local redis
+docker run -p 6379:6379 redis

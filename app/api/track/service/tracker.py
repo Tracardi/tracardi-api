@@ -2,6 +2,8 @@ import asyncio
 import logging
 from typing import List
 
+from tracardi.domain.value_object.bulk_insert_result import BulkInsertResult
+
 from tracardi.domain.console import Console
 
 from tracardi.domain.event import Event
@@ -31,7 +33,10 @@ logger = logging.getLogger('app.api.track.service.tracker')
 async def _persist(session: Session, events: List[Event],
                    tracker_payload: TrackerPayload, profile: Profile = None) -> CollectResult:
     # Save profile
-    save_profile_result = await save_profile(profile, True)
+    if profile.operation.new:
+        save_profile_result = await save_profile(profile)
+    else:
+        save_profile_result = BulkInsertResult()
 
     # Save session
     persist_session = False if tracker_payload.is_disabled('saveSession') else True
@@ -125,7 +130,7 @@ async def track_event(tracker_payload: TrackerPayload, ip: str):
     # Must be the last operation
     try:
         if rules_engine.profile.operation.needs_update():
-            await StorageFor(rules_engine.profile).index().save()
+            await save_profile(profile)
     except Exception as e:
         message = "Profile update returned an error: `{}`".format(str(e))
         console_log.append(

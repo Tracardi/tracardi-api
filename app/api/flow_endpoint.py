@@ -348,7 +348,6 @@ async def debug_flow(flow: GraphFlow):
 
             if profile.operation.needs_update():
                 profile_save_result = await StorageFor(profile).index().save()
-                # profile_save_result = await profile.storage().save()
 
         except StorageException as e:
             console = Console(
@@ -399,7 +398,6 @@ async def get_plugin_state(id: str, state: YesNo):
         record = await StorageFor(action).index("action").load(FlowActionPluginRecord)  # type: FlowActionPluginRecord
         action = record.decode()
         action.settings.hidden = Settings.as_bool(state)
-        # return await FlowActionPluginRecord.encode(action).storage().save()
         return await StorageFor(FlowActionPluginRecord.encode(action)).index().save()
 
     except Exception as e:
@@ -419,7 +417,6 @@ async def get_plugin_enabled(id: str, state: YesNo):
         record = await StorageFor(action).index("action").load(FlowActionPluginRecord)  # type: FlowActionPluginRecord
         action = record.decode()
         action.settings.enabled = Settings.as_bool(state)
-        # return await FlowActionPluginRecord.encode(action).storage().save()
         return await StorageFor(FlowActionPluginRecord.encode(action)).index().save()
 
     except Exception as e:
