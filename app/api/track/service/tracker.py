@@ -13,6 +13,7 @@ from app.api.track.service.segmentation import segment
 from tracardi.domain.session import Session
 from tracardi.domain.value_object.tracker_payload_result import TrackerPayloadResult
 from tracardi.config import tracardi
+from tracardi.exceptions.exception import UnauthorizedException
 from tracardi.process_engine.rules_engine import RulesEngine
 from tracardi.domain.value_object.collect_result import CollectResult
 from tracardi.domain.payload.tracker_payload import TrackerPayload
@@ -55,11 +56,15 @@ async def _persist(session: Session, events: List[Event],
 
 async def track_event(tracker_payload: TrackerPayload, ip: str):
     tracker_payload.metadata.ip = ip
-    source = await source_cache.validate_source(source_id=tracker_payload.source.id)
+
+    try:
+        source = await source_cache.validate_source(source_id=tracker_payload.source.id)
+    except ValueError as e:
+        raise UnauthorizedException(e)
 
     # Get session
     if tracker_payload.session.id is None:
-        raise ValueError("Session must be set.")
+        raise UnauthorizedException("Session must be set.")
 
     # Load session from storage
     session = await StorageFor(tracker_payload.session).index("session").load(Session)  # type: Session
