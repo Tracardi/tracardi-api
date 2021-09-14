@@ -3,10 +3,10 @@ from collections import defaultdict
 from fastapi import APIRouter
 from fastapi import HTTPException, Depends
 
-from tracardi.service.storage.factory import StorageForBulk
+from tracardi.service.storage.driver import storage
 from .auth.authentication import get_current_user
 from .grouper import search
-from tracardi.domain.resource import ResourceRecord, Resource
+from tracardi.domain.resource import Resource
 
 router = APIRouter(
     dependencies=[Depends(get_current_user)]
@@ -16,9 +16,10 @@ router = APIRouter(
 @router.get("/credentials/by_type", tags=["credential"])
 async def get_credentials(query: str = None):
     try:
-        result = await StorageForBulk().index('resource').load()
-        total = result.total
-        result = [ResourceRecord.construct(Resource.__fields_set__, **r).decode() for r in result]
+        result, total = await storage.driver.resources.load_all()
+        # result = await StorageForBulk().index('resource').load()
+        # total = result.total
+        # result = [ResourceRecord.construct(Resource.__fields_set__, **r).decode() for r in result]
 
         # Filtering
         if query is not None and len(query) > 0:

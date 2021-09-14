@@ -5,7 +5,9 @@ from time import sleep
 
 from fastapi import APIRouter
 from fastapi import HTTPException, Depends
-from tracardi.service.storage.factory import StorageFor, StorageForBulk, storage
+
+from tracardi.service.storage.driver import storage
+from tracardi.service.storage.factory import StorageFor, StorageForBulk
 
 from .auth.authentication import get_current_user
 from .grouper import search
@@ -182,5 +184,4 @@ async def delete_source(id: str):
 
 @router.get("/resources/refresh", tags=["resource"])
 async def refresh_sources():
-    service = storage('resource')
-    return await service.refresh()
+    return await storage.driver.resources.refresh()

@@ -16,7 +16,7 @@ from app.api.scheduler import tasks_endpoint
 from app.api.track import event_server_endpoint
 from app.config import server
 from app.setup.on_start import add_plugins, register_api_instance, update_api_instance
-from tracardi.service.storage.elastic import Elastic
+from tracardi.service.storage.elastic_client import ElasticClient
 from app.setup.indices_setup import create_indices
 from tracardi.service.storage.factory import StorageForBulk
 
@@ -162,7 +162,7 @@ async def add_process_time_header(request: Request, call_next):
 
 @application.on_event("shutdown")
 async def app_shutdown():
-    elastic = Elastic.instance()
+    elastic = ElasticClient.instance()
     await elastic.close()
 
 

@@ -17,16 +17,10 @@ from tracardi.exceptions.exception import UnauthorizedException
 from tracardi.process_engine.rules_engine import RulesEngine
 from tracardi.domain.value_object.collect_result import CollectResult
 from tracardi.domain.payload.tracker_payload import TrackerPayload
+from tracardi.service.storage.driver import storage
 from tracardi.service.storage.factory import StorageFor, StorageForBulk
-from tracardi.service.storage.helpers.debug_saver import save_debug_info
-from tracardi.service.storage.helpers.flow_loader import load_flow
-from tracardi.service.storage.helpers.profile_loader import load_merged_profile
-from tracardi.service.storage.helpers.rules_loader import load_rules
-from tracardi.service.storage.helpers.segment_loader import load_segment_by_event_type
+from tracardi.service.storage.drivers.elastic.debug_info import save_debug_info
 from tracardi.service.storage.helpers.source_cacher import source_cache
-from tracardi.service.storage.helpers.events_saver import save_events
-from tracardi.service.storage.helpers.profile_saver import save_profile
-from tracardi.service.storage.helpers.session_saver import save_session
 
 logger = logging.getLogger('app.api.track.service.tracker')
 
@@ -35,17 +29,17 @@ async def _persist(session: Session, events: List[Event],
                    tracker_payload: TrackerPayload, profile: Profile = None) -> CollectResult:
     # Save profile
     if profile.operation.new:
-        save_profile_result = await save_profile(profile)
+        save_profile_result = await storage.driver.profile.save_profile(profile)
     else:
         save_profile_result = BulkInsertResult()
 
     # Save session
     persist_session = False if tracker_payload.is_disabled('saveSession') else True
-    save_session_result = await save_session(session, profile, persist_session)
+    save_session_result = await storage.driver.session.save_session(session, profile, persist_session)
 
     # Save events
     persist_events = False if tracker_payload.is_disabled('saveEvents') else True
-    save_events_result = await save_events(events, persist_events)
+    save_events_result = await storage.driver.events.save_events(events, persist_events)
 
     return CollectResult(
         session=save_session_result,
@@ -70,7 +64,9 @@ async def track_event(tracker_payload: TrackerPayload, ip: str):
     session = await StorageFor(tracker_payload.session).index("session").load(Session)  # type: Session
 
     # Get profile
-    profile, session = await tracker_payload.get_profile_and_session(session, load_merged_profile)
+    # profile, session = await tracker_payload.get_profile_and_session(session, load_merged_profile)
+    profile, session = await tracker_payload.get_profile_and_session(session,
+                                                                     storage.driver.profile.load_merged_profile)
 
     # Get events
     events = tracker_payload.get_events(session, profile)
@@ -82,7 +78,7 @@ async def track_event(tracker_payload: TrackerPayload, ip: str):
     rules_engine = RulesEngine(
         session,
         profile,
-        events_rules=load_rules(events),
+        events_rules=storage.driver.rules.load_rules(events),
         console_log=console_log
     )
 
@@ -90,11 +86,13 @@ async def track_event(tracker_payload: TrackerPayload, ip: str):
 
         # Invoke rules engine
         debug_info_by_event_type_and_rule_name, ran_event_types, console_log = await rules_engine.invoke(
-            load_flow,
+            storage.driver.flow.load_flow,
             tracker_payload.source.id)
 
         # Segment
-        segmentation_result = await segment(rules_engine.profile, ran_event_types, load_segment_by_event_type)
+        segmentation_result = await segment(rules_engine.profile,
+                                            ran_event_types,
+                                            storage.driver.segment.load_segment_by_event_type)
 
     except Exception as e:
         message = 'Rules engine or segmentation returned an error `{}`'.format(str(e))
@@ -135,7 +133,7 @@ async def track_event(tracker_payload: TrackerPayload, ip: str):
     # Must be the last operation
     try:
         if rules_engine.profile.operation.needs_update():
-            await save_profile(profile)
+            await storage.driver.profile.save_profile(profile)
     except Exception as e:
         message = "Profile update returned an error: `{}`".format(str(e))
         console_log.append(
@@ -153,7 +151,10 @@ async def track_event(tracker_payload: TrackerPayload, ip: str):
     try:
 
         # Save debug info
-        save_tasks.append(asyncio.create_task(save_debug_info(debug_info_by_event_type_and_rule_name)))
+        save_tasks.append(
+            asyncio.create_task(
+                storage.driver.debug_info.save_debug_info(
+                    debug_info_by_event_type_and_rule_name)))
 
         # Run tasks
         await asyncio.gather(*save_tasks)

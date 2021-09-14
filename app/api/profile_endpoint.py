@@ -1,7 +1,9 @@
 from fastapi import APIRouter
 from fastapi import HTTPException, Depends
 from fastapi.responses import Response
-from tracardi.service.storage.factory import StorageFor, storage
+
+from tracardi.service.storage.driver import storage
+from tracardi.service.storage.factory import StorageFor
 from .auth.authentication import get_current_user
 from tracardi.domain.profile import Profile
 
@@ -13,7 +15,7 @@ router = APIRouter(
 @router.get("/profiles/refresh", tags=["profile"])
 async def refresh_profile():
     try:
-        return await storage('profile').refresh()
+        return await storage.driver.profiles.refresh()
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -43,5 +45,5 @@ async def delete_profile(id: str):
 
 @router.get("/profile/logs/{id}", tags=["profile"], response_model=list)
 async def get_profile_logs(id: str):
-    log_records = await storage('console-log').load_by("profile_id", id)
+    log_records = await storage.driver.console_log.load_by_profile(id)
     return list(log_records)

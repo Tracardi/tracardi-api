@@ -3,7 +3,9 @@ from typing import List
 
 from fastapi import APIRouter
 from fastapi import HTTPException, Depends
-from tracardi.service.storage.factory import StorageFor, storage
+
+from tracardi.service.storage.driver import storage
+from tracardi.service.storage.factory import StorageFor
 
 from tracardi.domain.resource import ResourceRecord
 from .auth.authentication import get_current_user
@@ -71,18 +73,13 @@ async def delete_rule(id: str):
 
 
 @router.get("/rules/by_flow/{id}", tags=["rules"], response_model=List[Rule])
-async def get_rules_attached_to_flow(id: str):
+async def get_rules_attached_to_flow(id: str) -> List[Rule]:
     try:
-        rules = storage('rule')
-
-        rules_attached_to_flow = await rules.load_by('flow.id.keyword', id)
-        rules = [Rule(**rule) for rule in rules_attached_to_flow]
-        return rules
+        return await storage.driver.rules.load_flow_rules(id)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.get("/rules/refresh", tags=["rules"])
 async def refresh_rules():
-    service = storage('rule')
-    return await service.refresh()
+    return await storage.driver.rules.refresh()

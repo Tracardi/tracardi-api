@@ -3,7 +3,9 @@ from time import sleep
 
 from fastapi import APIRouter
 from fastapi import HTTPException, Depends
-from tracardi.service.storage.factory import StorageFor, StorageForBulk, storage
+
+from tracardi.service.storage.driver import storage
+from tracardi.service.storage.factory import StorageFor, StorageForBulk
 
 from .auth.authentication import get_current_user
 from .grouper import search
@@ -36,8 +38,7 @@ async def delete_segment(id: str):
 
 @router.get("/segments/refresh", tags=["segment"])
 async def refresh_segments():
-    service = storage('segment')
-    return await service.refresh()
+    return await storage.driver.segments.refresh()
 
 
 @router.get("/segments", tags=["segment"])

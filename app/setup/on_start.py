@@ -7,8 +7,8 @@ from datetime import datetime
 from uuid import uuid4
 from tracardi.exceptions.exception import StorageException
 from tracardi.domain.api_instance import ApiInstance
+from tracardi.service.storage.driver import storage
 from tracardi.service.storage.factory import StorageFor
-from tracardi.service.storage.helpers.plugin_saver import save_plugin
 from tracardi_plugin_sdk.domain.register import Plugin
 
 from .module_loader import load_callable, pip_install
@@ -55,7 +55,8 @@ async def add_plugin(module, install=False, upgrade=False):
         action_id = plugin_data.spec.module + plugin_data.spec.className
         action_id = hashlib.md5(action_id.encode()).hexdigest()
         await asyncio.sleep(0)
-        return await save_plugin(action_id, plugin_data)
+        logger.info(f"Module `{plugin_data.spec.module}` was REGISTERED.")
+        return await storage.driver.plugin.save_plugin(action_id, plugin_data)
 
     except ModuleNotFoundError as e:
         logger.error(f"Module `{module}` was NOT INSTALLED as it raised an error `{str(e)}`.")

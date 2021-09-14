@@ -8,7 +8,8 @@ from fastapi import HTTPException, Depends
 from tracardi.exceptions.exception import StorageException
 
 from tracardi.domain.console import Console
-from tracardi.service.storage.factory import StorageFor, StorageForBulk, storage
+from tracardi.service.storage.driver import storage
+from tracardi.service.storage.factory import StorageFor, StorageForBulk
 from tracardi_graph_runner.domain.flow_history import FlowHistory
 from tracardi_graph_runner.domain.work_flow import WorkFlow
 from tracardi_plugin_sdk.domain.console import Log
@@ -55,7 +56,6 @@ async def upsert_flow_draft(draft: Flow):
             origin.description = "Created during workflow draft save."
             record = FlowRecord.encode(origin)
             await StorageFor(record).index().save()
-            # await record.storage().save()
         else:
             # If exists decode origin flow
             origin = draft_record.decode()
@@ -65,7 +65,6 @@ async def upsert_flow_draft(draft: Flow):
         flow_record = FlowRecord.encode(origin)
 
         return await StorageFor(flow_record).index().save()
-        # return await flow_record.storage().save()
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -118,7 +117,7 @@ async def get_flows(query: str = None):
 @router.get("/flows/refresh", tags=["flow"])
 async def refresh_flows():
     try:
-        return await storage('flow').refresh()
+        return await storage.driver.flows.refresh()
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -196,7 +195,6 @@ async def upsert_flow(flow: Flow):
     try:
         flow_record = FlowRecord.encode(flow)
         return await StorageFor(flow_record).index().save()
-        # return await flow_record.storage().save()
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -223,21 +221,18 @@ async def upsert_flow_details(flow_metadata: FlowMetaData):
             )
 
         return await StorageFor(flow_record).index().save()
-        # return await flow_record.storage().save()
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.get("/flow/metadata/refresh", tags=["flow"])
 async def flow_refresh():
-    service = storage('flow')
-    return await service.refresh()
+    return await storage.driver.flows.refresh()
 
 
 @router.get("/flow/metadata/flush", tags=["flow"])
 async def flow_refresh():
-    service = storage('flow')
-    return await service.flush()
+    return await storage.driver.flows.flush()
 
 
 @router.post("/flow/draft/metadata", tags=["flow"], response_model=BulkInsertResult)
@@ -264,7 +259,6 @@ async def upsert_flow_details(flow_metadata: FlowMetaData):
 
             flow_record.encode_draft(draft)
 
-        # return await flow_record.storage().save()
         return await StorageFor(flow_record).index().save()
 
     except Exception as e:
@@ -282,7 +276,6 @@ async def update_flow_lock(id: str, lock: str):
 
         flow_record.lock = True if lock.lower() == 'yes' else False
         return await StorageFor(flow_record).index().save()
-        # return await flow_record.storage().save()
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -298,7 +291,6 @@ async def update_flow_lock(id: str, lock: str):
 
         flow_record.enabled = True if lock.lower() == 'yes' else False
         return await StorageFor(flow_record).index().save()
-        # return await flow_record.storage().save()
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -463,7 +455,6 @@ async def upsert_plugin(action: FlowActionPlugin):
         record = FlowActionPluginRecord.encode(action)
 
         return await StorageFor(record).index().save()
-        # return await record.storage().save()
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -523,8 +514,7 @@ async def register_plugin_by_module(plugin: PluginImport):
 
     try:
         result = await add_plugin(plugin.module, install=True, upgrade=plugin.upgrade)
-        service = storage('action')
-        await service.refresh()
+        await storage.driver.actions.refresh()
         return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

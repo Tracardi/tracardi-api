@@ -2,7 +2,9 @@ from typing import List
 
 from fastapi import APIRouter, Depends
 from fastapi import HTTPException
-from tracardi.service.storage.factory import StorageFor, StorageForBulk, storage
+
+from tracardi.service.storage.driver import storage
+from tracardi.service.storage.factory import StorageFor, StorageForBulk, storage_manager
 from tracardi.domain.record.event_debug_record import EventDebugRecord
 from tracardi_graph_runner.domain.debug_info import DebugInfo
 from .auth.authentication import get_current_user
@@ -36,6 +38,7 @@ async def get_event(id: str):
         profile = Entity(id=full_event.profile.id)
         full_event.profile = await StorageFor(profile).index("profile").load(Profile)
 
+        # todo move to driver
         query = {
             "query": {
                 "match": {
@@ -44,7 +47,7 @@ async def get_event(id: str):
             }
         }
 
-        index = storage("stat-log")
+        index = storage_manager("stat-log")
         event_result = await index.filter(query)
 
         return {
@@ -69,7 +72,7 @@ async def delete_event(id: str):
 
 @router.get("/event/debug/{id}", tags=["event"], response_model=List[DebugInfo])
 async def get_event_debug_info(id: str):
-    encoded_debug_records = await storage('debug-info').load_by("id", id)
+    encoded_debug_records = await storage.driver.debug_info.load_by_event(id)
     if encoded_debug_records is not None:
         debug_info = [EventDebugRecord.decode(record, from_dict=True)
                       for record in encoded_debug_records]  # type: List[DebugInfo]
@@ -79,5 +82,5 @@ async def get_event_debug_info(id: str):
 
 @router.get("/event/logs/{id}", tags=["event"], response_model=list)
 async def get_event_logs(id: str):
-    log_records = await storage('console-log').load_by("event_id", id)
+    log_records = await storage.driver.console_log.load_by_event(id)
     return list(log_records)

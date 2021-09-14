@@ -1,6 +1,6 @@
 from app.config import auth
 from tracardi.service.storage import index
-from tracardi.service.storage.elastic import Elastic
+from tracardi.service.storage.elastic_client import ElasticClient
 
 
 class UserDb:
@@ -29,7 +29,7 @@ class UserDb:
 class TokenDb:
 
     def __init__(self):
-        self._elastic = Elastic.instance()
+        self._elastic = ElasticClient.instance()
         self._index_read = index.resources['token'].get_read_index()
         self._index_write = index.resources['token'].get_write_index()
 
