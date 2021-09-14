@@ -96,10 +96,13 @@ async def add_plugins():
         'tracardi_key_counter.plugin',
         'tracardi.process_engine.action.v1.traits.reshape_payload_action',
         'tracardi.process_engine.action.v1.detect_client_agent_action',
-        'tracardi.process_engine.action.v1.sleep_action',
+        'tracardi_url_parser.plugin',
+
+        # Time
+        'tracardi.process_engine.action.v1.time.sleep_action',
+        'tracardi.process_engine.action.v1.time.today_action',
         'tracardi_day_night_split.day_night_split_action',
         'tracardi_local_timespan.plugin',
-        'tracardi_url_parser.plugin',
 
         # Connectors
         'tracardi_rabbitmq_publisher.plugin',
