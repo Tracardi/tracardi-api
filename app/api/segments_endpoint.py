@@ -38,7 +38,7 @@ async def delete_segment(id: str):
 
 @router.get("/segments/refresh", tags=["segment"])
 async def refresh_segments():
-    return await storage.driver.segments.refresh()
+    return await storage.driver.segment.refresh()
 
 
 @router.get("/segments", tags=["segment"])

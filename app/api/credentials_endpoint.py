@@ -16,10 +16,7 @@ router = APIRouter(
 @router.get("/credentials/by_type", tags=["credential"])
 async def get_credentials(query: str = None):
     try:
-        result, total = await storage.driver.resources.load_all()
-        # result = await StorageForBulk().index('resource').load()
-        # total = result.total
-        # result = [ResourceRecord.construct(Resource.__fields_set__, **r).decode() for r in result]
+        result, total = await storage.driver.resource.load_all()
 
         # Filtering
         if query is not None and len(query) > 0:

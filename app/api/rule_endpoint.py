@@ -75,11 +75,11 @@ async def delete_rule(id: str):
 @router.get("/rules/by_flow/{id}", tags=["rules"], response_model=List[Rule])
 async def get_rules_attached_to_flow(id: str) -> List[Rule]:
     try:
-        return await storage.driver.rules.load_flow_rules(id)
+        return await storage.driver.rule.load_flow_rules(id)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.get("/rules/refresh", tags=["rules"])
 async def refresh_rules():
-    return await storage.driver.rules.refresh()
+    return await storage.driver.rule.refresh()

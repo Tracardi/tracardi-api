@@ -3,6 +3,7 @@ from typing import List
 from fastapi import APIRouter, Depends
 from fastapi import HTTPException
 
+from tracardi.domain.storage_aggregate_result import StorageAggregateResult
 from tracardi.service.storage.driver import storage
 from tracardi.service.storage.factory import StorageFor, StorageForBulk, storage_manager
 from tracardi.domain.record.event_debug_record import EventDebugRecord
@@ -24,6 +25,16 @@ async def event_types():
         "total": result.total,
         "result": list(result)
     }
+
+
+@router.get("/events/by_type/profile/{profile_id}", tags=["event"])
+async def event_types(profile_id: str):
+    return await storage.driver.event.aggregate_profile_events_by_type(profile_id)
+
+
+@router.get("/events/heatmap/profile/{profile_id}", tags=["event"])
+async def event_types(profile_id: str):
+    return await storage.driver.event.load_events_heatmap(profile_id)
 
 
 @router.get("/event/{id}", tags=["event"])

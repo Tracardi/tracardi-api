@@ -28,6 +28,20 @@
         "dynamic": true,
         "type": "object"
       },
+      "source": {
+        "properties": {
+          "id": {
+            "type": "keyword"
+          }
+        }
+      },
+      "session": {
+        "properties": {
+          "id": {
+            "type": "keyword"
+          }
+        }
+      },
       "profile": {
         "properties": {
           "id": {

@@ -39,7 +39,7 @@ async def _persist(session: Session, events: List[Event],
 
     # Save events
     persist_events = False if tracker_payload.is_disabled('saveEvents') else True
-    save_events_result = await storage.driver.events.save_events(events, persist_events)
+    save_events_result = await storage.driver.event.save_events(events, persist_events)
 
     return CollectResult(
         session=save_session_result,
@@ -78,7 +78,7 @@ async def track_event(tracker_payload: TrackerPayload, ip: str):
     rules_engine = RulesEngine(
         session,
         profile,
-        events_rules=storage.driver.rules.load_rules(events),
+        events_rules=storage.driver.rule.load_rules(events),
         console_log=console_log
     )
 

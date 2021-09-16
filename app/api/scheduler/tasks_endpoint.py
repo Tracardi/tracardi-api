@@ -1,5 +1,5 @@
 import logging
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from tracardi.domain.task import Task
 from tracardi.service.storage.driver import storage
 from app.api.auth.authentication import get_current_user
@@ -13,9 +13,21 @@ router = APIRouter(
 )
 
 
+@router.get("/instances", tags=["api-instance"])
+async def all_api_instances():
+    try:
+        result = await storage.driver.task.load_all()
+        return {
+            "total": result.total,
+            "result": list(result)
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 @router.get("/tasks/run", tags=["tasks"])
 async def run_tasks():
-    tasks = await storage.driver.task.load_tasks()
+    tasks = await storage.driver.task.load_pending_tasks()
 
     logger.info("Found {} task to run.".format(len(tasks)))
     event_tasks = []
@@ -32,7 +44,7 @@ async def run_tasks():
 
     bulk_tasks = []
     for task in event_tasks:
-
+        # todo check for errors
         result, _task = await task
         if _task.status == 'running':
             _task.status = 'done'

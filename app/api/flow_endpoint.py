@@ -117,7 +117,7 @@ async def get_flows(query: str = None):
 @router.get("/flows/refresh", tags=["flow"])
 async def refresh_flows():
     try:
-        return await storage.driver.flows.refresh()
+        return await storage.driver.flow.refresh()
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -227,12 +227,12 @@ async def upsert_flow_details(flow_metadata: FlowMetaData):
 
 @router.get("/flow/metadata/refresh", tags=["flow"])
 async def flow_refresh():
-    return await storage.driver.flows.refresh()
+    return await storage.driver.flow.refresh()
 
 
 @router.get("/flow/metadata/flush", tags=["flow"])
 async def flow_refresh():
-    return await storage.driver.flows.flush()
+    return await storage.driver.flow.flush()
 
 
 @router.post("/flow/draft/metadata", tags=["flow"], response_model=BulkInsertResult)
@@ -514,7 +514,7 @@ async def register_plugin_by_module(plugin: PluginImport):
 
     try:
         result = await add_plugin(plugin.module, install=True, upgrade=plugin.upgrade)
-        await storage.driver.actions.refresh()
+        await storage.driver.action.refresh()
         return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

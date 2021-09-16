@@ -184,4 +184,4 @@ async def delete_source(id: str):
 
 @router.get("/resources/refresh", tags=["resource"])
 async def refresh_sources():
-    return await storage.driver.resources.refresh()
+    return await storage.driver.resource.refresh()

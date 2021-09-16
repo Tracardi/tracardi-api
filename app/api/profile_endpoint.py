@@ -15,7 +15,7 @@ router = APIRouter(
 @router.get("/profiles/refresh", tags=["profile"])
 async def refresh_profile():
     try:
-        return await storage.driver.profiles.refresh()
+        return await storage.driver.profile.refresh()
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
