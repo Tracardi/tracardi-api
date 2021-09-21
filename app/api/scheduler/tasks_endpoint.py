@@ -13,8 +13,8 @@ router = APIRouter(
 )
 
 
-@router.get("/instances", tags=["api-instance"])
-async def all_api_instances():
+@router.get("/tasks", tags=["tasks"])
+async def all_tasks():
     try:
         result = await storage.driver.task.load_all()
         return {

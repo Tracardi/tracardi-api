@@ -23,5 +23,6 @@ async def all_api_instances():
 
 @router.delete("/instances/stale", tags=["api-instance"])
 async def remove_stale_api_instances():
+    """Not implemented"""
     # todo remove stale instances
     pass

@@ -15,7 +15,7 @@ from app.api import token_endpoint, rule_endpoint, resource_endpoint, event_endp
 from app.api.scheduler import tasks_endpoint
 from app.api.track import event_server_endpoint
 from app.config import server
-from app.setup.on_start import add_plugins, register_api_instance, update_api_instance
+from app.setup.on_start import add_plugins, update_api_instance
 from tracardi.service.storage.elastic_client import ElasticClient
 from app.setup.indices_setup import create_indices
 from tracardi.service.storage.factory import StorageForBulk
@@ -138,7 +138,7 @@ async def app_starts():
     while True:
         try:
             await create_indices()
-            await register_api_instance()
+            await update_api_instance()
             if server.update_plugins_on_start_up is not False:
                 await add_plugins()
 

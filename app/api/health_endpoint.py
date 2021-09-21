@@ -2,7 +2,7 @@ from json import JSONDecodeError
 from fastapi import APIRouter, Request, HTTPException, Depends
 
 from app.api.auth.authentication import get_current_user
-from app.setup.on_start import register_api_instance
+from app.setup.on_start import update_api_instance
 
 router = APIRouter(
     dependencies=[Depends(get_current_user)]
@@ -47,6 +47,6 @@ async def track(r: Request):
 @router.get("/health/report/instance", tags=["health"])
 async def register_api_instance_health():
     try:
-        return await register_api_instance()
+        return await update_api_instance()
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

@@ -3,8 +3,6 @@ import hashlib
 import importlib
 import logging
 import os
-from datetime import datetime
-from uuid import uuid4
 from tracardi.exceptions.exception import StorageException
 from tracardi.domain.api_instance import ApiInstance
 from tracardi.service.storage.driver import storage
@@ -12,7 +10,6 @@ from tracardi.service.storage.factory import StorageFor
 from tracardi_plugin_sdk.domain.register import Plugin
 
 from .module_loader import load_callable, pip_install
-from ..utils.network import local_ip
 
 __local_dir = os.path.dirname(__file__)
 logger = logging.getLogger('setup.on_start')
@@ -118,35 +115,23 @@ async def add_plugins():
         'tracardi_mysql_connector.plugin',
         'tracardi_redshift_connector.plugin',
         'tracardi_postgresql_connector.plugin',
+        'tracardi_string_validator.plugin'
 
     ]
     for plugin in plugins:
         await add_plugin(plugin, install=False, upgrade=False)
 
 
-async def register_api_instance():
-    api_instance = ApiInstance(id=str(uuid4()), ip=local_ip)
-    try:
-        result = await StorageFor(api_instance).index().save()
-        if result.saved == 1:
-            logger.info(f"This API instance was REGISTERED as `{api_instance.id}`")
-        return result
-    except StorageException as e:
-        logger.error(f"API instance `{api_instance.id}` was NOT REGISTERED due to ERROR `{str(e)}`")
-        raise e
-
-
 async def update_api_instance():
-    api_instance = ApiInstance(
-        id=str(uuid4()),
-        ip=local_ip,
-        timestamp=datetime.utcnow()
-    )
+    api_instance = ApiInstance()
+
     try:
-        result = await StorageFor(api_instance).index().save()
+        result = await StorageFor(api_instance.get_record()).index().save()
         if result.saved == 1:
-            logger.info(f"HEARTBEAT. API instance id `{api_instance.id}` was UPDATED.")
+            logger.info(f"HEARTBEAT. API instance id `{api_instance.get_record().id}` was UPDATED.")
         return result
     except StorageException as e:
-        logger.error(f"API instance `{api_instance.id}` was NOT UPDATED due to ERROR `{str(e)}`")
+        logger.error(f"API instance `{api_instance.get_record().id}` was NOT UPDATED due to ERROR `{str(e)}`")
         raise e
+    finally:
+        api_instance.reset()

@@ -1,6 +1,7 @@
 import logging
 from fastapi import APIRouter, Request
 from fastapi import HTTPException
+from tracardi.domain.api_instance import ApiInstance
 
 from app.api.track.service.synchronizer import ProfileTracksSynchronizer
 from app.api.track.service.tracker import track_event
@@ -28,3 +29,6 @@ async def track(tracker_payload: TrackerPayload, request: Request):
     except TracardiException as e:
         logger.error(str(e))
         raise HTTPException(detail=str(e), status_code=500)
+    finally:
+        api_instance = ApiInstance()
+        api_instance.increase_track_requests()
