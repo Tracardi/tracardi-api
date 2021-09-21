@@ -11,10 +11,12 @@ RUN /usr/local/bin/python -m pip install --upgrade pip
 RUN mkdir app/
 WORKDIR /app
 
+## Install dependencies
+COPY app/requirements.txt .
+RUN pip install -r requirements.txt
+
 ## Copy application
 COPY app app/
-## Install dependencies
-RUN pip install -r app/requirements.txt
 
 ## Copy manual
 COPY manual manual/
