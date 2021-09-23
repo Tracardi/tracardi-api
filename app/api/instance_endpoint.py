@@ -1,3 +1,5 @@
+from typing import Optional
+
 from fastapi import APIRouter, Depends
 from fastapi import HTTPException
 
@@ -9,10 +11,19 @@ router = APIRouter(
 )
 
 
+@router.get("/instances/page/{page}", tags=["api-instance"])
 @router.get("/instances", tags=["api-instance"])
-async def all_api_instances():
+async def all_api_instances(page: Optional[int] = None):
     try:
-        result = await storage.driver.api_instance.load_all()
+        if page is None:
+            page = 0
+            page_size = 100
+        else:
+            page_size = 1
+        start = page * page_size
+        limit = page_size
+        result = await storage.driver.api_instance.load_all(start, limit)
+
         return {
             "total": result.total,
             "result": list(result)
