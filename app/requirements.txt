@@ -29,4 +29,4 @@ git+https://github.com/atompie/tracardi-event-scheduler.git
 git+https://github.com/atompie/tracardi-plugin_validator.git
 git+https://github.com/atompie/tracardi-fullcontact-webhook.git
 git+https://github.com/atompie/tracardi-sentiment-analysis.git
-
+git+https://github.com/atompie/tracardi-text-classification.git
