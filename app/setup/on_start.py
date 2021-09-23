@@ -115,7 +115,8 @@ async def add_plugins():
         'tracardi_mysql_connector.plugin',
         'tracardi_redshift_connector.plugin',
         'tracardi_postgresql_connector.plugin',
-        'tracardi_string_validator.plugin'
+        'tracardi_string_validator.plugin',
+        'tracardi_fullcontact_webhook.plugin'
 
     ]
     for plugin in plugins:

@@ -27,3 +27,4 @@ git+https://github.com/atompie/tracardi-weather.git
 git+https://github.com/atompie/tracardi-zapier-webhook.git
 git+https://github.com/atompie/tracardi-event-scheduler.git
 git+https://github.com/atompie/tracardi-plugin_validator.git
+git+https://github.com/atompie/tracardi-fullcontact-webhook.git
