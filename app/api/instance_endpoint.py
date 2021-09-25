@@ -4,6 +4,7 @@ from fastapi import APIRouter, Depends
 from fastapi import HTTPException
 
 from app.api.auth.authentication import get_current_user
+from app.config import server
 from tracardi.service.storage.driver import storage
 
 router = APIRouter(
@@ -19,7 +20,7 @@ async def all_api_instances(page: Optional[int] = None):
             page = 0
             page_size = 100
         else:
-            page_size = 25
+            page_size = server.page_size
         start = page * page_size
         limit = page_size
         result = await storage.driver.api_instance.load_all(start, limit)
