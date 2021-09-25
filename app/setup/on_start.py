@@ -118,7 +118,8 @@ async def add_plugins():
         'tracardi_string_validator.plugin',
         'tracardi_fullcontact_webhook.plugin',
         'tracardi_sentiment_analysis.plugin',
-        'tracardi_text_classification.plugin'
+        'tracardi_text_classification.plugin',
+        'tracardi_smtp_connector.plugin'
 
     ]
     for plugin in plugins:
