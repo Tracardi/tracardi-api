@@ -6,6 +6,7 @@ from time import sleep
 from fastapi import APIRouter
 from fastapi import HTTPException, Depends
 
+from tracardi.domain.enum.type_enum import TypeEnum
 from tracardi.service.storage.driver import storage
 from tracardi.service.storage.factory import StorageFor, StorageForBulk
 
@@ -21,28 +22,80 @@ router = APIRouter(
 )
 
 
-@router.get("/resources/types", tags=["resource"], response_model=dict)
-async def get_source_types() -> dict:
+@router.get("/resources/type/{type}", tags=["resource"], response_model=dict)
+async def get_source_types(type: TypeEnum) -> dict:
     """
     Returns a list of source types. Each source requires a source type to define what kind of data is
     that source holding.
     """
 
     try:
-        return {"total": 10,
-                "result": [
-                    "web-page",
-                    "mysql",
-                    "rabbitmq",
-                    "kafka",
-                    "smtp-server",
-                    "ip-geo-locator",
-                    "postgresql",
-                    "redshif",
-                    "twillo",
-                    "redis",
-                    "mongodb"
-                ]}
+        types = {
+            "web-page": {
+                "user": None,
+                "password": None
+            },
+            "rabbitmq": {
+                "uri": "amqp://127.0.0.1:5672//",
+                "timeout": 5,
+                "virtual_host": None,
+                "port": None
+            },
+            "kafka": {},
+            "smtp-server": {
+                "smtp": None,
+                "port": None,
+                "username": None,
+                "password": None
+            },
+            "ip-geo-locator": {
+                "host": None,
+                "license": None,
+                "accountId": None
+            },
+            "postgresql": {
+                "host": "localhost",
+                "port": 5439,
+                "user": None,
+                "password": None,
+                "database": None
+            },
+            "redshift": {
+                "host": "localhost",
+                "port": 5439,
+                "user": None,
+                "password": None,
+                "database": None
+            },
+            "mysql": {
+                "host": "localhost",
+                "port": 3306,
+                "user": None,
+                "password": None,
+                "database": None
+            },
+            "mqtt": {},
+            "twillo": {
+                "token": None,
+            },
+            "redis": {
+                "url": None,
+                "user": None,
+                "password": None
+            },
+            "mongodb": {
+                "uri": "mongodb://127.0.0.1:27017/",
+                "timeout": 5000
+            },
+            "api-token": {
+                "token": None
+            },
+        }
+        if type.value == 'name':
+            types = list(types.keys())
+
+        return {"total": len(types),
+                "result": types}
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -80,11 +133,11 @@ async def list_sources(query: str = None):
         # Grouping
         groups = defaultdict(list)
         for resource in result:  # type: Resource
-            if isinstance(resource.origin, list):
-                for group in resource.origin:
+            if isinstance(resource.tags, list):
+                for group in resource.tags:
                     groups[group].append(resource)
-            elif isinstance(resource.origin, str):
-                groups[resource.origin].append(resource)
+            elif isinstance(resource.tags, str):
+                groups[resource.tags].append(resource)
 
         # Sort
         groups = {k: sorted(v, key=lambda r: r.name, reverse=False) for k, v in groups.items()}
