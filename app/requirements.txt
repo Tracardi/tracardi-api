@@ -26,7 +26,7 @@ git+https://github.com/atompie/tracardi-remote-call.git
 git+https://github.com/atompie/tracardi-weather.git
 git+https://github.com/atompie/tracardi-zapier-webhook.git
 git+https://github.com/atompie/tracardi-event-scheduler.git
-git+https://github.com/atompie/tracardi-plugin_validator.git
+git+https://github.com/atompie/tracardi-string-validator.git
 git+https://github.com/atompie/tracardi-fullcontact-webhook.git
 git+https://github.com/atompie/tracardi-sentiment-analysis.git
 git+https://github.com/atompie/tracardi-text-classification.git
