@@ -12,8 +12,11 @@ docker run -p 5601:5601 -e "ELASTICSEARCH_HOSTS=http://192.168.1.103:9200" docke
 # Run local ElasticSearch
 docker run -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" docker.elastic.co/elasticsearch/elasticsearch:7.13.2
 
-# Run local OpenSource 
+# Run local OpenSearch
 docker run -p 9200:9200 -p 9600:9600 -e "discovery.type=single-node" opensearchproject/opensearch:latest
+
+# Run OpenDisto
+docker run -p 9200:9200 -p 9600:9600 -e "discovery.type=single-node" amazon/opendistro-for-elasticsearch:latest
 
 # Run local API
 docker run -p 8686:80 -e ELASTIC_HOST=http://192.168.1.103:9200 tracardi/tracardi-api:0.6.0

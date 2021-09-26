@@ -22,7 +22,7 @@ async def select_by_sql(index: IndexesSearch, query: Optional[SqlQuery] = None):
         elastic_index = Index(storage_manager(index.value))
         if query is None:
             query = SqlQuery()
-        return await elastic_index.search(query.where, query.limit)
+        return await elastic_index.search(query.where, limit=query.limit)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

@@ -51,6 +51,14 @@ Here is the configuration for connection with CLOUD_ID
     ELASTIC_CLOUD_ID: 'cluster-1:dXMa5Fx...',
 ```
 
+### CERT Verification
+
+If your instance of elasticsearch or opensearch has certs that can not be verified set ELASTIC_VERIFY_CERTS to `no`.
+
+```yaml
+    ELASTIC_VERIFY_CERTS: "no",
+```
+
 ### Other connection types
 
 If there is a need for more advanced connection configuration the change in /app/globals/elastic_client.py
