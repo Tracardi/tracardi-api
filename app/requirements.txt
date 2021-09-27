@@ -1,3 +1,4 @@
+pip>=21.2.4
 fastapi==0.68.0
 uvicorn==0.14.0
 aiofiles
@@ -12,10 +13,16 @@ git+https://github.com/atompie/tracardi-wf.git@main
 git+https://github.com/atompie/tracardi-dot-notation.git
 
 git+https://github.com/atompie/tracardi-plugin-sdk.git
+
+git+https://github.com/atompie/tracardi-maxmind-geolite2.git
+# git+https://github.com/atompie/tracardi-fullcontact-webhook.git
+
 git+https://github.com/atompie/tracardi-day-night-split.git
 git+https://github.com/atompie/tracardi-key-counter.git
 git+https://github.com/atompie/tracardi-url-parser.git
+git+https://github.com/atompie/tracardi-string-splitter.git
 
+git+https://github.com/atompie/tracardi-pushover-webhook.git
 git+https://github.com/atompie/tracardi-discord-webhook.git
 git+https://github.com/atompie/tracardi-mongodb-connector.git
 git+https://github.com/atompie/tracardi-mysql-connector.git
@@ -27,8 +34,7 @@ git+https://github.com/atompie/tracardi-weather.git
 git+https://github.com/atompie/tracardi-zapier-webhook.git
 git+https://github.com/atompie/tracardi-event-scheduler.git
 git+https://github.com/atompie/tracardi-string-validator.git
-git+https://github.com/atompie/tracardi-fullcontact-webhook.git
 git+https://github.com/atompie/tracardi-sentiment-analysis.git
 git+https://github.com/atompie/tracardi-text-classification.git
 git+https://github.com/atompie/tracardi-smtp-connector.git
-git+https://github.com/atompie/tracardi-pushover-webhook.git
+git+https://github.com/atompie/tracardi-is-in-given-time-span.git
