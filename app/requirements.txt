@@ -15,7 +15,7 @@ git+https://github.com/atompie/tracardi-dot-notation.git
 git+https://github.com/atompie/tracardi-plugin-sdk.git
 
 git+https://github.com/atompie/tracardi-maxmind-geolite2.git
-# git+https://github.com/atompie/tracardi-fullcontact-webhook.git
+git+https://github.com/atompie/tracardi-fullcontact-webhook.git
 
 git+https://github.com/atompie/tracardi-day-night-split.git
 git+https://github.com/atompie/tracardi-key-counter.git

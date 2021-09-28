@@ -64,6 +64,7 @@ async def add_plugins():
         'tracardi.process_engine.action.v1.debug_payload_action',
         'tracardi.process_engine.action.v1.start_action',
         'tracardi.process_engine.action.v1.end_action',
+        'tracardi.process_engine.action.v1.raise_error_action',
         'tracardi.process_engine.action.v1.inject_action',
 
         'tracardi.process_engine.action.v1.increase_views_action',
