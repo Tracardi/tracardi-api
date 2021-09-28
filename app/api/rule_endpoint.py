@@ -13,13 +13,14 @@ from tracardi.domain.entity import Entity
 from tracardi.domain.flow import FlowRecord
 from tracardi.domain.named_entity import NamedEntity
 from tracardi.domain.rule import Rule
+from ..config import server
 
 router = APIRouter(
     dependencies=[Depends(get_current_user)]
 )
 
 
-@router.get("/rule/{id}", tags=["rule"], response_model=Rule)
+@router.get("/rule/{id}", tags=["rule"], response_model=Rule, include_in_schema=server.expose_gui_api)
 async def get_rule(id: str):
     """
     Returns rule or None if rule does not exist.
@@ -32,7 +33,7 @@ async def get_rule(id: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.post("/rule", tags=["rule"])
+@router.post("/rule", tags=["rule"], include_in_schema=server.expose_gui_api)
 async def upsert_rule(rule: Rule):
     try:
         # Check if source id exists
@@ -63,7 +64,7 @@ async def upsert_rule(rule: Rule):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.delete("/rule/{id}", tags=["rule"])
+@router.delete("/rule/{id}", tags=["rule"], include_in_schema=server.expose_gui_api)
 async def delete_rule(id: str):
     try:
         rule = Entity(id=id)
@@ -72,7 +73,7 @@ async def delete_rule(id: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/rules/by_flow/{id}", tags=["rules"], response_model=List[Rule])
+@router.get("/rules/by_flow/{id}", tags=["rules"], response_model=List[Rule], include_in_schema=server.expose_gui_api)
 async def get_rules_attached_to_flow(id: str) -> List[Rule]:
     try:
         return await storage.driver.rule.load_flow_rules(id)
@@ -80,6 +81,6 @@ async def get_rules_attached_to_flow(id: str) -> List[Rule]:
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/rules/refresh", tags=["rules"])
+@router.get("/rules/refresh", tags=["rules"], include_in_schema=server.expose_gui_api)
 async def refresh_rules():
     return await storage.driver.rule.refresh()

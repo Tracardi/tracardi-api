@@ -2,6 +2,7 @@ from json import JSONDecodeError
 from fastapi import APIRouter, Request, HTTPException, Depends
 
 from app.api.auth.authentication import get_current_user
+from app.config import server
 from app.setup.on_start import update_api_instance
 
 router = APIRouter(
@@ -9,7 +10,7 @@ router = APIRouter(
 )
 
 
-@router.post("/healthcheck", tags=["health"])
+@router.post("/healthcheck", tags=["health"], include_in_schema=server.expose_gui_api)
 async def track(r: Request):
     try:
         print(r.headers)
@@ -20,7 +21,7 @@ async def track(r: Request):
         return await r.body()
 
 
-@router.get("/healthcheck", tags=["health"])
+@router.get("/healthcheck", tags=["health"], include_in_schema=server.expose_gui_api)
 async def track(r: Request):
     try:
         return await r.json()
@@ -28,7 +29,7 @@ async def track(r: Request):
         return await r.body()
 
 
-@router.put("/healthcheck", tags=["health"])
+@router.put("/healthcheck", tags=["health"], include_in_schema=server.expose_gui_api)
 async def track(r: Request):
     try:
         return await r.json()
@@ -36,7 +37,7 @@ async def track(r: Request):
         return await r.body()
 
 
-@router.delete("/healthcheck", tags=["health"])
+@router.delete("/healthcheck", tags=["health"], include_in_schema=server.expose_gui_api)
 async def track(r: Request):
     try:
         return await r.json()
@@ -44,7 +45,7 @@ async def track(r: Request):
         return await r.body()
 
 
-@router.get("/health/report/instance", tags=["health"])
+@router.get("/health/report/instance", tags=["health"], include_in_schema=server.expose_gui_api)
 async def register_api_instance_health():
     try:
         return await update_api_instance()

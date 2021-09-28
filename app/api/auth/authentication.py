@@ -5,6 +5,8 @@ from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from starlette import status
 
+from ...config import server
+
 _singleton = None
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
@@ -71,6 +73,12 @@ def get_authentication():
 
 async def get_current_user(token: str = Depends(oauth2_scheme)):
 
+    if not server.expose_gui_api:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Access forbidden",
+        )
+
     try:
         auth = Authentication()
         user = await auth.get_user_by_token(token)
@@ -82,7 +90,7 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
     except Exception:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="Authentication exception",
+            detail="Access forbidden",
         )
 
     if not user:

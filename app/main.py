@@ -11,7 +11,7 @@ from starlette.staticfiles import StaticFiles
 from app.api import token_endpoint, rule_endpoint, resource_endpoint, event_endpoint, \
     profile_endpoint, flow_endpoint, generic_endpoint, project_endpoint, \
     credentials_endpoint, segments_endpoint, \
-    tql_endpoint, health_endpoint, session_endpoint, instance_endpoint
+    tql_endpoint, health_endpoint, session_endpoint, instance_endpoint, plugins_endpoint
 from app.api.scheduler import tasks_endpoint
 from app.api.track import event_server_endpoint
 from app.config import server
@@ -85,7 +85,7 @@ application = FastAPI(
     title="Tracardi Customer Data Platform Project",
     description="TRACARDI open-source customer data platform offers you excellent control over your customer data with its broad set of features",
     version="0.6.0",
-    openapi_tags=tags_metadata,
+    openapi_tags=tags_metadata if server.expose_gui_api else None,
     contact={
         "name": "Risto Kowaczewski",
         "url": "http://github.com/atompie/tracardi",
@@ -131,6 +131,7 @@ application.include_router(health_endpoint.router)
 application.include_router(session_endpoint.router)
 application.include_router(tasks_endpoint.router)
 application.include_router(instance_endpoint.router)
+application.include_router(plugins_endpoint.router)
 
 
 @application.on_event("startup")
@@ -174,11 +175,6 @@ def report_i_am_alive():
             await update_api_instance()
 
     asyncio.create_task(heartbeat())
-
-
-@application.get("/action/plugins")
-async def plugins():
-    return await StorageForBulk().index('action').load()
 
 
 if __name__ == "__main__":

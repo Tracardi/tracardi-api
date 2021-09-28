@@ -2,12 +2,13 @@ from fastapi import APIRouter, Request
 from fastapi import HTTPException
 from lark.exceptions import LarkError
 
+from app.config import server
 from tracardi.process_engine.tql.condition import Condition
 
 router = APIRouter()
 
 
-@router.post("/tql/validate", tags=["tql"])
+@router.post("/tql/validate", tags=["tql"], include_in_schema=server.expose_gui_api)
 async def is_tql_valid(request: Request):
     try:
         tql = await request.body()

@@ -20,8 +20,8 @@ router = APIRouter(
 )
 
 
-@router.get("/tasks/page/{page}", tags=["tasks"])
-@router.get("/tasks", tags=["tasks"])
+@router.get("/tasks/page/{page}", tags=["tasks"], include_in_schema=server.expose_gui_api)
+@router.get("/tasks", tags=["tasks"], include_in_schema=server.expose_gui_api)
 async def all_tasks(page: Optional[int] = None):
     try:
         if page is None:
@@ -40,7 +40,7 @@ async def all_tasks(page: Optional[int] = None):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/tasks/run", tags=["tasks"])
+@router.get("/tasks/run", tags=["tasks"], include_in_schema=server.expose_gui_api)
 async def run_tasks():
 
     def run(task: Task):

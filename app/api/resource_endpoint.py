@@ -16,13 +16,17 @@ from tracardi.domain.resource import Resource, ResourceRecord
 from tracardi.domain.entity import Entity
 from tracardi.domain.enum.indexes_source_bool import IndexesSourceBool
 from tracardi.domain.value_object.bulk_insert_result import BulkInsertResult
+from ..config import server
 
 router = APIRouter(
     dependencies=[Depends(get_current_user)]
 )
 
 
-@router.get("/resources/type/{type}", tags=["resource"], response_model=dict)
+@router.get("/resources/type/{type}",
+            tags=["resource"],
+            response_model=dict,
+            include_in_schema=server.expose_gui_api)
 async def get_source_types(type: TypeEnum) -> dict:
     """
     Returns a list of source types. Each source requires a source type to define what kind of data is
@@ -101,7 +105,9 @@ async def get_source_types(type: TypeEnum) -> dict:
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/resources", tags=["resource"])
+@router.get("/resources",
+            tags=["resource"],
+            include_in_schema=server.expose_gui_api)
 async def list_sources():
     try:
         result = await StorageForBulk().index('resource').load()
@@ -116,7 +122,9 @@ async def list_sources():
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/resources/by_tag", tags=["resource"])
+@router.get("/resources/by_tag",
+            tags=["resource"],
+            include_in_schema=server.expose_gui_api)
 async def list_sources(query: str = None):
     try:
 
@@ -151,7 +159,10 @@ async def list_sources(query: str = None):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/resource/{id}/{type}/on", tags=["resource"], response_model=dict)
+@router.get("/resource/{id}/{type}/on",
+            tags=["resource"],
+            response_model=dict,
+            include_in_schema=server.expose_gui_api)
 async def set_source_property_on(id: str, type: IndexesSourceBool):
     try:
         entity = Entity(id=id)
@@ -171,7 +182,10 @@ async def set_source_property_on(id: str, type: IndexesSourceBool):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/resource/{id}/{type}/off", tags=["resource"], response_model=dict)
+@router.get("/resource/{id}/{type}/off",
+            tags=["resource"],
+            response_model=dict,
+            include_in_schema=server.expose_gui_api)
 async def set_source_property_off(id: str, type: IndexesSourceBool):
     try:
         entity = Entity(id=id)
@@ -191,7 +205,10 @@ async def set_source_property_off(id: str, type: IndexesSourceBool):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/resource/{id}", tags=["resource"], response_model=Resource)
+@router.get("/resource/{id}",
+            tags=["resource"],
+            response_model=Resource,
+            include_in_schema=server.expose_gui_api)
 async def get_source_by_id(id: str) -> Optional[Resource]:
     """
     Returns source data with given id.
@@ -210,7 +227,9 @@ async def get_source_by_id(id: str) -> Optional[Resource]:
     raise HTTPException(status_code=404, detail="Resource id: {} does not exist.".format(id))
 
 
-@router.post("/resource", tags=["resource"], response_model=BulkInsertResult)
+@router.post("/resource", tags=["resource"],
+             response_model=BulkInsertResult,
+             include_in_schema=server.expose_gui_api)
 async def upsert_source(resource: Resource):
     sleep(1)
     try:
@@ -221,7 +240,9 @@ async def upsert_source(resource: Resource):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.delete("/resource/{id}", tags=["resource"], response_model=dict)
+@router.delete("/resource/{id}", tags=["resource"],
+               response_model=dict,
+               include_in_schema=server.expose_gui_api)
 async def delete_source(id: str):
     try:
         entity = Entity(id=id)
@@ -235,6 +256,8 @@ async def delete_source(id: str):
     return result
 
 
-@router.get("/resources/refresh", tags=["resource"])
+@router.get("/resources/refresh",
+            tags=["resource"],
+            include_in_schema=server.expose_gui_api)
 async def refresh_sources():
     return await storage.driver.resource.refresh()

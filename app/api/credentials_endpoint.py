@@ -7,13 +7,14 @@ from tracardi.service.storage.driver import storage
 from .auth.authentication import get_current_user
 from .grouper import search
 from tracardi.domain.resource import Resource
+from ..config import server
 
 router = APIRouter(
     dependencies=[Depends(get_current_user)]
 )
 
 
-@router.get("/credentials/by_type", tags=["credential"])
+@router.get("/credentials/by_type", tags=["credential"], include_in_schema=server.expose_gui_api)
 async def get_credentials(query: str = None):
     try:
         result, total = await storage.driver.resource.load_all()

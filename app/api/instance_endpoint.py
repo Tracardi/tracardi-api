@@ -12,8 +12,8 @@ router = APIRouter(
 )
 
 
-@router.get("/instances/page/{page}", tags=["api-instance"])
-@router.get("/instances", tags=["api-instance"])
+@router.get("/instances/page/{page}", tags=["api-instance"], include_in_schema=server.expose_gui_api)
+@router.get("/instances", tags=["api-instance"], include_in_schema=server.expose_gui_api)
 async def all_api_instances(page: Optional[int] = None):
     try:
         if page is None:
@@ -33,7 +33,7 @@ async def all_api_instances(page: Optional[int] = None):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.delete("/instances/stale", tags=["api-instance"])
+@router.delete("/instances/stale", tags=["api-instance"], include_in_schema=server.expose_gui_api)
 async def remove_stale_api_instances():
     """Not implemented"""
     # todo remove stale instances

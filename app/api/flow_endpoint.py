@@ -34,6 +34,7 @@ from tracardi.domain.session import Session
 from tracardi.domain.settings import Settings
 from tracardi.domain.resource import Resource
 from tracardi.domain.value_object.bulk_insert_result import BulkInsertResult
+from ..config import server
 from ..setup.on_start import add_plugin
 
 router = APIRouter(
@@ -41,7 +42,7 @@ router = APIRouter(
 )
 
 
-@router.post("/flow/draft", tags=["flow"], response_model=BulkInsertResult)
+@router.post("/flow/draft", tags=["flow"], response_model=BulkInsertResult, include_in_schema=server.expose_gui_api)
 async def upsert_flow_draft(draft: Flow):
     try:
 
@@ -70,7 +71,7 @@ async def upsert_flow_draft(draft: Flow):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/flow/draft/{id}", tags=["flow"], response_model=Flow)
+@router.get("/flow/draft/{id}", tags=["flow"], response_model=Flow, include_in_schema=server.expose_gui_api)
 async def load_flow_draft(id: str):
     try:
 
@@ -92,7 +93,7 @@ async def load_flow_draft(id: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/flows", tags=["flow"])
+@router.get("/flows", tags=["flow"], include_in_schema=server.expose_gui_api)
 async def get_flows(query: str = None):
     try:
         result = await StorageForBulk().index('flow').load()
@@ -114,7 +115,7 @@ async def get_flows(query: str = None):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/flows/refresh", tags=["flow"])
+@router.get("/flows/refresh", tags=["flow"], include_in_schema=server.expose_gui_api)
 async def refresh_flows():
     try:
         return await storage.driver.flow.refresh()
@@ -122,7 +123,7 @@ async def refresh_flows():
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/flows/by_tag", tags=["flow"])
+@router.get("/flows/by_tag", tags=["flow"], include_in_schema=server.expose_gui_api)
 async def get_grouped_flows(query: str = None):
     try:
         result = await StorageForBulk().index('flow').load()
@@ -156,7 +157,7 @@ async def get_grouped_flows(query: str = None):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.delete("/flow/{id}", tags=["flow"], response_model=dict)
+@router.delete("/flow/{id}", tags=["flow"], response_model=dict, include_in_schema=server.expose_gui_api)
 async def delete_flow(id: str):
     try:
         # delete rule before flow
@@ -175,7 +176,7 @@ async def delete_flow(id: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/flow/{id}", tags=["flow"], response_model=Flow)
+@router.get("/flow/{id}", tags=["flow"], response_model=Flow, include_in_schema=server.expose_gui_api)
 async def get_flow(id: str):
     try:
         flow = Entity(id=id)
@@ -190,7 +191,7 @@ async def get_flow(id: str):
     raise HTTPException(status_code=404, detail="Flow id: `{}` does not exist.".format(id))
 
 
-@router.post("/flow", tags=["flow"], response_model=BulkInsertResult)
+@router.post("/flow", tags=["flow"], response_model=BulkInsertResult, include_in_schema=server.expose_gui_api)
 async def upsert_flow(flow: Flow):
     try:
         flow_record = FlowRecord.encode(flow)
@@ -199,7 +200,7 @@ async def upsert_flow(flow: Flow):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.post("/flow/metadata", tags=["flow"], response_model=BulkInsertResult)
+@router.post("/flow/metadata", tags=["flow"], response_model=BulkInsertResult, include_in_schema=server.expose_gui_api)
 async def upsert_flow_details(flow_metadata: FlowMetaData):
     try:
         entity = Entity(id=flow_metadata.id)
@@ -225,17 +226,18 @@ async def upsert_flow_details(flow_metadata: FlowMetaData):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/flow/metadata/refresh", tags=["flow"])
+@router.get("/flow/metadata/refresh", tags=["flow"], include_in_schema=server.expose_gui_api)
 async def flow_refresh():
     return await storage.driver.flow.refresh()
 
 
-@router.get("/flow/metadata/flush", tags=["flow"])
+@router.get("/flow/metadata/flush", tags=["flow"], include_in_schema=server.expose_gui_api)
 async def flow_refresh():
     return await storage.driver.flow.flush()
 
 
-@router.post("/flow/draft/metadata", tags=["flow"], response_model=BulkInsertResult)
+@router.post("/flow/draft/metadata", tags=["flow"], response_model=BulkInsertResult,
+             include_in_schema=server.expose_gui_api)
 async def upsert_flow_details(flow_metadata: FlowMetaData):
     try:
         entity = Entity(id=flow_metadata.id)
@@ -265,7 +267,9 @@ async def upsert_flow_details(flow_metadata: FlowMetaData):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/flow/{id}/lock/{lock}", tags=["flow"], response_model=BulkInsertResult)
+@router.get("/flow/{id}/lock/{lock}", tags=["flow"],
+            response_model=BulkInsertResult,
+            include_in_schema=server.expose_gui_api)
 async def update_flow_lock(id: str, lock: str):
     try:
         entity = Entity(id=id)
@@ -280,7 +284,9 @@ async def update_flow_lock(id: str, lock: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/flow/{id}/enable/{lock}", tags=["flow"], response_model=BulkInsertResult)
+@router.get("/flow/{id}/enable/{lock}", tags=["flow"],
+            response_model=BulkInsertResult,
+            include_in_schema=server.expose_gui_api)
 async def update_flow_lock(id: str, lock: str):
     try:
         entity = Entity(id=id)
@@ -295,7 +301,8 @@ async def update_flow_lock(id: str, lock: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.post("/flow/debug", tags=["flow"])
+@router.post("/flow/debug", tags=["flow"],
+             include_in_schema=server.expose_gui_api)
 async def debug_flow(flow: GraphFlow):
     """
         Debugs flow sent in request body
@@ -365,7 +372,10 @@ async def debug_flow(flow: GraphFlow):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/flow/action/plugin/{id}", tags=["flow", "action", "plugin"], response_model=FlowActionPlugin)
+@router.get("/flow/action/plugin/{id}",
+            tags=["flow", "action", "plugin"],
+            response_model=FlowActionPlugin,
+            include_in_schema=server.expose_gui_api)
 async def get_plugin(id: str):
     """
     Returns FlowActionPlugin object.
@@ -378,7 +388,8 @@ async def get_plugin(id: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/flow/action/plugin/{id}/hide/{state}", tags=["flow", "action", "plugin"], response_model=BulkInsertResult)
+@router.get("/flow/action/plugin/{id}/hide/{state}", tags=["flow", "action", "plugin"],
+            response_model=BulkInsertResult, include_in_schema=server.expose_gui_api)
 async def get_plugin_state(id: str, state: YesNo):
     """
     Returns FlowActionPlugin object.
@@ -397,7 +408,7 @@ async def get_plugin_state(id: str, state: YesNo):
 
 
 @router.get("/flow/action/plugin/{id}/enable/{state}", tags=["flow", "action", "plugin"],
-            response_model=BulkInsertResult)
+            response_model=BulkInsertResult, include_in_schema=server.expose_gui_api)
 async def get_plugin_enabled(id: str, state: YesNo):
     """
     Returns FlowActionPlugin object.
@@ -415,7 +426,8 @@ async def get_plugin_enabled(id: str, state: YesNo):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/flow/action/plugin/{id}", tags=["flow", "action", "plugin"], response_model=FlowActionPlugin)
+@router.get("/flow/action/plugin/{id}", tags=["flow", "action", "plugin"],
+            response_model=FlowActionPlugin, include_in_schema=server.expose_gui_api)
 async def get_plugin(id: str):
     """
     Returns FlowActionPlugin object.
@@ -428,7 +440,8 @@ async def get_plugin(id: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.delete("/flow/action/plugin/{id}", tags=["flow", "action", "plugin"], response_model=dict)
+@router.delete("/flow/action/plugin/{id}", tags=["flow", "action", "plugin"],
+               response_model=dict, include_in_schema=server.expose_gui_api)
 async def delete_plugin(id: str):
     """
     Deletes FlowActionPlugin object.
@@ -440,7 +453,8 @@ async def delete_plugin(id: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.post("/flow/action/plugin", tags=["flow", "action", "plugin"], response_model=BulkInsertResult)
+@router.post("/flow/action/plugin", tags=["flow", "action", "plugin"],
+             response_model=BulkInsertResult, include_in_schema=server.expose_gui_api)
 async def upsert_plugin(action: FlowActionPlugin):
     """
     Upserts workflow action plugin. Action plugin id is a hash of its module and className so
@@ -459,7 +473,8 @@ async def upsert_plugin(action: FlowActionPlugin):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/flow/action/plugins", tags=["flow", "action", "plugin"])
+@router.get("/flow/action/plugins", tags=["flow", "action", "plugin"],
+            include_in_schema=server.expose_gui_api)
 async def get_plugins_list(query: Optional[str] = None):
     """
     Returns a list of available plugins.
@@ -505,7 +520,8 @@ async def get_plugins_list(query: Optional[str] = None):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.post("/flow/action/plugin/register", tags=["flow", "action", "plugin"], response_model=BulkInsertResult)
+@router.post("/flow/action/plugin/register", tags=["flow", "action", "plugin"],
+             response_model=BulkInsertResult, include_in_schema=server.expose_gui_api)
 async def register_plugin_by_module(plugin: PluginImport):
     """
     Registers action plugin by its module. Module must have register method that returns Plugin

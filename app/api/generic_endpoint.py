@@ -10,13 +10,16 @@ from tracardi.domain.enum.indexes_search import IndexesSearch
 from tracardi.service.storage.helpers.index import Index
 from tracardi.domain.sql_query import SqlQuery
 from tracardi.domain.time_range_query import DatetimeRangePayload
+from ..config import server
 
 router = APIRouter(
     dependencies=[Depends(get_current_user)]
 )
 
 
-@router.post("/{index}/select", tags=["generic", "event", "profile", "resource", "rule", "session", "flow", "segment"])
+@router.post("/{index}/select",
+             tags=["generic", "event", "profile", "resource", "rule", "session", "flow", "segment"],
+             include_in_schema=server.expose_gui_api)
 async def select_by_sql(index: IndexesSearch, query: Optional[SqlQuery] = None):
     try:
         elastic_index = Index(storage_manager(index.value))
@@ -28,9 +31,11 @@ async def select_by_sql(index: IndexesSearch, query: Optional[SqlQuery] = None):
 
 
 @router.post("/{index}/select/range/page/{page}",
-             tags=["generic", "event", "profile", "resource", "rule", "session", "flow", "segment"])
+             tags=["generic", "event", "profile", "resource", "rule", "session", "flow", "segment"],
+             include_in_schema=server.expose_gui_api)
 @router.post("/{index}/select/range",
-             tags=["generic", "event", "profile", "resource", "rule", "session", "flow", "segment"])
+             tags=["generic", "event", "profile", "resource", "rule", "session", "flow", "segment"],
+             include_in_schema=server.expose_gui_api)
 async def time_range_with_sql(index: IndexesHistogram, query: DatetimeRangePayload, page: Optional[int] = None):
     try:
         if page is not None:
@@ -44,7 +49,8 @@ async def time_range_with_sql(index: IndexesHistogram, query: DatetimeRangePaylo
 
 
 @router.post("/{index}/select/histogram",
-             tags=["generic", "event", "profile", "resource", "rule", "session", "flow", "segment"])
+             tags=["generic", "event", "profile", "resource", "rule", "session", "flow", "segment"],
+             include_in_schema=server.expose_gui_api)
 async def histogram_with_sql(index: IndexesHistogram, query: DatetimeRangePayload):
     try:
         elastic_index = Index(storage_manager(index.value))

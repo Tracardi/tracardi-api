@@ -1,6 +1,4 @@
 from collections import defaultdict
-from time import sleep
-
 from fastapi import APIRouter
 from fastapi import HTTPException, Depends
 
@@ -12,13 +10,16 @@ from .grouper import search
 from tracardi.domain.entity import Entity
 from tracardi.domain.segment import Segment
 from tracardi.domain.value_object.bulk_insert_result import BulkInsertResult
+from ..config import server
 
 router = APIRouter(
     dependencies=[Depends(get_current_user)]
 )
 
 
-@router.get("/segment/{id}", tags=["segment"])
+@router.get("/segment/{id}",
+            tags=["segment"],
+            include_in_schema=server.expose_gui_api)
 async def get_segment(id: str):
     try:
         entity = Entity(id=id)
@@ -27,7 +28,9 @@ async def get_segment(id: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.delete("/segment/{id}", tags=["segment"])
+@router.delete("/segment/{id}",
+               tags=["segment"],
+               include_in_schema=server.expose_gui_api)
 async def delete_segment(id: str):
     try:
         entity = Entity(id=id)
@@ -36,12 +39,16 @@ async def delete_segment(id: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/segments/refresh", tags=["segment"])
+@router.get("/segments/refresh",
+            tags=["segment"],
+            include_in_schema=server.expose_gui_api)
 async def refresh_segments():
     return await storage.driver.segment.refresh()
 
 
-@router.get("/segments", tags=["segment"])
+@router.get("/segments",
+            tags=["segment"],
+            include_in_schema=server.expose_gui_api)
 async def get_segments(query: str = None):
     try:
         result = await StorageForBulk().index('segment').load()
@@ -78,7 +85,10 @@ async def get_segments(query: str = None):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.post("/segment", tags=["segment"], response_model=BulkInsertResult)
+@router.post("/segment",
+             tags=["segment"],
+             response_model=BulkInsertResult,
+             include_in_schema=server.expose_gui_api)
 async def upsert_source(segment: Segment):
     try:
         return await StorageFor(segment).index().save()

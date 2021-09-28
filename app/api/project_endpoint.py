@@ -6,13 +6,14 @@ from .auth.authentication import get_current_user
 from tracardi.domain.project import Project
 from tracardi.domain.entity import Entity
 from tracardi.domain.value_object.bulk_insert_result import BulkInsertResult
+from ..config import server
 
 router = APIRouter(
     dependencies=[Depends(get_current_user)]
 )
 
 
-@router.get("/projects", tags=["project"])
+@router.get("/projects", tags=["project"], include_in_schema=server.expose_gui_api)
 async def get_projects(query: str = None):
     try:
         result = await StorageForBulk().index('project').load()
@@ -21,7 +22,7 @@ async def get_projects(query: str = None):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/project/{id}", tags=["project"], response_model=Project)
+@router.get("/project/{id}", tags=["project"], response_model=Project, include_in_schema=server.expose_gui_api)
 async def get_project_by_id(id: str):
     try:
         project = Entity(id=id)
@@ -30,7 +31,7 @@ async def get_project_by_id(id: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.post("/project", tags=["project"], response_model=BulkInsertResult)
+@router.post("/project", tags=["project"], response_model=BulkInsertResult, include_in_schema=server.expose_gui_api)
 async def add_project(project: Project):
     try:
         return await StorageFor(project).index().save()
@@ -39,7 +40,7 @@ async def add_project(project: Project):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.delete("/project/{id}", tags=["project"], response_model=dict)
+@router.delete("/project/{id}", tags=["project"], response_model=dict, include_in_schema=server.expose_gui_api)
 async def delete_project(id: str):
     try:
         project = Entity(id=id)
