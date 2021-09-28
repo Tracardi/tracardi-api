@@ -6,6 +6,9 @@
   "mappings": {
     "dynamic": true,
     "properties": {
+      "id": {
+        "type": "keyword"
+      },
       "metadata": {
         "dynamic": false,
         "properties": {

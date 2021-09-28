@@ -6,6 +6,9 @@
   "mappings": {
     "dynamic": false,
     "properties": {
+      "id": {
+        "type": "keyword"
+      },
       "metadata": {
         "properties": {
           "time": {
@@ -24,10 +27,6 @@
         "dynamic": true,
         "type": "object"
       },
-      "context": {
-        "dynamic": true,
-        "type": "object"
-      },
       "source": {
         "properties": {
           "id": {
@@ -39,6 +38,14 @@
         "properties": {
           "id": {
             "type": "keyword"
+          },
+          "metadata": {
+            "dynamic": true,
+            "type": "object"
+          },
+          "context": {
+            "dynamic": true,
+            "type": "object"
           }
         }
       },
@@ -61,6 +68,10 @@
           },
           "segments": {
             "type": "keyword"
+          },
+          "stats": {
+            "dynamic": true,
+            "type": "object"
           },
           "consents": {
             "dynamic": true,

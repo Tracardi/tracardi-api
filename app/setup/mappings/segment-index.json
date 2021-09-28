@@ -6,6 +6,9 @@
   "mappings": {
     "dynamic": false,
     "properties": {
+      "id": {
+        "type": "keyword"
+      },
       "eventType": {
         "type": "keyword"
       },
