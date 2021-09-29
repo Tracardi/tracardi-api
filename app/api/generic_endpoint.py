@@ -2,12 +2,11 @@ from typing import Optional
 
 from fastapi import APIRouter
 from fastapi import HTTPException, Depends
-from tracardi.service.storage.factory import storage_manager
 
+from tracardi.service.storage.driver import storage
 from .auth.authentication import get_current_user
 from tracardi.domain.enum.indexes_histogram import IndexesHistogram
 from tracardi.domain.enum.indexes_search import IndexesSearch
-from tracardi.service.storage.helpers.index import Index
 from tracardi.domain.sql_query import SqlQuery
 from tracardi.domain.time_range_query import DatetimeRangePayload
 from ..config import server
@@ -22,10 +21,9 @@ router = APIRouter(
              include_in_schema=server.expose_gui_api)
 async def select_by_sql(index: IndexesSearch, query: Optional[SqlQuery] = None):
     try:
-        elastic_index = Index(storage_manager(index.value))
         if query is None:
             query = SqlQuery()
-        return await elastic_index.search(query.where, limit=query.limit)
+        return await storage.driver.raw.index(index.value).search(query.where, limit=query.limit)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -42,8 +40,7 @@ async def time_range_with_sql(index: IndexesHistogram, query: DatetimeRangePaylo
             page_size = 25
             query.start = page_size * page
             query.limit = page
-        elastic_index = Index(storage_manager(index.value))
-        return await elastic_index.time_range(query)
+        return await storage.driver.raw.index(index.value).query_by_sql_in_time_range(query)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -53,7 +50,6 @@ async def time_range_with_sql(index: IndexesHistogram, query: DatetimeRangePaylo
              include_in_schema=server.expose_gui_api)
 async def histogram_with_sql(index: IndexesHistogram, query: DatetimeRangePayload):
     try:
-        elastic_index = Index(storage_manager(index.value))
-        return await elastic_index.histogram(query)
+        return await storage.driver.raw.index(index.value).histogram_by_sql_in_time_range(query)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
