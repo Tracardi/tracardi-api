@@ -17,11 +17,16 @@
                 "type": "date"
               }
             }
+          },
+          "ip": {
+            "type": "keyword",
+            "null_value": "NULL"
           }
         }
       },
       "type": {
-        "type": "keyword"
+        "type": "keyword",
+        "null_value": "NULL"
       },
       "properties": {
         "dynamic": true,
