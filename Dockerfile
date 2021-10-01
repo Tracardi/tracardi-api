@@ -15,6 +15,8 @@ WORKDIR /app
 COPY app/requirements.txt .
 RUN pip install -r requirements.txt
 
+RUN pip show tracardi
+
 ## Copy application
 COPY app app/
 
