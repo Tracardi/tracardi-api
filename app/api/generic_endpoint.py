@@ -39,7 +39,7 @@ async def time_range_with_sql(index: IndexesHistogram, query: DatetimeRangePaylo
         if page is not None:
             page_size = 25
             query.start = page_size * page
-            query.limit = page
+            query.limit = page_size
         return await storage.driver.raw.index(index.value).query_by_sql_in_time_range(query)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
