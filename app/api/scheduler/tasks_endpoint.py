@@ -1,6 +1,6 @@
 import asyncio
 import logging
-from typing import Optional
+from typing import Optional, List
 
 from fastapi import APIRouter, Depends, HTTPException
 
@@ -14,10 +14,14 @@ from app.api.auth.authentication import get_current_user
 logger = logging.getLogger('app.api.scheduler.tasks_endpoint')
 logger.setLevel(logging.INFO)
 
-
 router = APIRouter(
     dependencies=[Depends(get_current_user)]
 )
+
+
+@router.post("/tasks", tags=["tasks"], include_in_schema=server.expose_gui_api)
+async def add_tasks(tasks: List[Task]):
+    return await storage.driver.task.save_tasks(tasks)
 
 
 @router.get("/tasks/page/{page}", tags=["tasks"], include_in_schema=server.expose_gui_api)
@@ -42,7 +46,6 @@ async def all_tasks(page: Optional[int] = None):
 
 @router.get("/tasks/run", tags=["tasks"], include_in_schema=server.expose_gui_api)
 async def run_tasks():
-
     def run(task: Task):
         tracker_payload = task.event.to_tracker_payload()
 

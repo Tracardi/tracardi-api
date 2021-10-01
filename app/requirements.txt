@@ -37,4 +37,4 @@ git+https://github.com/atompie/tracardi-string-validator.git
 git+https://github.com/atompie/tracardi-sentiment-analysis.git
 git+https://github.com/atompie/tracardi-text-classification.git
 git+https://github.com/atompie/tracardi-smtp-connector.git
-git+https://github.com/atompie/tracardi-is-in-given-time-span.git
+git+https://github.com/atompie/tracardi-local-timespan.git
