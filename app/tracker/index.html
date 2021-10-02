@@ -9,7 +9,11 @@
     <script>
 
         const url = new URL(window.location.href);
-        const source = url.searchParams.get("source");
+        let source = url.searchParams.get("source");
+
+        if(source === null) {
+            source="@test-resource"
+        }
 
         const options = {
             listeners: {
@@ -122,8 +126,12 @@
 <body>
 <h1><BOLD>TRACARDI</BOLD> <THIN>JavaScript Integration Test Page</THIN></h1>
 <section>
-<p>This page load TRACARDI Javascript to show-case how it can be utilized to collect user data.</p>
-<p>In order to use this page add source parameter to URL.</p>
+<p>This page loads TRACARDI Javascript to show-case how it can be used to collect user data.</p>
+<p>In order to use this page, add source parameter to URL with resource id defined in TRACARDI GUI
+    or create test resource by visiting http://localhost/test/resource (it will add new test resource in TRACARDI).
+
+    Then return again to this page it will send events with test source id.
+</p>
 </section>
 <pre style="display: none">
 const options = {
@@ -161,6 +169,10 @@ const options = {
 <section>
     <p>TRACARDI will respond with information on user profile, session, and information on what was saved in the system.</p>
     <p>This information can be used to change your page on the fly with javascript.</p>
+
+    If you can not see response from server as JSON data than it means there was an error. It can happen if there is no
+    test resource or provided source does not exist in TRACARDI.
+
     <pre id="response"></pre>
 </section>
 
