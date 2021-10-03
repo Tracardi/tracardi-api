@@ -64,6 +64,10 @@ async def get_source_types(type: TypeEnum) -> dict:
                 "password": None,
                 "database": None
             },
+            "pushover": {
+                "token": None,
+                "user": None
+            },
             "redshift": {
                 "host": "localhost",
                 "port": 5439,
