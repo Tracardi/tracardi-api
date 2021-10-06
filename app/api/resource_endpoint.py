@@ -27,7 +27,7 @@ router = APIRouter(
             tags=["resource"],
             response_model=dict,
             include_in_schema=server.expose_gui_api)
-async def get_source_types(type: TypeEnum) -> dict:
+async def get_resource_types(type: TypeEnum) -> dict:
     """
     Returns a list of source types. Each source requires a source type to define what kind of data is
     that source holding.
@@ -112,7 +112,7 @@ async def get_source_types(type: TypeEnum) -> dict:
 @router.get("/resources",
             tags=["resource"],
             include_in_schema=server.expose_gui_api)
-async def list_sources():
+async def list_resources():
     try:
         result = await StorageForBulk().index('resource').load()
         total = result.total
@@ -126,10 +126,27 @@ async def list_sources():
         raise HTTPException(status_code=500, detail=str(e))
 
 
+# @router.get("/resources/by_id",
+#             tags=["resource"],
+#             include_in_schema=server.expose_gui_api)
+# async def list_resources_by_id():
+#     try:
+#         result = await StorageForBulk().index('resource').load()
+#         total = result.total
+#         result = {r['id']: r['name'] for r in result}
+#
+#         return {
+#             "total": total,
+#             "result": result
+#         }
+#     except Exception as e:
+#         raise HTTPException(status_code=500, detail=str(e))
+
+
 @router.get("/resources/by_tag",
             tags=["resource"],
             include_in_schema=server.expose_gui_api)
-async def list_sources(query: str = None):
+async def list_resources(query: str = None):
     try:
 
         result = await StorageForBulk().index('resource').load()
@@ -167,7 +184,7 @@ async def list_sources(query: str = None):
             tags=["resource"],
             response_model=dict,
             include_in_schema=server.expose_gui_api)
-async def set_source_property_on(id: str, type: IndexesSourceBool):
+async def set_resource_property_on(id: str, type: IndexesSourceBool):
     try:
         entity = Entity(id=id)
 
@@ -190,7 +207,7 @@ async def set_source_property_on(id: str, type: IndexesSourceBool):
             tags=["resource"],
             response_model=dict,
             include_in_schema=server.expose_gui_api)
-async def set_source_property_off(id: str, type: IndexesSourceBool):
+async def set_resource_property_off(id: str, type: IndexesSourceBool):
     try:
         entity = Entity(id=id)
 
@@ -213,7 +230,7 @@ async def set_source_property_off(id: str, type: IndexesSourceBool):
             tags=["resource"],
             response_model=Resource,
             include_in_schema=server.expose_gui_api)
-async def get_source_by_id(id: str) -> Optional[Resource]:
+async def get_resource_by_id(id: str) -> Optional[Resource]:
     """
     Returns source data with given id.
 
@@ -234,7 +251,7 @@ async def get_source_by_id(id: str) -> Optional[Resource]:
 @router.post("/resource", tags=["resource"],
              response_model=BulkInsertResult,
              include_in_schema=server.expose_gui_api)
-async def upsert_source(resource: Resource):
+async def upsert_resource(resource: Resource):
     sleep(1)
     try:
         record = ResourceRecord.encode(resource)
@@ -247,7 +264,7 @@ async def upsert_source(resource: Resource):
 @router.delete("/resource/{id}", tags=["resource"],
                response_model=dict,
                include_in_schema=server.expose_gui_api)
-async def delete_source(id: str):
+async def delete_resource(id: str):
     try:
         entity = Entity(id=id)
         result = await StorageFor(entity).index("resource").delete()
@@ -263,5 +280,5 @@ async def delete_source(id: str):
 @router.get("/resources/refresh",
             tags=["resource"],
             include_in_schema=server.expose_gui_api)
-async def refresh_sources():
+async def refresh_resources():
     return await storage.driver.resource.refresh()
