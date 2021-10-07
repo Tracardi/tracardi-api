@@ -112,6 +112,51 @@ Example of event data payload with context `attached`.
 
 # Response
 
+Example of the response
+
+```json
+{
+  "debugging": {
+    "session": {
+      "saved": 1,
+      "errors": [],
+      "ids": [
+        "string"
+      ],
+      "types": []
+    },
+    "events": {
+      "saved": 0,
+      "errors": [],
+      "ids": [],
+      "types": []
+    },
+    "profile": {
+      "saved": 1,
+      "errors": [],
+      "ids": [
+        "0d2d9dc5-0d60-471e-956f-8766dcb8aba2"
+      ],
+      "types": []
+    },
+    "execution": {},
+    "segmentation": {
+      "errors": [],
+      "ids": []
+    },
+    "logs": []
+  },
+  "profile": {
+    "id": "0d2d9dc5-0d60-471e-956f-8766dcb8aba2"
+  },
+  "source": {
+    "consent": false
+  }
+}
+```
+
+Debugging key is optional (may not be returned) and consist of data that delivers information on execution of the workflows attached
+to the event in Tracardi. 
 
 # Usage
 
