@@ -6,8 +6,8 @@ from fastapi import APIRouter, Depends, HTTPException
 
 from app.api.track.service.tracker import track_event
 from app.config import server
-from app.utils.network import local_ip
 from tracardi.domain.task import Task
+from tracardi.service.network import local_ip
 from tracardi.service.storage.driver import storage
 from app.api.auth.authentication import get_current_user
 
