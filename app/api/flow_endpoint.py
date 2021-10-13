@@ -373,7 +373,7 @@ async def debug_flow(flow: GraphFlow):
 
 
 @router.get("/flow/action/plugin/{id}",
-            tags=["flow", "action", "plugin"],
+            tags=["flow", "action"],
             response_model=FlowActionPlugin,
             include_in_schema=server.expose_gui_api)
 async def get_plugin(id: str):
@@ -388,7 +388,7 @@ async def get_plugin(id: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/flow/action/plugin/{id}/hide/{state}", tags=["flow", "action", "plugin"],
+@router.get("/flow/action/plugin/{id}/hide/{state}", tags=["flow", "action"],
             response_model=BulkInsertResult, include_in_schema=server.expose_gui_api)
 async def get_plugin_state(id: str, state: YesNo):
     """
@@ -407,7 +407,7 @@ async def get_plugin_state(id: str, state: YesNo):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/flow/action/plugin/{id}/enable/{state}", tags=["flow", "action", "plugin"],
+@router.get("/flow/action/plugin/{id}/enable/{state}", tags=["flow", "action"],
             response_model=BulkInsertResult, include_in_schema=server.expose_gui_api)
 async def get_plugin_enabled(id: str, state: YesNo):
     """
@@ -426,7 +426,7 @@ async def get_plugin_enabled(id: str, state: YesNo):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/flow/action/plugin/{id}", tags=["flow", "action", "plugin"],
+@router.get("/flow/action/plugin/{id}", tags=["flow", "action"],
             response_model=FlowActionPlugin, include_in_schema=server.expose_gui_api)
 async def get_plugin(id: str):
     """
@@ -440,7 +440,7 @@ async def get_plugin(id: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.delete("/flow/action/plugin/{id}", tags=["flow", "action", "plugin"],
+@router.delete("/flow/action/plugin/{id}", tags=["flow", "action"],
                response_model=dict, include_in_schema=server.expose_gui_api)
 async def delete_plugin(id: str):
     """
@@ -453,7 +453,7 @@ async def delete_plugin(id: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.post("/flow/action/plugin", tags=["flow", "action", "plugin"],
+@router.post("/flow/action/plugin", tags=["flow", "action"],
              response_model=BulkInsertResult, include_in_schema=server.expose_gui_api)
 async def upsert_plugin(action: FlowActionPlugin):
     """
@@ -473,7 +473,7 @@ async def upsert_plugin(action: FlowActionPlugin):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/flow/action/plugins", tags=["flow", "action", "plugin"],
+@router.get("/flow/action/plugins", tags=["flow", "action"],
             include_in_schema=server.expose_gui_api)
 async def get_plugins_list(query: Optional[str] = None):
     """
@@ -520,7 +520,7 @@ async def get_plugins_list(query: Optional[str] = None):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.post("/flow/action/plugin/register", tags=["flow", "action", "plugin"],
+@router.post("/flow/action/plugin/register", tags=["flow", "action"],
              response_model=BulkInsertResult, include_in_schema=server.expose_gui_api)
 async def register_plugin_by_module(plugin: PluginImport):
     """

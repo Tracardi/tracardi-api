@@ -1,15 +1,13 @@
 import asyncio
-import hashlib
-import importlib
 import logging
 import os
 from tracardi.exceptions.exception import StorageException
 from tracardi.domain.api_instance import ApiInstance
+from tracardi.service.module_loader import pip_install, load_callable, import_package
 from tracardi.service.storage.driver import storage
 from tracardi.service.storage.factory import StorageFor
 from tracardi_plugin_sdk.domain.register import Plugin
 
-from .module_loader import load_callable, pip_install
 
 __local_dir = os.path.dirname(__file__)
 logger = logging.getLogger('setup.on_start')
@@ -25,12 +23,12 @@ async def add_plugin(module, install=False, upgrade=False):
 
         try:
             # import
-            module = importlib.import_module(module)
+            module = import_package(module)
         except ImportError as e:
             # install
             if install:
                 pip_install(module.split(".")[0])
-                module = importlib.import_module(module)
+                module = import_package(module)
             else:
                 raise e
 
@@ -49,11 +47,9 @@ async def add_plugin(module, install=False, upgrade=False):
 
         # Action plugin id is a hash of its module and className
 
-        action_id = plugin_data.spec.module + plugin_data.spec.className
-        action_id = hashlib.md5(action_id.encode()).hexdigest()
         await asyncio.sleep(0)
         logger.info(f"Module `{plugin_data.spec.module}` was REGISTERED.")
-        return await storage.driver.plugin.save_plugin(action_id, plugin_data)
+        return await storage.driver.action.save_plugin(plugin_data)
 
     except ModuleNotFoundError as e:
         logger.error(f"Module `{module}` was NOT INSTALLED as it raised an error `{str(e)}`.")
@@ -97,6 +93,7 @@ async def add_plugins():
         'tracardi.process_engine.action.v1.detect_client_agent_action',
         'tracardi_url_parser.plugin',
         'tracardi_string_splitter.plugin',
+        'tracardi_event_counter.plugin',
 
         # Time
         'tracardi.process_engine.action.v1.time.sleep_action',
