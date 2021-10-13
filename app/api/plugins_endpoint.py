@@ -23,11 +23,26 @@ async def plugins():
 async def validate_plugin_configuration(id: str, config: dict = None):
     try:
         record = await storage.driver.action.load_by_id(id)
-        action_record = FlowActionPluginRecord(**record)
+
+        if record is None:
+            raise HTTPException(status_code=404, detail=f"No action plugin for id `{id}`")
+
+        try:
+            action_record = FlowActionPluginRecord(**record)
+        except ValidationError as e:
+            raise HTTPException(status_code=404, detail="Action plugin id `{id}` could not be"
+                                                        "validated and mapped into FlowActionPluginRecord object."
+                                                        f"Internal error: {str(e)}")
+
         validate = action_record.get_validator()
         if config is None:
-            raise ValueError("No configuration provided. Nothing to validate.")
+            raise HTTPException(status_code=404, detail="No validate function provided. "
+                                                        "Could not validate on server side.")
+
         return validate(config)
+
+    except HTTPException as e:
+        raise e
     except AttributeError as e:
         raise HTTPException(status_code=404, detail=str(e))
     except ValidationError as e:
