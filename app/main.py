@@ -18,7 +18,7 @@ from app.config import server
 from app.setup.on_start import add_plugins, update_api_instance
 from tracardi.service.storage.elastic_client import ElasticClient
 from app.setup.indices_setup import create_indices
-from tracardi.service.storage.factory import StorageForBulk
+from tracardi.service.storage.index import resources
 
 logging.basicConfig(level=logging.ERROR)
 logger = logging.getLogger('app.main')
@@ -139,6 +139,12 @@ application.include_router(test_endpoint.router)
 async def app_starts():
     while True:
         try:
+            if server.reset_plugins is True:
+                es = ElasticClient.instance()
+                index = resources.resources['action']
+                if await es.exists_index(index.get_write_index()):
+                    await es.remove_index(index.get_read_index())
+
             await create_indices()
             await update_api_instance()
             if server.update_plugins_on_start_up is not False:

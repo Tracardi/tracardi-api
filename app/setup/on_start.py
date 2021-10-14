@@ -32,8 +32,6 @@ async def add_plugin(module, install=False, upgrade=False):
             else:
                 raise e
 
-        # module = import_and_install(module, upgrade)
-
         # loads and installs dependencies
         plugin = load_callable(module, 'register')
         plugin_data = plugin()  # type: Plugin
