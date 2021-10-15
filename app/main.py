@@ -16,13 +16,14 @@ from app.api.scheduler import tasks_endpoint
 from app.api.track import event_server_endpoint
 from app.config import server
 from app.setup.on_start import add_plugins, update_api_instance
+from tracardi.config import tracardi
 from tracardi.service.storage.elastic_client import ElasticClient
 from app.setup.indices_setup import create_indices
 from tracardi.service.storage.index import resources
 
 logging.basicConfig(level=logging.ERROR)
 logger = logging.getLogger('app.main')
-logger.setLevel(logging.INFO)
+logger.setLevel(tracardi.logging_level)
 
 _local_dir = os.path.dirname(__file__)
 

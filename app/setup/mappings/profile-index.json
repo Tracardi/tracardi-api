@@ -17,6 +17,9 @@
             "properties": {
               "insert": {
                 "type": "date"
+              },
+              "lastVisit": {
+                "type": "date"
               }
             }
           }
