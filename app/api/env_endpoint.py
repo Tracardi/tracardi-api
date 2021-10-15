@@ -19,35 +19,40 @@ def get_envs() -> List[EnvVar]:
         EnvVar(
             **{
                 "label": "USER_NAME",
-                "variable": ("user", auth.user),
+                "suffix": "user",
+                "value": auth.user,
                 "desc": "Environmental variable containing username."
             }
         ),
         EnvVar(
             **{
                 "label": "PASSWORD",
-                "variable": ("password", auth.password),
+                "suffix": "password",
+                "value": auth.password,
                 "desc": "Environmental variable containing password."
             }
         ),
         EnvVar(
             **{
                 "label": "UPDATE_PLUGINS_ON_STARTUP",
-                "variable": ("update_plugins_on_startup", server.update_plugins_on_start_up),
+                "suffix": "update_plugins_on_startup",
+                "value": server.update_plugins_on_start_up,
                 "desc": "Environmental variable telling TracardiAPI to update plugins on startup or not."
             }
         ),
         EnvVar(
             **{
                 "label": "DEBUG_MAKE_SLOWER_RESPONSES",
-                "variable": ("make_slower_responses", server.make_slower_responses),
+                "suffix": "make_slower_responses",
+                "value": server.make_slower_responses,
                 "desc": "Environmental variable telling TracardiAPI the speed of debug responses, defaults to 0."
             }
         ),
         EnvVar(
             **{
                 "label": "RUN_HEARTBEAT_EVERY",
-                "variable": ("heartbeat_every", server.heartbeat_every),
+                "suffix": "heartbeat_every",
+                "value": server.heartbeat_every,
                 "desc": "Environmental variable telling TracardiAPI the interval of running heartbeat in seconds, "
                         "defaults to 300."
             }
@@ -55,7 +60,8 @@ def get_envs() -> List[EnvVar]:
         EnvVar(
             **{
                 "label": "TASKS_EVERY",
-                "variable": ("tasks_every", server.tasks_every),
+                "suffix": "tasks_every",
+                "value": server.tasks_every,
                 "desc": "Environmental variable telling TracardiAPI the interval of running tasks in seconds, "
                         "defaults to 1."
             }
@@ -63,7 +69,8 @@ def get_envs() -> List[EnvVar]:
         EnvVar(
             **{
                 "label": "AUTOLOAD_PAGE_SIZE",
-                "variable": ("page_size", server.page_size),
+                "suffix": "page_size",
+                "value": server.page_size,
                 "desc": "Environmental variable telling TracardiAPI the size of automatically loaded page, defaults"
                         " to 25."
             }
@@ -71,7 +78,8 @@ def get_envs() -> List[EnvVar]:
         EnvVar(
             **{
                 "label": "EXPOSE_GUI_API",
-                "variable": ("expose_gui_api", server.expose_gui_api),
+                "suffix": "expose_gui_api",
+                "value": server.expose_gui_api,
                 "desc": "Environmental variable telling TracardiAPI to expose GUI API or not, defaults to True, "
                         "can be changed by setting this variable to 'yes' (then it's True) or something else, "
                         "which makes it False."
@@ -80,7 +88,8 @@ def get_envs() -> List[EnvVar]:
         EnvVar(
             **{
                 "label": "RESET_PLUGINS",
-                "variable": ("reset_plugins", server.reset_plugins),
+                "suffix": "reset_plugins",
+                "value": server.reset_plugins,
                 "desc": "Environmental variable telling TracardiAPI to reset plugins data in ElasticSearch database"
                         " or not to do so, defaults to False, can be changed as previous one."
             }
