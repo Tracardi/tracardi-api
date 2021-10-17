@@ -1,9 +1,9 @@
+from datetime import datetime, timedelta
 from typing import List
 
 from fastapi import APIRouter, Depends
 from fastapi import HTTPException
 
-from tracardi.domain.storage_aggregate_result import StorageAggregateResult
 from tracardi.service.storage.driver import storage
 from tracardi.service.storage.factory import StorageFor, StorageForBulk, storage_manager
 from tracardi.domain.record.event_debug_record import EventDebugRecord
@@ -17,6 +17,38 @@ from ..config import server
 router = APIRouter(
     dependencies=[Depends(get_current_user)]
 )
+
+
+def __format_aggs(rows):
+    for row in rows:
+        # todo timestamp no timezone
+        timestamp = datetime.fromisoformat(row["key_as_string"].replace('Z', '+00:00'))
+        yield {
+            "date": "{}".format(timestamp.strftime("%Y/%m/%d")),
+            "count": row["doc_count"]
+        }
+
+
+@router.get("/events/heatmap/profile/{id}", tags=["event"], include_in_schema=server.expose_gui_api)
+async def heatmap_by_profile(id: str):
+    try:
+
+        result = await storage.driver.event.heatmap_by_profile(id)
+        return list(__format_aggs(result))
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/events/heatmap", tags=["event"], include_in_schema=server.expose_gui_api)
+async def heatmap():
+    try:
+
+        result = await storage.driver.event.heatmap_by_profile(profile_id=None)
+        return list(__format_aggs(result))
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.get("/events/metadata/type", tags=["event"], include_in_schema=server.expose_gui_api)
@@ -33,7 +65,7 @@ async def event_types(profile_id: str):
     return await storage.driver.event.aggregate_profile_events_by_type(profile_id)
 
 
-@router.get("/events/heatmap/profile/{profile_id}", tags=["event"], include_in_schema=server.expose_gui_api)
+@router.get("/events/heatmap_by_profile/profile/{profile_id}", tags=["event"], include_in_schema=server.expose_gui_api)
 async def event_types(profile_id: str):
     return await storage.driver.event.load_events_heatmap(profile_id)
 
@@ -82,7 +114,8 @@ async def delete_event(id: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/event/debug/{id}", tags=["event"], response_model=List[DebugInfo], include_in_schema=server.expose_gui_api)
+@router.get("/event/debug/{id}", tags=["event"], response_model=List[DebugInfo],
+            include_in_schema=server.expose_gui_api)
 async def get_event_debug_info(id: str):
     encoded_debug_records = await storage.driver.debug_info.load_by_event(id)
     if encoded_debug_records is not None:

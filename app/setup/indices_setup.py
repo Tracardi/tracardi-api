@@ -1,5 +1,7 @@
 import json
 import os
+
+from tracardi.config import tracardi
 from tracardi.service.storage.elastic_client import ElasticClient
 from tracardi.service.storage.index import resources, Index
 import logging
@@ -13,8 +15,8 @@ index_mapping = {
     }
 }
 
-logger = logging.getLogger('tracardi.create_indices')
-logger.setLevel(logging.INFO)
+logger = logging.getLogger(__name__)
+logger.setLevel(tracardi.logging_level)
 
 
 async def create_indices():
