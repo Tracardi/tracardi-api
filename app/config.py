@@ -1,5 +1,5 @@
 import os
-
+from tracardi.service.storage.driver import storage
 
 class AuthConfig:
     def __init__(self, env):
