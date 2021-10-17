@@ -8,35 +8,36 @@ elasticsearch==7.13.4
 prodict==0.8.18
 lark==0.11.3
 
-git+https://github.com/atompie/tracardi.git@master
-git+https://github.com/atompie/tracardi-wf.git@main
-git+https://github.com/atompie/tracardi-dot-notation.git
+git+https://github.com/Tracardi/tracardi.git@master
+git+https://github.com/Tracardi/tracardi-wf.git@main
+git+https://github.com/Tracardi/tracardi-dot-notation.git
 
-git+https://github.com/atompie/tracardi-plugin-sdk.git
+git+https://github.com/Tracardi/tracardi-plugin-sdk.git
 
-git+https://github.com/atompie/tracardi-maxmind-geolite2.git
-git+https://github.com/atompie/tracardi-fullcontact-webhook.git
+git+https://github.com/Tracardi/tracardi-maxmind-geolite2.git
+git+https://github.com/Tracardi/tracardi-fullcontact-webhook.git
 
-git+https://github.com/atompie/tracardi-day-night-split.git
-git+https://github.com/atompie/tracardi-key-counter.git
-git+https://github.com/atompie/tracardi-url-parser.git
-git+https://github.com/atompie/tracardi-string-splitter.git
+git+https://github.com/Tracardi/tracardi-day-night-split.git
+git+https://github.com/Tracardi/tracardi-key-counter.git
+git+https://github.com/Tracardi/tracardi-url-parser.git
+git+https://github.com/Tracardi/tracardi-string-splitter.git
 
-git+https://github.com/atompie/tracardi-pushover-webhook.git
-git+https://github.com/atompie/tracardi-discord-webhook.git
-git+https://github.com/atompie/tracardi-mongodb-connector.git
-git+https://github.com/atompie/tracardi-mysql-connector.git
-git+https://github.com/atompie/tracardi-postgresql-connector.git
-git+https://github.com/atompie/tracardi-redshift-connector.git
-git+https://github.com/atompie/tracardi-rabbitmq-publisher.git
-git+https://github.com/atompie/tracardi-remote-call.git
-git+https://github.com/atompie/tracardi-weather.git
-git+https://github.com/atompie/tracardi-zapier-webhook.git
-git+https://github.com/atompie/tracardi-event-scheduler.git
-git+https://github.com/atompie/tracardi-string-validator.git
-git+https://github.com/atompie/tracardi-sentiment-analysis.git
-git+https://github.com/atompie/tracardi-text-classification.git
-git+https://github.com/atompie/tracardi-smtp-connector.git
-git+https://github.com/atompie/tracardi-local-timespan.git
-git+https://github.com/atompie/tracardi-event-counter.git
-git+https://github.com/atompie/tracardi-language-detection.git
+git+https://github.com/Tracardi/tracardi-pushover-webhook.git
+git+https://github.com/Tracardi/tracardi-discord-webhook.git
+git+https://github.com/Tracardi/tracardi-mongodb-connector.git
+git+https://github.com/Tracardi/tracardi-mysql-connector.git
+git+https://github.com/Tracardi/tracardi-postgresql-connector.git
+git+https://github.com/Tracardi/tracardi-redshift-connector.git
+git+https://github.com/Tracardi/tracardi-rabbitmq-publisher.git
+git+https://github.com/Tracardi/tracardi-remote-call.git
+git+https://github.com/Tracardi/tracardi-weather.git
+git+https://github.com/Tracardi/tracardi-zapier-webhook.git
+git+https://github.com/Tracardi/tracardi-event-scheduler.git
+git+https://github.com/Tracardi/tracardi-string-validator.git
+git+https://github.com/Tracardi/tracardi-sentiment-analysis.git
+git+https://github.com/Tracardi/tracardi-text-classification.git
+git+https://github.com/Tracardi/tracardi-smtp-connector.git
+git+https://github.com/Tracardi/tracardi-local-timespan.git
+git+https://github.com/Tracardi/tracardi-event-counter.git
+git+https://github.com/Tracardi/tracardi-language-detection.git
+git+https://github.com/Tracardi/tracardi-regex-validator.git
