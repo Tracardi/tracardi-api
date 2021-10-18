@@ -1,5 +1,7 @@
 from typing import Union, List
 
+from tracardi.config import elastic, redis_config, tracardi, memory_cache
+
 from app.api.auth.authentication import get_current_user
 from app.config import *
 from fastapi import APIRouter, Depends
@@ -80,6 +82,174 @@ system_settings = [
             "value": server.reset_plugins,
             "desc": "Reset plugins data in ElasticSearch database, defaults to False. "
                     "Plug-ins are recreated with every Tracardi restart."
+        }
+    ),
+    SystemSettings(
+        **{
+            "label": "TRACK_DEBUG",
+            "value": tracardi.track_debug,
+            "desc": "Track debug or not, defaults to False."
+        }
+    ),
+    SystemSettings(
+        **{
+            "label": "CACHE_PROFILE",
+            "value": tracardi.cache_profiles,
+            "desc": "Cache profiles or not, defaults to False."
+        }
+    ),
+    SystemSettings(
+        **{
+            "label": "SYNC_PROFILE_TRACKS",
+            "value": tracardi.sync_profile_tracks,
+            "desc": "No desc"
+        }
+    ),
+    SystemSettings(
+        **{
+            "label": "STORAGE_DRIVER",
+            "value": tracardi.storage_driver,
+            "desc": "The name of storage driver, defaults to 'elastic'."
+        }
+    ),
+    SystemSettings(
+        **{
+            "label": "LOGGING_LEVEL",
+            "value": tracardi.logging_level,
+            "desc": "The logging level. Defaults to logging.WARNING."
+        }
+    ),
+    SystemSettings(
+        **{
+            "label": "SOURCE_TTL",
+            "value": memory_cache.source_ttl,
+            "desc": "No desc, defaults to 60."
+        }
+    ),
+    SystemSettings(
+        **{
+            "label": "ELASTIC_HOST",
+            "value": elastic.host,
+            "desc": "Elastic host. Defaults to '127.0.0.1'."
+        }
+    ),
+    SystemSettings(
+        **{
+            "label": "ELASTIC_SNIFF_ON_START",
+            "value": elastic.sniff_on_start,
+            "desc": "Defaults to None."
+        }
+    ),
+    SystemSettings(
+        **{
+            "label": "ELASTIC_SNIFF_ON_CONNECTION_FAIL",
+            "value": elastic.sniff_on_connection_fail,
+            "desc": "Defaults to None."
+        }
+    ),
+    SystemSettings(
+        **{
+            "label": "ELASTIC_SNIFFER_TIMEOUT",
+            "value": elastic.sniffer_timeout,
+            "desc": "Defaults to None."
+        }
+    ),
+    SystemSettings(
+        **{
+            "label": "ELASTIC_HTTP_AUTH_USERNAME",
+            "value": elastic.http_auth_username,
+            "desc": "Defaults to None."
+        }
+    ),
+    SystemSettings(
+        **{
+            "label": "ELASTIC_HTTP_AUTH_PASSWORD",
+            "value": elastic.http_auth_password,
+            "desc": "Defaults to None."
+        }
+    ),
+    SystemSettings(
+        **{
+            "label": "ELASTIC_SCHEME",
+            "value": elastic.scheme,
+            "desc": "Defaults to None."
+        }
+    ),
+    SystemSettings(
+        **{
+            "label": "ELASTIC_CAFILE",
+            "value": elastic.cafile,
+            "desc": "Defaults to None."
+        }
+    ),
+    SystemSettings(
+        **{
+            "label": "ELASTIC_API_KEY",
+            "value": elastic.api_key,
+            "desc": "Defaults to None."
+        }
+    ),
+    SystemSettings(
+        **{
+            "label": "ELASTIC_CLOUD_ID",
+            "value": elastic.cloud_id,
+            "desc": "Defaults to None."
+        }
+    ),
+    SystemSettings(
+        **{
+            "label": "ELASTIC_MAX_CONN",
+            "value": elastic.maxsize,
+            "desc": "Defaults to None."
+        }
+    ),
+    SystemSettings(
+        **{
+            "label": "ELASTIC_HTTP_COMPRESS",
+            "value": elastic.http_compress,
+            "desc": "Defaults to None."
+        }
+    ),
+    SystemSettings(
+        **{
+            "label": "ELASTIC_VERIFY_CERTS",
+            "value": elastic.verify_certs,
+            "desc": "Defaults to None. Can be changed by being set to 'yes'."
+        }
+    ),
+    SystemSettings(
+        **{
+            "label": "ELASTIC_SQL_TRANSLATE_URL",
+            "value": elastic.sql_translate_url,
+            "desc": "Defaults to '/_sql/translate'."
+        }
+    ),
+    SystemSettings(
+        **{
+            "label": "ELASTIC_SQL_TRANSLATE_METHOD",
+            "value": elastic.sql_translate_method,
+            "desc": "Defaults to 'POST'."
+        }
+    ),
+    SystemSettings(
+        **{
+            "label": "ELASTIC_REFRESH_PROFILES_AFTER_SAVE",
+            "value": elastic.refresh_profiles_after_save,
+            "desc": "Defaults to False."
+        }
+    ),
+    SystemSettings(
+        **{
+            "label": "ELASTIC_LOGGING_LEVEL",
+            "value": elastic.logging_level,
+            "desc": "Defaults to logging.WARNING."
+        }
+    ),
+    SystemSettings(
+        **{
+            "label": "REDIS_HOST",
+            "value": redis_config.redis_host,
+            "desc": "Defaults to 'redis://localhost:6379'."
         }
     ),
 ]
