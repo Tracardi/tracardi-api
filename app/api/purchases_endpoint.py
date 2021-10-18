@@ -1,15 +1,18 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
+
+from app.api.auth.authentication import get_current_user
 from app.config import server
-from tracardi.service.storage.drivers.elastic import raw
+from tracardi.service.storage.driver import storage
 
-router = APIRouter()
+router = APIRouter(
+    dependencies=[Depends(get_current_user)]
+)
 
 
-@router.get("/purchases/plugin/{profile_id}", tags=["purchases"], include_in_schema=server.expose_gui_api)
-async def get_purchases_by_id(profile_id: str, limit: int = 0) -> list:
-    purchases = (await raw.index("profile-purchase").storage.load_by(
-        "profile.id",
+@router.get("/purchases/profile/{profile_id}", tags=["purchases"],
+            include_in_schema=server.expose_gui_api, response_model=dict)
+async def get_purchases_by_id(profile_id: str, limit: int = 0) -> dict:
+    return await storage.driver.purchase.load(
         profile_id,
-        limit if 0 < limit < 1000 else 10
-    ))["hits"]["hits"]
-    return purchases
+        limit
+    )

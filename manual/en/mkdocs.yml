@@ -70,6 +70,10 @@ nav:
               - flow/actions/decrement_action.md
               - flow/actions/increase_views_action.md
               - flow/actions/increase_visits_action.md
+            - Connectors:
+                - flow/actions/zapier_webhhok_action.md
+            - Validators:
+                - flow/actions/regex_validator_action.md
             - flow/actions/new_event_action.md
         - Notations:
             - notations/index.md
