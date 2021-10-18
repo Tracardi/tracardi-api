@@ -1,4 +1,4 @@
-from typing import Union, List
+from typing import List, Any
 
 from tracardi.config import elastic, redis_config, tracardi, memory_cache
 
@@ -10,7 +10,7 @@ from pydantic import BaseModel
 
 class SystemSettings(BaseModel):
     label: str
-    value: Union[str, int, float, bool]
+    value: Any
     desc: str
 
 
