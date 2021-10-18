@@ -71,6 +71,8 @@ nav:
               - flow/actions/increase_views_action.md
               - flow/actions/increase_visits_action.md
             - flow/actions/new_event_action.md
+            - flow/actions/event_counter_action.md
+            - flow/actions/purchase_add_action.md
         - Notations:
             - notations/index.md
             - notations/dot_notation.md
