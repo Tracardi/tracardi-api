@@ -1,13 +1,14 @@
-from typing import List, Union
+from typing import List, Any
 from app.config import *
 from fastapi import APIRouter
 from pydantic import BaseModel
+from tracardi.config import *
 
 
 class EnvVar(BaseModel):
     suffix: str
     label: str
-    value: Union[str, int, float, bool]
+    value: Any
     desc: str
 
     def generate_endpoint(self):
@@ -15,7 +16,7 @@ class EnvVar(BaseModel):
 
 
 def get_envs() -> List[EnvVar]:
-    env_vars = [
+    return [
         EnvVar(
             **{
                 "label": "USER_NAME",
@@ -94,8 +95,199 @@ def get_envs() -> List[EnvVar]:
                         " or not to do so, defaults to False, can be changed as previous one."
             }
         ),
+        EnvVar(
+            **{
+                "label": "TRACK_DEBUG",
+                "suffix": "track_debug",
+                "value": tracardi.track_debug,
+                "desc": "Environmental variable telling Tracardi to track debug or not, defaults to False."
+            }
+        ),
+        EnvVar(
+            **{
+                "label": "CACHE_PROFILE",
+                "suffix": "cache_profiles",
+                "value": tracardi.cache_profiles,
+                "desc": "Environmental variable telling Tracardi to cache profiles or not, defaults to False."
+            }
+        ),
+        EnvVar(
+            **{
+                "label": "SYNC_PROFILE_TRACKS",
+                "suffix": "sync_profile_tracks",
+                "value": tracardi.sync_profile_tracks,
+                "desc": "No desc"
+            }
+        ),
+        EnvVar(
+            **{
+                "label": "STORAGE_DRIVER",
+                "suffix": "storage_driver",
+                "value": tracardi.storage_driver,
+                "desc": "Environmental variable telling Tracardi the name of storage driver, defaults to 'elastic'."
+            }
+        ),
+        EnvVar(
+            **{
+                "label": "LOGGING_LEVEL",
+                "suffix": "logging_level",
+                "value": tracardi.logging_level,
+                "desc": "Environmental variable telling Tracardi the logging level. Defaults to logging.WARNING."
+            }
+        ),
+        EnvVar(
+            **{
+                "label": "SOURCE_TTL",
+                "suffix": "source_ttl",
+                "value": memory_cache.source_ttl,
+                "desc": "No desc, defaults to 60."
+            }
+        ),
+        EnvVar(
+            **{
+                "label": "ELASTIC_HOST",
+                "suffix": "host",
+                "value": elastic.host,
+                "desc": "Environmental variable telling Tracardi the name of elastic host. Defaults to '127.0.0.1'."
+            }
+        ),
+        EnvVar(
+            **{
+                "label": "ELASTIC_SNIFF_ON_START",
+                "suffix": "sniff_on_start",
+                "value": elastic.sniff_on_start,
+                "desc": "Defaults to None."
+            }
+        ),
+        EnvVar(
+            **{
+                "label": "ELASTIC_SNIFF_ON_CONNECTION_FAIL",
+                "suffix": "sniff_on_connection_fail",
+                "value": elastic.sniff_on_connection_fail,
+                "desc": "Defaults to None."
+            }
+        ),
+        EnvVar(
+            **{
+                "label": "ELASTIC_SNIFFER_TIMEOUT",
+                "suffix": "sniffer_timeout",
+                "value": elastic.sniffer_timeout,
+                "desc": "Defaults to None."
+            }
+        ),
+        EnvVar(
+            **{
+                "label": "ELASTIC_HTTP_AUTH_USERNAME",
+                "suffix": "http_auth_username",
+                "value": elastic.http_auth_username,
+                "desc": "Defaults to None."
+            }
+        ),
+        EnvVar(
+            **{
+                "label": "ELASTIC_HTTP_AUTH_PASSWORD",
+                "suffix": "http_auth_password",
+                "value": elastic.http_auth_password,
+                "desc": "Defaults to None."
+            }
+        ),
+        EnvVar(
+            **{
+                "label": "ELASTIC_SCHEME",
+                "suffix": "scheme",
+                "value": elastic.scheme,
+                "desc": "Defaults to None."
+            }
+        ),
+        EnvVar(
+            **{
+                "label": "ELASTIC_CAFILE",
+                "suffix": "cafile",
+                "value": elastic.cafile,
+                "desc": "Defaults to None."
+            }
+        ),
+        EnvVar(
+            **{
+                "label": "ELASTIC_API_KEY",
+                "suffix": "api_key",
+                "value": elastic.api_key,
+                "desc": "Defaults to None."
+            }
+        ),
+        EnvVar(
+            **{
+                "label": "ELASTIC_CLOUD_ID",
+                "suffix": "cloud_id",
+                "value": elastic.cloud_id,
+                "desc": "Defaults to None."
+            }
+        ),
+        EnvVar(
+            **{
+                "label": "ELASTIC_MAX_CONN",
+                "suffix": "maxsize",
+                "value": elastic.maxsize,
+                "desc": "Defaults to None."
+            }
+        ),
+        EnvVar(
+            **{
+                "label": "ELASTIC_HTTP_COMPRESS",
+                "suffix": "http_compress",
+                "value": elastic.http_compress,
+                "desc": "Defaults to None."
+            }
+        ),
+        EnvVar(
+            **{
+                "label": "ELASTIC_VERIFY_CERTS",
+                "suffix": "verify_certs",
+                "value": elastic.verify_certs,
+                "desc": "Defaults to None. Can be changed by being set to 'yes'."
+            }
+        ),
+        EnvVar(
+            **{
+                "label": "ELASTIC_SQL_TRANSLATE_URL",
+                "suffix": "sql_translate_url",
+                "value": elastic.sql_translate_url,
+                "desc": "Defaults to '/_sql/translate'."
+            }
+        ),
+        EnvVar(
+            **{
+                "label": "ELASTIC_SQL_TRANSLATE_METHOD",
+                "suffix": "sql_translate_method",
+                "value": elastic.sql_translate_method,
+                "desc": "Defaults to 'POST'."
+            }
+        ),
+        EnvVar(
+            **{
+                "label": "ELASTIC_REFRESH_PROFILES_AFTER_SAVE",
+                "suffix": "refresh_profiles_after_save",
+                "value": elastic.refresh_profiles_after_save,
+                "desc": "Defaults to False."
+            }
+        ),
+        EnvVar(
+            **{
+                "label": "ELASTIC_LOGGING_LEVEL",
+                "suffix": "elastic_logging_level",
+                "value": elastic.logging_level,
+                "desc": "Defaults to logging.WARNING."
+            }
+        ),
+        EnvVar(
+            **{
+                "label": "REDIS_HOST",
+                "suffix": "redis_host",
+                "value": redis_config.redis_host,
+                "desc": "Defaults to 'redis://localhost:6379'."
+            }
+        ),
     ]
-    return env_vars
 
 
 router = APIRouter()
