@@ -72,6 +72,7 @@ nav:
               - flow/actions/decrement_action.md
               - flow/actions/increase_views_action.md
               - flow/actions/increase_visits_action.md
+              - flow/actions/key_counter_action.md
             - Connectors:
                 - flow/actions/zapier_webhook_action.md
                 - flow/actions/smtp_connector_action.md
@@ -81,6 +82,8 @@ nav:
                 - flow/actions/regex_validator_action.md
             - Locations:
                 - flow/actions/geo_ip_locator.md
+            - Time:
+                - flow/actions/day_night_split_action.md
             - flow/actions/new_event_action.md
             - flow/actions/event_counter_action.md
             - flow/actions/purchase_add_action.md

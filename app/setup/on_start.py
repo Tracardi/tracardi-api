@@ -98,7 +98,7 @@ async def add_plugins():
         # Time
         'tracardi.process_engine.action.v1.time.sleep_action',
         'tracardi.process_engine.action.v1.time.today_action',
-        'tracardi_day_night_split.day_night_split_action',
+        'tracardi_day_night_split.plugin',
         'tracardi_local_timespan.plugin',
 
         # Connectors
