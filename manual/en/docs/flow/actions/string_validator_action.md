@@ -1,4 +1,4 @@
-# Tracardi plugin: String Validator
+# String Validator Action
 
 The purpose of this plugin is to validate data. We need to specify a type of validation. 
 
