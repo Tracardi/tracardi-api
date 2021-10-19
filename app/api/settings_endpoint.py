@@ -1,18 +1,9 @@
-from typing import List, Any
-
+from typing import List, Optional
 from tracardi.config import elastic, redis_config, tracardi, memory_cache
-
 from app.api.auth.authentication import get_current_user
 from app.config import *
 from fastapi import APIRouter, Depends
-from pydantic import BaseModel
-
-
-class SystemSettings(BaseModel):
-    label: str
-    value: Any
-    desc: str
-
+from tracardi.domain.settings import SystemSettings
 
 system_settings = [
     SystemSettings(
@@ -257,6 +248,16 @@ system_settings = [
 router = APIRouter(
     dependencies=[Depends(get_current_user)]
 )
+
+
+@router.get("/setting/{name}", tags=["settings"],
+            include_in_schema=server.expose_gui_api,
+            response_model=Optional[SystemSettings])
+async def get_system_settings(name: str) -> Optional[SystemSettings]:
+    for setting in system_settings:
+        if setting.label == name:
+            return setting
+    return None
 
 
 @router.get("/settings", tags=["settings"],
