@@ -8,12 +8,11 @@ elasticsearch==7.13.4
 prodict==0.8.18
 lark==0.11.3
 
-git+https://github.com/Tracardi/tracardi.git@master
-git+https://github.com/Tracardi/tracardi-wf.git@main
-git+https://github.com/Tracardi/tracardi-dot-notation.git
-
 git+https://github.com/Tracardi/tracardi-plugin-sdk.git
+git+https://github.com/Tracardi/tracardi-wf.git@main
+git+https://github.com/Tracardi/tracardi.git@master
 
+git+https://github.com/Tracardi/tracardi-smtp-connector.git
 git+https://github.com/Tracardi/tracardi-maxmind-geolite2.git
 git+https://github.com/Tracardi/tracardi-fullcontact-webhook.git
 
@@ -36,7 +35,6 @@ git+https://github.com/Tracardi/tracardi-event-scheduler.git
 git+https://github.com/Tracardi/tracardi-string-validator.git
 git+https://github.com/Tracardi/tracardi-sentiment-analysis.git
 git+https://github.com/Tracardi/tracardi-text-classification.git
-git+https://github.com/Tracardi/tracardi-smtp-connector.git
 git+https://github.com/Tracardi/tracardi-local-timespan.git
 git+https://github.com/Tracardi/tracardi-event-counter.git
 git+https://github.com/Tracardi/tracardi-language-detection.git
