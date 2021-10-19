@@ -76,8 +76,11 @@ nav:
                 - flow/actions/zapier_webhook_action.md
                 - flow/actions/smtp_connector_action.md
                 - flow/actions/remote_call_action.md
+                - flow/actions/fullcontact_webhook_action.md
             - Validators:
                 - flow/actions/regex_validator_action.md
+            - Locations:
+                - flow/actions/geo_ip_locator.md
             - flow/actions/new_event_action.md
             - flow/actions/event_counter_action.md
             - flow/actions/purchase_add_action.md

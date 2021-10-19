@@ -35,7 +35,7 @@ async def get_resource_types(type: TypeEnum) -> dict:
 
     try:
         types = {
-            "web-page": {
+            "api-call": {
                 "user": None,
                 "password": None
             },
@@ -53,7 +53,7 @@ async def get_resource_types(type: TypeEnum) -> dict:
                 "password": None
             },
             "ip-geo-locator": {
-                "host": None,
+                "host": "geolite.info",
                 "license": None,
                 "accountId": None
             },
