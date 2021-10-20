@@ -1,38 +1,39 @@
-# String Validator Action
+# String Validator
 
-The purpose of this plugin is to validate data with custom regex.
+This plugin validates data with regex pattern.
 
 # Configuration
 
-This node require configuration.
+This node requires configuration.
 
-* validation_regex - paste here your regex.
-* data - here is data what we want to validate
+* validation_regex - this is regex pattern.
+* data - data what we want to validate. this value can also be a path to date in profile, session, event.
 
 # Examples
 
 ```json
 {
-  "validation_regex": "^h",
-  "data": "hello!"
+  "validation_regex": "^H",
+  "data": "payload@properties.hello"   // This will return e.g. Hello world
 }
 ```
 
-It will return TRUE
+It will return `{"result":true}`
 
 ```json
 {
   "validation_regex": "^a",
-  "data": "hello!"
+  "data": "hello!"  // Now we use plain string instead of path to data.
 }
 ```
 
-It will return FALSE
+It will return `{"result":false}`
 
-# Input payload
+
+# Input
 
 This node does not process input payload.
 
 # Output
 
-This is two output TRUE and FALSE.
+This is two outputs `{"result":true}` and `{"result":false}`.
