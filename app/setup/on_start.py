@@ -68,10 +68,6 @@ async def add_plugins():
         'tracardi.process_engine.action.v1.increment_action',
         'tracardi.process_engine.action.v1.decrement_action',
 
-        'tracardi.process_engine.action.v1.read_session_action',
-        'tracardi.process_engine.action.v1.read_profile_action',
-        'tracardi.process_engine.action.v1.read_event_action',
-
         'tracardi.process_engine.action.v1.if_action',
         'tracardi.process_engine.action.v1.new_visit_action',
         'tracardi.process_engine.action.v1.new_profile_action',
