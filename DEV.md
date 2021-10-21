@@ -22,4 +22,4 @@ docker run -p 9200:9200 -p 9600:9600 -e "discovery.type=single-node" amazon/open
 docker run -p 8686:80 -e ELASTIC_HOST=http://192.168.1.103:9200 tracardi/tracardi-api
 
 # Run local redis
-docker run -p 63o79:6379 redis
+docker run -p 6379:6379 redis
