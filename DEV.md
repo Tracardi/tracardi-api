@@ -23,3 +23,6 @@ docker run -p 8686:80 -e ELASTIC_HOST=http://192.168.1.103:9200 tracardi/tracard
 
 # Run local redis
 docker run -p 6379:6379 redis
+
+# Run local jupyter notebook
+docker run -p 8888:8888 jupyter/minimal-notebook

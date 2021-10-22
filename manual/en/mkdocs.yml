@@ -79,6 +79,7 @@ nav:
                 - flow/actions/remote_call_action.md
                 - flow/actions/fullcontact_webhook_action.md
                 - flow/actions/send_pushover_msg_action.md
+                - flow/actions/rabbitmq_action.md
             - Validators:
                 - flow/actions/regex_validator_action.md
             - Locations:
@@ -88,6 +89,7 @@ nav:
             - Processing:
                 - flow/actions/url_parser_action.md
                 - flow/actions/string_splitter_action.md
+                - flow/actions/string_properties_action.md
             - flow/actions/new_event_action.md
             - flow/actions/event_counter_action.md
             - flow/actions/purchase_add_action.md
