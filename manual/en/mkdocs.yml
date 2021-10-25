@@ -81,6 +81,7 @@ nav:
                 - flow/actions/send_pushover_msg_action.md
                 - flow/actions/rabbitmq_action.md
                 - flow/actions/rabbit_publisher_action.md
+                - flow/actions/discord_webhook_action.md
             - Validators:
                 - flow/actions/regex_validator_action.md
             - Locations:
