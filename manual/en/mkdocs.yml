@@ -82,6 +82,7 @@ nav:
                 - flow/actions/rabbitmq_action.md
                 - flow/actions/rabbit_publisher_action.md
                 - flow/actions/discord_webhook_action.md
+                - flow/actions/weather_action.md
             - Validators:
                 - flow/actions/regex_validator_action.md
             - Locations:
