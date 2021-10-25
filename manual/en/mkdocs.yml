@@ -89,6 +89,7 @@ nav:
                 - flow/actions/geo_ip_locator.md
             - Time:
                 - flow/actions/day_night_split_action.md
+                - flow/actions/local_time_span_action.md
             - Processing:
                 - flow/actions/url_parser_action.md
                 - flow/actions/string_splitter_action.md
