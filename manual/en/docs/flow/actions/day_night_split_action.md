@@ -4,19 +4,19 @@ The purpose of this plugin is to split the workflow depending on day or night of
 
 It will check if the event happened at day or night. Then it will route the workflow to the appropriate output port.
 
-This action minds the time zone of the event. Therefore, you must provide time zone in configuration. By default, time
-zone is included in browser event context.
+This action minds the city of the event. Therefore, you must provide city in configuration. 
 
 # Configuration
 
-This node requires configuration. In order to read timezone you must define path to time zone data. Use dot notation to
+This node requires configuration. In order to read city you must define path to city data. Use dot notation to
 do that.
 
 *Example*
 
 ```json
 {
-  "timezone": "session@context.time.tz"
+  "service": "open-street-map",
+  "city": "session@context.city"
 }
 ```
 
@@ -30,4 +30,3 @@ This node has two output nodes. One for DAY route and one for NIGHT node. The DA
 day. The NIGHT node is active when it is night. 
 
 Active output ports will return input payload. 
- 
