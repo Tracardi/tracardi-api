@@ -34,3 +34,6 @@ mysql -h localhost -P 3306 --protocol=tcp -u root -p root test
 
 # Run local mongo
 docker run -p 27017:27017 mongo
+
+# Run local PG
+docker run -e POSTGRES_PASSWORD=root -p 5432:5432 postgres
