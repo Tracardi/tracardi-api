@@ -67,6 +67,7 @@ nav:
             - flow/actions/detect_client_agent_action.md
             - flow/actions/debug_payload_action.md
             - flow/actions/inject_action.md
+            - flow/actions/event_scheduler_action.md
             - Stats:
               - flow/actions/increment_action.md
               - flow/actions/decrement_action.md
@@ -83,6 +84,7 @@ nav:
                 - flow/actions/rabbit_publisher_action.md
                 - flow/actions/discord_webhook_action.md
                 - flow/actions/weather_action.md
+                - flow/actions/mongo_query_action.md
             - Validators:
                 - flow/actions/regex_validator_action.md
             - Locations:

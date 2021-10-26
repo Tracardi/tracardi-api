@@ -30,3 +30,7 @@ docker run -p 8888:8888 jupyter/minimal-notebook
 # Run local mysql
 docker run -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=test -p 3306:3306 mysql
 mysql -h localhost -P 3306 --protocol=tcp -u root -p root test
+
+
+# Run local mongo
+docker run -p 27017:27017 mongo
