@@ -75,6 +75,7 @@ There are other operators possible like:
 * greater or equal then (>=)
 * not equal (!=)
 * exists (*fieldname* EXISTS)
+* not exists (*fieldname* NOT EXISTS)
 
 # Value types
 
