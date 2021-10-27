@@ -28,6 +28,20 @@ This plugin connects to Mysql and executes a SQL query.
 * *data* - data to replace in SQL prepared statement template.
 * *timeout* - query timeout.
 
+## Resource schema
+
+*Example*
+
+```json
+{
+  "host": "192.168.1.103",
+  "port": 3306,
+  "user": "root",
+  "password": "root",
+  "database": "mysql"
+}
+```
+
 # Output
 
 It returns the data in JSON.
