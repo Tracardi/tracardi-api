@@ -85,6 +85,7 @@ nav:
                 - flow/actions/discord_webhook_action.md
                 - flow/actions/weather_action.md
                 - flow/actions/mongo_query_action.md
+                - flow/actions/mysql_connector_action.md
             - Validators:
                 - flow/actions/regex_validator_action.md
             - Locations:
