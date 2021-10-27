@@ -26,7 +26,6 @@ git+https://github.com/Tracardi/tracardi-discord-webhook.git
 git+https://github.com/Tracardi/tracardi-mongodb-connector.git
 git+https://github.com/Tracardi/tracardi-mysql-connector.git
 git+https://github.com/Tracardi/tracardi-postgresql-connector.git
-git+https://github.com/Tracardi/tracardi-redshift-connector.git
 git+https://github.com/Tracardi/tracardi-rabbitmq-publisher.git
 git+https://github.com/Tracardi/tracardi-remote-call.git
 git+https://github.com/Tracardi/tracardi-weather.git
