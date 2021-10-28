@@ -106,9 +106,6 @@ nav:
             - flow/actions/purchase_add_action.md
         - Notations:
             - notations/index.md
-            - notations/dot_notation.md
-            - notations/logic.md
-            - notations/math.md
     - Integration:
         - integration/js-integration.md
         - integration/api-integration.md
