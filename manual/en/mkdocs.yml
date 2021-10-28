@@ -42,7 +42,8 @@ nav:
         - installation/elasticsearch/elastic_authentication.md
         - installation/elasticsearch/sql_translation_configuration.md
         - installation/elasticsearch/elastic_max_connections.md
-      - installation/trouble_shooting.md
+  - Trouble shooting:
+    - trouble/trouble_shooting.md
   - Running:
       - running/index.md
   - Getting started:

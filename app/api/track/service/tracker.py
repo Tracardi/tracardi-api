@@ -13,7 +13,7 @@ from app.api.track.service.segmentation import segment
 from tracardi.domain.session import Session
 from tracardi.domain.value_object.tracker_payload_result import TrackerPayloadResult
 from tracardi.config import tracardi
-from tracardi.exceptions.exception import UnauthorizedException
+from tracardi.exceptions.exception import UnauthorizedException, StorageException, FieldTypeConflictException
 from tracardi.process_engine.rules_engine import RulesEngine
 from tracardi.domain.value_object.collect_result import CollectResult
 from tracardi.domain.payload.tracker_payload import TrackerPayload
@@ -28,18 +28,27 @@ logger = logging.getLogger('app.api.track.service.tracker')
 async def _persist(session: Session, events: List[Event],
                    tracker_payload: TrackerPayload, profile: Profile = None) -> CollectResult:
     # Save profile
-    if profile.operation.new:
-        save_profile_result = await storage.driver.profile.save_profile(profile)
-    else:
-        save_profile_result = BulkInsertResult()
+    try:
+        if profile.operation.new:
+            save_profile_result = await storage.driver.profile.save_profile(profile)
+        else:
+            save_profile_result = BulkInsertResult()
+    except StorageException as e:
+        raise FieldTypeConflictException("Could not save profile. Error: {}".format(e.message), rows=e.details)
 
     # Save session
-    persist_session = False if tracker_payload.is_disabled('saveSession') else True
-    save_session_result = await storage.driver.session.save_session(session, profile, persist_session)
+    try:
+        persist_session = False if tracker_payload.is_disabled('saveSession') else True
+        save_session_result = await storage.driver.session.save_session(session, profile, persist_session)
+    except StorageException as e:
+        raise FieldTypeConflictException("Could not save session. Error: {}".format(e.message), rows=e.details)
 
     # Save events
-    persist_events = False if tracker_payload.is_disabled('saveEvents') else True
-    save_events_result = await storage.driver.event.save_events(events, persist_events)
+    try:
+        persist_events = False if tracker_payload.is_disabled('saveEvents') else True
+        save_events_result = await storage.driver.event.save_events(events, persist_events)
+    except StorageException as e:
+        raise FieldTypeConflictException("Could not save event. Error: {}".format(e.message), rows=e.details)
 
     return CollectResult(
         session=save_session_result,
@@ -177,6 +186,7 @@ async def track_event(tracker_payload: TrackerPayload, ip: str):
         # todo maybe persisting profile is not necessary - it is persisted right after workflow - see above
         # TODO notice that profile is saved only when it's new change it when it need update
         # Save profile, session, events
+
         collect_result = await _persist(session, events, tracker_payload, profile)
 
         # Save console log

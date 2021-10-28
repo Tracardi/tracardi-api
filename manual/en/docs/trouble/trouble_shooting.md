@@ -83,6 +83,30 @@ Notice that you try to connect to Elastic on localhost. When you run it like thi
 the docker itself as localhost means local in docker. Obviously elastic is not there, so Tracardi will never connect. 
 Pass external ip for elastic. This may be your laptop IP if you are running Tracardi locally. 
 
+## Failed to index document
+
+Document will fail to index if its schema is conflicting with other documents in Tracardi. It this happens you
+may see this message:
+
+```
+Could not save event. Error: 1 document(s) failed to index. - failed to parse field [properties.id] of type [float] 
+in document with id '052df0ed-e719-457c-9de1-3b197c44b44e'. Preview of field's value: 'consent-type'"
+```
+
+Why this happens and how to solve it. It happens when the type of data that is already in Tracardi is conflicting with
+data that's being sent to be saved.
+
+For example. Consider to following scenario. You have saved age as an integer number for example: 34, 25, 15, 67. 
+It is saved in properties.age. You 100 documents that are saved this way. You can easily search for anyone 
+underage 21. But now someone wants to send an age as a string e.g. "21 years old". This type of data is conflicting with 
+existing data so Tracardi will raise the error.
+
+```
+Could not save event. Error: 1 document(s) failed to index. - failed to parse field [properties.age] of type [string] 
+in document with id '052df0ed-e719-457c-9de1-3b197c44b44e'. Preview of field's value: '21 years old'"
+```
+
+
 ## Other issues
 
 Sometimes you can see the log like this:
