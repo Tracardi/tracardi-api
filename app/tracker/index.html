@@ -18,27 +18,35 @@
         const options = {
             listeners: {
                 onContextReady: ({helpers, context}) => {
-                    console.log(helpers)
-
                     const btn0 = document.querySelector('#page-view-event')
                     helpers.onClick(btn0, async ()=> {
-                        const response = await helpers.track("page-view", {"page": "hello"});
-
-                        if(response) {
-                            const responseToCustomEvent = document.getElementById('response-to-custom-event');
-                            responseToCustomEvent.innerText = JSON.stringify(response.data, null, " ");
-                            responseToCustomEvent.style.display = "block"
+                        try {
+                            const response = await helpers.track("page-view", {"id": "hello"});
+                            if(response) {
+                                const responseToCustomEvent = document.getElementById('response-to-custom-event');
+                                responseToCustomEvent.innerText = JSON.stringify(response.data, null, " ");
+                                responseToCustomEvent.style.display = "block"
+                            }
+                        } catch(e) {
+                            alert(e.response.data.detail)
+                            console.error(e.message)
                         }
+
                     });
 
                     const btn1 = document.querySelector('#custom-click-event')
                     helpers.onClick(btn1, async ()=> {
-                        const response = await helpers.track("custom-click-event", {"new-property": "hello"});
+                         try {
+                            const response = await helpers.track("custom-click-event", {"new-property": "hello"});
 
-                        if(response) {
-                            const responseToCustomEvent = document.getElementById('response-to-custom-event');
-                            responseToCustomEvent.innerText = JSON.stringify(response.data, null, " ");
-                            responseToCustomEvent.style.display = "block"
+                            if(response) {
+                                const responseToCustomEvent = document.getElementById('response-to-custom-event');
+                                responseToCustomEvent.innerText = JSON.stringify(response.data, null, " ");
+                                responseToCustomEvent.style.display = "block"
+                            }
+                         } catch(e) {
+                            alert(e.response.data.detail)
+                            console.error(e.message)
                         }
                     });
 
@@ -46,31 +54,28 @@
 
                     const btn2 = document.querySelector('#consent-all')
                     helpers.onClick(btn2, async ()=> {
-                        const response = await helpers.track("cookie-consent", {
-                            "id":"consent-type",
-                            "granted": true,
-                            'revoke': null
-                        });
-
-                        if(response) {
-
-                            helpers.consentSubmitted();
-                            const consentBox = document.getElementById('consentBox');
-                            if (consentBox) {
-                                consentBox.style.display = "none";
+                        try {
+                            const response = await helpers.track("cookie-consent", {
+                                "id":"consent-type",
+                                "granted": true,
+                                'revoke': null
+                            });
+                            if(response) {
+                                helpers.consentSubmitted();
+                                const consentBox = document.getElementById('consentBox');
+                                if (consentBox) {
+                                    consentBox.style.display = "none";
+                                }
                             }
-
-                        } else {
-                            alert("Network error")
+                        } catch(e) {
+                            alert(e.response.data.detail)
                         }
-
-
                     })
 
                     const btn3 = document.querySelector('#block-all')
                     helpers.onClick(btn3, async ()=> {
                         const response = await helpers.track("cookie-consent", {
-                            "id":"consent-type",
+                            "type":"consent-type",
                             "granted": false,
                             'revoke': null
                         });
@@ -107,7 +112,7 @@
     </script>
     <script>
         window.response.context.profile = true;
-        window.tracker.track("purchase-order", {"product": "Sun glasses - Badoo", "price": 13.45})
+        window.tracker.track("purchase-order", {"id": "Sun glasses - Badoo", "price": 13.45})
         window.tracker.track("profile-interest", {"Vacation": 1})
         window.tracker.track("page-view", {"custom-data": 1});
         window.tracker.track("personal-data", {
@@ -153,7 +158,7 @@ const options = {
     <p>This is the example code that sends events to TRACARDI. Events pinpoint what happened on your web-site</p>
     <pre>
     window.response.context.profile = true;
-    window.tracker.track("purchase-order", {"product": "Sun glasses - Badoo", "price": 13.45})
+    window.tracker.track("purchase-order", {product": "Sun glasses - Badoo", "price": 13.45})
     window.tracker.track("profile-interest", {"Vacation": 1})
     window.tracker.track("page-view", {"custom-data": 1});
     window.tracker.track("personal-data", {
@@ -170,8 +175,8 @@ const options = {
     <p>TRACARDI will respond with information on user profile, session, and information on what was saved in the system.</p>
     <p>This information can be used to change your page on the fly with javascript.</p>
 
-    If you can not see response from server as JSON data than it means there was an error. It can happen if there is no
-    test resource or provided source does not exist in TRACARDI.
+    <p>If you can not see response from server as JSON data than it means there was an error. It can happen if there is no
+        test resource or provided source does not exist in TRACARDI.</p>
 
     <pre id="response"></pre>
 </section>

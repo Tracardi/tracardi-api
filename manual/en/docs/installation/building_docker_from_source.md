@@ -1,7 +1,7 @@
 ## Building Tracardi docker from source
 
 Sometimes you will need to build a docker container yourself. 
-It is usually needed when you would like your  docker server to run https requests. 
+It is usually needed when you would like your docker server to run https requests. 
 
 To build a docker container from source clone our repository
 

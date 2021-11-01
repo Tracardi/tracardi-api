@@ -58,6 +58,19 @@
           },
           "telephone": {
             "type": "keyword"
+          },
+          "twitter": {
+            "type": "keyword"
+          },
+          "facebook": {
+            "type": "keyword"
+          },
+          "whatsapp": {
+            "type": "keyword"
+          },
+          "other": {
+            "dynamic": true,
+            "type": "object"
           }
         }
       },

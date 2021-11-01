@@ -33,7 +33,7 @@ This node require configuration.
 }
 ```
 
-It will return `true` on output
+It will return `payload` on `valid` output port. `invalid` port will stay inactive. 
 
 ```json
 {
@@ -42,7 +42,7 @@ It will return `true` on output
 }
 ```
 
-It will return `false` on output
+It will return `payload` on `invalid` output port. `valid` port will stay inactive. 
 
 # Input payload
 
@@ -50,4 +50,4 @@ This node does not process input payload. Input payload will not be returned on 
 
 # Output
 
-It will return `{"result":true}` on output payload if validation was successful or `{"result":false}` if validation failed.
+This plugin has to port valid and invalid. Depending on validation result the appropriate ports will be launched with payload copied as data.

@@ -42,7 +42,8 @@ nav:
         - installation/elasticsearch/elastic_authentication.md
         - installation/elasticsearch/sql_translation_configuration.md
         - installation/elasticsearch/elastic_max_connections.md
-      - installation/trouble_shooting.md
+  - Trouble shooting:
+    - trouble/trouble_shooting.md
   - Running:
       - running/index.md
   - Getting started:
@@ -67,6 +68,7 @@ nav:
             - flow/actions/detect_client_agent_action.md
             - flow/actions/debug_payload_action.md
             - flow/actions/inject_action.md
+            - flow/actions/event_scheduler_action.md
             - Stats:
               - flow/actions/increment_action.md
               - flow/actions/decrement_action.md
@@ -78,23 +80,33 @@ nav:
                 - flow/actions/smtp_connector_action.md
                 - flow/actions/remote_call_action.md
                 - flow/actions/fullcontact_webhook_action.md
+                - flow/actions/send_pushover_msg_action.md
+                - flow/actions/rabbitmq_action.md
+                - flow/actions/rabbit_publisher_action.md
+                - flow/actions/discord_webhook_action.md
+                - flow/actions/weather_action.md
+                - flow/actions/mongo_query_action.md
+                - flow/actions/mysql_connector_action.md
             - Validators:
                 - flow/actions/regex_validator_action.md
             - Locations:
                 - flow/actions/geo_ip_locator.md
             - Time:
                 - flow/actions/day_night_split_action.md
+                - flow/actions/local_time_span_action.md
             - Processing:
                 - flow/actions/url_parser_action.md
                 - flow/actions/string_splitter_action.md
+                - flow/actions/string_properties_action.md
+            - Machine Learning:
+                - flow/actions/text_classification_action.md
+                - flow/actions/lang_detection_action.md
+                - flow/actions/sentiment_analysis_action.md
             - flow/actions/new_event_action.md
             - flow/actions/event_counter_action.md
             - flow/actions/purchase_add_action.md
         - Notations:
             - notations/index.md
-            - notations/dot_notation.md
-            - notations/logic.md
-            - notations/math.md
     - Integration:
         - integration/js-integration.md
         - integration/api-integration.md

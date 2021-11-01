@@ -7,7 +7,7 @@ from app.api.track.service.synchronizer import ProfileTracksSynchronizer
 from app.api.track.service.tracker import track_event
 from tracardi.config import tracardi
 from tracardi.domain.payload.tracker_payload import TrackerPayload
-from tracardi.exceptions.exception import TracardiException, UnauthorizedException
+from tracardi.exceptions.exception import TracardiException, UnauthorizedException, FieldTypeConflictException
 
 logger = logging.getLogger('tracardi.api.event_server')
 logger.setLevel(logging.WARNING)
@@ -26,6 +26,9 @@ async def track(tracker_payload: TrackerPayload, request: Request):
     except UnauthorizedException as e:
         logger.error(str(e))
         raise HTTPException(detail=str(e), status_code=401)
+    except FieldTypeConflictException as e:
+        logger.error(str(e))
+        raise HTTPException(detail="{} - {}".format(str(e), e.explain()), status_code=422)
     except TracardiException as e:
         logger.error(str(e))
         raise HTTPException(detail=str(e), status_code=500)

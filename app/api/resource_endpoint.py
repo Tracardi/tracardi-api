@@ -59,8 +59,8 @@ async def get_resource_types(type: TypeEnum) -> dict:
             },
             "postgresql": {
                 "host": "localhost",
-                "port": 5439,
-                "user": None,
+                "port": 5432,
+                "user": "postgres",
                 "password": None,
                 "database": None
             },

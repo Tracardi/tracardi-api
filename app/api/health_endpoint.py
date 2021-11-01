@@ -6,41 +6,54 @@ from app.config import server
 from app.setup.on_start import update_api_instance
 
 router = APIRouter(
-    dependencies=[Depends(get_current_user)]
+    # dependencies=[Depends(get_current_user)]
 )
 
 
 @router.post("/healthcheck", tags=["health"], include_in_schema=server.expose_gui_api)
-async def track(r: Request):
+async def post_healthcheck(r: Request):
     try:
-        print(r.headers)
-        # from time import sleep
-        # sleep(5)
-        return await r.json()
+        return {
+            "headers": r.headers,
+            "json": await r.json(),
+            "body": await r.body()
+        }
     except JSONDecodeError as e:
         return await r.body()
 
 
 @router.get("/healthcheck", tags=["health"], include_in_schema=server.expose_gui_api)
-async def track(r: Request):
+async def get_healthcheck(r: Request):
     try:
-        return await r.json()
+        return {
+            "headers": r.headers,
+            "json": await r.json(),
+            "body": await r.body()
+        }
     except JSONDecodeError as e:
         return await r.body()
 
 
 @router.put("/healthcheck", tags=["health"], include_in_schema=server.expose_gui_api)
-async def track(r: Request):
+async def put_healthcheck(r: Request):
     try:
-        return await r.json()
+        return {
+            "headers": r.headers,
+            "json": await r.json(),
+            "body": await r.body()
+        }
     except JSONDecodeError as e:
         return await r.body()
 
 
 @router.delete("/healthcheck", tags=["health"], include_in_schema=server.expose_gui_api)
-async def track(r: Request):
+async def delete_healthcheck(r: Request):
     try:
-        return await r.json()
+        return {
+            "headers": r.headers,
+            "json": await r.json(),
+            "body": await r.body()
+        }
     except JSONDecodeError as e:
         return await r.body()
 

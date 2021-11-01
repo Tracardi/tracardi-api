@@ -4,19 +4,19 @@ The purpose of this plugin is to split the workflow depending on day or night of
 
 It will check if the event happened at day or night. Then it will route the workflow to the appropriate output port.
 
-This action minds the time zone of the event. Therefore, you must provide time zone in configuration. By default, time
-zone is included in browser event context.
+This action minds the location of the event. Therefore, you must provide latitude and longitude in configuration. 
 
 # Configuration
 
-This node requires configuration. In order to read timezone you must define path to time zone data. Use dot notation to
-do that.
+This node requires configuration. In order to read longitude or latitude you must define path to its data. 
+Use dot notation to do that.
 
 *Example*
 
 ```json
 {
-  "timezone": "session@context.time.tz"
+  "latitude": "payload@location.latitude",
+  "longitude": "payload@location.longitude"
 }
 ```
 
