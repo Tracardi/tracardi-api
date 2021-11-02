@@ -164,7 +164,3 @@ This type of event tracking integration is only required when you integrate your
 device or service. If you want to use event tracing with your web page a javascript code is already prepared 
 to help you do it more easily. 
 
-# Javascript integration
-
-
-

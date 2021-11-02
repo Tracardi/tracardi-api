@@ -14,9 +14,9 @@ Actions can be divided into 2 distinctive types:
   that copies data from event to profile.
 * *connectors* - this type of actions connect to external databases and fetch or save data.
 
-Although there are different types of actions the way they work is the same. they perform some task.
+Although there are different types of actions the way they work is the same. They perform some task.
 
 ## Action Documentation
 
-Below you wil find a list of action that are available in Tracardi. Documentaion shows how to configure those action using
-JSON file. 
+Below you will find a list of action that are available in Tracardi. Documentaion shows how to configure those action using
+JSON file. GUI user can configure actions by filling the form. 

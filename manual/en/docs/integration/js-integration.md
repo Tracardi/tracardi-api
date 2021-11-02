@@ -57,7 +57,7 @@ in Tracardi and then replace string ‘<your-source-id-HERE>‘ with your source
     </script>
 ```
 
-Please notice that there is also defined the URL of tracardi backend server. Please replace the IP 192.168.1.103 with the address of your Tracardi server installation.
+Please notice that there is also defined the URL of Tracardi backend server. Please replace the IP 192.168.1.103 with the address of your Tracardi server installation.
 
 ## Sending events
 
@@ -92,7 +92,7 @@ To do that add the following configuration to options.
 
 ```javascript
 listeners: {
-    onInit: ({helpers, context}) => {
+    onContextReady: ({helpers, context}) => {
       // Code that binds events.
     }
 }
@@ -104,7 +104,7 @@ The whole configuration should look like this.
 
         const options = {
             listeners: {
-                onInit: ({helpers, context}) => {
+                onContextReady: ({helpers, context}) => {
                     // Code that binds events.
                 },
             tracker: {
@@ -129,7 +129,7 @@ tracardi event.
 This is the example code:
 
 ```javascript
-onInit: ({helpers, context}) => {
+onContextReady: ({helpers, context}) => {
     const btn0 = document.querySelector('#button')
 
     helpers.onClick(btn0, async ()=> {
@@ -182,7 +182,7 @@ The whole configuration looks like this:
  
          const options = {
              listeners: {
-                 onInit: ({helpers, context}) => {
+                 onContextReady: ({helpers, context}) => {
                      const btn0 = document.querySelector('#button')
                  
                      helpers.onClick(btn0, async ()=> {

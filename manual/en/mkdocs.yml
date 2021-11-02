@@ -28,95 +28,95 @@ extra:
     - icon: fontawesome/brands/youtube
       link: https://www.youtube.com/channel/UC0atjYqW43MdqNiSJBvN__Q
 copyright: Copyright &copy; 2020 - 2021 Tracardi
-repo_url: https://github.com/atompie/tracardi
-repo_name: atompie/tracardi
+repo_url: https://github.com/tracardi/tracardi
+repo_name: tracardi/tracardi
 nav:
   - index.md
+  - Getting started:
+      - getting_started/index.md
+      - getting_started/code_definitions.md
+      - getting_started/event_tracking.md
+      - getting_started/profile_merging.md
+      - getting_started/profile_segmentation.md
   - Installation:
       - installation/index.md
       - installation/building_docker_from_source.md
       - installation/tracardi_ssl.md
       - Configuration:
           - installation/tracardi_configuration.md
+          - Events synchronization:
+              - installation/index.md
       - Elasticsearch:
-        - installation/elasticsearch/connecting_elasticsearch_cluster.md
-        - installation/elasticsearch/elastic_authentication.md
-        - installation/elasticsearch/elastic_max_connections.md
+          - installation/elasticsearch/connecting_elasticsearch_cluster.md
+          - installation/elasticsearch/elastic_authentication.md
+          - installation/elasticsearch/elastic_max_connections.md
+          - installation/elasticsearch/elastic_sniffing.md
   - Trouble shooting:
-    - trouble/trouble_shooting.md
+      - trouble/index.md
   - Running:
       - running/index.md
-  - Getting started:
-    - getting_started/index.md
-    - getting_started/code_definitions.md
-    - getting_started/event_tracking.md
-    - getting_started/profile_merging.md
-    - getting_started/profile_segmentation.md
-  - Data:
-      data/index.md
-  - Configuration:
-    - Sources:
-        - sources/index.md
-    - Flow:
-        - flow/index.md
-        - Actions:
-            - flow/actions/index.md
-            - Operations:
-                - flow/actions/update_profile_action.md
-                - flow/actions/merge_profiles_action.md
-                - flow/actions/segment_profiles_action.md
-            - flow/actions/if_action.md
-            - flow/actions/detect_client_agent_action.md
-            - flow/actions/debug_payload_action.md
-            - flow/actions/inject_action.md
-            - flow/actions/event_scheduler_action.md
-            - Stats:
-              - flow/actions/increment_action.md
-              - flow/actions/decrement_action.md
-              - flow/actions/increase_views_action.md
-              - flow/actions/increase_visits_action.md
-              - flow/actions/key_counter_action.md
-            - Connectors:
-                - flow/actions/zapier_webhook_action.md
-                - flow/actions/smtp_connector_action.md
-                - flow/actions/remote_call_action.md
-                - flow/actions/fullcontact_webhook_action.md
-                - flow/actions/send_pushover_msg_action.md
-                - flow/actions/rabbitmq_action.md
-                - flow/actions/rabbit_publisher_action.md
-                - flow/actions/discord_webhook_action.md
-                - flow/actions/weather_action.md
-                - flow/actions/mongo_query_action.md
-                - flow/actions/mysql_connector_action.md
-            - Validators:
-                - flow/actions/regex_validator_action.md
-            - Locations:
-                - flow/actions/geo_ip_locator.md
-            - Time:
-                - flow/actions/day_night_split_action.md
-                - flow/actions/local_time_span_action.md
-            - Processing:
-                - flow/actions/url_parser_action.md
-                - flow/actions/string_splitter_action.md
-                - flow/actions/string_properties_action.md
-            - Machine Learning:
-                - flow/actions/text_classification_action.md
-                - flow/actions/lang_detection_action.md
-                - flow/actions/sentiment_analysis_action.md
-            - flow/actions/new_event_action.md
-            - flow/actions/event_counter_action.md
-            - flow/actions/purchase_add_action.md
-        - Notations:
-            - notations/index.md
-    - Integration:
-        - integration/js-integration.md
-        - integration/api-integration.md
+      - Sources:
+          - sources/index.md
+      - Flows:
+          - flow/index.md
+          - Actions:
+              - flow/actions/index.md
+              - Operations:
+                  - flow/actions/update_profile_action.md
+                  - flow/actions/merge_profiles_action.md
+                  - flow/actions/segment_profiles_action.md
+              - flow/actions/if_action.md
+              - flow/actions/detect_client_agent_action.md
+              - flow/actions/debug_payload_action.md
+              - flow/actions/inject_action.md
+              - flow/actions/event_scheduler_action.md
+              - Stats:
+                  - flow/actions/increment_action.md
+                  - flow/actions/decrement_action.md
+                  - flow/actions/increase_views_action.md
+                  - flow/actions/increase_visits_action.md
+                  - flow/actions/key_counter_action.md
+              - Connectors:
+                  - flow/actions/zapier_webhook_action.md
+                  - flow/actions/smtp_connector_action.md
+                  - flow/actions/remote_call_action.md
+                  - flow/actions/fullcontact_webhook_action.md
+                  - flow/actions/send_pushover_msg_action.md
+                  - flow/actions/rabbitmq_action.md
+                  - flow/actions/rabbit_publisher_action.md
+                  - flow/actions/discord_webhook_action.md
+                  - flow/actions/weather_action.md
+                  - flow/actions/mongo_query_action.md
+                  - flow/actions/mysql_connector_action.md
+              - Validators:
+                  - flow/actions/regex_validator_action.md
+              - Locations:
+                  - flow/actions/geo_ip_locator.md
+              - Time:
+                  - flow/actions/day_night_split_action.md
+                  - flow/actions/local_time_span_action.md
+              - Processing:
+                  - flow/actions/url_parser_action.md
+                  - flow/actions/string_splitter_action.md
+                  - flow/actions/string_properties_action.md
+              - Machine Learning:
+                  - flow/actions/text_classification_action.md
+                  - flow/actions/lang_detection_action.md
+                  - flow/actions/sentiment_analysis_action.md
+              - flow/actions/new_event_action.md
+              - flow/actions/event_counter_action.md
+              - flow/actions/purchase_add_action.md
+          - Notations:
+              - notations/index.md
+  - Integration:
+      - integration/js-integration.md
+      - integration/api-integration.md
   - Api:
       - api/index.md
   - Extending Tracardi:
       - plugins/index.md
-  - Development:
-      - development/index.md
+      - Development:
+          - development/index.md
   - support_us.md
   - attribution.md
   - software_license.md
