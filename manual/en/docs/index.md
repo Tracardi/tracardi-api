@@ -1,6 +1,6 @@
 # Tracardi Customer Data Platform
 
-[Tracardi](http://www.tracardi.com)  is the Customer Data Platform
+[Tracardi](http://www.tracardi.com) is the Customer Data Platform
 
 
  

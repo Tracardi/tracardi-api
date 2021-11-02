@@ -6,7 +6,7 @@ It is usually needed when you would like your docker server to run https request
 To build a docker container from source clone our repository
 
 ```
-git clone https://github.com/atompie/tracardi-api.git
+git clone https://github.com/tracardi/tracardi-api.git
 ```
 
 Go to tracardi folder and run docker build
@@ -28,7 +28,7 @@ If you would like to connect Tracardi to HTTPS web page you will need to prepare
 request. To do that clone our repository.
 
 ```
-git clone https://github.com/atompie/tracardi-api.git
+git clone https://github.com/tracardi/tracardi-api.git
 ```
 
 Next go to tracardi folder and find file **Dockerfile.ssl-internal** and type path to your SSL certificate and key file. 

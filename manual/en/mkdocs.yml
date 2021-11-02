@@ -41,7 +41,6 @@ nav:
       - Elasticsearch:
         - installation/elasticsearch/connecting_elasticsearch_cluster.md
         - installation/elasticsearch/elastic_authentication.md
-        - installation/elasticsearch/sql_translation_configuration.md
         - installation/elasticsearch/elastic_max_connections.md
   - Trouble shooting:
     - trouble/trouble_shooting.md
@@ -61,6 +60,7 @@ nav:
     - Flow:
         - flow/index.md
         - Actions:
+            - flow/actions/index.md
             - Operations:
                 - flow/actions/update_profile_action.md
                 - flow/actions/merge_profiles_action.md

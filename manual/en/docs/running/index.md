@@ -1,4 +1,4 @@
-# Running Tracardi
+# Running Tracardi Graphical User Interface
 
 When everything is downloaded and installed open browser and go to http://127.0.0.1.
 
@@ -11,3 +11,14 @@ Tracardi default username and password is:
  password: admin
 ```
 
+# Running Tracardi backend
+
+There as different scenarios of running Tracardi backend.
+
+## Evaluation mode
+
+## Testing mode
+
+## Development mode
+
+## Production mode
