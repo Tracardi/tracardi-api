@@ -37,3 +37,8 @@ docker run -p 27017:27017 mongo
 
 # Run local PG
 docker run -e POSTGRES_PASSWORD=root -p 5432:5432 postgres
+
+# Run tracardi api with SSL
+
+docker run -v /home/risto/PycharmProjects/tracardi-api/ssl:/ssl -p 8686:433 -e ELASTIC_HOST=http://192.168.1.103:9200 -e GUNICORN_CMD_ARGS="--keyfile=/ssl/key.pem --certfile=/ssl/cert.pem" tracardi/tracardi-api-ssl
+

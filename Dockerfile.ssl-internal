@@ -13,13 +13,18 @@ RUN pip install -r requirements.txt
 
 ## Copy application
 COPY app app/
-
-## Copy manual
+COPY ssl ssl/
 COPY manual manual/
+
+RUN pip install -r manual/requirements.txt
+WORKDIR /app/manual/en
+RUN mkdocs build
+
 ENV VARIABLE_NAME="application"
 
-# ENV GUNICORN_CMD_ARGS="--keyfile=/ssl/key.pem --certfile=/ssl/cert.pem"
+RUN pip show tracardi
+RUN pip list
 
 EXPOSE 433
-CMD ["gunicorn", "-b", "0.0.0.0:433", "-k", "uvicorn.workers.UvicornWorker", "--workers", "25", "app.main:application"]
+CMD ["gunicorn", "-b", "0.0.0.0:433", "--workers", "25", "--keyfile", "/app/ssl/key.pem", "--certfile", "/app/ssl/cert.pem", "-k", "uvicorn.workers.UvicornWorker", "app.main:application"]
 
