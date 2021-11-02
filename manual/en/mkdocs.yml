@@ -35,6 +35,7 @@ nav:
   - Installation:
       - installation/index.md
       - installation/building_docker_from_source.md
+      - installation/tracardi_ssl.md
       - Configuration:
           - installation/tracardi_configuration.md
       - Elasticsearch:

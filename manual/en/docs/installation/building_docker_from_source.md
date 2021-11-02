@@ -31,12 +31,12 @@ request. To do that clone our repository.
 git clone https://github.com/atompie/tracardi-api.git
 ```
 
-Next go to tracardi folder and find file **Dockerfile.ssl** and type path to your SSL certificate and key file. 
+Next go to tracardi folder and find file **Dockerfile.ssl-internal** and type path to your SSL certificate and key file. 
 
 * Replace `ssl/key.pem` with a path to your key file
 * Replace `ssl/cert.pem` with a path to your certificate
 
-This is how the **Dockerfile.ssl** looks like
+This is how the **Dockerfile.ssl-internal** looks like
 
 ```
 FROM tiangolo/uvicorn-gunicorn-fastapi
@@ -59,14 +59,14 @@ COPY manual manual/
 ENV VARIABLE_NAME="application"
 
 EXPOSE 433
-CMD ["gunicorn", "-b", "0.0.0.0:433", "--keyfile", "ssl/key.pem", "--certfile", "ssl/cert.pem", "-k", "uvicorn.workers.UvicornWorker", "app.main:application"]
+CMD ["gunicorn", "-b", "0.0.0.0:433", "--workers", "25,"--keyfile", "ssl/key.pem", "--certfile", "ssl/cert.pem", "-k", "uvicorn.workers.UvicornWorker", "app.main:application"]
 ```
 
-Then run `docker build`
+Then run
 
 ```
 cd tracardi-api/
-docker build . -f Dockerfile.ssl -t tracardi-api-ssl
+docker build . -f Dockerfile.ssl-internal -t tracardi-api-ssl
 ```
 
 Once build you can run Tracardi with the following command:
@@ -74,3 +74,5 @@ Once build you can run Tracardi with the following command:
 ```
 docker run -p 8686:80 -e ELASTIC_HOST=http://<your-laptop-ip>:9200 tracardi-api-ssl
 ```
+
+
