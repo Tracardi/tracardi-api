@@ -1,6 +1,6 @@
 # Data resources
 
-In order to kick start your new project with Tracardi needs a new resource. That resource defined in Tracardi will give
+In order to kick start data collection Tracardi needs a resource. This resource when defined in Tracardi will give
 you an identifier which when attached to your track calls will start collecting data about your users. There are two
 types of resources.
 

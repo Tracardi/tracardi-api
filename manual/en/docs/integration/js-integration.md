@@ -1,6 +1,6 @@
 # Web page JS integrations
 
-## Connecting the script and configuration
+## Connecting and configuring the script 
 
 Tracardi comes with Javascript snippet that integrates any webpage with Tracardi. 
 In order to use it you must paste it in your web page header. 
@@ -15,7 +15,7 @@ This is the example of the snippet:
                     api: 'http://192.168.1.103:8686'
                 },
                 source: {
-                    id: "<your-source-id-HERE>"
+                    id: "<your-resource-id-HERE>"
                 }
             }
         }
@@ -32,11 +32,11 @@ Headers:
 Status: 401 Unauthorized
 
 Body:
-detail"Access denied. Invalid source."
+{"detail": "Access denied. Invalid source."}
 ```
 
-This is because of the invalid source id that was not defined in the option.source.id section of the snippet. To obtain source id create it 
-in Tracardi and then replace string ‘<your-source-id-HERE>‘ with your source id like this:
+This is because of the invalid source id that was not defined in the option.source.id section of the snippet. To obtain source id create 
+resource in Tracardi and then replace string ‘<your-resource-id-HERE>‘ with the resource id from Tracardi, like this:
 
 ```html
     <script>
@@ -57,7 +57,8 @@ in Tracardi and then replace string ‘<your-source-id-HERE>‘ with your source
     </script>
 ```
 
-Please notice that there is also defined the URL of Tracardi backend server. Please replace the IP 192.168.1.103 with the address of your Tracardi server installation.
+Please notice that there is also the URL of Tracardi backend server. Please replace the IP 192.168.1.103 with the address 
+of your Tracardi server.
 
 ## Sending events
 
@@ -72,7 +73,7 @@ window.tracker.track("interest", {"Eletronics": ["Mobile phones", "Accessories"]
 window.tracker.track("page-view",{});
 ```
 
-Events consist of a event type. Event type is any string that describes what happened. 
+Events consist of an event type. Event type is any string that describes what happened. 
 In our example we have 3 events: "purchase-order", "interest", "page-view".
 
 ### Events data, properties
