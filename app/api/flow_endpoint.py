@@ -480,10 +480,15 @@ async def get_plugins_list(query: Optional[str] = None):
     Returns a list of available plugins.
     """
 
+    _current_plugin = None
     try:
 
         result = await StorageForBulk().index('action').load()
-        _result = [FlowActionPluginRecord(**r).decode() for r in result]
+
+        _result = []
+        for r in result:
+            _current_plugin = r
+            _result.append(FlowActionPluginRecord(**r).decode())
 
         if query is not None and len(query) > 0:
             query = query.lower()
@@ -517,7 +522,7 @@ async def get_plugins_list(query: Optional[str] = None):
         }
 
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail="{} {}".format(str(e), _current_plugin))
 
 
 @router.post("/flow/action/plugin/register", tags=["flow", "action"],
