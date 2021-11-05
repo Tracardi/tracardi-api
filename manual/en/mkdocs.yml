@@ -50,6 +50,7 @@ nav:
           - installation/elasticsearch/elastic_authentication.md
           - installation/elasticsearch/elastic_max_connections.md
           - installation/elasticsearch/elastic_sniffing.md
+  - upgrade.md
   - trouble/index.md
   - Running:
       - running/index.md
