@@ -4,7 +4,7 @@ uvicorn app.main:application --reload --host 0.0.0.0 --port 8686
 gunicorn -b 0.0.0.0:8001 -k uvicorn.workers.UvicornWorker app.main:application
 
 uvicorn app.main:application --reload --host 0.0.0.0 --port 8686 --ssl-keyfile ssl/key.pem --ssl-certfile ssl/cert.pem  --ssl-keyfile-password 12345
-gunicorn -b 0.0.0.0:433 --keyfile ssl/key.pem --certfile ssl/cert.pem -k uvicorn.workers.UvicornWorker app.main:application
+gunicorn -b 0.0.0.0:443 --keyfile ssl/key.pem --certfile ssl/cert.pem -k uvicorn.workers.UvicornWorker app.main:application
 
 # Run local Kibana
 docker run -p 5601:5601 -e ELASTICSEARCH_HOSTS=http://192.168.1.103:9200 docker.elastic.co/kibana/kibana:7.13.2
@@ -43,5 +43,5 @@ docker run -e POSTGRES_PASSWORD=root -p 5432:5432 postgres
 
 # Run tracardi api with SSL
 
-docker run -v /home/risto/PycharmProjects/tracardi-api/ssl:/ssl -p 8686:433 -e ELASTIC_HOST=http://192.168.1.103:9200 -e GUNICORN_CMD_ARGS="--keyfile=/ssl/key.pem --certfile=/ssl/cert.pem" tracardi/tracardi-api-ssl
+docker run -v /home/risto/PycharmProjects/tracardi-api/ssl:/ssl -p 8686:443 -e ELASTIC_HOST=http://192.168.1.103:9200 -e GUNICORN_CMD_ARGS="--keyfile=/ssl/key.pem --certfile=/ssl/cert.pem" tracardi/tracardi-api-ssl
 

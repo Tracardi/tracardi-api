@@ -37,8 +37,8 @@ COPY ssl ssl/
 COPY manual manual/
 ENV VARIABLE_NAME="application"
 
-EXPOSE 433
-CMD ["gunicorn", "-b", "0.0.0.0:433", "--workers", "25,"--keyfile", "ssl/key.pem", "--certfile", "ssl/cert.pem", "-k", "uvicorn.workers.UvicornWorker", "app.main:application"]
+EXPOSE 443
+CMD ["gunicorn", "-b", "0.0.0.0:443", "--workers", "25,"--keyfile", "ssl/key.pem", "--certfile", "ssl/cert.pem", "-k", "uvicorn.workers.UvicornWorker", "app.main:application"]
 ```
 
 If you would like to tweak the number of workers running change `--workers` option in `gunicorn`.
@@ -71,7 +71,7 @@ You can place it anywhere but remember to change the location in the command bel
 ```
 docker run \
 -v /local/path/to/ssl:/ssl \
--p 8686:433 \
+-p 8686:443 \
 -e ELASTIC_HOST=http://<your-elastic-instance-ip>:9200 \
 -e GUNICORN_CMD_ARGS="--keyfile=/ssl/key.pem --certfile=/ssl/cert.pem" \
 tracardi/tracardi-api-ssl
