@@ -10,36 +10,36 @@ system_settings = [
         **{
             "label": "USER_NAME",
             "value": auth.user,
-            "desc": "Tracardi username."
+            "desc": "Default: admin. Login to Tracardi API"
         }
     ),
     SystemSettings(
         **{
             "label": "PASSWORD",
             "value": auth.password,
-            "desc": "Tracardi password."
+            "desc": "Default: admin. Password to Tracardi API"
         }
     ),
     SystemSettings(
         **{
             "label": "UPDATE_PLUGINS_ON_STARTUP",
             "value": server.update_plugins_on_start_up,
-            "desc": "Update plugins on startup or not."
+            "desc": "Default: no. If equals yes it will update all installed plugins on Tracardi start."
         }
     ),
     SystemSettings(
         **{
             "label": "DEBUG_MAKE_SLOWER_RESPONSES",
             "value": server.make_slower_responses,
-            "desc": "Slow responses by adding a wait time. This is for debug purposes only, defaults to 0."
+            "desc": "Default: 0. This variable is for testing purposes only. It sets the number of seconds each "
+                    "endpoint should be slowed in order to see the GUI responses."
         }
     ),
     SystemSettings(
         **{
             "label": "RUN_HEARTBEAT_EVERY",
             "value": server.heartbeat_every,
-            "desc": "The interval of running heartbeat in seconds, "
-                    "defaults to 300."
+            "desc": "Default: 300. The time each worker reports its health."
         }
     ),
     SystemSettings(
@@ -86,14 +86,15 @@ system_settings = [
         **{
             "label": "CACHE_PROFILE",
             "value": tracardi.cache_profiles,
-            "desc": "Cache profiles or not, defaults to False."
+            "desc": "Default: no. Profiles can be cached, but it is not recommended as this option is experimental."
         }
     ),
     SystemSettings(
         **{
             "label": "SYNC_PROFILE_TRACKS",
             "value": tracardi.sync_profile_tracks,
-            "desc": "No desc"
+            "desc": "Variable telling Tracardi to synchronize profile tracks or not, defaults to False, can be changed"
+                    "by getting set to 'yes'."
         }
     ),
     SystemSettings(
@@ -114,133 +115,149 @@ system_settings = [
         **{
             "label": "SOURCE_TTL",
             "value": memory_cache.source_ttl,
-            "desc": "No desc, defaults to 60."
+            "desc": "Default: 60. Each resource read is cached for given seconds. That means that when you change any "
+                    "resource data, e.g. credentials it wil be available with max 60 seconds."
         }
     ),
     SystemSettings(
         **{
             "label": "ELASTIC_HOST",
             "value": elastic.host,
-            "desc": "Elastic host. Defaults to '127.0.0.1'."
+            "desc": "Default: 127.0.0.1. This setting defines a IP address of elastic search instance. See Connecting "
+                    "to elastic cluster for more information how to connect to a cluster of servers."
         }
     ),
     SystemSettings(
         **{
             "label": "ELASTIC_SNIFF_ON_START",
             "value": elastic.sniff_on_start,
-            "desc": "Defaults to None."
+            "desc": "Default: None. When you enable this option, the client will attempt to execute an elasitcsearch "
+                    "sniff request during the client initialization or first usage. Search documentation for "
+                    "sniffing to get more information."
         }
     ),
     SystemSettings(
         **{
             "label": "ELASTIC_SNIFF_ON_CONNECTION_FAIL",
             "value": elastic.sniff_on_connection_fail,
-            "desc": "Defaults to None."
+            "desc": "Default: None. If you enable this option, the client will attempt to execute a sniff request every"
+                    " time a node is faulty, which means a broken connection or a dead node."
         }
     ),
     SystemSettings(
         **{
             "label": "ELASTIC_SNIFFER_TIMEOUT",
             "value": elastic.sniffer_timeout,
-            "desc": "Defaults to None."
+            "desc": "Default: None, Time out for sniff operation."
         }
     ),
     SystemSettings(
         **{
             "label": "ELASTIC_HTTP_AUTH_USERNAME",
             "value": elastic.http_auth_username,
-            "desc": "Defaults to None."
+            "desc": "Default: None. Elastic search username. Search for elastic authentication "
+                    "for more information on how to configure connection to elastic."
         }
     ),
     SystemSettings(
         **{
             "label": "ELASTIC_HTTP_AUTH_PASSWORD",
             "value": elastic.http_auth_password,
-            "desc": "Defaults to None."
+            "desc": "Default: None. Elastic search password. Search for elastic authentication "
+                    "for more information on how to configure connection to elastic."
         }
     ),
     SystemSettings(
         **{
             "label": "ELASTIC_SCHEME",
             "value": elastic.scheme,
-            "desc": "Defaults to None."
+            "desc": "Default: http. Available options http, https."
         }
     ),
     SystemSettings(
         **{
             "label": "ELASTIC_CAFILE",
             "value": elastic.cafile,
-            "desc": "Defaults to None."
+            "desc": "Default: None. Elastic CA file. Search for elastic authentication for more information on how "
+                    "to configure connection to elastic."
         }
     ),
     SystemSettings(
         **{
             "label": "ELASTIC_API_KEY",
             "value": elastic.api_key,
-            "desc": "Defaults to None."
+            "desc": "Default: None. Elastic API key. Search for elastic authentication for more information on how "
+                    "to configure connection to elastic."
         }
     ),
     SystemSettings(
         **{
             "label": "ELASTIC_CLOUD_ID",
             "value": elastic.cloud_id,
-            "desc": "Defaults to None."
+            "desc": "Default: None. Search for elastic authentication for more information on how to configure "
+                    "connection to elastic."
         }
     ),
     SystemSettings(
         **{
             "label": "ELASTIC_MAX_CONN",
             "value": elastic.maxsize,
-            "desc": "Defaults to None."
+            "desc": "Default: None. Defines max connection to elastic cluster. It defaults to elastic default value."
         }
     ),
     SystemSettings(
         **{
             "label": "ELASTIC_HTTP_COMPRESS",
             "value": elastic.http_compress,
-            "desc": "Defaults to None."
+            "desc": "default value: None. Set compression on data when the client calls the server."
         }
     ),
     SystemSettings(
         **{
             "label": "ELASTIC_VERIFY_CERTS",
             "value": elastic.verify_certs,
-            "desc": "Defaults to None. Can be changed by being set to 'yes'."
+            "desc": "default value: None. Verify certificates when https schema is set. Set it to no if certificates "
+                    "has no CA."
         }
     ),
     SystemSettings(
         **{
             "label": "ELASTIC_SQL_TRANSLATE_URL",
             "value": elastic.sql_translate_url,
-            "desc": "Defaults to '/_sql/translate'."
+            "desc": "Variable telling Elastic URL for SQL translation, defaults to '/_sql/translate'."
         }
     ),
     SystemSettings(
         **{
             "label": "ELASTIC_SQL_TRANSLATE_METHOD",
             "value": elastic.sql_translate_method,
-            "desc": "Defaults to 'POST'."
+            "desc": "Variable telling Elastic the method of translating from SQL, defaults to 'POST'."
         }
     ),
     SystemSettings(
         **{
             "label": "ELASTIC_REFRESH_PROFILES_AFTER_SAVE",
             "value": elastic.refresh_profiles_after_save,
-            "desc": "Defaults to False."
+            "desc": "Default: no. When set to yes profile index will be forced to refresh its data after each update. "
+                    "That means that elastic will write all updates without buffering. This may slow the elastic "
+                    "significantly so be cautious with this setting."
         }
     ),
     SystemSettings(
         **{
             "label": "ELASTIC_LOGGING_LEVEL",
             "value": elastic.logging_level,
-            "desc": "Defaults to logging.WARNING."
+            "desc": "Default WARNING. Sets logging level of elastic requests. It may be useful to set it to INFO when"
+                    " debugging Tracardi."
         }
     ),
     SystemSettings(
         **{
             "label": "REDIS_HOST",
             "value": redis_config.redis_host,
-            "desc": "Defaults to 'redis://localhost:6379'."
+            "desc": "Default: redis://localhost:6379. This setting is used only when SYNC_PROFILE_TRACKS is equal to "
+                    "yes. This is the host URI of Redis instance that is required to synchronize profile tracks. "
+                    "Available only in commercial version of Tracardi."
         }
     ),
 ]
