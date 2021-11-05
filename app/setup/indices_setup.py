@@ -40,7 +40,8 @@ async def create_indices():
                                    result
                                ))
                 else:
-                    logger.log(level=logging.INFO, msg="New index `{}` created.".format(index.get_write_index()))
+                    logger.log(level=logging.INFO,
+                               msg="New index `{}` created. Mapping from `{}` was used.".format(index.get_write_index(), map_file))
 
                 if key in index_mapping and 'on-start' in index_mapping[key]:
                     if index_mapping[key]['on-start'] is not None:
@@ -49,6 +50,7 @@ async def create_indices():
                             await on_start()
             else:
                 logger.log(level=logging.INFO, msg="Index `{}` exists.".format(index.get_write_index()))
+
 
 if __name__ == "__main__":
     import asyncio

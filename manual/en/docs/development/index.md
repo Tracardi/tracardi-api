@@ -2,14 +2,28 @@
 
 To start working on Tracardi GUI clone tracardi-gui repo.
 
+```
+git clone http://github.com/tracardi/tracardi-gui
+```
+
+Then run:
+
+```
+yarn install
+```
+
+This will install all project dependencies.
+
+## Starting GUI
+
 In the project directory, you run:
 
 ### `yarn start`
 
-Runs the app in the development mode.\
+This will run the app in the development mode.\
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
-The page will reload if you make edits.\
+The page will reload if you edit  source code. \
 You will also see any lint errors in the console.
 
 # Tracardi API
@@ -26,7 +40,9 @@ uvicorn app.main:application --reload --host 0.0.0.0 --port 8686
 
 This will start tracardi API on port 8686
 
-You need elasticsearch for tracardi to work.
+# Tracardi Database
+
+You need elasticsearch for Tracardi to work.
 
 Run a single node elastic in docker:
 

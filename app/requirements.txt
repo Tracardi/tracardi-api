@@ -1,6 +1,7 @@
 pip>=21.2.4
 fastapi==0.68.0
 uvicorn==0.14.0
+pydantic>=1.8.2
 aiofiles
 aioredis
 redis

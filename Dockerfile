@@ -16,12 +16,15 @@ COPY app/requirements.txt .
 RUN pip install -r requirements.txt
 
 RUN pip show tracardi
+RUN pip list
+
 
 ## Copy application
 COPY app app/
 
 ## Copy manual
 COPY manual manual/
+
 ## Install dependencies
 RUN pip install -r manual/requirements.txt
 WORKDIR /app/manual/en
