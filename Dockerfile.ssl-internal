@@ -25,6 +25,6 @@ ENV VARIABLE_NAME="application"
 RUN pip show tracardi
 RUN pip list
 
-EXPOSE 433
-CMD ["gunicorn", "-b", "0.0.0.0:433", "--workers", "25", "--keyfile", "/app/ssl/key.pem", "--certfile", "/app/ssl/cert.pem", "-k", "uvicorn.workers.UvicornWorker", "app.main:application"]
+EXPOSE 443
+CMD ["gunicorn", "-b", "0.0.0.0:443", "--workers", "25", "--keyfile", "/app/ssl/key.pem", "--certfile", "/app/ssl/cert.pem", "-k", "uvicorn.workers.UvicornWorker", "app.main:application"]
 
