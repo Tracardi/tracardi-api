@@ -2,7 +2,7 @@
 
 You have several options to run Tracardi in SSL mode.
 
-## Building Tracardi with SSL certificates embedded into docker
+## Building Tracardi API with SSL certificates embedded into docker
 
 Clone repository `tracardi/tracardi-api.git`.
 
@@ -56,7 +56,7 @@ Once built you can run Tracardi with the following command:
 docker run -p 8686:80 -e ELASTIC_HOST=http://<your-laptop-ip>:9200 tracardi-api-ssl
 ```
 
-## Running Tracardi with SSL certificates provided from outside container
+## Running Tracardi API with SSL certificates provided from outside container
 
 Sometimes you do not want to build the docker yourself. Then you can use the prebuild docker and attach
 value with your certificates. To do that pull `tracardi/tracardi-api-ssl`.
@@ -80,9 +80,12 @@ tracardi/tracardi-api-ssl
 It will start Tracardi with the provided certificates. This command expects na SSL key file to be named `key.pem` and
 certificate to be named `cert.pem`.
 
-## Tracardi behind HTTPS proxy
+## Tracardi API behind HTTPS proxy
 
-You can use treafic to hide Tracardi behind HTTPS proxy.
+You can use treafic to hide Tracardi API behind HTTPS proxy.
 
 Refer to this link for instructions:
 https://traefik.io/resources/traefik-fastapi-kuberrnetes-ai-ml/
+
+## Tracardi GUI in HTTPS mode
+
