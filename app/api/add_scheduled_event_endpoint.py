@@ -5,7 +5,6 @@ from typing import Dict
 from app.config import server
 from pydantic import BaseModel, validator
 from pytimeparse.timeparse import timeparse
-from uuid import uuid4
 
 
 class Source(BaseModel):
@@ -53,28 +52,14 @@ router = APIRouter()
 
 @router.post("/event/schedule", tags=["event"], include_in_schema=server.expose_gui_api)
 async def add_scheduled_event(inserted_event: EventForm):
-    result = await task.create([{
-        "id": uuid4(),
-        "timestamp": inserted_event.schedule.get_parsed_time(),
-        "event": {
-            "metadata": {
-                "time": {
-                    "insert": datetime.utcnow()
-                }
-            },
-            "type": inserted_event.event.type,
-            "properties": inserted_event.event.properties,
-            "context": {"No context data provided.": None},
-            "session": {
-                "id": None
-            },
-            "source": {
-                "id": inserted_event.source.id
-            },
-            "profile": {
-                "id": None
-            }
-        },
-        "status": None
-    }])
+    result = await task.create(
+        timestamp=inserted_event.schedule.get_parsed_time(),
+        type=inserted_event.event.type,
+        properties=inserted_event.event.properties,
+        context=None,
+        session_id=None,
+        source_id=inserted_event.source.id,
+        profile_id=None,
+        status=None
+    )
     return {"result": result.errors if result.errors else "OK"}
