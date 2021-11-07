@@ -12,7 +12,7 @@ from app.api import token_endpoint, rule_endpoint, resource_endpoint, event_endp
     profile_endpoint, flow_endpoint, generic_endpoint, project_endpoint, \
     credentials_endpoint, segments_endpoint, \
     tql_endpoint, health_endpoint, session_endpoint, instance_endpoint, plugins_endpoint, test_endpoint, settings_endpoint, \
-    purchases_endpoint, add_scheduled_event_endpoint
+    purchases_endpoint
 from app.api.scheduler import tasks_endpoint
 from app.api.track import event_server_endpoint
 from app.config import server
@@ -137,7 +137,6 @@ application.include_router(plugins_endpoint.router)
 application.include_router(test_endpoint.router)
 application.include_router(settings_endpoint.router)
 application.include_router(purchases_endpoint.router)
-application.include_router(add_scheduled_event_endpoint.router)
 
 
 @application.on_event("startup")
