@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime
 from typing import List
 
 from fastapi import APIRouter, Depends
@@ -12,6 +12,7 @@ from .auth.authentication import get_current_user
 from tracardi.domain.entity import Entity
 from tracardi.domain.event import Event
 from tracardi.domain.profile import Profile
+from .domain.schedule import ScheduleData
 from ..config import server
 
 router = APIRouter(
@@ -129,3 +130,18 @@ async def get_event_debug_info(id: str):
 async def get_event_logs(id: str):
     log_records = await storage.driver.console_log.load_by_event(id)
     return list(log_records)
+
+
+@router.post("/event/schedule", tags=["event"], include_in_schema=server.expose_gui_api)
+async def add_scheduled_event(schedule_data: ScheduleData):
+    result = await storage.driver.task.create(
+        timestamp=schedule_data.schedule.get_parsed_time(),
+        type=schedule_data.event.type,
+        properties=schedule_data.event.properties,
+        context=schedule_data.context.id if schedule_data.context is not None else None,
+        session_id=schedule_data.session.id if schedule_data.session is not None else None,
+        source_id=schedule_data.source.id,
+        profile_id=schedule_data.profile.id,
+        status=None
+    )
+    return {"result": result}
