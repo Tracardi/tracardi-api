@@ -2,7 +2,6 @@ from tracardi.service.storage.driver import storage
 from typing import List
 from fastapi import APIRouter, Depends, HTTPException
 from app.config import server
-from tracardi.domain.value_object.bulk_insert_result import BulkInsertResult
 from .auth.authentication import get_current_user
 from tracardi.domain.event_tag import EventTag
 
