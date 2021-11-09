@@ -1,16 +1,10 @@
-from tracardi.service.storage.drivers.elastic.tag import add_tags, remove_tags, load_all_tags
-from pydantic import BaseModel
+from tracardi.service.storage.driver import storage
 from typing import List
 from fastapi import APIRouter, Depends, HTTPException
 from app.config import server
 from tracardi.domain.value_object.bulk_insert_result import BulkInsertResult
 from .auth.authentication import get_current_user
-
-
-class TagForm(BaseModel):
-    event_type: str = ""
-    tags: List[str] = []
-
+from tracardi.domain.event_tag import EventTag
 
 router = APIRouter(
     dependencies=[Depends(get_current_user)]
@@ -18,9 +12,9 @@ router = APIRouter(
 
 
 @router.post("/event/tag/add", tags=["event"], include_in_schema=server.expose_gui_api, response_model=dict)
-async def add_event_tag_endpoint(tag_form: TagForm):
-    result = await add_tags(
-        event_type=tag_form.event_type,
+async def add_tags(tag_form: EventTag):
+    result = await storage.driver.tag.add(
+        event_type=tag_form.type,
         tags=tag_form.tags
     )
     if result.errors:
@@ -29,15 +23,19 @@ async def add_event_tag_endpoint(tag_form: TagForm):
 
 
 @router.delete("/event/tag/delete", tags=["event"], include_in_schema=server.expose_gui_api, response_model=dict)
-async def delete_event_tag_endpoint(tag_form: TagForm):
-    total, removed, result = await remove_tags(
-        event_type=tag_form.event_type,
+async def delete_tags(tag_form: EventTag):
+    total, removed, result = await storage.driver.tag.remove(
+        event_type=tag_form.type,
         tags=tag_form.tags
     )
-    return {} if isinstance(result, BulkInsertResult) and result.errors else \
-        {"OK": {"removed": removed, "total": total}}
+    if total == 0:
+        return {"OK": {"removed": removed, "total": total}} if result["result"] == "deleted" else \
+            {"ERROR": {"details": result["result"]}}
+    else:
+        return {"OK": {"removed": removed, "total": total}} if not result.errors else \
+            {"ERROR": {"details": result.errors}}
 
 
 @router.get("/event/tag/get", tags=["event"], include_in_schema=server.expose_gui_api, response_model=List[dict])
-async def get_event_tag_endpoint(limit: int = 100):
-    return (await load_all_tags(limit=limit)).dict()["result"]
+async def get_tags(limit: int = 100):
+    return (await storage.driver.tag.load_tags(limit=limit)).dict()["result"]
