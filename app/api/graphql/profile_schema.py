@@ -62,6 +62,32 @@ class Event(Entity):
 
 
 @strawberry.type
+class EventAggregationsBuckets:
+
+    def __init__(self, id):
+        self.id = id
+
+    @strawberry.field
+    async def by_time(self) -> 'JSONScalar':
+        bucket_name = 'by_time'
+        aggregated_events = await storage.driver.event.heatmap_by_profile(self.id, bucket_name)
+        bucket, items = next(aggregated_events.iterate(bucket_name))  # There is only one key
+        return items
+
+    @strawberry.field
+    async def by_type(self) -> 'JSONScalar':
+        bucket_name = 'by_type'
+        aggregated_events = await storage.driver.event.aggregate_profile_events_by_type(self.id, bucket_name)
+        bucket, items = next(aggregated_events.iterate(bucket_name))  # There is only one key
+        return items
+
+
+@strawberry.type
+class EventAggregations:
+    aggregations: EventAggregationsBuckets
+
+
+@strawberry.type
 class Profile(Entity):
     metadata: ProfileMeta
     traits: ProfileTraits
@@ -70,11 +96,12 @@ class Profile(Entity):
     segments: typing.List[str]
     consents: JSONScalar
     active: bool
+    event: EventAggregations
 
     @strawberry.field
     async def events(self, info: Info, type: typing.Optional[str] = None, limit: int = 20) -> typing.List[Event]:
         # print(info)
-        fields = info.selected_fields
+        # fields = info.selected_fields
         # print(fields[0].selections)
         key_value_pais = [
             ("profile.id", self.id)
@@ -108,10 +135,11 @@ class ProfileQuery:
     @strawberry.field
     async def profile(self, info: Info, id: strawberry.ID) -> Profile:
         # print(info)
-        fields = info.selected_fields
+        # fields = info.selected_fields
         # print(fields[0].selections)
         profile = await storage.driver.profile.load_by_id(id)
-        print("load profile")
+        if profile is None:
+            raise ValueError("There is no profile {}".format(id))
         return Profile(
             id=profile.id,
             metadata=ProfileMeta(time=profile.metadata.time.insert, ip=profile.metadata.ip,
@@ -121,5 +149,6 @@ class ProfileQuery:
             pii=ProfilePII(**profile.pii.dict()),
             segments=profile.segments,
             consents=profile.consents,
-            active=profile.active
+            active=profile.active,
+            event=EventAggregations(aggregations=EventAggregationsBuckets(profile.id))
         )
