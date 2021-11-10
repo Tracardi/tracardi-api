@@ -37,7 +37,7 @@ async def heatmap_by_profile(id: str):
         bucket_name = "items_over_time"
 
         result = await storage.driver.event.heatmap_by_profile(id, bucket_name)
-        return {key: value for key, value in result.process(__format_time_buckets, bucket_name)}
+        return {key: value for key, value in result.process(__format_time_buckets, bucket_name)}[bucket_name]
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -50,7 +50,7 @@ async def heatmap():
         bucket_name = "items_over_time"
 
         result = await storage.driver.event.heatmap_by_profile(None, bucket_name)
-        return {key: value for key, value in result.process(__format_time_buckets, bucket_name)}
+        return {key: value for key, value in result.process(__format_time_buckets, bucket_name)}[bucket_name]
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
