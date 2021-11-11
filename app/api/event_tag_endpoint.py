@@ -38,9 +38,7 @@ async def delete_tags(tag_form: EventTag):
 async def get_tags(limit: int = 100):
     return (await storage.driver.tag.load_tags(limit=limit)).dict()["result"]
 
-
-@router.put("/event/tag/type/{event_type}", tags=["event"],
-            include_in_schema=server.expose_gui_api, response_model=dict)
+@router.put("/event/tag/type/{event_type}", tags=["event"], include_in_schema=server.expose_gui_api, response_model=dict)
 async def update_tags(event_type: str):
     try:
         search_result = await storage.driver.tag.get_by_type(event_type)
