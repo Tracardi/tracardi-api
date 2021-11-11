@@ -44,7 +44,7 @@ async def update_tags(event_type: str):
         search_result = await storage.driver.tag.get_by_type(event_type)
         record = list(search_result).pop()
         tags = EventTag(**record).tags
-        update_result = await storage.driver.event.update_fields(event_type=event_type, field="tags", value=tags)
+        update_result = await storage.driver.event.update_field(event_type=event_type, field="tags", value=tags)
     except StorageException as e:
         raise HTTPException(status_code=500, detail=str(e))
     return {
