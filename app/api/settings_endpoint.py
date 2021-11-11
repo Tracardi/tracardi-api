@@ -260,6 +260,13 @@ system_settings = [
                     "Available only in commercial version of Tracardi."
         }
     ),
+    SystemSettings(
+        **{
+            "label": "TAGS_TTL",
+            "value": memory_cache.tags_ttl,
+            "desc": "Time of availability of event tags in memory cache, expressed in seconds, defaults to 60."
+        }
+    ),
 ]
 
 router = APIRouter(
