@@ -83,6 +83,9 @@
             "type": "object"
           }
         }
+      },
+      "tags": {
+        "type": "keyword"
       }
     }
   }
