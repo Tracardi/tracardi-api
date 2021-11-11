@@ -20,13 +20,13 @@ router = APIRouter(
 )
 
 
-def __format_aggs(rows):
-    for row in rows:
+def __format_time_buckets(row):
+    for key, value in row.items():
+        timestamp = datetime.fromisoformat(key.replace('Z', '+00:00'))
         # todo timestamp no timezone
-        timestamp = datetime.fromisoformat(row["key_as_string"].replace('Z', '+00:00'))
         yield {
             "date": "{}".format(timestamp.strftime("%Y/%m/%d")),
-            "count": row["doc_count"]
+            "count": value
         }
 
 
@@ -34,8 +34,10 @@ def __format_aggs(rows):
 async def heatmap_by_profile(id: str):
     try:
 
-        result = await storage.driver.event.heatmap_by_profile(id)
-        return list(__format_aggs(result))
+        bucket_name = "items_over_time"
+
+        result = await storage.driver.event.heatmap_by_profile(id, bucket_name)
+        return {key: value for key, value in result.process(__format_time_buckets, bucket_name)}[bucket_name]
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -45,8 +47,10 @@ async def heatmap_by_profile(id: str):
 async def heatmap():
     try:
 
-        result = await storage.driver.event.heatmap_by_profile(profile_id=None)
-        return list(__format_aggs(result))
+        bucket_name = "items_over_time"
+
+        result = await storage.driver.event.heatmap_by_profile(None, bucket_name)
+        return {key: value for key, value in result.process(__format_time_buckets, bucket_name)}[bucket_name]
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -63,7 +67,7 @@ async def event_types():
 
 @router.get("/events/by_type/profile/{profile_id}", tags=["event"], include_in_schema=server.expose_gui_api)
 async def event_types(profile_id: str):
-    return await storage.driver.event.aggregate_profile_events_by_type(profile_id)
+    return await storage.driver.event.aggregate_profile_events_by_type(profile_id, bucket_name='by_type')
 
 
 @router.get("/events/heatmap_by_profile/profile/{profile_id}", tags=["event"], include_in_schema=server.expose_gui_api)
