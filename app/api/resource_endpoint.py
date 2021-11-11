@@ -35,6 +35,10 @@ async def get_resource_types(type: TypeEnum) -> dict:
 
     try:
         types = {
+            "web-page": {
+                "user": None,
+                "password": None
+            },
             "api-call": {
                 "user": None,
                 "password": None
