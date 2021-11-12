@@ -19,7 +19,7 @@ async def add_tags(tag_form: EventTag):
     )
     if result.errors:
         raise HTTPException(status_code=500, detail=result.errors)
-    return {"new": result.saved, "updated": 1-result.saved}
+    return {"new": result.saved, "updated": 1 - result.saved}
 
 
 @router.delete("/event/tag/delete", tags=["event"], include_in_schema=server.expose_gui_api, response_model=dict)
@@ -38,7 +38,9 @@ async def delete_tags(tag_form: EventTag):
 async def get_tags(limit: int = 100):
     return (await storage.driver.tag.load_tags(limit=limit)).dict()["result"]
 
-@router.put("/event/tag/type/{event_type}", tags=["event"], include_in_schema=server.expose_gui_api, response_model=dict)
+
+@router.put("/event/tag/type/{event_type}", tags=["event"],
+            include_in_schema=server.expose_gui_api, response_model=dict)
 async def update_tags(event_type: str):
     try:
         search_result = await storage.driver.tag.get_by_type(event_type)
@@ -50,3 +52,13 @@ async def update_tags(event_type: str):
     return {
         "total": update_result["updated"]
     }
+
+
+@router.delete("/event/tag/delete/{event_type}", tags=["event"],
+               include_in_schema=server.expose_gui_api, response_model=dict)
+async def delete_record(event_type: str):
+    try:
+        delete_result = await storage.driver.tag.delete(event_type)
+    except StorageException as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    return {"deleted": 0 if delete_result is None else 1}
