@@ -71,6 +71,7 @@ async def add_plugins():
         'tracardi.process_engine.action.v1.if_action',
         'tracardi.process_engine.action.v1.new_visit_action',
         'tracardi.process_engine.action.v1.new_profile_action',
+        'tracardi.process_engine.action.v1.template_action',
 
         'tracardi.process_engine.action.v1.detect_client_agent_action',
 
