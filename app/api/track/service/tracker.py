@@ -73,7 +73,6 @@ async def track_event(tracker_payload: TrackerPayload, ip: str):
     session = await StorageFor(tracker_payload.session).index("session").load(Session)  # type: Session
 
     # Get profile
-    # profile, session = await tracker_payload.get_profile_and_session(session, load_merged_profile)
     profile, session = await tracker_payload.get_profile_and_session(session,
                                                                      storage.driver.profile.load_merged_profile)
 

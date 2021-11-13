@@ -53,7 +53,7 @@ async def run_tasks():
             try:
                 return await track_event(tracker_payload, ip=local_ip), task
             except Exception as e:
-                print(str(e))
+                logger.error("Scheduled task error: ".format(str(e)))
                 task.status = 'error'
                 return None, task
 
@@ -66,7 +66,6 @@ async def run_tasks():
     bulk_tasks = []
     for task in tasks:
         task = Task(**task)
-
         task_coroutine = run(task)
         event_tasks.append(task_coroutine)
         task.status = 'running'
@@ -80,7 +79,7 @@ async def run_tasks():
         result, _task = await task
         if _task.status == 'running':
             _task.status = 'done'
-        print('_task', _task)
+
         bulk_tasks.append(_task)
 
     return await storage.driver.task.save_tasks(bulk_tasks)
