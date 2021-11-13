@@ -85,7 +85,14 @@
         }
       },
       "tags": {
-        "type": "keyword"
+        "properties": {
+          "content": {
+            "type": "text"
+          },
+          "count": {
+            "type": "double"
+          }
+        }
       }
     }
   }
