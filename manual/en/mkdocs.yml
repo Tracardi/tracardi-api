@@ -95,6 +95,7 @@ nav:
               - flow/actions/url_parser_action.md
               - flow/actions/string_splitter_action.md
               - flow/actions/string_properties_action.md
+              - flow/actions/profile_segment.md
           - Machine Learning:
               - flow/actions/text_classification_action.md
               - flow/actions/lang_detection_action.md
