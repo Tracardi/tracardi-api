@@ -87,7 +87,7 @@
       "tags": {
         "properties": {
           "values": {
-            "type": "text"
+            "type": "keyword"
           },
           "count": {
             "type": "double"

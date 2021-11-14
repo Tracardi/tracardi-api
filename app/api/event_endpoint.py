@@ -14,6 +14,7 @@ from tracardi.domain.event import Event
 from tracardi.domain.profile import Profile
 from .domain.schedule import ScheduleData
 from ..config import server
+from elasticsearch.exceptions import ElasticsearchException
 
 router = APIRouter(
     dependencies=[Depends(get_current_user)]
@@ -149,3 +150,60 @@ async def add_scheduled_event(schedule_data: ScheduleData):
         status=None
     )
     return {"result": result}
+
+
+@router.get("/event/group/by_tags/profile/{profile_id}", tags=["event"],
+            include_in_schema=server.expose_gui_api, response_model=dict)
+async def get_grouped_by_tags_prof(profile_id: str):
+    aggregate_query = {
+        "for_tags": {
+            "terms": {
+                "field": "tags.values"
+            }
+        },
+        "for_missing_tags": {
+            "missing": {
+                "field": "tags.values"
+            }
+        }
+    }
+    try:
+        result = await storage.driver.event.aggregate_profile_events(
+            profile_id=profile_id,
+            aggregate_query=aggregate_query
+        )
+    except ElasticsearchException as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    del result.aggregations["for_tags"][0]["other"]
+    result.aggregations["for_tags"][0]["no_tag"] = result.aggregations["for_missing_tags"][0]["found"]
+    agg_results = {**result.aggregations["for_tags"][0]}
+    return agg_results
+
+
+@router.get("/event/group/by_tags/from/{time_from}/to/{time_to}", tags=["event"], include_in_schema=server.expose_gui_api,
+            response_model=dict)
+async def get_grouped_by_tags_time(time_from: str, time_to: str):
+    aggregate_query = {
+        "for_tags": {
+            "terms": {
+                "field": "tags.values"
+            }
+        },
+        "for_missing_tags": {
+            "missing": {
+                "field": "tags.values"
+            }
+        }
+    }
+    try:
+        result = await storage.driver.event.aggregate_timespan_events(
+            time_from=time_from,
+            time_to=time_to,
+            aggregate_query=aggregate_query
+        )
+    except ElasticsearchException as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    del result.aggregations["for_tags"][0]["other"]
+    result.aggregations["for_tags"][0]["no_tag"] = result.aggregations["for_missing_tags"][0]["found"]
+    agg_results = {**result.aggregations["for_tags"][0]}
+    return agg_results
