@@ -44,7 +44,7 @@ async def get_tags(limit: int = 100):
 async def update_tags(event_type: str):
     try:
         search_result = await storage.driver.tag.get_by_type(event_type)
-        record = list(search_result).pop()
+        record = list(search_result).pop() if search_result else {}
         tags = EventTag(**record).tags
         update_result = await storage.driver.event.update_tags(event_type=event_type, tags=tags)
     except StorageException as e:
