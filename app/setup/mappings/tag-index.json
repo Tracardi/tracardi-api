@@ -10,7 +10,7 @@
         "type": "keyword"
       },
       "tags": {
-        "type": "keyword"
+        "type": "text"
       }
     }
   }
