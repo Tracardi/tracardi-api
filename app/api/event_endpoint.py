@@ -182,7 +182,12 @@ async def get_grouped_by_tags_prof(profile_id: str):
 
 @router.get("/event/group/by_tags/from/{time_from}/to/{time_to}", tags=["event"], include_in_schema=server.expose_gui_api,
             response_model=dict)
-async def get_grouped_by_tags_time(time_from: str, time_to: str):
+async def get_grouped_by_tags_time(time_from: datetime, time_to: datetime):
+
+    """
+    Accepted time format: 2021-09-15T15:53:00
+    """
+
     aggregate_query = {
         "for_tags": {
             "terms": {
