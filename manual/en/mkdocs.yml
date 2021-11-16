@@ -84,8 +84,9 @@ nav:
               - flow/actions/weather_action.md
               - flow/actions/mongo_query_action.md
               - flow/actions/mysql_connector_action.md
-          - Validators:
-              - flow/actions/regex_validator_action.md
+          - Regex:
+              - flow/actions/regex/regex_validator_action.md
+              - flow/actions/regex/regex_match.md
           - Locations:
               - flow/actions/geo_ip_locator.md
           - Time:

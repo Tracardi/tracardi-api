@@ -120,7 +120,8 @@ async def add_plugins():
         'tracardi_event_scheduler.plugin',
         'tracardi_pushover_webhook.plugin',
         'tracardi_language_detection.plugin',
-        'tracardi_profile_segmentation.plugin'
+        'tracardi_profile_segmentation.plugin',
+        'tracardi_regex_match.plugin'
 
     ]
     for plugin in plugins:
