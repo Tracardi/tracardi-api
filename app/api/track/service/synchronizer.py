@@ -9,8 +9,10 @@ logger = logging.getLogger('tracardi.api.event_server')
 logger.setLevel(logging.WARNING)
 
 
+# todo try to use this.
 class AsyncProfileTracksSynchronizer:
-    def __init__(self, profile: Optional[Entity]):
+    def __init__(self, profile: Optional[Entity], wait=0.1):
+        self.wait = wait
         self.profile = profile
         self.redis = AsyncRedisClient(redis_config.redis_host)
         self.hash = "profile-blocker"
@@ -19,7 +21,7 @@ class AsyncProfileTracksSynchronizer:
         while True:
             if await self._is_profile_processed():
                 logger.warning(f"Waiting for /track/{self.profile.id} to finish")
-                await asyncio.sleep(.1)
+                await asyncio.sleep(self.wait)
             else:
                 await self._set_profile_process_id()
                 return self

@@ -15,7 +15,7 @@ This node requires configuration.
     "send_from": "from@email.com",
     "reply_to": "reply-to@email.com",
     "title": "E-mail subject",
-    "message": "My name is {profile@traits.private.pii.name}"
+    "message": "My name is {{profile@pii.name}}"
   },
   "source": {
     "id": "resource-id"
@@ -25,11 +25,11 @@ This node requires configuration.
 
 ## Configuration description
 
-* to: None, - Choose `e-mail` recipient
-* from: None, - Choose your `e-mail`
+* to: None, - Choose *e-mail* recipient
+* from: None, - Choose your *e-mail*
 * replyTo: None,- Select to whom the reply should be sent
-* title: Enter a `E-mail subject`,
-* message: Enter your `message`, HTML is allowed as well as message template.
+* title: Enter a *E-mail subject*,
+* message: Enter your *message*, HTML is allowed as well as message template.
 
 ### Message
 
@@ -39,11 +39,11 @@ or session.
 *Example of Tracardi message template*
 
 ```
-My name is {profile@traits.private.pii.name}
+My name is {{profile@pii.name}}
 ```
 
-The `{profile@traits.private.pii.name}` placeholder will be replaced by data from profile. Path to data is 
-`traits.private.pii.name`.
+The *{{profile@pii.name}}* placeholder will be replaced by data from profile. Path to data is 
+*traits.private.pii.name*.
 
 
 ## Resource configuration
@@ -57,10 +57,10 @@ This node needs access to resource that configures SMTP server credentials:
 
 Needed credentials:
 
-* smtp: smtp.gmail.com, - Choose a smtp server
-* port: 587, - Select the port on which smtp will run
-* username: None, - enter your username
-* password: None, - enter your password
+* smtp: smtp.gmail.com - Choose a smtp server
+* port: 587 - Select the port on which smtp will run
+* username: - enter your username
+* password: - enter your password
 * timeout: 15
 
 ## Example of resource configuration
@@ -81,4 +81,4 @@ This node does not process input payload.
 
 # Output
 
-This node returns `true` if mail was sent or `false` if there was an error.
+This node returns *true* if mail was sent or *false* if there was an error.
