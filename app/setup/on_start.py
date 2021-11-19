@@ -84,6 +84,8 @@ async def add_plugins():
         'tracardi.process_engine.action.v1.operations.merge_profiles_action',
         'tracardi.process_engine.action.v1.operations.segment_profile_action',
 
+        'tracardi.process_engine.action.v1.microservice.profile_statistics',
+
         # Plugins
         'tracardi_key_counter.plugin',
         'tracardi.process_engine.action.v1.traits.reshape_payload_action',

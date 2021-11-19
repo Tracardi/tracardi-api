@@ -102,6 +102,11 @@ async def get_resource_types(type: TypeEnum) -> dict:
             "api-token": {
                 "token": None
             },
+            "tracardi-pro": {
+                "url": '',
+                "username": '',
+                "password": ''
+            }
         }
         if type.value == 'name':
             types = list(types.keys())
