@@ -103,9 +103,9 @@ async def get_resource_types(type: TypeEnum) -> dict:
                 "token": None
             },
             "tracardi-pro": {
-                "url": '',
-                "username": '',
-                "password": ''
+                "url": "http://localhost:12345",
+                "username": "admin",
+                "password": "admin"
             }
         }
         if type.value == 'name':
