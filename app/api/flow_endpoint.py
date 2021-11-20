@@ -46,6 +46,11 @@ router = APIRouter(
 async def upsert_flow_draft(draft: Flow):
     try:
 
+        # Frontend edge id is log. Save space and md5 it.
+
+        if draft.flowGraph is not None:
+            draft.flowGraph.shorten_edge_ids()
+
         # Check if origin flow exists
 
         entity = Entity(id=draft.id)
