@@ -32,16 +32,26 @@ async def create_indices():
             map = json.load(file)
             if not await es.exists_index(index.get_write_index()):
 
-                result = await es.create_index(index.get_write_index(), map)
+                if index.multi_index is True:
+                    # Multi indices need templates. Index will be create automatically on first insert
+                    result = await es.put_index_template(index.index, map)
+                else:
+                    result = await es.create_index(index.get_write_index(), map)
+
                 if 'acknowledged' not in result or result['acknowledged'] is not True:
                     logger.log(level=logging.ERROR,
-                               msg="New index `{}` was not created. The following result was returned {}".format(
+                               msg="New {} `{}` was not created. The following result was returned {}".format(
+                                   'template' if index.multi_index else 'index',
                                    index.get_write_index(),
-                                   result
-                               ))
+                                   result)
+                               )
                 else:
                     logger.log(level=logging.INFO,
-                               msg="New index `{}` created. Mapping from `{}` was used.".format(index.get_write_index(), map_file))
+                               msg="New {} `{}` created. Mapping from `{}` was used.".format(
+                                   'template' if index.multi_index else 'index',
+                                   index.get_write_index(),
+                                   map_file)
+                               )
 
                 if key in index_mapping and 'on-start' in index_mapping[key]:
                     if index_mapping[key]['on-start'] is not None:
