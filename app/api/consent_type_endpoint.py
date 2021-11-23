@@ -2,13 +2,12 @@ from fastapi import APIRouter, Depends, HTTPException
 from app.api.auth.authentication import get_current_user
 from app.config import server
 from pydantic import BaseModel, validator
-from uuid import UUID
+from uuid import UUID, uuid4
 from tracardi.service.storage.driver import storage
 from elasticsearch import ElasticsearchException
 
 
-class ConsentForm(BaseModel):
-    id: UUID
+class ConsentTypePayload(BaseModel):
     name: str
     description: str
     revokable: bool
@@ -20,6 +19,8 @@ class ConsentForm(BaseModel):
             raise ValueError("'default_value' must be either 'grant' or 'deny'")
         return v
 
+class ConsentType(ConsentTypePayload):
+    id: UUID = uuid4()
 
 router = APIRouter(
     dependencies=[Depends(get_current_user)]
@@ -27,15 +28,9 @@ router = APIRouter(
 
 
 @router.post("/consent", tags=["consent"], include_in_schema=server.expose_gui_api, response_model=dict)
-async def add_consent_type(data: ConsentForm):
+async def add_consent_type(data: ConsentTypePayload):
     try:
-        result = await storage.driver.consent_type.add_consent(
-            data.id,
-            data.name,
-            data.description,
-            data.revokable,
-            data.default_value
-        )
+        result = await storage.driver.consent_type.add_consent(**ConsentType(**data.dict()).dict())
     except ElasticsearchException as e:
         raise HTTPException(status_code=500, detail=str(e))
     return result
