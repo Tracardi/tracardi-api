@@ -40,7 +40,8 @@ async def get_resource_types(type: TypeEnum) -> dict:
                 "password": None
             },
             "api-call": {
-                "user": None,
+                "url": None,
+                "username": None,
                 "password": None
             },
             "rabbitmq": {
