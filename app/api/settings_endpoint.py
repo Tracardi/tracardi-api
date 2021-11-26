@@ -222,20 +222,6 @@ system_settings = [
     ),
     SystemSettings(
         **{
-            "label": "ELASTIC_SQL_TRANSLATE_URL",
-            "value": elastic.sql_translate_url,
-            "desc": "Variable telling Elastic URL for SQL translation, defaults to '/_sql/translate'."
-        }
-    ),
-    SystemSettings(
-        **{
-            "label": "ELASTIC_SQL_TRANSLATE_METHOD",
-            "value": elastic.sql_translate_method,
-            "desc": "Variable telling Elastic the method of translating from SQL, defaults to 'POST'."
-        }
-    ),
-    SystemSettings(
-        **{
             "label": "ELASTIC_REFRESH_PROFILES_AFTER_SAVE",
             "value": elastic.refresh_profiles_after_save,
             "desc": "Default: no. When set to yes profile index will be forced to refresh its data after each update. "

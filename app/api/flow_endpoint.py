@@ -11,6 +11,7 @@ from tracardi.domain.console import Console
 from tracardi.service.storage.driver import storage
 from tracardi.service.storage.factory import StorageFor, StorageForBulk
 from tracardi_graph_runner.domain.flow_history import FlowHistory
+from tracardi_graph_runner.domain.named_entity import NamedEntity
 from tracardi_graph_runner.domain.work_flow import WorkFlow
 from tracardi_plugin_sdk.domain.console import Log
 
@@ -45,6 +46,11 @@ router = APIRouter(
 @router.post("/flow/draft", tags=["flow"], response_model=BulkInsertResult, include_in_schema=server.expose_gui_api)
 async def upsert_flow_draft(draft: Flow):
     try:
+
+        # Frontend edge id is log. Save space and md5 it.
+
+        if draft.flowGraph is not None:
+            draft.flowGraph.shorten_edge_ids()
 
         # Check if origin flow exists
 
@@ -88,6 +94,22 @@ async def load_flow_draft(id: str):
             return draft_record.decode_draft()
 
         return draft_record.decode()
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/flows/entity", tags=["flow"], include_in_schema=server.expose_gui_api)
+async def get_flows():
+    try:
+        result = await StorageForBulk().index('flow').load()
+        total = result.total
+        result = [NamedEntity(**r) for r in result]
+
+        return {
+            "total": total,
+            "result": result,
+        }
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

@@ -1,96 +1,101 @@
 {
-  "settings": {
-    "number_of_shards": 5,
-    "number_of_replicas": 1
-  },
-  "mappings": {
-    "dynamic": false,
-    "properties": {
-      "id": {
-        "type": "keyword"
-      },
-      "metadata": {
-        "properties": {
-          "time": {
-            "properties": {
-              "insert": {
-                "type": "date"
-              }
-            }
-          },
-          "ip": {
-            "type": "keyword",
-            "null_value": "NULL"
-          }
-        }
-      },
-      "type": {
-        "type": "keyword",
-        "null_value": "NULL"
-      },
+  "index_patterns": [
+    "tracardi-event-*-*"
+  ],
+  "template": {
+    "settings": {
+      "number_of_shards": 5,
+      "number_of_replicas": 1
+    },
+    "mappings": {
+      "dynamic": false,
       "properties": {
-        "dynamic": true,
-        "type": "object"
-      },
-      "source": {
-        "properties": {
-          "id": {
-            "type": "keyword"
-          }
-        }
-      },
-      "session": {
-        "properties": {
-          "id": {
-            "type": "keyword"
-          },
-          "metadata": {
-            "dynamic": true,
-            "type": "object"
-          },
-          "context": {
-            "dynamic": true,
-            "type": "object"
-          }
-        }
-      },
-      "profile": {
-        "properties": {
-          "id": {
-            "type": "keyword"
-          },
+        "id": {
+          "type": "keyword"
+        },
+        "metadata": {
           "properties": {
-            "properties": {
-              "private": {
-                "dynamic": true,
-                "type": "object"
-              },
-              "public": {
-                "dynamic": true,
-                "type": "object"
+            "time": {
+              "properties": {
+                "insert": {
+                  "type": "date"
+                }
               }
+            },
+            "ip": {
+              "type": "keyword",
+              "null_value": "NULL"
             }
-          },
-          "segments": {
-            "type": "keyword"
-          },
-          "stats": {
-            "dynamic": true,
-            "type": "object"
-          },
-          "consents": {
-            "dynamic": true,
-            "type": "object"
           }
-        }
-      },
-      "tags": {
+        },
+        "type": {
+          "type": "keyword",
+          "null_value": "NULL"
+        },
         "properties": {
-          "values": {
-            "type": "keyword"
-          },
-          "count": {
-            "type": "double"
+          "dynamic": true,
+          "type": "object"
+        },
+        "source": {
+          "properties": {
+            "id": {
+              "type": "keyword"
+            }
+          }
+        },
+        "session": {
+          "properties": {
+            "id": {
+              "type": "keyword"
+            },
+            "metadata": {
+              "dynamic": true,
+              "type": "object"
+            },
+            "context": {
+              "dynamic": true,
+              "type": "object"
+            }
+          }
+        },
+        "profile": {
+          "properties": {
+            "id": {
+              "type": "keyword"
+            },
+            "properties": {
+              "properties": {
+                "private": {
+                  "dynamic": true,
+                  "type": "object"
+                },
+                "public": {
+                  "dynamic": true,
+                  "type": "object"
+                }
+              }
+            },
+            "segments": {
+              "type": "keyword"
+            },
+            "stats": {
+              "dynamic": true,
+              "type": "object"
+            },
+            "consents": {
+              "dynamic": true,
+              "type": "object"
+            }
+          }
+        },
+        "tags": {
+          "properties": {
+            "values": {
+              "type": "keyword"
+            },
+            "count": {
+              "type": "double"
+            }
           }
         }
       }

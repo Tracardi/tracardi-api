@@ -49,7 +49,7 @@ async def time_range_with_sql(index: IndexesHistogram, query: DatetimeRangePaylo
              tags=["generic", "event", "profile", "resource", "rule", "session", "flow", "segment"],
              include_in_schema=server.expose_gui_api)
 async def histogram_with_sql(index: IndexesHistogram, query: DatetimeRangePayload):
-    try:
+    # try:
         return await storage.driver.raw.index(index.value).histogram_by_sql_in_time_range(query)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    # except Exception as e:
+    #     raise HTTPException(status_code=500, detail=str(e))

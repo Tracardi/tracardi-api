@@ -84,6 +84,8 @@ async def add_plugins():
         'tracardi.process_engine.action.v1.operations.merge_profiles_action',
         'tracardi.process_engine.action.v1.operations.segment_profile_action',
 
+        'tracardi.process_engine.action.v1.microservice.profile_metrics',
+
         # Plugins
         'tracardi_key_counter.plugin',
         'tracardi.process_engine.action.v1.traits.reshape_payload_action',
@@ -120,7 +122,10 @@ async def add_plugins():
         'tracardi_event_scheduler.plugin',
         'tracardi_pushover_webhook.plugin',
         'tracardi_language_detection.plugin',
-        'tracardi_profile_segmentation.plugin'
+        'tracardi_profile_segmentation.plugin',
+        'tracardi_regex_match.plugin',
+        'tracardi_aws_sqs.plugin',
+        'tracardi_resource.plugin'
 
     ]
     for plugin in plugins:
