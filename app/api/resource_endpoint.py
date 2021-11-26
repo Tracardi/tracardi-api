@@ -9,6 +9,7 @@ from fastapi import HTTPException, Depends
 from tracardi.domain.enum.type_enum import TypeEnum
 from tracardi.service.storage.driver import storage
 from tracardi.service.storage.factory import StorageFor, StorageForBulk
+from tracardi_graph_runner.domain.named_entity import NamedEntity
 
 from .auth.authentication import get_current_user
 from .grouper import search
@@ -115,6 +116,23 @@ async def get_resource_types(type: TypeEnum) -> dict:
         return {"total": len(types),
                 "result": types}
 
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/resources/entity",
+            tags=["resource"],
+            include_in_schema=server.expose_gui_api)
+async def list_resources():
+    try:
+        result = await StorageForBulk().index('resource').load()
+        total = result.total
+        result = [NamedEntity(**r) for r in result]
+
+        return {
+            "total": total,
+            "result": list(result)
+        }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

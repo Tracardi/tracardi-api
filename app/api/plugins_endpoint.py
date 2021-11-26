@@ -50,9 +50,8 @@ async def validate_plugin_configuration(id: str, config: dict = None):
         for error in e.errors():
             if 'loc' not in error or 'msg' not in error:
                 continue
-            for field in error['loc']:
-                # One field at a time. This is ok to override field errors.
-                response[field] = error['msg'].capitalize()
+            field = ".".join(error['loc']) if isinstance(error['loc'], tuple) else error['loc']
+            response[field] = error['msg'].capitalize()
         return JSONResponse(
             status_code=422,
             content=jsonable_encoder(response)
