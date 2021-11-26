@@ -46,12 +46,10 @@
                 "ignore_above": 32
               },
               "keywords": {
-                "type": "text",
-                "ignore_above": 24
+                "type": "text"
               },
               "name": {
-                "type": "text",
-                "ignore_above": 128
+                "type": "text"
               },
               "type": {
                 "type": "keyword",
