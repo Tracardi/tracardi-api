@@ -83,8 +83,15 @@
           "ignore_above": 64
         },
         "consents": {
-          "dynamic": true,
-          "type": "object"
+          "type": "nested",
+          "properties": {
+            "type_id": {
+              "type": "keyword"
+            },
+            "revoke": {
+              "type": "date"
+            }
+          }
         },
         "active": {
           "type": "boolean"

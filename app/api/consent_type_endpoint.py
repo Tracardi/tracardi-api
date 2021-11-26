@@ -19,8 +19,10 @@ class ConsentTypePayload(BaseModel):
             raise ValueError("'default_value' must be either 'grant' or 'deny'")
         return v
 
+
 class ConsentType(ConsentTypePayload):
     id: UUID = uuid4()
+
 
 router = APIRouter(
     dependencies=[Depends(get_current_user)]

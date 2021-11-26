@@ -8,6 +8,7 @@ from .auth.authentication import get_current_user
 from tracardi.domain.profile import Profile
 from ..config import server
 
+
 router = APIRouter(
     dependencies=[Depends(get_current_user)]
 )
@@ -48,3 +49,4 @@ async def delete_profile(id: str):
 async def get_profile_logs(id: str):
     log_records = await storage.driver.console_log.load_by_profile(id)
     return list(log_records)
+
