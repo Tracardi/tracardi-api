@@ -1,6 +1,6 @@
 # Core definitions
 
-In order to understand how Tracardi CPD works you will need to learn the following definitions.
+In order to understand how Tracardi CDP works you will need to learn the following definitions.
 
 ## Resource
 
