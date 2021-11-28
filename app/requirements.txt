@@ -1,14 +1,15 @@
 pip>=21.2.4
-fastapi>=0.68.0
+strawberry-graphql[fastapi]
+fastapi>=0.70.0
 uvicorn[standard]>=0.14.0
 pydantic>=1.8.2
-aiofiles
-aioredis
-redis
-elasticsearch==7.13.4
+aiofiles==0.8.0
+aioredis==2.0.0
+hiredis==2.0.0
+redis==4.0.2
+elasticsearch[async]==7.10.1
 prodict==0.8.18
-lark==0.11.3
-strawberry-graphql[fastapi]
+lark==1.0.0
 
 
 git+https://github.com/Tracardi/tracardi-plugin-sdk.git
