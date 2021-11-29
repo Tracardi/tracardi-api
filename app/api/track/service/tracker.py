@@ -94,7 +94,7 @@ async def track_event(tracker_payload: TrackerPayload, ip: str):
 
         # Invoke rules engine
         debug_info_by_event_type_and_rule_name, ran_event_types, console_log = await rules_engine.invoke(
-            storage.driver.flow.load_flow,
+            storage.driver.flow.load_production_flow,
             tracker_payload.source.id)
 
         # Segment

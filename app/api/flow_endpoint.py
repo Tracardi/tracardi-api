@@ -8,6 +8,7 @@ from fastapi import HTTPException, Depends
 from tracardi.exceptions.exception import StorageException
 
 from tracardi.domain.console import Console
+from tracardi.service.secrets import encrypt
 from tracardi.service.storage.driver import storage
 from tracardi.service.storage.factory import StorageFor, StorageForBulk
 from tracardi_graph_runner.domain.flow_history import FlowHistory
@@ -22,7 +23,7 @@ from tracardi.domain.enum.yes_no import YesNo
 from tracardi.domain.flow_meta_data import FlowMetaData
 from tracardi.domain.entity import Entity
 from tracardi.domain.event import Event
-from tracardi.domain.flow import Flow, FlowGraphDataRecord
+from tracardi.domain.flow import Flow
 from tracardi_graph_runner.domain.flow import Flow as GraphFlow
 from tracardi.domain.flow_action_plugin import FlowActionPlugin
 from tracardi.domain.plugin_import import PluginImport
@@ -55,21 +56,12 @@ async def upsert_flow_draft(draft: Flow):
         # Check if origin flow exists
 
         entity = Entity(id=draft.id)
-        draft_record = await StorageFor(entity).index('flow').load(FlowRecord)  # type: FlowRecord
+        flow_record = await StorageFor(entity).index('flow').load(FlowRecord)  # type: FlowRecord
 
-        if draft_record is None:
-            # If not exists create new one
-            origin = Flow.new(draft.id)
-            origin.description = "Created during workflow draft save."
-            record = FlowRecord.encode(origin)
-            await StorageFor(record).index().save()
-        else:
-            # If exists decode origin flow
-            origin = draft_record.decode()
+        if flow_record is None:
+            raise ValueError("Workflow {} does not exist.".format(draft.id))
 
-        # Append draft
-        origin.encode_draft(draft)
-        flow_record = FlowRecord.encode(origin)
+        flow_record.draft = encrypt(draft.dict())
 
         return await StorageFor(flow_record).index().save()
 
@@ -80,21 +72,24 @@ async def upsert_flow_draft(draft: Flow):
 @router.get("/flow/draft/{id}", tags=["flow"], response_model=Flow, include_in_schema=server.expose_gui_api)
 async def load_flow_draft(id: str):
     try:
-
-        # Check if origin flow exists
-
         entity = Entity(id=id)
-        draft_record = await StorageFor(entity).index('flow').load(FlowRecord)  # type: FlowRecord
+        flow_record = await StorageFor(entity).index('flow').load(FlowRecord)  # type: FlowRecord
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
-        if draft_record is None:
-            raise ValueError("Flow `{}` does not exists.".format(id))
+    if flow_record is None:
+        raise HTTPException(status_code=404, detail="Workflow `{}` does not exists.".format(id))
 
+    try:
         # Return draft if exists
-        if draft_record.draft:
-            return draft_record.decode_draft()
+        if flow_record.draft:
+            return flow_record.get_draft_workflow()
 
-        return draft_record.decode()
+        # Fallback to production version
+        if flow_record.production:
+            return flow_record.get_production_workflow()
 
+        return flow_record.get_empty_workflow(id)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -198,26 +193,40 @@ async def delete_flow(id: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/flow/{id}", tags=["flow"], response_model=Flow, include_in_schema=server.expose_gui_api)
+@router.get("/flow/production/{id}", tags=["flow"], response_model=Flow, include_in_schema=server.expose_gui_api)
 async def get_flow(id: str):
     try:
         flow = Entity(id=id)
-        flow_record = await StorageFor(flow).index("flow").load(FlowRecord)
-        result = flow_record.decode() if flow_record is not None else None
+        flow_record = await StorageFor(flow).index("flow").load(FlowRecord)  # type: FlowRecord
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-    if result is not None:
-        return result
+    if flow_record is None:
+        raise HTTPException(status_code=404, detail="Flow id: `{}` does not exist.".format(id))
 
-    raise HTTPException(status_code=404, detail="Flow id: `{}` does not exist.".format(id))
+    try:
+        if flow_record.production:
+            return flow_record.get_production_workflow()
+
+        return flow_record.get_empty_workflow(id)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.post("/flow", tags=["flow"], response_model=BulkInsertResult, include_in_schema=server.expose_gui_api)
+@router.post("/flow/production", tags=["flow"], response_model=BulkInsertResult, include_in_schema=server.expose_gui_api)
 async def upsert_flow(flow: Flow):
     try:
-        flow_record = FlowRecord.encode(flow)
+        flow_record = flow.get_production_workflow_record()
         return await StorageFor(flow_record).index().save()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/flow/metadata/{id}", tags=["flow"], response_model=FlowRecord, include_in_schema=server.expose_gui_api)
+async def get_flow_details(id: str):
+    try:
+        entity = Entity(id=id)
+        return await StorageFor(entity).index("flow").load(FlowRecord)  # type: FlowRecord
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -227,21 +236,13 @@ async def upsert_flow_details(flow_metadata: FlowMetaData):
     try:
         entity = Entity(id=flow_metadata.id)
         flow_record = await StorageFor(entity).index("flow").load(FlowRecord)  # type: FlowRecord
-        if flow_record:
+        if flow_record is None:
+            flow_record = FlowRecord(**flow_metadata.dict())
+        else:
             flow_record.name = flow_metadata.name
             flow_record.description = flow_metadata.description
             flow_record.enabled = flow_metadata.enabled
             flow_record.projects = flow_metadata.projects
-        else:
-            # new record
-            flow_record = FlowRecord(
-                id=flow_metadata.id,
-                name=flow_metadata.name,
-                description=flow_metadata.description,
-                enabled=flow_metadata.enabled,
-                flowGraph=FlowGraphDataRecord(nodes=[], edges=[]),
-                projects=flow_metadata.projects
-            )
 
         return await StorageFor(flow_record).index().save()
     except Exception as e:
@@ -274,14 +275,14 @@ async def upsert_flow_details(flow_metadata: FlowMetaData):
         flow_record.projects = flow_metadata.projects
 
         if flow_record.draft:
-            draft = flow_record.decode_draft()
+            draft_workflow = flow_record.get_draft_workflow()
 
-            draft.name = flow_metadata.name
-            draft.description = flow_metadata.description
-            draft.enabled = flow_metadata.enabled
-            draft.projects = flow_metadata.projects
+            draft_workflow.name = flow_metadata.name
+            draft_workflow.description = flow_metadata.description
+            draft_workflow.enabled = flow_metadata.enabled
+            draft_workflow.projects = flow_metadata.projects
 
-            flow_record.encode_draft(draft)
+            flow_record.production = encrypt(draft_workflow.dict())
 
         return await StorageFor(flow_record).index().save()
 

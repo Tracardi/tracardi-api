@@ -18,12 +18,11 @@
       "projects": {
         "type": "keyword"
       },
-      "flowGraph": {
-        "type": "object",
-        "dynamic": true,
-        "enabled": false
-      },
       "draft": {
+        "type": "keyword",
+        "index": false
+      },
+      "production": {
         "type": "keyword",
         "index": false
       },
