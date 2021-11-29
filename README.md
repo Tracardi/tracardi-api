@@ -20,8 +20,8 @@ a legacy system you can integrate TRACARDI easily. Use TRACARDI for:
  * **Profile Unification** - You can merge customer data from various sources to
    single profile. Auto de-duplicate customer records. Blend customers in one account.
    
- * **Automation** - TRACARDI is a great framework for creating
-   marketing automation apps. You can send your data to other systems easily
+ * **Automation** - TRACARDI is a great framework for creating marketing automation apps. 
+   You can send your data to other systems easily
 
 ## Screenshots
 
