@@ -125,7 +125,8 @@ async def add_plugins():
         'tracardi_profile_segmentation.plugin',
         'tracardi_regex_match.plugin',
         'tracardi_aws_sqs.plugin',
-        'tracardi_resource.plugin'
+        'tracardi_resource.plugin',
+        'tracardi_json_from_objects.plugin'
 
     ]
     for plugin in plugins:

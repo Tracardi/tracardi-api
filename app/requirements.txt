@@ -47,3 +47,4 @@ git+https://github.com/Tracardi/tracardi-segmentation.git
 git+https://github.com/Tracardi/tracardi-regex-match.git
 git+https://github.com/Tracardi/tracardi-aws-sqs-connector.git
 git+https://github.com/Tracardi/tracardi-resource.git
+git+https://github.com/Tracardi/tracardi-json-from-payload.git
