@@ -1,26 +1,27 @@
-Please DO NOT DELETE this template. Fill it. PR without this template will be discarded. We need your declaration that
-your contribution is MIT licensed without it, we can not merge your code.
+Please DO NOT DELETE this template. Fill it. PR without your declaration that you licence your code under MIT will 
+be discarded. 
 
-To make clear that you license your contribution under the MIT you have to acknowledge this by using the following check-box.
+Tips
+----------------
 
- - [ ] I hereby declare this contribution to be licenced under the [MIT license](https://opensource.org/licenses/MIT)
+ * Give the same name to the pull request as the name of ticket if possible
+ * Make the title in form of: Pull request title (#<issue-id>)
+ * Write a pull request description that is detailed enough to understand what the pull request does, how, and why.
+ * Test your code throughly before PR.
 
-PRs without ticked MIT license will bot be accepted - Sorry. 
+Pull Request title
+-------------------
 
----
+     Pull request title (#<issue-id>)
 
-PR Title format: 
+Pull Request description
+-------------------------
 
-    Pull request title with short description (#<issue-id>)
-
-**Please** add a meaningful description for your change here
+    Pull request description
 
 ----
 
-**Please** following this checklist to help us incorporate your contribution quickly and easily:
+We need your declaration that your contribution is MIT licensed without it, we can not merge your code.
+To make clear that you license your contribution under the MIT you have to acknowledge this by using the following check-box.
 
- - [ ] Give the same name to the pull request as the name of ticket 
- - [ ] Write a pull request description that is detailed enough to understand what the pull request does, how, and why.
- - [ ] Test your code throughly before PR.
- 
-
+ - [ ] I hereby declare this contribution to be licenced under the [MIT license](https://opensource.org/licenses/MIT)

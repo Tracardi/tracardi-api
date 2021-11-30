@@ -36,6 +36,11 @@ async def get_resource_types(type: TypeEnum) -> dict:
 
     try:
         types = {
+            "tracardi-pro": {
+                "url": "http://localhost:12345",
+                "username": "admin",
+                "password": "admin"
+            },
             "web-page": {
                 "user": None,
                 "password": None
@@ -50,6 +55,10 @@ async def get_resource_types(type: TypeEnum) -> dict:
                 "timeout": 5,
                 "virtual_host": None,
                 "port": None
+            },
+            "aws": {
+                "aws_access_key_id": None,
+                "aws_secret_access_key": None,
             },
             "kafka": {},
             "smtp-server": {
@@ -103,11 +112,6 @@ async def get_resource_types(type: TypeEnum) -> dict:
             },
             "api-token": {
                 "token": None
-            },
-            "tracardi-pro": {
-                "url": "http://localhost:12345",
-                "username": "admin",
-                "password": "admin"
             }
         }
         if type.value == 'name':
