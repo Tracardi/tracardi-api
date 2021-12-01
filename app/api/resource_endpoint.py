@@ -37,81 +37,125 @@ async def get_resource_types(type: TypeEnum) -> dict:
     try:
         types = {
             "tracardi-pro": {
-                "url": "http://localhost:12345",
-                "username": "admin",
-                "password": "admin"
+                "config": {
+                    "url": "http://localhost:12345",
+                    "username": "admin",
+                    "password": "admin"
+                },
+                "tags": ['pro', 'api']
             },
             "web-page": {
-                "user": None,
-                "password": None
+                "config": {
+                    "user": None,
+                    "password": None
+                },
+                "tags": ['web-page']
             },
-            "api-call": {
-                "url": None,
-                "username": None,
-                "password": None
+            "api": {
+                "config": {
+                    "url": None,
+                    "username": None,
+                    "password": None
+                },
+                "tags": ['api']
             },
-            "rabbitmq": {
-                "uri": "amqp://127.0.0.1:5672//",
-                "timeout": 5,
-                "virtual_host": None,
-                "port": None
+            "rabbitMQ": {
+                "config": {
+                    "uri": "amqp://127.0.0.1:5672//",
+                    "timeout": 5,
+                    "virtual_host": None,
+                    "port": None
+                },
+                "tags": ['rabbitmq', 'queue']
             },
             "aws": {
-                "aws_access_key_id": None,
-                "aws_secret_access_key": None,
+                "config": {
+                    "aws_access_key_id": None,
+                    "aws_secret_access_key": None,
+                },
+                "tags": ['aws', 'cloud', 'token']
             },
-            "kafka": {},
+            "kafka": {
+                "config": {},
+                "tags": ['kafka', 'queue']
+            },
             "smtp-server": {
-                "smtp": None,
-                "port": None,
-                "username": None,
-                "password": None
+                "config": {
+                    "smtp": None,
+                    "port": None,
+                    "username": None,
+                    "password": None
+                },
+                "tags": ['mail', 'smtp']
             },
-            "ip-geo-locator": {
-                "host": "geolite.info",
-                "license": None,
-                "accountId": None
+            "ip-goe-locator": {
+                "config": {
+                    "host": "geolite.info",
+                    "license": None,
+                    "accountId": None
+                },
+                "tags": ['api', 'geo-locator']
             },
             "postgresql": {
-                "host": "localhost",
-                "port": 5432,
-                "user": "postgres",
-                "password": None,
-                "database": None
+                "config": {
+                    "host": "localhost",
+                    "port": 5432,
+                    "user": "postgres",
+                    "password": None,
+                    "database": None
+                },
+                "tags": ['database', 'postresql']
             },
             "pushover": {
-                "token": None,
-                "user": None
-            },
-            "redshift": {
-                "host": "localhost",
-                "port": 5439,
-                "user": None,
-                "password": None,
-                "database": None
+                "config": {
+                    "token": None,
+                    "user": None
+                },
+                "tags": ['pushover', 'message']
             },
             "mysql": {
-                "host": "localhost",
-                "port": 3306,
-                "user": None,
-                "password": None,
-                "database": None
+                "config": {
+                    "host": "localhost",
+                    "port": 3306,
+                    "user": None,
+                    "password": None,
+                    "database": None
+                },
+                "tags": ['mysql', 'database']
             },
-            "mqtt": {},
+            "mqtt": {
+                "config": {
+                    "url": None,
+                    "port": None
+                },
+                "tags": ['mqtt', 'queue']
+            },
             "twillo": {
-                "token": None,
+                "config": {
+                    "token": None
+                },
+                "tags": ['token', 'twillo']
             },
             "redis": {
-                "url": None,
-                "user": None,
-                "password": None
+                "config": {
+                    "url": None,
+                    "user": None,
+                    "password": None
+                },
+                "tags": ['redis']
             },
             "mongodb": {
-                "uri": "mongodb://127.0.0.1:27017/",
-                "timeout": 5000
+                "config": {
+                    "uri": "mongodb://127.0.0.1:27017/",
+                    "timeout": 5000
+                },
+                "tags": ['mongodb', 'database', 'nosql']
             },
-            "api-token": {
-                "token": None
+            "token": {
+                "config": {
+                    "token": None
+                },
+                "tags": ['token']
             }
         }
         if type.value == 'name':
@@ -284,10 +328,8 @@ async def get_resource_by_id(id: str) -> Optional[Resource]:
              response_model=BulkInsertResult,
              include_in_schema=server.expose_gui_api)
 async def upsert_resource(resource: Resource):
-    sleep(1)
     try:
         record = ResourceRecord.encode(resource)
-        # return await record.storage().save()
         return await StorageFor(record).index().save()
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
