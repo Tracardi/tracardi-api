@@ -6,14 +6,46 @@
   "mappings": {
     "dynamic": false,
     "properties": {
-      "id": {
-        "type": "keyword"
-      },
       "type": {
         "type": "keyword"
       },
+      "metadata": {
+        "properties": {
+          "time": {
+            "properties": {
+              "insert": {
+                "type": "date"
+              },
+              "lastVisit": {
+                "type": "date"
+              }
+            }
+          },
+          "ip": {
+            "type": "ip"
+          }
+        }
+      },
+      "name": {
+        "type": "keyword"
+      },
+      "description": {
+        "type": "keyword"
+      },
+      "config": {
+        "type": "keyword"
+      },
+      "enabled": {
+        "type": "boolean"
+      },
       "tags": {
         "type": "keyword"
+      },
+      "icon": {
+        "type": "keyword"
+      },
+      "consent": {
+        "type": "boolean"
       }
     }
   }
