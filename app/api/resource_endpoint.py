@@ -219,13 +219,14 @@ async def list_resources():
 #         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/resources/by_tag",
+@router.get("/resources/by_type",
             tags=["resource"],
             include_in_schema=server.expose_gui_api)
 async def list_resources(query: str = None):
     try:
 
         result = await StorageForBulk().index('resource').load()
+
         total = result.total
         result = [ResourceRecord.construct(Resource.__fields_set__, **r).decode() for r in result]
 
@@ -238,11 +239,11 @@ async def list_resources(query: str = None):
         # Grouping
         groups = defaultdict(list)
         for resource in result:  # type: Resource
-            if isinstance(resource.tags, list):
-                for group in resource.tags:
+            if isinstance(resource.type, list):
+                for group in resource.type:
                     groups[group].append(resource)
-            elif isinstance(resource.tags, str):
-                groups[resource.tags].append(resource)
+            elif isinstance(resource.type, str):
+                groups[resource.type].append(resource)
 
         # Sort
         groups = {k: sorted(v, key=lambda r: r.name, reverse=False) for k, v in groups.items()}
@@ -251,6 +252,19 @@ async def list_resources(query: str = None):
             "total": total,
             "grouped": groups
         }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/resources/entity/tag/{tag}",
+            tags=["resource"],
+            include_in_schema=server.expose_gui_api)
+async def get_resource_gey_tag(tag: str = None):
+    try:
+
+        # todo fetch resources by tag
+        pass
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -272,7 +286,6 @@ async def set_resource_property_on(id: str, type: IndexesSourceBool):
         resource = Resource.construct(_fields_set=resource.__fields_set__, **resource_data)
         record = ResourceRecord.encode(resource)
 
-        # return await record.storage().save()
         return await StorageFor(record).index().save()
 
     except Exception as e:
