@@ -26,13 +26,16 @@
           }
         }
       },
+      "id": {
+        "type": "keyword"
+      },
       "name": {
         "type": "keyword"
       },
       "description": {
         "type": "keyword"
       },
-      "config": {
+      "credentials": {
         "type": "keyword"
       },
       "enabled": {

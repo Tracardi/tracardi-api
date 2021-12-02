@@ -168,6 +168,23 @@ async def get_resource_types(type: TypeEnum) -> dict:
         raise HTTPException(status_code=500, detail=str(e))
 
 
+@router.get("/resources/entity/tag/{tag}",
+            tags=["resource"],
+            include_in_schema=server.expose_gui_api)
+async def list_resources(tag: str):
+    try:
+        result = await storage.driver.resource.load_by_tag(tag)
+        total = result.total
+        result = [NamedEntity(**r) for r in result]
+
+        return {
+            "total": total,
+            "result": list(result)
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 @router.get("/resources/entity",
             tags=["resource"],
             include_in_schema=server.expose_gui_api)
