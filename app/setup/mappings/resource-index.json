@@ -39,7 +39,7 @@
         "type": "boolean"
       },
       "tags": {
-        "type": "keyword"
+        "type": "text"
       },
       "icon": {
         "type": "keyword"
