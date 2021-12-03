@@ -47,14 +47,6 @@
           "properties": {
             "id": {
               "type": "keyword"
-            },
-            "metadata": {
-              "dynamic": true,
-              "type": "object"
-            },
-            "context": {
-              "dynamic": true,
-              "type": "object"
             }
           }
         },
@@ -62,31 +54,12 @@
           "properties": {
             "id": {
               "type": "keyword"
-            },
-            "properties": {
-              "properties": {
-                "private": {
-                  "dynamic": true,
-                  "type": "object"
-                },
-                "public": {
-                  "dynamic": true,
-                  "type": "object"
-                }
-              }
-            },
-            "segments": {
-              "type": "keyword"
-            },
-            "stats": {
-              "dynamic": true,
-              "type": "object"
-            },
-            "consents": {
-              "dynamic": true,
-              "type": "object"
             }
           }
+        },
+        "aux": {
+          "dynamic": true,
+          "type": "object"
         },
         "tags": {
           "properties": {

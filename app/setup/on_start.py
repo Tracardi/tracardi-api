@@ -83,6 +83,7 @@ async def add_plugins():
         'tracardi.process_engine.action.v1.operations.update_profile_action',
         'tracardi.process_engine.action.v1.operations.merge_profiles_action',
         'tracardi.process_engine.action.v1.operations.segment_profile_action',
+        'tracardi.process_engine.action.v1.operations.update_event_action',
 
         'tracardi.process_engine.action.v1.microservice.profile_metrics',
 

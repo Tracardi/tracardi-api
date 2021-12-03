@@ -1,4 +1,6 @@
 import asyncio
+from typing import List
+
 from fastapi import APIRouter
 from fastapi import HTTPException, Depends
 from tracardi.exceptions.exception import StorageException
@@ -246,19 +248,18 @@ async def debug_flow(flow: GraphFlow):
         workflow = WorkFlow(
             FlowHistory(history=[]),
             session,
-            profile,
-            event
+            profile
         )
-        debug_info, log_list = await workflow.invoke(flow, debug=True)
+        debug_info, log_list, event = await workflow.invoke(flow, event, debug=True)
 
-        console_log = []
+        console_log = []  # type: List[Console]
         profile_save_result = None
         try:
             # Store logs in one console log
             for log in log_list:  # type: Log
                 console = Console(
                     origin="node",
-                    event_id=workflow.event.id,
+                    event_id=event.id,
                     flow_id=flow.id,
                     module=log.module,
                     class_name=log.class_name,
@@ -273,7 +274,7 @@ async def debug_flow(flow: GraphFlow):
         except StorageException as e:
             console = Console(
                 origin="profile",
-                event_id=workflow.event.id,
+                event_id=event.id,
                 flow_id=flow.id,
                 module='tracardi_api.flow_endpoint',
                 class_name='log.class_name',

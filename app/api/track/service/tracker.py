@@ -90,10 +90,11 @@ async def track_event(tracker_payload: TrackerPayload, ip: str):
         console_log=console_log
     )
 
+    post_invoke_events = None
     try:
 
         # Invoke rules engine
-        debug_info_by_event_type_and_rule_name, ran_event_types, console_log = await rules_engine.invoke(
+        debug_info_by_event_type_and_rule_name, ran_event_types, console_log, post_invoke_events = await rules_engine.invoke(
             storage.driver.flow.load_production_flow,
             tracker_payload.source.id)
 
@@ -185,6 +186,18 @@ async def track_event(tracker_payload: TrackerPayload, ip: str):
         # todo maybe persisting profile is not necessary - it is persisted right after workflow - see above
         # TODO notice that profile is saved only when it's new change it when it need update
         # Save profile, session, events
+
+        # Synchronize post invoke events. Replace events with events changed by WF.
+        # Events are saved only if marked in event.update==true
+        if post_invoke_events is not None:
+            synced_events = []
+            for ev in events:
+                if ev.update is True and ev.id in post_invoke_events:
+                    synced_events.append(post_invoke_events[ev.id])
+                else:
+                    synced_events.append(ev)
+
+            events = synced_events
 
         collect_result = await _persist(session, events, tracker_payload, profile)
 

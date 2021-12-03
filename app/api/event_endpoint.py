@@ -79,30 +79,12 @@ async def event_types(profile_id: str):
 @router.get("/event/{id}", tags=["event"], include_in_schema=server.expose_gui_api)
 async def get_event(id: str):
     try:
-        event = Entity(id=id)
-        # Loads TrackerPayload as it has broader data
-        full_event = await StorageFor(event).index("event").load(Event)  # type: Event
-        if full_event is None:
+        event = await StorageFor(Entity(id=id)).index("event").load(Event)  # type: Event
+        if event is None:
             raise HTTPException(detail="Event {} does not exist.".format(id), status_code=404)
 
-        profile = Entity(id=full_event.profile.id)
-        full_event.profile = await StorageFor(profile).index("profile").load(Profile)
-
-        # todo move to driver
-        query = {
-            "query": {
-                "match": {
-                    "events.ids": id,
-                }
-            }
-        }
-
-        index = storage_manager("stat-log")
-        event_result = await index.filter(query)
-
         return {
-            "event": full_event,
-            "result": list(event_result)[0] if event_result.total == 1 else None
+            "event": event
         }
 
     except Exception as e:
