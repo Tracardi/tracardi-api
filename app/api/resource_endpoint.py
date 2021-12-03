@@ -326,19 +326,6 @@ async def list_resources(query: str = None):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/resources/entity/tag/{tag}",
-            tags=["resource"],
-            include_in_schema=server.expose_gui_api)
-async def get_resource_gey_tag(tag: str = None):
-    try:
-
-        # todo fetch resources by tag
-        pass
-
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-
 @router.get("/resource/{id}/{type}/on",
             tags=["resource"],
             response_model=dict,
