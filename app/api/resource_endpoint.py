@@ -1,8 +1,5 @@
 from collections import defaultdict
 from typing import Optional
-
-from time import sleep
-
 from fastapi import APIRouter
 from fastapi import HTTPException, Depends
 
@@ -32,6 +29,9 @@ async def get_resource_types(type: TypeEnum) -> dict:
     """
     Returns a list of source types. Each source requires a source type to define what kind of data is
     that source holding.
+
+    * Endpoint /resources/type/name will return only names and id.
+    * Endpoint /resources/type/configuration will return all data.
     """
 
     try:
@@ -39,130 +39,158 @@ async def get_resource_types(type: TypeEnum) -> dict:
             "tracardi-pro": {
                 "config": {
                     "url": "http://localhost:12345",
-                    "username": "admin",
-                    "password": "admin"
+                    "username": "<username>",
+                    "password": "<password>"
                 },
-                "tags": ['pro', 'api']
+                "tags": ['pro', 'api'],
+                "name": "Tracardi Pro Service"
             },
             "web-page": {
                 "config": {
-                    "user": None,
-                    "password": None
+                    "user": "<user>",
+                    "password": "<password>"
                 },
-                "tags": ['web-page']
+                "tags": ['web-page', "input", "output"],
+                "name": "Web page"
             },
             "api": {
                 "config": {
-                    "url": None,
-                    "username": None,
-                    "password": None
+                    "url": "<url>",
+                    "username": "<username>",
+                    "password": "<password>"
                 },
-                "tags": ['api']
+                "tags": ['api'],
+                "name": "API endpoint"
             },
             "rabbitMQ": {
                 "config": {
                     "uri": "amqp://127.0.0.1:5672//",
                     "timeout": 5,
                     "virtual_host": None,
-                    "port": None
+                    "port": 5672
                 },
-                "tags": ['rabbitmq', 'queue']
+                "tags": ['rabbitmq', 'queue'],
+                "name": "RabbitMQ server"
             },
             "aws": {
                 "config": {
-                    "aws_access_key_id": None,
-                    "aws_secret_access_key": None,
+                    "aws_access_key_id": "<key-id>",
+                    "aws_secret_access_key": "<access-key>",
                 },
-                "tags": ['aws', 'cloud', 'token']
-            },
-            "kafka": {
-                "config": {},
-                "tags": ['kafka', 'queue']
+                "tags": ['aws', 'cloud', 'token'],
+                "name": "AWS IAM Credentials"
             },
             "smtp-server": {
                 "config": {
                     "smtp": None,
                     "port": None,
-                    "username": None,
-                    "password": None
+                    "username": "<username>",
+                    "password": "<password>"
                 },
-                "tags": ['mail', 'smtp']
+                "tags": ['mail', 'smtp'],
+                "name": "SMTP Server"
             },
-            "ip-goe-locator": {
+            "ip-geo-locator": {
                 "config": {
                     "host": "geolite.info",
                     "license": None,
                     "accountId": None
                 },
-                "tags": ['api', 'geo-locator']
+                "tags": ['api', 'geo-locator'],
+                "name": "MaxMind GEO-LOCATION endpoint"
             },
             "postgresql": {
                 "config": {
-                    "host": "localhost",
+                    "host": "<url>",
                     "port": 5432,
-                    "user": "postgres",
-                    "password": None,
-                    "database": None
+                    "user": "<username>",
+                    "password": "<password>",
+                    "database": "<database>"
                 },
-                "tags": ['database', 'postresql']
+                "tags": ['database', 'postresql'],
+                "name": "PostgreSQL database"
+            },
+            "elastic-search": {
+                "config": {
+                    "url": "<url>",
+                    "port": 9200,
+                    "scheme": "http",
+                    "username": "<username>",
+                    "password": "<password>",
+                    "verify_certs": True
+                },
+                "tags": ['elastic'],
+                "name": "Elasticsearch server"
             },
             "pushover": {
                 "config": {
-                    "token": None,
-                    "user": None
+                    "token": "<token>",
+                    "user": "<user>"
                 },
-                "tags": ['pushover', 'message']
+                "tags": ['pushover', 'message'],
+                "name": "Pushover service"
             },
             "mysql": {
                 "config": {
                     "host": "localhost",
                     "port": 3306,
-                    "user": None,
-                    "password": None,
-                    "database": None
+                    "user": "<url>",
+                    "password": "<password>",
+                    "database": "<database>"
                 },
-                "tags": ['mysql', 'database']
+                "tags": ['mysql', 'database'],
+                "name": "MySQL database"
+
             },
             "mqtt": {
                 "config": {
-                    "url": None,
-                    "port": None
+                    "url": "<url>",
+                    "port": "<port>"
                 },
-                "tags": ['mqtt', 'queue']
+                "tags": ['mqtt', 'queue'],
+                "name": "MQTT Server"
             },
             "twillo": {
                 "config": {
-                    "token": None
+                    "token": "<token>"
                 },
-                "tags": ['token', 'twillo']
+                "tags": ['token', 'twillo'],
+                "name": "TWILLO credentials"
             },
             "redis": {
                 "config": {
-                    "url": None,
-                    "user": None,
-                    "password": None
+                    "url": "<url>",
+                    "user": "<user>",
+                    "password": "<password>"
                 },
-                "tags": ['redis']
+                "tags": ['redis'],
+                "name": "Redis server"
+
             },
             "mongodb": {
                 "config": {
                     "uri": "mongodb://127.0.0.1:27017/",
                     "timeout": 5000
                 },
-                "tags": ['mongodb', 'database', 'nosql']
+                "tags": ['mongodb', 'database', 'nosql'],
+                "name": "MongoDB server"
             },
             "token": {
                 "config": {
-                    "token": None
+                    "token": "<token>"
                 },
-                "tags": ['token']
+                "tags": ['token'],
+                "name": "Token"
             }
         }
-        if type.value == 'name':
-            types = list(types.keys())
 
-        return {"total": len(types),
-                "result": types}
+        if type.value == 'name':
+            types = {id: t['name'] for id, t in types.items()}
+
+        return {
+            "total": len(types),
+            "result": types
+        }
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -172,7 +200,6 @@ async def get_resource_types(type: TypeEnum) -> dict:
             tags=["resource"],
             include_in_schema=server.expose_gui_api)
 async def list_resources_names_by_tag(tag: str):
-
     """
     Returns list of resources that have defined tag. This list contains only id and name.
     """
