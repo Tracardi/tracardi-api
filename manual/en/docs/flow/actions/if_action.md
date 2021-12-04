@@ -87,4 +87,23 @@ payload@numberOfPurchases == 1 and payload@title == "Title"
 
 Field *payload@numberOfPurchases* is considered an integer number while *payload@title* is considered a string.
 
+# Troubleshooting
 
+When you compare date you must pay attention to dates types. There are dates that are time zone aware (offset-aware)
+and dates that are not aware of time zone. You can not compare them.
+
+```
+can't compare offset-naive and offset-aware datetimes
+```
+
+# Time functions
+
+The following time functions are available:
+
+* now()
+* utcnow()
+* datetime("<value>"), e.g datetime("2021-01-01 00:00:00")
+* datetime(<field>), e.g datetime(profile@maetadata.time.insert)
+* now("<time_zone>"), e.g. now("europe/warsaw")
+* now.offset("europe/warsaw", "+700 days")
+* now.offset(payload@time, "+700 days")
