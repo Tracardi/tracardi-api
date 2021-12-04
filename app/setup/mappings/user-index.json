@@ -1,0 +1,29 @@
+{
+  "settings": {
+    "number_of_shards": 5,
+    "number_of_replicas": 1
+  },
+  "mappings": {
+    "dynamic": false,
+    "properties": {
+      "username": {
+        "type": "keyword"
+      },
+      "password": {
+        "type": "keyword"
+      },
+      "full_name": {
+        "type": "keyword"
+      },
+      "email": {
+        "type": "keyword"
+      },
+      "roles": {
+        "type": "keyword"
+      },
+      "disabled": {
+        "type": "boolean"
+      }
+    }
+  }
+}
