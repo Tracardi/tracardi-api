@@ -42,7 +42,6 @@ git+https://github.com/Tracardi/tracardi-local-timespan.git
 git+https://github.com/Tracardi/tracardi-event-counter.git
 git+https://github.com/Tracardi/tracardi-language-detection.git
 git+https://github.com/Tracardi/tracardi-regex-validator.git
-git+https://github.com/Tracardi/tracardi-string-operations.git
 git+https://github.com/Tracardi/tracardi-regex-match.git
 git+https://github.com/Tracardi/tracardi-aws-sqs-connector.git
 git+https://github.com/Tracardi/tracardi-resource.git
