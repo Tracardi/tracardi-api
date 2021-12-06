@@ -1,4 +1,4 @@
-# tracardi Regex Match
+# Regex Match
 
 The purpose of this plugin is to display particular groups of regexes that we specify in a pattern.
 
@@ -42,7 +42,7 @@ This node does not process input payload.
 
 # Output
 
-This node returns dictionary containing data on groups
+This node returns dictionary containing matched data with groups
 
 *Example*
 

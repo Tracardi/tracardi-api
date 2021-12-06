@@ -19,7 +19,7 @@ This node require configuration.
 
 *Configuration values*
 
-* validate_regex - type of validation.
+* validator - type of validation.
 * data - the string that we would like to validate
 
 *Data* can be a dotted notation path to value inside profile, event, session, etc. or any string.
@@ -28,7 +28,7 @@ This node require configuration.
 
 ```json
 {
-  "validate_regex" : "url",
+  "validator" : "url",
   "data" : "profile@traits.private.email"
 }
 ```
@@ -37,7 +37,7 @@ It will return `payload` on `valid` output port. `invalid` port will stay inacti
 
 ```json
 {
-  "validate_regex" : "email",
+  "validator" : "email",
   "data" : "12341232"
 }
 ```
