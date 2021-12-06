@@ -123,7 +123,7 @@ async def add_plugins():
         'tracardi_event_scheduler.plugin',
         'tracardi_pushover_webhook.plugin',
         'tracardi_language_detection.plugin',
-        'tracardi_profile_segmentation.plugin',
+        'tracardi.process_engine.action.v1.segments.profile_segmentation.plugin',
         'tracardi_regex_match.plugin',
         'tracardi_aws_sqs.plugin',
         'tracardi_resource.plugin',
