@@ -95,9 +95,11 @@ async def add_plugins():
         'tracardi_string_splitter.plugin',
         'tracardi.process_engine.action.v1.events.event_counter.plugin',
 
+        # String
         'tracardi.process_engine.action.v1.strings.string_operations.plugin',
         'tracardi.process_engine.action.v1.strings.regex_match.plugin',
         'tracardi.process_engine.action.v1.strings.regex_validator.plugin',
+        'tracardi.process_engine.action.v1.strings.string_validator.plugin',
 
         # Time
         'tracardi.process_engine.action.v1.time.sleep_action',
@@ -117,7 +119,7 @@ async def add_plugins():
         'tracardi_mongodb_connector.plugin',
         'tracardi_mysql_connector.plugin',
         'tracardi_postgresql_connector.plugin',
-        'tracardi_string_validator.plugin',
+
 
         'tracardi_fullcontact_webhook.plugin',
         'tracardi_sentiment_analysis.plugin',
