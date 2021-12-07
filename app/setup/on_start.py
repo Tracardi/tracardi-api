@@ -85,13 +85,13 @@ async def add_plugins():
         'tracardi.process_engine.action.v1.operations.segment_profile_action',
         'tracardi.process_engine.action.v1.operations.update_event_action',
 
-        'tracardi.process_engine.action.v1.microservice.profile_metrics',
+
 
         # Plugins
-        'tracardi_key_counter.plugin',
+
         'tracardi.process_engine.action.v1.traits.reshape_payload_action',
         'tracardi.process_engine.action.v1.detect_client_agent_action',
-        'tracardi_url_parser.plugin',
+
         'tracardi.process_engine.action.v1.events.event_counter.plugin',
 
         # String
@@ -100,27 +100,24 @@ async def add_plugins():
         'tracardi.process_engine.action.v1.strings.regex_validator.plugin',
         'tracardi.process_engine.action.v1.strings.string_validator.plugin',
         'tracardi.process_engine.action.v1.strings.string_splitter.plugin',
+        'tracardi.process_engine.action.v1.strings.url_parser.plugin',
 
         # Time
         'tracardi.process_engine.action.v1.time.sleep_action',
         'tracardi.process_engine.action.v1.time.today_action',
-        'tracardi_day_night_split.plugin',
+        'tracardi.process_engine.action.v1.time.day_night.plugin',
         'tracardi.process_engine.action.v1.time.local_time_span.plugin',
 
         # Connectors
         'tracardi_rabbitmq_publisher.plugin',
-
         'tracardi_weather.plugin',
         'tracardi_maxmind_geolite2.plugin',
         'tracardi_remote_call.plugin',
         'tracardi_discord_webhook.plugin',
         'tracardi_zapier_webhook.plugin',
-
         'tracardi_mongodb_connector.plugin',
         'tracardi_mysql_connector.plugin',
         'tracardi_postgresql_connector.plugin',
-
-
         'tracardi_fullcontact_webhook.plugin',
         'tracardi_sentiment_analysis.plugin',
         'tracardi_text_classification.plugin',
@@ -131,7 +128,11 @@ async def add_plugins():
         'tracardi.process_engine.action.v1.segments.profile_segmentation.plugin',
         'tracardi_aws_sqs.plugin',
         'tracardi_resource.plugin',
-        'tracardi_json_from_objects.plugin'
+        'tracardi_json_from_objects.plugin',
+
+        # Metrics
+        'tracardi.process_engine.action.v1.metrics.key_counter.plugin',
+        'tracardi.process_engine.action.v1.microservice.profile_metrics',
 
     ]
     for plugin in plugins:
