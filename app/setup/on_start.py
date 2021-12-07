@@ -92,7 +92,6 @@ async def add_plugins():
         'tracardi.process_engine.action.v1.traits.reshape_payload_action',
         'tracardi.process_engine.action.v1.detect_client_agent_action',
         'tracardi_url_parser.plugin',
-        'tracardi_string_splitter.plugin',
         'tracardi.process_engine.action.v1.events.event_counter.plugin',
 
         # String
@@ -100,6 +99,7 @@ async def add_plugins():
         'tracardi.process_engine.action.v1.strings.regex_match.plugin',
         'tracardi.process_engine.action.v1.strings.regex_validator.plugin',
         'tracardi.process_engine.action.v1.strings.string_validator.plugin',
+        'tracardi.process_engine.action.v1.strings.string_splitter.plugin',
 
         # Time
         'tracardi.process_engine.action.v1.time.sleep_action',
