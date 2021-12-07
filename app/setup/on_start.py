@@ -93,14 +93,14 @@ async def add_plugins():
         'tracardi.process_engine.action.v1.detect_client_agent_action',
         'tracardi_url_parser.plugin',
         'tracardi_string_splitter.plugin',
-        'tracardi_event_counter.plugin',
+        'tracardi.process_engine.action.v1.events.event_counter.plugin',
         'tracardi.process_engine.action.v1.strings.string_operations.plugin',
 
         # Time
         'tracardi.process_engine.action.v1.time.sleep_action',
         'tracardi.process_engine.action.v1.time.today_action',
         'tracardi_day_night_split.plugin',
-        'tracardi_local_timespan.plugin',
+        'tracardi.process_engine.action.v1.time.local_time_span.plugin',
 
         # Connectors
         'tracardi_rabbitmq_publisher.plugin',

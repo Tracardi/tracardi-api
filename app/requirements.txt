@@ -38,8 +38,6 @@ git+https://github.com/Tracardi/tracardi-event-scheduler.git
 git+https://github.com/Tracardi/tracardi-string-validator.git
 git+https://github.com/Tracardi/tracardi-sentiment-analysis.git
 git+https://github.com/Tracardi/tracardi-text-classification.git
-git+https://github.com/Tracardi/tracardi-local-timespan.git
-git+https://github.com/Tracardi/tracardi-event-counter.git
 git+https://github.com/Tracardi/tracardi-language-detection.git
 git+https://github.com/Tracardi/tracardi-regex-validator.git
 git+https://github.com/Tracardi/tracardi-regex-match.git
