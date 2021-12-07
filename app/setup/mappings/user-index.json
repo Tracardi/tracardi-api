@@ -13,7 +13,7 @@
         "type": "keyword"
       },
       "full_name": {
-        "type": "keyword"
+        "type": "text"
       },
       "email": {
         "type": "keyword"

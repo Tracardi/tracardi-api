@@ -5,7 +5,7 @@ from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from starlette import status
 from tracardi.service.login_service import find_user
-
+from tracardi.domain.user import User
 from ...config import server
 
 _singleton = None
@@ -17,7 +17,7 @@ class Authentication:
     def __init__(self):
         self.token2user = token2user
 
-    async def authorize(self, username, password):  # username exists
+    async def authorize(self, username, password) -> User:  # username exists
 
         user = await find_user(username, password)
 
