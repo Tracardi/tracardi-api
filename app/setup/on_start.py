@@ -94,7 +94,10 @@ async def add_plugins():
         'tracardi_url_parser.plugin',
         'tracardi_string_splitter.plugin',
         'tracardi.process_engine.action.v1.events.event_counter.plugin',
+
         'tracardi.process_engine.action.v1.strings.string_operations.plugin',
+        'tracardi.process_engine.action.v1.strings.regex_match.plugin',
+        'tracardi.process_engine.action.v1.strings.regex_validator.plugin',
 
         # Time
         'tracardi.process_engine.action.v1.time.sleep_action',
@@ -115,7 +118,7 @@ async def add_plugins():
         'tracardi_mysql_connector.plugin',
         'tracardi_postgresql_connector.plugin',
         'tracardi_string_validator.plugin',
-        'tracardi_regex_validator.plugin',
+
         'tracardi_fullcontact_webhook.plugin',
         'tracardi_sentiment_analysis.plugin',
         'tracardi_text_classification.plugin',
@@ -124,7 +127,6 @@ async def add_plugins():
         'tracardi_pushover_webhook.plugin',
         'tracardi_language_detection.plugin',
         'tracardi.process_engine.action.v1.segments.profile_segmentation.plugin',
-        'tracardi_regex_match.plugin',
         'tracardi_aws_sqs.plugin',
         'tracardi_resource.plugin',
         'tracardi_json_from_objects.plugin'

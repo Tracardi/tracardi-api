@@ -39,8 +39,6 @@ git+https://github.com/Tracardi/tracardi-string-validator.git
 git+https://github.com/Tracardi/tracardi-sentiment-analysis.git
 git+https://github.com/Tracardi/tracardi-text-classification.git
 git+https://github.com/Tracardi/tracardi-language-detection.git
-git+https://github.com/Tracardi/tracardi-regex-validator.git
-git+https://github.com/Tracardi/tracardi-regex-match.git
 git+https://github.com/Tracardi/tracardi-aws-sqs-connector.git
 git+https://github.com/Tracardi/tracardi-resource.git
 git+https://github.com/Tracardi/tracardi-json-from-payload.git
