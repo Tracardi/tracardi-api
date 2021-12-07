@@ -28,7 +28,7 @@ router = APIRouter(
 )
 
 
-@router.post("/user/create", tags=["user"], include_in_schema=server.expose_gui_api, response_model=dict)
+@router.post("/user", tags=["user"], include_in_schema=server.expose_gui_api, response_model=dict)
 async def add_user(user: NewUserPayload):
     try:
         user_exists = await storage.driver.user.check_if_exists(user.username, user.id)
