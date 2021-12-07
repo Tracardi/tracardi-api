@@ -1,10 +1,11 @@
 import secrets
 from elasticsearch import ElasticsearchException
-from ..auth.user_db import token2user, UserDb
+from ..auth.user_db import token2user
 from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from starlette import status
-
+from tracardi.service.login_service import find_user
+from tracardi.domain.user import User
 from ...config import server
 
 _singleton = None
@@ -14,40 +15,28 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 class Authentication:
 
     def __init__(self):
-        self.users_db = UserDb()
         self.token2user = token2user
 
-    def authorize(self, username, password):  # username exists
-        if not password:
-            raise ValueError("Password empty")
+    async def authorize(self, username, password) -> User:  # username exists
 
-        db_username_record = self.users_db.get_user(username)
-        if not db_username_record:
-            raise ValueError("Incorrect username or password")
+        user = await find_user(username, password)
 
-        db_username = db_username_record['username']
-        db_password = db_username_record['password']
-        db_disabled = db_username_record["disabled"]
-
-        if db_disabled:
+        if user.disabled:
             raise ValueError("This account was disabled")
 
-        if db_username != username or db_password != password:
-            raise ValueError("Incorrect username or password")
-
-        return db_username_record
+        return user
 
     @staticmethod
     def _generate_token():
         return secrets.token_hex(32)
 
     async def login(self, username, password):
-        user_record = self.authorize(username, password)
+        user = await self.authorize(username, password)
         token = self._generate_token()
         # save token, match token with user in token2user
         await self.token2user.set(token, username)
 
-        return {"access_token": token, "token_type": "bearer", "roles": user_record['roles']}
+        return {"access_token": token, "token_type": "bearer", "roles": user.roles}
 
     async def logout(self, token):
         await self.token2user.delete(token)
