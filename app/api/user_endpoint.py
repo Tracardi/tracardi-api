@@ -49,8 +49,7 @@ async def add_user(user: NewUserPayload):
             raise HTTPException(status_code=500, detail=str(e))
         return {"inserted": result.saved}
     else:
-        raise HTTPException(status_code=409, detail=f"User with username '{user.username}' already exists or chosen "
-                                                    f"ID is already taken. Try to refresh site or change username.")
+        raise HTTPException(status_code=409, detail=f"User with username '{user.username}' already exists.")
 
 
 @router.delete("/user/{id}", tags=["user"], include_in_schema=server.expose_gui_api, response_model=dict)
