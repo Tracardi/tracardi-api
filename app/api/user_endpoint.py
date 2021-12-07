@@ -30,7 +30,10 @@ router = APIRouter(
 
 @router.post("/user/create", tags=["user"], include_in_schema=server.expose_gui_api, response_model=dict)
 async def add_user(user: NewUserPayload):
-    user_exists = await storage.driver.user.check_if_exists(user.username, user.id)
+    try:
+        user_exists = await storage.driver.user.check_if_exists(user.username, user.id)
+    except ElasticsearchException as e:
+        raise HTTPException(status_code=500, detail=str(e))
     if not user_exists:
         try:
             result = await storage.driver.user.add_user(
@@ -46,7 +49,7 @@ async def add_user(user: NewUserPayload):
             raise HTTPException(status_code=500, detail=str(e))
         return {"inserted": result.saved}
     else:
-        raise HTTPException(status_code=500, detail=f"User with username '{user.username}' already exists or chosen "
+        raise HTTPException(status_code=409, detail=f"User with username '{user.username}' already exists or chosen "
                                                     f"ID is already taken. Try to refresh site or change username.")
 
 
