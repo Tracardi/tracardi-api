@@ -134,6 +134,9 @@ async def add_plugins():
         'tracardi.process_engine.action.v1.metrics.key_counter.plugin',
         'tracardi.process_engine.action.v1.microservice.profile_metrics',
 
+        # Consents
+        'tracardi.process_engine.action.v1.consents.add_consent_action.plugin'
+
     ]
     for plugin in plugins:
         await add_plugin(plugin, install=False, upgrade=False)
