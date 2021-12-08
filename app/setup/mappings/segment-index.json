@@ -20,6 +20,9 @@
       },
       "enabled": {
         "type": "boolean"
+      },
+      "machine_name": {
+        "type": "keyword"
       }
     }
   }
