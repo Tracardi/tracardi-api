@@ -6,7 +6,7 @@ from fastapi.security import OAuth2PasswordBearer
 from starlette import status
 from tracardi.service.login_service import find_user
 from tracardi.domain.user import User
-from ...config import server
+from ...config import server, auth
 
 _singleton = None
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
@@ -17,7 +17,18 @@ class Authentication:
     def __init__(self):
         self.token2user = token2user
 
-    async def authorize(self, username, password) -> User:  # username exists
+    @staticmethod
+    async def authorize(username, password) -> User:  # username exists
+
+        if auth.user is not None and username == auth.user and password == auth.password:
+            return User(
+                id='@dummy',
+                username=username,
+                password="",
+                roles=['admin'],
+                email="",
+                full_name="John Doe"
+            )
 
         user = await find_user(username, password)
 

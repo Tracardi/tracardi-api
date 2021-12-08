@@ -134,7 +134,7 @@ async def get_resource_types(type: TypeEnum) -> dict:
                 "config": {
                     "host": "localhost",
                     "port": 3306,
-                    "user": "<url>",
+                    "user": "<username>",
                     "password": "<password>",
                     "database": "<database>"
                 },
