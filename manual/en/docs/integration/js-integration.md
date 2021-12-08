@@ -181,7 +181,7 @@ Tracardi collects all events and sends it as one request to the Tracradi tracker
 
 All events will be sent when page fully loads.
 
-## Binding events to page elements
+## Handling response from Tracardi
 
 You can also bind events to page elements. To do that you will need to be sure that the page loads and every element of
 the page is accessible.
@@ -224,6 +224,24 @@ The whole configuration should look like this.
 
 </script>
 ```
+
+The *onContextReady* method will run after the events are triggered. It will not run if the events are not defined.
+
+The parameters have the following meaning.
+
+* *helpers* - this is a reference to class that will allow you to raise another events
+* *context* has the response from Tracardi to you initial events. It will have profile data, and if configured
+  debug information.
+
+You can configure how much data the server should return in the response to event track.
+
+If you woul like to receive the full profile remember to set:
+
+`window.response.context.profile = true;`
+
+It is wise not to receive the full profile when you do not need it.
+
+### Binding events to page elements
 
 Then you can write a code that binds for example onClick event on a button to tracardi event.
 
@@ -329,3 +347,9 @@ helpers.addListener(btn0, 'mouseover', async ()=> {
 ```
 
 Helpers also have track method that let you send custom event to Tracardi at any time. 
+
+This is how you can use it:
+
+```javascript
+const response = await helpers.track("new-page-view", {"page": "hello"});
+```
