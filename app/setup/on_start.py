@@ -128,7 +128,7 @@ async def add_plugins():
         'tracardi.process_engine.action.v1.segments.profile_segmentation.plugin',
         'tracardi_aws_sqs.plugin',
         'tracardi_resource.plugin',
-        'tracardi_json_from_objects.plugin',
+        'tracardi.process_engine.action.v1.converters.payload_to_json.plugin',
 
         # Metrics
         'tracardi.process_engine.action.v1.metrics.key_counter.plugin',

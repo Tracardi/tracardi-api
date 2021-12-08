@@ -21,7 +21,6 @@ git+https://github.com/Tracardi/tracardi-maxmind-geolite2.git
 git+https://github.com/Tracardi/tracardi-fullcontact-webhook.git
 
 git+https://github.com/Tracardi/tracardi-resource.git
-git+https://github.com/Tracardi/tracardi-json-from-payload.git
 
 git+https://github.com/Tracardi/tracardi-pushover-webhook.git
 git+https://github.com/Tracardi/tracardi-discord-webhook.git
