@@ -77,8 +77,9 @@ docker run \
 tracardi/tracardi-api-ssl
 ```
 
-It will start Tracardi with the provided certificates. This command expects na SSL key file to be named `key.pem` and
-certificate to be named `cert.pem`.
+It will start Tracardi with files from your local `/local/path/to/ssl` folder copied/linked to internal docker folder called `/ssl`.
+If you placed certificates inside that folder then the files will be accessable form `/ssl` in docker. 
+The Docker image expects na SSL key file to be named `key.pem` and certificate to be named `cert.pem`.
 
 ## Tracardi API behind HTTPS proxy
 
