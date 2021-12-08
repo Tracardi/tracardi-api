@@ -93,7 +93,7 @@ https://traefik.io/resources/traefik-fastapi-kuberrnetes-ai-ml/
 git clone https://github.com/tracardi/tracardi-gui.git
 ```
 
-Find `tracardi-gui/nginix/conf-ssl/certs` and place there you certificates:
+Find `tracardi-gui/nginix/conf-ssl/certs` and place there your certificates:
 
 * cert.pem
 * key.pem
