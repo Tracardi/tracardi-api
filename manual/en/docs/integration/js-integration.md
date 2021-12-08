@@ -69,8 +69,32 @@ address of your Tracardi server.
 
 ## Context data scope
 
-Configuration can be extended with *context* parameter, where you may define the scope of context data. By default, the
-following context data will be sent to Tracardi:
+Configuration can be extended with *context* parameter, where you may define the scope of context data. 
+
+*Example*
+
+```javascript
+    const options = {
+      tracker: {
+        url: {
+            script: 'http://localhost:8686/tracker',
+            api: 'http://localhost:8686'
+        },
+        source: {
+            id: "3ee63fc6-490a-4fd8-bfb3-bf0c8c8d3387"
+        },
+        context: {
+            browser: true,
+            page: true,
+            session: false,
+            storage:true,
+            screen: true
+        }
+    }
+}
+```
+
+By default, the following context data will be sent to Tracardi:
 
 ```json
 {
