@@ -89,3 +89,20 @@ https://traefik.io/resources/traefik-fastapi-kuberrnetes-ai-ml/
 
 ## Tracardi GUI in HTTPS mode
 
+```
+git clone https://github.com/tracardi/tracardi-gui.git
+```
+
+Find `tracardi-gui/nginix/conf-ssl/certs` and place there you certificates:
+
+* cert.pem
+* key.pem
+
+Run
+
+```
+docker build . -f Dockerfile-https --no-cache -t tracardi/tracardi-gui-https
+```
+
+Use `tracardi/tracardi-gui-https` as you docker image instead of `tracardi/tracardi-gui`.
+
