@@ -1,0 +1,13 @@
+version: '2'
+
+services:
+  nginx:
+    image: stono/docker-nginx-letsencrypt
+    restart: always
+    volumes:
+      - ./certs:/etc/letsencrypt/live
+    environment:
+      - HOST_WEBSITE1=karlstoney.com,karlstoney.www.svc.cluster.local:2368,default_server
+    ports:
+      - 443
+      - 80
