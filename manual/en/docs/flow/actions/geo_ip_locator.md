@@ -31,4 +31,25 @@ Example of source configuration for GeoLite2 API:
 }
 ```
 
-You must provide `license-key` and `account-id` to connect to MaxMind GeoLite2 API.
+You must provide *license-key* and *account-id* to connect to MaxMind GeoLite2 API.
+
+# Output
+
+```json
+{
+  "city": "<city>",
+  "country": {
+    "name": "<country>",
+    "code": "<country-code>",
+    "county": "<county>",
+    "postal": "<code>",
+    "latitude": 52.0979,
+    "longitude": 18.2016
+  }
+}
+
+
+
+
+
+```
