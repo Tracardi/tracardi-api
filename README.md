@@ -2,7 +2,7 @@
 
 # Tracardi Open-source Customer Data Platform
 
-[Tracardi](http://www.tracardi.com)  is an open-source Customer Data Platform.
+Tracardi is an open-source Customer Data Platform.
 
 TRACARDI is an API-first solution, low-code / no-code platform aimed at any e-commerce business that 
 wants to start using user data for marketing purposes. If you own a brand-new e-commerce platform or 
@@ -27,7 +27,7 @@ a legacy system you can integrate TRACARDI easily. Use TRACARDI for:
 
 ![Screenshot 1](https://raw.githubusercontent.com/atompie/tracardi/0.5.0-dev/raw/intro5.png)
 
-Please see [https://github.com/atompie/tracardi](https://github.com/atompie/tracardi) for installation instructions.
+Please see [https://github.com/tracardi/tracardi](https://github.com/tracardi/tracardi) for installation instructions.
 
 # Installation
 
