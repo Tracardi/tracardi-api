@@ -1,0 +1,21 @@
+{
+  "settings": {
+    "number_of_shards": 5,
+    "number_of_replicas": 1
+  },
+  "mappings": {
+    "dynamic": false,
+    "properties": {
+      "to_exclude": {
+        "type": "keyword"
+      },
+      "to_validate": {
+        "index": false,
+        "type": "keyword"
+      },
+      "id": {
+        "type": "keyword"
+      }
+    }
+  }
+}
