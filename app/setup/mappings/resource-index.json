@@ -9,22 +9,8 @@
       "type": {
         "type": "keyword"
       },
-      "metadata": {
-        "properties": {
-          "time": {
-            "properties": {
-              "insert": {
-                "type": "date"
-              },
-              "lastVisit": {
-                "type": "date"
-              }
-            }
-          },
-          "ip": {
-            "type": "ip"
-          }
-        }
+      "timestamp": {
+        "type": "date"
       },
       "id": {
         "type": "keyword"
