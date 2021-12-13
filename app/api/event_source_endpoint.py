@@ -1,19 +1,35 @@
 from collections import defaultdict
+from urllib.parse import urljoin, urlparse
 from fastapi import APIRouter
-from fastapi import HTTPException, Depends
+from fastapi import HTTPException, Depends, Response, status
+from tracardi.domain.credentials import Credentials
+from tracardi.service.microservice import MicroserviceApi
 from tracardi.domain.named_entity import NamedEntity
-
 from tracardi.domain.enum.type_enum import TypeEnum
 from tracardi.domain.event_source import EventSource
 from tracardi.service.storage.driver import storage
 from .auth.authentication import get_current_user
-from tracardi.domain.value_object.bulk_insert_result import BulkInsertResult
 from .grouper import search
 from ..config import server
 
 router = APIRouter(
     dependencies=[Depends(get_current_user)]
 )
+
+
+def event_source_types():
+    return {
+        "tracardi-pro": {
+            "tags": ['pro', 'api'],
+            "name": "Tracardi Pro Service",
+            "configurable": True
+        },
+        "web-page": {
+            "tags": ['web-page', "input", "output"],
+            "name": "Web page",
+            "configurable": False
+        }
+    }
 
 
 @router.get("/event-sources/by_type",
@@ -65,18 +81,7 @@ async def get_event_source_types(type: TypeEnum) -> dict:
     """
 
     try:
-        types = {
-            "tracardi-pro": {
-                "tags": ['pro', 'api'],
-                "name": "Tracardi Pro Service",
-                "configurable": True
-            },
-            "web-page": {
-                "tags": ['web-page', "input", "output"],
-                "name": "Web page",
-                "configurable": False
-            }
-        }
+        types = event_source_types()
 
         if type.value == 'name':
             types = {id: t['name'] for id, t in types.items()}
@@ -101,13 +106,35 @@ async def load_event_source(id: str):
 
 
 @router.post("/event-source", tags=["event-source"],
-             response_model=BulkInsertResult,
              include_in_schema=server.expose_gui_api)
 async def save_event_source(event_source: EventSource):
-    try:
-        return await storage.driver.event_source.save(event_source)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    # try:
+
+    types = event_source_types()
+    if event_source.type in types:
+        configuration = types[event_source.type]
+        if configuration['configurable'] is True:
+            client = MicroserviceApi(urljoin(event_source.url, '/'),
+                                     credentials=Credentials(username='admin', password='admin'))
+            path = urlparse(event_source.url).path
+            if path[-1] != '/':
+                path = path + "/"
+            endpoint = f"{path}{event_source.id}"
+            print(endpoint)
+            response = await client.call(endpoint, method="get", data=None)
+            print(response.status)
+            if response.status == 200:
+                result = await storage.driver.event_source.save(event_source)
+                if result.is_nothing_saved():
+                    raise ValueError("Could not save event source.")
+                return Response(
+                    media_type="application/json",
+                    content=await response.text(),
+                    status_code=status.HTTP_206_PARTIAL_CONTENT)
+
+    return True
+    # except Exception as e:
+    #     raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.delete("/event-source/{id}", tags=["event-source"],
