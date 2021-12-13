@@ -1,5 +1,8 @@
+import json
 from collections import defaultdict
 from urllib.parse import urljoin, urlparse
+
+from aiohttp import InvalidURL, ClientError
 from fastapi import APIRouter
 from fastapi import HTTPException, Depends, Response, status
 from tracardi.domain.credentials import Credentials
@@ -108,33 +111,65 @@ async def load_event_source(id: str):
 @router.post("/event-source", tags=["event-source"],
              include_in_schema=server.expose_gui_api)
 async def save_event_source(event_source: EventSource):
-    # try:
+    try:
+        types = event_source_types()
+        if event_source.type in types:
+            configuration = types[event_source.type]
+            if configuration['configurable'] is True:
+                url = urljoin(event_source.url, '/')
+                print("url", url)
+                if len(url) > 0 and url[-1] == '/':
+                    url = url[:-1]
+                client = MicroserviceApi(url,
+                                         credentials=Credentials(username=event_source.username,
+                                                                 password=event_source.password))
+                path = urlparse(event_source.url).path
+                if len(path) > 0 and path[-1] != '/':
+                    path = path + "/"
+                endpoint = f"{path}{event_source.id}"
+                try:
+                    response = await client.call(endpoint, method="get", data=None)
+                    print(response)
+                    if response.status == 200:
+                        result = await storage.driver.event_source.save(event_source)
+                        if result.is_nothing_saved():
+                            raise ValueError("Could not save event source.")
 
-    types = event_source_types()
-    if event_source.type in types:
-        configuration = types[event_source.type]
-        if configuration['configurable'] is True:
-            client = MicroserviceApi(urljoin(event_source.url, '/'),
-                                     credentials=Credentials(username='admin', password='admin'))
-            path = urlparse(event_source.url).path
-            if path[-1] != '/':
-                path = path + "/"
-            endpoint = f"{path}{event_source.id}"
-            print(endpoint)
-            response = await client.call(endpoint, method="get", data=None)
-            print(response.status)
-            if response.status == 200:
+                        content = await response.json()
+                        content["url"] = url
+
+                        return Response(
+                            media_type="application/json",
+                            content=json.dumps(content),
+                            status_code=status.HTTP_206_PARTIAL_CONTENT
+                        )
+                    elif response.status == 404:
+                        raise ConnectionError("Could not find endpoint {} at {}".format(endpoint, url))
+
+                    elif response.status == 422:
+
+                        return Response(
+                            media_type="application/json",
+                            content=json.dumps(await response.json()),
+                            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY
+                        )
+
+                    else:
+                        raise ConnectionError("Client returned {} status".format(response.status))
+
+                except InvalidURL as e:
+                    raise ConnectionError("Could not find endpoint {} at {}".format(endpoint, url))
+                except ClientError as e:
+                    raise ConnectionError("Client error {}".format(repr(e)))
+            else:
                 result = await storage.driver.event_source.save(event_source)
                 if result.is_nothing_saved():
                     raise ValueError("Could not save event source.")
-                return Response(
-                    media_type="application/json",
-                    content=await response.text(),
-                    status_code=status.HTTP_206_PARTIAL_CONTENT)
 
-    return True
-    # except Exception as e:
-    #     raise HTTPException(status_code=500, detail=str(e))
+        return True
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=repr(e))
 
 
 @router.delete("/event-source/{id}", tags=["event-source"],
