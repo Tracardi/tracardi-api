@@ -4,6 +4,7 @@ from starlette.responses import JSONResponse
 
 from app.api.auth.authentication import get_current_user
 from app.config import server
+from app.service.error_converter import convert_errors
 from tracardi.domain.record.flow_action_plugin_record import FlowActionPluginRecord
 from tracardi.service.storage.driver import storage
 from tracardi.service.storage.factory import StorageForBulk
@@ -46,15 +47,9 @@ async def validate_plugin_configuration(id: str, config: dict = None):
     except AttributeError as e:
         raise HTTPException(status_code=404, detail=str(e))
     except ValidationError as e:
-        response = {}
-        for error in e.errors():
-            if 'loc' not in error or 'msg' not in error:
-                continue
-            field = ".".join(error['loc']) if isinstance(error['loc'], tuple) else error['loc']
-            response[field] = error['msg'].capitalize()
         return JSONResponse(
             status_code=422,
-            content=jsonable_encoder(response)
+            content=jsonable_encoder(convert_errors(e))
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

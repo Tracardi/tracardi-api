@@ -84,7 +84,11 @@ async def add_plugins():
         'tracardi.process_engine.action.v1.operations.merge_profiles_action',
         'tracardi.process_engine.action.v1.operations.segment_profile_action',
         'tracardi.process_engine.action.v1.operations.update_event_action',
+        'tracardi.process_engine.action.v1.calculator_action',
 
+        # Connectors
+
+        'tracardi.process_engine.action.v1.connectors.api_call.plugin',
 
 
         # Plugins
@@ -112,7 +116,6 @@ async def add_plugins():
         'tracardi_rabbitmq_publisher.plugin',
         'tracardi_weather.plugin',
         'tracardi_maxmind_geolite2.plugin',
-        'tracardi_remote_call.plugin',
         'tracardi_discord_webhook.plugin',
         'tracardi_zapier_webhook.plugin',
         'tracardi_mongodb_connector.plugin',
