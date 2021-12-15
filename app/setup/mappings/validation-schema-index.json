@@ -6,9 +6,6 @@
   "mappings": {
     "dynamic": false,
     "properties": {
-      "to_exclude": {
-        "type": "keyword"
-      },
       "to_validate": {
         "index": false,
         "type": "keyword"
