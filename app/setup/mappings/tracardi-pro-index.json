@@ -1,0 +1,26 @@
+{
+  "settings": {
+    "number_of_shards": 5,
+    "number_of_replicas": 1
+  },
+  "mappings": {
+    "dynamic": false,
+    "properties": {
+      "id": {
+        "type": "keyword"
+      },
+      "url": {
+        "type": "keyword"
+      },
+      "token": {
+        "type": "keyword"
+      },
+      "username": {
+        "type": "keyword"
+      },
+      "password": {
+        "type": "keyword"
+      }
+    }
+  }
+}

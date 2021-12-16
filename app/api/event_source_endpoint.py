@@ -14,25 +14,39 @@ from tracardi.service.storage.driver import storage
 from .auth.authentication import get_current_user
 from .grouper import search
 from ..config import server
+from ..service.tracardi_pro_inbound_sources import get_tracardi_pro_services
 
 router = APIRouter(
     dependencies=[Depends(get_current_user)]
 )
 
 
-def event_source_types():
-    return {
-        "tracardi-pro": {
-            "tags": ['pro', 'api'],
-            "name": "Tracardi Pro Service",
-            "configurable": True
-        },
+async def event_source_types():
+    standard_inbound_sources = {
         "web-page": {
-            "tags": ['web-page', "input", "output"],
+            "tags": ['web-page', 'inbound'],
             "name": "Web page",
             "configurable": False
-        }
+        },
+        "mobile-app": {
+            "tags": ['mobile-app', 'inbound'],
+            "name": "Mobile application",
+            "configurable": False
+        },
+        "external-system": {
+            "tags": ['external-system', 'inbound'],
+            "name": "External system",
+            "configurable": False
+        },
     }
+
+    for service in await get_tracardi_pro_services():
+        standard_inbound_sources[service["id"]] = {
+            "tags": [],
+            "name": service["name"]
+        }
+
+    return standard_inbound_sources
 
 
 @router.get("/event-sources/by_type",
@@ -84,7 +98,7 @@ async def get_event_source_types(type: TypeEnum) -> dict:
     """
 
     try:
-        types = event_source_types()
+        types = await event_source_types()
 
         if type.value == 'name':
             types = {id: t['name'] for id, t in types.items()}
@@ -112,12 +126,12 @@ async def load_event_source(id: str):
              include_in_schema=server.expose_gui_api)
 async def save_event_source(event_source: EventSource):
     try:
-        types = event_source_types()
+        types = await event_source_types()
         if event_source.type in types:
             configuration = types[event_source.type]
             if configuration['configurable'] is True:
                 url = urljoin(event_source.url, '/')
-                print("url", url)
+
                 if len(url) > 0 and url[-1] == '/':
                     url = url[:-1]
                 client = MicroserviceApi(url,
