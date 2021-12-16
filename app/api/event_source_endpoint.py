@@ -117,7 +117,7 @@ async def save_event_source(event_source: EventSource):
             configuration = types[event_source.type]
             if configuration['configurable'] is True:
                 url = urljoin(event_source.url, '/')
-                print("url", url)
+
                 if len(url) > 0 and url[-1] == '/':
                     url = url[:-1]
                 client = MicroserviceApi(url,
