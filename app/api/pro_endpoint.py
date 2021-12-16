@@ -1,7 +1,7 @@
 from typing import Optional
 
 from asyncio import sleep
-from fastapi import APIRouter, Request, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends
 
 from app.service.tracardi_pro_inbound_sources import get_tracardi_pro_services
 from tracardi.domain.credentials import Credentials
@@ -59,7 +59,7 @@ async def refresh_configured_tracardi_pro_services():
                              credentials=Credentials(username=endpoint.username,
                                                      password=endpoint.password))
 
-    response = await client.call(endpoint.get_registered_services_endpoint(), method="PUT")
+    response = await client.call(endpoint.get_running_services_endpoint(), method="PUT")
     if response.status == 200:
         return await response.json()
     return []
@@ -69,3 +69,19 @@ async def refresh_configured_tracardi_pro_services():
 async def get_configured_tracardi_pro_services(available: Optional[str] = None):
     await sleep(1)
     return await get_tracardi_pro_services(available)
+
+
+@router.delete("/tracardi-pro/service/{id}", tags=["tracardi-pro"], include_in_schema=server.expose_gui_api)
+async def delete_tracardi_pro_service(id: str):
+    endpoint = await storage.driver.pro.read_pro_service_endpoint()
+    if endpoint is None:
+        raise HTTPException(status_code=404, detail="Tracardi Pro services not connected.")
+
+    client = MicroserviceApi(endpoint.url,
+                             credentials=Credentials(username=endpoint.username,
+                                                     password=endpoint.password))
+
+    response = await client.call(endpoint.get_running_service(id), method="DELETE")
+    if response.status == 200:
+        return await response.json()
+    return []

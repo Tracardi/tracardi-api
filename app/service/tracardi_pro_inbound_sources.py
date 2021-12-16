@@ -13,7 +13,7 @@ async def get_tracardi_pro_services(available=None):
     client = MicroserviceApi(endpoint.url,
                              credentials=Credentials(username=endpoint.username,
                                                      password=endpoint.password))
-    path = endpoint.get_registered_services_endpoint() \
+    path = endpoint.get_running_services_endpoint() \
         if available is None \
         else endpoint.get_available_services_endpoint()
 
