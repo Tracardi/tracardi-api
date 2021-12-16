@@ -2,6 +2,8 @@ from typing import Optional
 
 from asyncio import sleep
 from fastapi import APIRouter, Request, HTTPException, Depends
+
+from app.service.tracardi_pro_inbound_sources import get_tracardi_pro_services
 from tracardi.domain.credentials import Credentials
 
 from tracardi.service.microservice import MicroserviceApi
@@ -66,15 +68,4 @@ async def refresh_configured_tracardi_pro_services():
 @router.get("/tracardi-pro/services", tags=["tracardi-pro"], include_in_schema=server.expose_gui_api)
 async def get_configured_tracardi_pro_services(available: Optional[str] = None):
     await sleep(1)
-    endpoint = await storage.driver.pro.read_pro_service_endpoint()
-    if endpoint is None:
-        raise HTTPException(status_code=404, detail="Tracardi Pro services not connected.")
-
-    client = MicroserviceApi(endpoint.url,
-                             credentials=Credentials(username=endpoint.username,
-                                                     password=endpoint.password))
-    path = endpoint.get_registered_services_endpoint() if available is None else endpoint.get_available_services_endpoint()
-    response = await client.call(path, method="GET")
-    if response.status == 200:
-        return await response.json()
-    return []
+    return await get_tracardi_pro_services(available)
