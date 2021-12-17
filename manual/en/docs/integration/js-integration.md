@@ -24,6 +24,7 @@ in your web page header. This is the example of the snippet:
 
     
 
+
 </script>
 ```
 
@@ -61,6 +62,7 @@ Tracardi, like this:
 
     
 
+
 </script>
 ```
 
@@ -69,7 +71,7 @@ address of your Tracardi server.
 
 ## Context data scope
 
-Configuration can be extended with *context* parameter, where you may define the scope of context data. 
+Configuration can be extended with *context* parameter, where you may define the scope of context data.
 
 *Example*
 
@@ -150,17 +152,18 @@ By default, the following context data will be sent to Tracardi:
   }
 }
 ```
-It consists of browser data, screen data and page data. It can be extended with cookies and local storage data. 
-Storage (localStorage) and session data is by default excluded. You can change it by explicitly flagging storage:true 
-in the context configuration. 
+
+It consists of browser data, screen data and page data. It can be extended with cookies and local storage data.
+Storage (localStorage) and session data is by default excluded. You can change it by explicitly flagging storage:true in
+the context configuration.
 
 *Caution* Sending cookies and localStorage data can lead to data explosion in Tracardi database. Each customer may have
-different cookies and local data that will lead to the 1000 fields per record limit in elastic. This will stop writing new
-sessions to the system.
+different cookies and local data that will lead to the 1000 fields per record limit in elastic. This will stop writing
+new sessions to the system.
 
 ## Sending events
 
-Events are defined in a separate script. Below you may find an example of such script. 
+Events are defined in a separate script. Below you may find an example of such script.
 
 ```javascript
 window.response.context.profile = true;
@@ -181,10 +184,9 @@ Tracardi collects all events and sends it as one request to the Tracradi tracker
 
 All events will be sent when page fully loads.
 
-
 ### Sending event on demand
 
-Events can be sent immediately when parameters fire is set to true. 
+Events can be sent immediately when parameters fire is set to true.
 
 Example:
 
@@ -196,7 +198,6 @@ window.tracker.track("page-view",{});
 ```
 
 The event "interest" will be sent immediately, because of `{"fire": true}`.
-
 
 ## Handling response from Tracardi
 
@@ -239,6 +240,7 @@ The whole configuration should look like this.
     
 
 
+
 </script>
 ```
 
@@ -247,8 +249,8 @@ The *onContextReady* method will run after the events are triggered. It will not
 The parameters have the following meaning.
 
 * *helpers* - this is a reference to class that will allow you to raise another events
-* *context* has the response from Tracardi to you initial events. It will have profile data, and if configured
-  debug information.
+* *context* has the response from Tracardi to you initial events. It will have profile data, and if configured debug
+  information.
 
 You can configure how much data the server should return in the response to event track.
 
@@ -310,40 +312,44 @@ const response = await helpers.track("page-view", {"page": "hello"});
 And on response we make a string from JSON response and bind it as innerText of element with
 id='response-to-custom-event'
 
-
 ### Binding directly to page elements
 
-There is another way of binding page elements. YOu may want to add a onCLick event like this.
+There is another way of binding page elements. You may want to add a onClick event like this. You will not have access
+to context data, such as profile.id, etc.
 
 ```html
 <button onClick="testClick()">Test click</button>
 ```
 
-Where the testClick function sends an event. 
+Where the **testClick** function sends an event.
 
 ```html
+
 <script>
 function testClick() {
      window.tracker.track("page-view", {"view": 1});
 }
+
 </script>
 ```
 
-When you click the **Test click** button then you will see the event being recorded in console. 
-
+When you click the **Test click** button then you will see the event being recorded in console.
 
 ```
 [Tracker] Event track 
 Object { type: "track", event: "page-view", properties: {…}, options: {}, userId: null, anonymousId: "642aa4a6-9a48-4c08-8fd5-f0772415c824", meta: {…} }
 ```
 
-But it is not sent to Tracardi. This event is collected but never triggered. To trigger an event add fire attribute equal to true as a param to window.tracker.track.
+But it is not sent to Tracardi. This event is collected but never triggered. To trigger an event add fire attribute
+equal to true as a param to window.tracker.track.
 
 ```html
+
 <script>
 function testClick() {
      window.tracker.track("page-view", {"view": 1}, {"fire": true});
 }
+
 </script>
 ```
 
@@ -385,6 +391,7 @@ The whole configuration looks like this:
      
  
 
+
 </script>
  ```
 
@@ -400,7 +407,7 @@ helpers.addListener(btn0, 'mouseover', async ()=> {
 });
 ```
 
-Helpers also have track method that let you send custom event to Tracardi at any time. 
+Helpers also have track method that let you send custom event to Tracardi at any time.
 
 This is how you can use it:
 
