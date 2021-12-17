@@ -181,6 +181,23 @@ Tracardi collects all events and sends it as one request to the Tracradi tracker
 
 All events will be sent when page fully loads.
 
+
+### Sending event on demand
+
+Events can be sent immediately when parameters fire is set to true. 
+
+Example:
+
+```javascript
+window.response.context.profile = true;
+window.tracker.track("purchase-order", {"product": "Sun glasses - Badoo", "price": 13.45})
+window.tracker.track("interest", {"Eletronics": ["Mobile phones", "Accessories"]}, {"fire": true})
+window.tracker.track("page-view",{});
+```
+
+The event "interest" will be sent immediately, because of `{"fire": true}`.
+
+
 ## Handling response from Tracardi
 
 You can also bind events to page elements. To do that you will need to be sure that the page loads and every element of
@@ -292,6 +309,43 @@ const response = await helpers.track("page-view", {"page": "hello"});
 
 And on response we make a string from JSON response and bind it as innerText of element with
 id='response-to-custom-event'
+
+
+### Binding directly to page elements
+
+There is another way of binding page elements. YOu may want to add a onCLick event like this.
+
+```html
+<button onClick="testClick()">Test click</button>
+```
+
+Where the testClick function sends an event. 
+
+```html
+<script>
+function testClick() {
+     window.tracker.track("page-view", {"view": 1});
+}
+</script>
+```
+
+When you click the **Test click** button then you will see the event being recorded in console. 
+
+
+```
+[Tracker] Event track 
+Object { type: "track", event: "page-view", properties: {…}, options: {}, userId: null, anonymousId: "642aa4a6-9a48-4c08-8fd5-f0772415c824", meta: {…} }
+```
+
+But it is not sent to Tracardi. This event is collected but never triggered. To trigger an event add fire attribute equal to true as a param to window.tracker.track.
+
+```html
+<script>
+function testClick() {
+     window.tracker.track("page-view", {"view": 1}, {"fire": true});
+}
+</script>
+```
 
 ## Wrap up
 
