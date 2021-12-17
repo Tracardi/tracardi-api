@@ -147,6 +147,8 @@ application.include_router(consent_type_endpoint.router)
 application.include_router(info_endpoint.router)
 application.include_router(user_endpoint.router)
 application.include_router(event_source_endpoint.router)
+application.include_router(pro_endpoint.router)
+application.include_router(validation_schema_endpoint.router)
 
 # GraphQL
 

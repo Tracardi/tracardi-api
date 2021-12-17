@@ -6,9 +6,13 @@ from tracardi.service.storage.driver import storage
 from elasticsearch import ElasticsearchException
 from typing import Optional
 
+from tracardi.service.event_validator import validate
+from tracardi_dot_notation.dot_accessor import DotAccessor
+from tracardi.domain.event import Event
+
 router = APIRouter(
     dependencies=[
-        Depends(get_current_user)
+        #Depends(get_current_user)
     ]
 )
 
@@ -40,3 +44,12 @@ async def list_schemas(start: Optional[int] = 0, limit: Optional[int] = 10):
     except ElasticsearchException as e:
         raise HTTPException(status_code=500, detail=str(e))
     return list(result)
+
+# TODO TEST
+@router.get("/validation-schema/{event_type}", tags=["validation"], include_in_schema=server.expose_gui_api)
+async def validation_test(event_type: str):
+    event = await storage.driver.event.load_event_by_type(event_type)
+    print(event)
+    dot = DotAccessor(event=Event(**event.dict()))
+    schema = await storage.driver.validation_schema.get_schema(event_type)
+    validate(dot, schema)
