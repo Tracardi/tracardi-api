@@ -2,10 +2,15 @@ import asyncio
 import logging
 from typing import List
 
+from app.config import server
+from tracardi.event_server.utils.memory_cache import MemoryCache, CacheItem
+from tracardi_dot_notation.dot_accessor import DotAccessor
+
+from tracardi.domain.event_payload_validator import EventPayloadValidator
 from tracardi.domain.value_object.bulk_insert_result import BulkInsertResult
 
 from tracardi.domain.console import Console
-
+from tracardi.service.event_validator import validate
 from tracardi.domain.event import Event
 from tracardi.domain.profile import Profile
 from app.api.track.service.merging import merge
@@ -23,6 +28,7 @@ from tracardi.service.storage.drivers.elastic.debug_info import save_debug_info
 from tracardi.service.storage.helpers.source_cacher import source_cache
 
 logger = logging.getLogger('app.api.track.service.tracker')
+cache = MemoryCache()
 
 
 async def _persist(session: Session, events: List[Event],
@@ -57,6 +63,27 @@ async def _persist(session: Session, events: List[Event],
     )
 
 
+async def validate_events_json_schemas(events, profile, session):
+    for event in events:
+        dot = DotAccessor(
+            profile=profile,
+            session=session,
+            payload=None,
+            event=event,
+            flow=None
+        )
+        event_type = dot.event['type']
+
+        if event_type not in cache:
+            event_payload_validator = await storage.driver.validation_schema.load_schema(
+                dot.event['type'])  # type: EventPayloadValidator
+            cache[event_type] = CacheItem(data=event_payload_validator, ttl=server.event_validator_ttl)
+
+        validation_data = cache[event_type].data
+        if validation_data is not None:
+            validate(dot, validator=validation_data)
+
+
 async def track_event(tracker_payload: TrackerPayload, ip: str):
     tracker_payload.metadata.ip = ip
 
@@ -78,6 +105,9 @@ async def track_event(tracker_payload: TrackerPayload, ip: str):
 
     # Get events
     events = tracker_payload.get_events(session, profile)
+
+    # Validates json schemas of events, throws exception if data is not valid
+    await validate_events_json_schemas(events, profile, session)
 
     debug_info_by_event_type_and_rule_name = None
     segmentation_result = None

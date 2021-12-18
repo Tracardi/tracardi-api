@@ -250,7 +250,15 @@ system_settings = [
         **{
             "label": "TAGS_TTL",
             "value": memory_cache.tags_ttl,
-            "desc": "Time of availability of event tags in memory cache, expressed in seconds, defaults to 60."
+            "desc": "Time of availability of event tags in memory cache, expressed in seconds, defaults to 60 seconds."
+        }
+    ),
+    SystemSettings(
+        **{
+            "label": "EVENT_VALIDATOR_TTL",
+            "value": server.event_validator_ttl,
+            "desc": "How many seconds it takes to reload event validation schema. Validation JSON SCHEMA is cached for "
+                    "performance reasons, defaults to 180 seconds."
         }
     ),
 ]

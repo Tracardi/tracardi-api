@@ -6,7 +6,7 @@
   "mappings": {
     "dynamic": false,
     "properties": {
-      "to_validate": {
+      "validation": {
         "index": false,
         "type": "keyword"
       },
