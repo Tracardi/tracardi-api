@@ -1,12 +1,7 @@
-import json
+import logging
 from collections import defaultdict
-from urllib.parse import urljoin, urlparse
-
-from aiohttp import InvalidURL, ClientError
 from fastapi import APIRouter
-from fastapi import HTTPException, Depends, Response, status
-from tracardi.domain.credentials import Credentials
-from tracardi.service.microservice import MicroserviceApi
+from fastapi import HTTPException, Depends
 from tracardi.domain.named_entity import NamedEntity
 from tracardi.domain.enum.type_enum import TypeEnum
 from tracardi.domain.event_source import EventSource
@@ -16,6 +11,8 @@ from .grouper import search
 from ..config import server
 from ..service.tracardi_pro_inbound_sources import get_tracardi_pro_services
 
+logger = logging.getLogger(__name__)
+
 router = APIRouter(
     dependencies=[Depends(get_current_user)]
 )
@@ -24,27 +21,28 @@ router = APIRouter(
 async def event_source_types():
     standard_inbound_sources = {
         "web-page": {
-            "tags": ['web-page', 'inbound'],
-            "name": "Web page",
-            "configurable": False
+            "name": "Web/mobile page",
+            "tags": ["web-page", "inbound"]
         },
         "mobile-app": {
-            "tags": ['mobile-app', 'inbound'],
             "name": "Mobile application",
-            "configurable": False
+            "tags": ["mobile-page", "inbound"]
         },
         "external-system": {
-            "tags": ['external-system', 'inbound'],
             "name": "External system",
-            "configurable": False
+            "tags": ["external-system", "inbound"]
         },
     }
-
-    for service in await get_tracardi_pro_services():
-        standard_inbound_sources[service["id"]] = {
-            "tags": [],
-            "name": service["name"]
-        }
+    try:
+        endpoint = await storage.driver.pro.read_pro_service_endpoint()
+        if endpoint is not None:
+            for service in await get_tracardi_pro_services(endpoint):
+                standard_inbound_sources[service["id"]] = {
+                    "name": "{} ({})".format(service["name"], service['prefix']),
+                    "tags": service["tags"] if "tags" in service else []
+                }
+    except Exception as e:
+        logger.error(repr(e))
 
     return standard_inbound_sources
 
@@ -66,11 +64,14 @@ async def list_resources(query: str = None):
         # Grouping
         groups = defaultdict(list)
         for event_source in result:  # type: EventSource
-            if isinstance(event_source.type, list):
-                for group in event_source.type:
-                    groups[group].append(event_source)
-            elif isinstance(event_source.type, str):
-                groups[event_source.type].append(event_source)
+            if isinstance(event_source.groups, list):
+                if len(event_source.groups) == 0:
+                    groups["general"].append(event_source)
+                else:
+                    for group in event_source.groups:
+                        groups[group].append(event_source)
+            elif isinstance(event_source.groups, str):
+                groups[event_source.groups].append(event_source)
 
         # Sort
         groups = {k: sorted(v, key=lambda r: r.name, reverse=False) for k, v in groups.items()}
@@ -128,57 +129,9 @@ async def save_event_source(event_source: EventSource):
     try:
         types = await event_source_types()
         if event_source.type in types:
-            configuration = types[event_source.type]
-            if configuration['configurable'] is True:
-                url = urljoin(event_source.url, '/')
-
-                if len(url) > 0 and url[-1] == '/':
-                    url = url[:-1]
-                client = MicroserviceApi(url,
-                                         credentials=Credentials(username=event_source.username,
-                                                                 password=event_source.password))
-                path = urlparse(event_source.url).path
-                if len(path) > 0 and path[-1] != '/':
-                    path = path + "/"
-                endpoint = f"{path}{event_source.id}"
-                try:
-                    response = await client.call(endpoint, method="get", data=None)
-                    print(response)
-                    if response.status == 200:
-                        result = await storage.driver.event_source.save(event_source)
-                        if result.is_nothing_saved():
-                            raise ValueError("Could not save event source.")
-
-                        content = await response.json()
-                        content["url"] = url
-
-                        return Response(
-                            media_type="application/json",
-                            content=json.dumps(content),
-                            status_code=status.HTTP_206_PARTIAL_CONTENT
-                        )
-                    elif response.status == 404:
-                        raise ConnectionError("Could not find endpoint {} at {}".format(endpoint, url))
-
-                    elif response.status == 422:
-
-                        return Response(
-                            media_type="application/json",
-                            content=json.dumps(await response.json()),
-                            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY
-                        )
-
-                    else:
-                        raise ConnectionError("Client returned {} status".format(response.status))
-
-                except InvalidURL as e:
-                    raise ConnectionError("Could not find endpoint {} at {}".format(endpoint, url))
-                except ClientError as e:
-                    raise ConnectionError("Client error {}".format(repr(e)))
-            else:
-                result = await storage.driver.event_source.save(event_source)
-                if result.is_nothing_saved():
-                    raise ValueError("Could not save event source.")
+            result = await storage.driver.event_source.save(event_source)
+            if result.is_nothing_saved():
+                raise ValueError("Could not save event source.")
 
         return True
 

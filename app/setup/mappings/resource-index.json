@@ -30,6 +30,9 @@
       "tags": {
         "type": "keyword"
       },
+      "groups": {
+        "type": "keyword"
+      },
       "icon": {
         "type": "keyword"
       },

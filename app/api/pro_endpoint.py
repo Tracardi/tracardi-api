@@ -68,7 +68,10 @@ async def refresh_configured_tracardi_pro_services():
 @router.get("/tracardi-pro/services", tags=["tracardi-pro"], include_in_schema=server.expose_gui_api)
 async def get_configured_tracardi_pro_services(available: Optional[str] = None):
     await sleep(1)
-    return await get_tracardi_pro_services(available)
+    endpoint = await storage.driver.pro.read_pro_service_endpoint()
+    if endpoint is None:
+        raise HTTPException(status_code=404, detail="Tracardi Pro services not connected.")
+    return await get_tracardi_pro_services(endpoint, available)
 
 
 @router.delete("/tracardi-pro/service/{id}", tags=["tracardi-pro"], include_in_schema=server.expose_gui_api)

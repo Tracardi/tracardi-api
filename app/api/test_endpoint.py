@@ -14,6 +14,7 @@ async def create_test_data():
         type="web-page",
         name="Test resource",
         description="This resource is created for test purposes.",
+        tags=['test']
     )
     return await storage.driver.event_source.save(resource)
 

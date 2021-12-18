@@ -1,3 +1,4 @@
+import logging
 from collections import defaultdict
 from typing import Optional
 from fastapi import APIRouter
@@ -15,6 +16,9 @@ from tracardi.domain.entity import Entity
 from tracardi.domain.enum.indexes_source_bool import IndexesSourceBool
 from tracardi.domain.value_object.bulk_insert_result import BulkInsertResult
 from ..config import server
+from ..service.tracardi_pro_inbound_sources import get_tracardi_pro_services
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(
     dependencies=[Depends(get_current_user)]
@@ -35,16 +39,25 @@ async def get_resource_types(type: TypeEnum) -> dict:
     """
 
     try:
-        types = {
-            "tracardi-pro": {
-                "config": {
-                    "url": "http://localhost:12345",
-                    "username": "<username>",
-                    "password": "<password>"
-                },
-                "tags": ['pro', 'api'],
-                "name": "Tracardi Pro Service"
-            },
+        types = {}
+        try:
+
+            endpoint = await storage.driver.pro.read_pro_service_endpoint()
+            if endpoint is not None:
+                for service in await get_tracardi_pro_services(endpoint):
+                    print("1", service["name"], service["tags"])
+                    types[service["id"]] = {
+                        "name": "{} ({})".format(service["name"], service['prefix']),
+                        "tags": service["tags"],
+                        "config": {
+                            "auth": endpoint.dict(exclude={"id": ...}),
+                            "services": "/{}/services/{}".format(service['prefix'], endpoint.token)
+                        }
+                    }
+        except Exception as e:
+            logger.error(repr(e))
+
+        types.update({
             "web-page": {
                 "config": {
                     "user": "<user>",
@@ -182,7 +195,7 @@ async def get_resource_types(type: TypeEnum) -> dict:
                 "tags": ['token'],
                 "name": "Token"
             }
-        }
+        })
 
         if type.value == 'name':
             types = {id: t['name'] for id, t in types.items()}
@@ -271,23 +284,6 @@ async def list_resources():
         raise HTTPException(status_code=500, detail=str(e))
 
 
-# @router.get("/resources/by_id",
-#             tags=["resource"],
-#             include_in_schema=server.expose_gui_api)
-# async def list_resources_by_id():
-#     try:
-#         result = await StorageForBulk().index('resource').load()
-#         total = result.total
-#         result = {r['id']: r['name'] for r in result}
-#
-#         return {
-#             "total": total,
-#             "result": result
-#         }
-#     except Exception as e:
-#         raise HTTPException(status_code=500, detail=str(e))
-
-
 @router.get("/resources/by_type",
             tags=["resource"],
             include_in_schema=server.expose_gui_api)
@@ -308,11 +304,14 @@ async def list_resources(query: str = None):
         # Grouping
         groups = defaultdict(list)
         for resource in result:  # type: Resource
-            if isinstance(resource.type, list):
-                for group in resource.type:
-                    groups[group].append(resource)
-            elif isinstance(resource.type, str):
-                groups[resource.type].append(resource)
+            if isinstance(resource.groups, list):
+                if len(resource.groups) == 0:
+                    groups["general"].append(resource)
+                else:
+                    for group in resource.groups:
+                        groups[group].append(resource)
+            elif isinstance(resource.groups, str):
+                groups[resource.groups].append(resource)
 
         # Sort
         groups = {k: sorted(v, key=lambda r: r.name, reverse=False) for k, v in groups.items()}
