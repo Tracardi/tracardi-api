@@ -14,7 +14,7 @@ from app.api import token_endpoint, rule_endpoint, resource_endpoint, event_endp
     tql_endpoint, health_endpoint, session_endpoint, instance_endpoint, plugins_endpoint, test_endpoint, \
     settings_endpoint, event_source_endpoint, \
     purchases_endpoint, event_tag_endpoint, consent_type_endpoint, flow_action_endpoint, flows_endpoint, info_endpoint,\
-    user_endpoint, pro_endpoint
+    user_endpoint, pro_endpoint, validation_schema_endpoint
 from app.api.auth.authentication import get_current_user
 from app.api.graphql.profile import graphql_profiles
 from app.api.scheduler import tasks_endpoint
@@ -148,6 +148,7 @@ application.include_router(info_endpoint.router)
 application.include_router(user_endpoint.router)
 application.include_router(event_source_endpoint.router)
 application.include_router(pro_endpoint.router)
+application.include_router(validation_schema_endpoint.router)
 
 # GraphQL
 
