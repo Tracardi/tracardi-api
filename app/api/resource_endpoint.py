@@ -45,7 +45,6 @@ async def get_resource_types(type: TypeEnum) -> dict:
             endpoint = await storage.driver.pro.read_pro_service_endpoint()
             if endpoint is not None:
                 for service in await get_tracardi_pro_services(endpoint):
-                    print("1", service["name"], service["tags"])
                     types[service["id"]] = {
                         "name": "{} ({})".format(service["name"], service['prefix']),
                         "tags": service["tags"],
