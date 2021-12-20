@@ -138,7 +138,10 @@ async def add_plugins():
         'tracardi.process_engine.action.v1.microservice.profile_metrics',
 
         # Consents
-        'tracardi.process_engine.action.v1.consents.add_consent_action.plugin'
+        'tracardi.process_engine.action.v1.consents.add_consent_action.plugin',
+
+        # Tracardi Pro
+        'tracardi.process_engine.action.v1.pro.scheduler.plugin'
 
     ]
     for plugin in plugins:

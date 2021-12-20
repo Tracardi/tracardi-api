@@ -5,6 +5,7 @@ from fastapi import APIRouter, HTTPException, Depends
 
 from app.service.tracardi_pro_inbound_sources import get_tracardi_pro_services
 from tracardi.domain.credentials import Credentials
+from tracardi.domain.pro_service_config import TracardiProServiceConfig
 
 from tracardi.service.microservice import MicroserviceApi
 
@@ -85,6 +86,25 @@ async def delete_tracardi_pro_service(id: str):
                                                      password=endpoint.password))
 
     response = await client.call(endpoint.get_running_service(id), method="DELETE")
+    if response.status == 200:
+        return await response.json()
+    return []
+
+
+@router.get("/tracardi-pro/service/{id}/actions", tags=["tracardi-pro"], include_in_schema=server.expose_gui_api)
+async def get_tracardi_pro_service_actions(id: str):
+    resource = await storage.driver.resource.load(id)
+    if resource is None:
+        raise HTTPException(status_code=404, detail="Resource {} not available.".format(id))
+
+    config = TracardiProServiceConfig(**resource.credentials.production)
+    print(config, config.auth.url)
+    client = MicroserviceApi(config.auth.url,
+                             credentials=Credentials(username=config.auth.username,
+                                                     password=config.auth.password))
+
+    response = await client.call(config.services, method="GET")
+    print(await response.json())
     if response.status == 200:
         return await response.json()
     return []
