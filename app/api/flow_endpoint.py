@@ -3,6 +3,8 @@ from typing import List
 
 from fastapi import APIRouter
 from fastapi import HTTPException, Depends
+
+from tracardi.domain.enum.production_draft import ProductionDraft
 from tracardi.exceptions.exception import StorageException
 from tracardi.domain.console import Console
 from tracardi.service.secrets import encrypt
@@ -48,7 +50,7 @@ async def upsert_flow_draft(draft: Flow):
     """
     try:
 
-        # Frontend edge id is log. Save space and md5 it.
+        # Frontend edge-id is long. Save space and md5 it.
 
         if draft.flowGraph is not None:
             draft.flowGraph.shorten_edge_ids()
@@ -62,7 +64,7 @@ async def upsert_flow_draft(draft: Flow):
 
         flow_record.draft = encrypt(draft.dict())
 
-        return await StorageFor(flow_record).index().save()
+        return await storage.driver.flow.save_record(flow_record)
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -111,23 +113,28 @@ async def get_flow(id: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/flow/production/{id}/restore", tags=["flow"], response_model=Flow, include_in_schema=server.expose_gui_api)
-async def restore_production_flow_backup(id: str):
+@router.get("/flow/{production_draft}/{id}/restore", tags=["flow"], response_model=Flow, include_in_schema=server.expose_gui_api)
+async def restore_production_flow_backup(id: str, production_draft: ProductionDraft):
     try:
         flow_record = await storage.driver.flow.load_record(id)  # type: FlowRecord
-
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
     if flow_record is None:
         raise HTTPException(status_code=404, detail="Flow id: `{}` does not exist.".format(id))
 
-    flow_record.restore_production_from_backup()
+    if production_draft.value == ProductionDraft.production:
+        flow_record.restore_production_from_backup()
+    else:
+        flow_record.restore_draft_from_production()
 
     try:
         result = await storage.driver.flow.save_record(flow_record)
         if result.saved == 1:
-            pass
+            if production_draft.value == ProductionDraft.production:
+                return flow_record.get_production_workflow()
+            return flow_record.get_draft_workflow()
+
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
