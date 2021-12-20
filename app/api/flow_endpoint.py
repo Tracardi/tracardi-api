@@ -122,7 +122,9 @@ async def upsert_flow(flow: Flow):
         by the production version. This may be the subject to change.
     """
     try:
+        old_flow_record = await storage.driver.flow.load_record(flow.id)
         flow_record = flow.get_production_workflow_record()
+        flow_record.backup = old_flow_record.production
         return await StorageFor(flow_record).index().save()
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
