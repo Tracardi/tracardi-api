@@ -55,8 +55,7 @@ async def upsert_flow_draft(draft: Flow):
 
         # Check if origin flow exists
 
-        entity = Entity(id=draft.id)
-        flow_record = await StorageFor(entity).index('flow').load(FlowRecord)  # type: FlowRecord
+        flow_record = await storage.driver.flow.load_record(draft.id)  # type: FlowRecord
 
         if flow_record is None:
             flow_record = draft.get_empty_workflow_record()
@@ -72,8 +71,7 @@ async def upsert_flow_draft(draft: Flow):
 @router.get("/flow/draft/{id}", tags=["flow"], response_model=Flow, include_in_schema=server.expose_gui_api)
 async def load_flow_draft(id: str):
     try:
-        entity = Entity(id=id)
-        flow_record = await StorageFor(entity).index('flow').load(FlowRecord)  # type: FlowRecord
+        flow_record = await storage.driver.flow.load_record(id)  # type: FlowRecord
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -97,8 +95,7 @@ async def load_flow_draft(id: str):
 @router.get("/flow/production/{id}", tags=["flow"], response_model=Flow, include_in_schema=server.expose_gui_api)
 async def get_flow(id: str):
     try:
-        flow = Entity(id=id)
-        flow_record = await StorageFor(flow).index("flow").load(FlowRecord)  # type: FlowRecord
+        flow_record = await storage.driver.flow.load_record(id)  # type: FlowRecord
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -110,6 +107,24 @@ async def get_flow(id: str):
             return flow_record.get_production_workflow()
 
         return flow_record.get_empty_workflow(id)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/flow/production/{id}/restore", tags=["flow"], response_model=Flow, include_in_schema=server.expose_gui_api)
+async def restore_production_flow_backup(id: str):
+    try:
+        flow_record = await storage.driver.flow.load_record(id)  # type: FlowRecord
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+    if flow_record is None:
+        raise HTTPException(status_code=404, detail="Flow id: `{}` does not exist.".format(id))
+
+    flow_record.restore_production_from_backup()
+
+    try:
+        pass
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
