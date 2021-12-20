@@ -110,6 +110,7 @@ async def get_flow(id: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+
 @router.get("/flow/production/{id}/restore", tags=["flow"], response_model=Flow, include_in_schema=server.expose_gui_api)
 async def restore_production_flow_backup(id: str):
     try:
@@ -124,7 +125,9 @@ async def restore_production_flow_backup(id: str):
     flow_record.restore_production_from_backup()
 
     try:
-        pass
+        result = await storage.driver.flow.save_record(flow_record)
+        if result.saved == 1:
+            pass
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
