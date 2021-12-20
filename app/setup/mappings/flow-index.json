@@ -26,6 +26,10 @@
         "type": "keyword",
         "index": false
       },
+      "backup": {
+        "type": "keyword",
+        "index": false
+      },
       "enabled": {
         "type": "boolean"
       },
