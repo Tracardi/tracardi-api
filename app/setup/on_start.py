@@ -111,6 +111,7 @@ async def add_plugins():
         'tracardi.process_engine.action.v1.time.today_action',
         'tracardi.process_engine.action.v1.time.day_night.plugin',
         'tracardi.process_engine.action.v1.time.local_time_span.plugin',
+        'tracardi.process_engine.action.v1.time.time_difference.plugin',
 
         # Connectors
         'tracardi_rabbitmq_publisher.plugin',
