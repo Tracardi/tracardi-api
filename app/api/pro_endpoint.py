@@ -68,7 +68,6 @@ async def refresh_configured_tracardi_pro_services():
 
 @router.get("/tracardi-pro/services", tags=["tracardi-pro"], include_in_schema=server.expose_gui_api)
 async def get_configured_tracardi_pro_services(available: Optional[str] = None):
-    await sleep(1)
     endpoint = await storage.driver.pro.read_pro_service_endpoint()
     if endpoint is None:
         raise HTTPException(status_code=404, detail="Tracardi Pro services not connected.")
@@ -98,13 +97,11 @@ async def get_tracardi_pro_service_actions(id: str):
         raise HTTPException(status_code=404, detail="Resource {} not available.".format(id))
 
     config = TracardiProServiceConfig(**resource.credentials.production)
-    print(config, config.auth.url)
     client = MicroserviceApi(config.auth.url,
                              credentials=Credentials(username=config.auth.username,
                                                      password=config.auth.password))
 
     response = await client.call(config.services, method="GET")
-    print(await response.json())
     if response.status == 200:
         return await response.json()
     return []

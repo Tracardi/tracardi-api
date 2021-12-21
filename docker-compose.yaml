@@ -5,6 +5,9 @@ services:
     image: tracardi/tracardi-api
     environment:
       ELASTIC_HOST: http://elasticsearch:9200
+      USER_NAME: admin
+      PASSWORD: admin
+      LOGGING_LEVEL: info
     ports:
       - 8686:80
 
