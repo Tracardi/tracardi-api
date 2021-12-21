@@ -3,15 +3,14 @@
 This plugin calculates time difference between two dates. 
 
 ## Config
-Plugin takes path to reference date (field Reference date), so for example ```event@metadata.time.lastVisit```. Second 
-can take multiple formats:
-- Now - it's just the moment of running workflow, correct value in Second date field for this format is just ```now```.
+Plugin takes reference date (field Reference date) and so called 'now date' (Second date). Both can be in one of following formats:
+- Now - it's just the moment of running workflow, correct value in date field for this format is just ```now```.
 - Date - that one is one specific date given by user. Correct values are for example ```2021-03-14``` or ```Aug 28 1999```. 
 For more specific information about correct formats, check https://dateutil.readthedocs.io/en/stable/parser.html
-- Path - This one takes path to date, exactly like Reference date.
+- Path - This one takes path to date.
 
 ## Output
-This plugin returns given payload (without any changes) on port ```payload```, and time difference information on port ```time_difference```.
+This plugin returns time difference information on port ```time_difference```.
 Time difference information is ___always___ in form of:
 ```
 {
