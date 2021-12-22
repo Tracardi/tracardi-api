@@ -2,6 +2,7 @@ import asyncio
 import logging
 from typing import List
 
+from app.api.console_log import ConsoleLog
 from app.config import server
 from tracardi.event_server.utils.memory_cache import MemoryCache, CacheItem
 from tracardi_dot_notation.dot_accessor import DotAccessor
@@ -11,7 +12,7 @@ from tracardi.domain.value_object.bulk_insert_result import BulkInsertResult
 
 from tracardi.domain.console import Console
 from tracardi.service.event_validator import validate
-from tracardi.domain.event import Event
+from tracardi.domain.event import Event, VALIDATED, ERROR, WARNING, OK
 from tracardi.domain.profile import Profile
 from app.api.track.service.merging import merge
 from app.api.track.service.segmentation import segment
@@ -31,7 +32,7 @@ logger = logging.getLogger('app.api.track.service.tracker')
 cache = MemoryCache()
 
 
-async def _persist(session: Session, events: List[Event],
+async def _persist(console_log: ConsoleLog, session: Session, events: List[Event],
                    tracker_payload: TrackerPayload, profile: Profile = None) -> CollectResult:
     # Save profile
     try:
@@ -52,6 +53,21 @@ async def _persist(session: Session, events: List[Event],
     # Save events
     try:
         persist_events = False if tracker_payload.is_disabled('saveEvents') else True
+
+        # Set statuses
+        log_event_journal = console_log.get_indexed_event_journal()
+        for event in events:
+            if event.id in log_event_journal:
+                log = log_event_journal[event.id]
+                if log.is_error():
+                    event.metadata.status = ERROR
+                    continue
+                elif log.is_warning():
+                    event.metadata.status = WARNING
+                    continue
+                else:
+                    event.metadata.status = OK
+
         save_events_result = await storage.driver.event.save_events(events, persist_events)
     except StorageException as e:
         raise FieldTypeConflictException("Could not save event. Error: {}".format(e.message), rows=e.details)
@@ -81,6 +97,7 @@ async def validate_events_json_schemas(events, profile, session):
 
         validation_data = cache[event_type].data
         if validation_data is not None:
+            event.metadata.status = VALIDATED
             validate(dot, validator=validation_data)
 
 
@@ -112,7 +129,7 @@ async def track_event(tracker_payload: TrackerPayload, ip: str):
     debug_info_by_event_type_and_rule_name = None
     segmentation_result = None
 
-    console_log = []
+    console_log = ConsoleLog()
     rules_engine = RulesEngine(
         session,
         profile,
@@ -229,7 +246,7 @@ async def track_event(tracker_payload: TrackerPayload, ip: str):
 
             events = synced_events
 
-        collect_result = await _persist(session, events, tracker_payload, profile)
+        collect_result = await _persist(console_log, session, events, tracker_payload, profile)
 
         # Save console log
         if console_log:

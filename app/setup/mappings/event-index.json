@@ -25,6 +25,10 @@
             "ip": {
               "type": "keyword",
               "null_value": "NULL"
+            },
+            "status": {
+              "type": "keyword",
+              "null_value": "NULL"
             }
           }
         },
