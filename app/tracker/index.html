@@ -107,8 +107,8 @@
                 context: {
                     browser: true,
                     page: true,
-                    session: false,
-                    storage:true,
+                    session: true,
+                    storage:false,
                     screen: true
                 }
             }
@@ -159,9 +159,11 @@ const options = {
 }
 </pre>
 
+<p>
 Configuration can be extended with context parameter, where you may define the scope of context data. Storage
-(localStorage) and session data is by default excluded. YOu can change it by explicitly flagging storage:true in this
+(localStorage) and session data is by default excluded. You can change it by explicitly flagging storage:true in this
 configuration. Sending cookies and localStorage data can lead to data explosion in Tracardi database.
+</p>
 
 <pre>
     const options = {
@@ -176,8 +178,8 @@ configuration. Sending cookies and localStorage data can lead to data explosion 
         context: {
             browser: true,
             page: true,
-            session: false,
-            storage:true,
+            session: true,
+            storage:false,
             screen: true
         }
     }
