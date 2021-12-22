@@ -4,10 +4,9 @@ from typing import List
 from fastapi import APIRouter
 from fastapi import HTTPException, Depends
 
+from tracardi.domain.event_source import EventSource
 from tracardi.service.storage.driver import storage
 from tracardi.service.storage.factory import StorageFor
-
-from tracardi.domain.resource import ResourceRecord
 from .auth.authentication import get_current_user
 from tracardi.domain.entity import Entity
 from tracardi.domain.flow import FlowRecord
@@ -38,11 +37,11 @@ async def upsert_rule(rule: Rule):
     try:
         # Check if source id exists
         entity = Entity(id=rule.source.id)
-        resource = await StorageFor(entity).index('resource').load(ResourceRecord)
+        event_source = await StorageFor(entity).index('event-source').load(EventSource)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-    if resource is None:
+    if event_source is None:
         raise HTTPException(status_code=422, detail='Incorrect source id: `{}`'.format(rule.source.id))
 
     try:
