@@ -1,5 +1,7 @@
 from typing import Dict
 
+from tracardi.domain.console import Console
+
 
 class StatusLog:
     def __init__(self, time, flow_id, profile_id, origin, class_name, module, type, message):
@@ -35,3 +37,7 @@ class ConsoleLog(list):
             flow_id=log.flow_id,
             time=log.metadata.timestamp
         ) for log in self}
+
+    def get_encoded(self):
+        for log in self:  # type: Console
+            yield log.encode_record()

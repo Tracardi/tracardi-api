@@ -1,8 +1,10 @@
 import asyncio
 import logging
-from typing import List
+from typing import List, Optional
 
-from app.api.console_log import ConsoleLog
+from tracardi.domain.entity import Entity
+
+from app.api.domain.console_log import ConsoleLog
 from app.config import server
 from tracardi.event_server.utils.memory_cache import MemoryCache, CacheItem
 from tracardi_dot_notation.dot_accessor import DotAccessor
@@ -24,19 +26,18 @@ from tracardi.process_engine.rules_engine import RulesEngine
 from tracardi.domain.value_object.collect_result import CollectResult
 from tracardi.domain.payload.tracker_payload import TrackerPayload
 from tracardi.service.storage.driver import storage
-from tracardi.service.storage.factory import StorageFor, StorageForBulk
-from tracardi.service.storage.drivers.elastic.debug_info import save_debug_info
+from tracardi.service.storage.factory import StorageForBulk
 from tracardi.service.storage.helpers.source_cacher import source_cache
 
 logger = logging.getLogger('app.api.track.service.tracker')
 cache = MemoryCache()
 
 
-async def _persist(console_log: ConsoleLog, session: Session, events: List[Event],
-                   tracker_payload: TrackerPayload, profile: Profile = None) -> CollectResult:
+async def _persist(profile_less, console_log: ConsoleLog, session: Session, events: List[Event],
+                   tracker_payload: TrackerPayload, profile: Optional[Profile] = None) -> CollectResult:
     # Save profile
     try:
-        if profile.operation.new:
+        if isinstance(profile, Profile) and profile.operation.new:
             save_profile_result = await storage.driver.profile.save_profile(profile)
         else:
             save_profile_result = BulkInsertResult()
@@ -46,7 +47,7 @@ async def _persist(console_log: ConsoleLog, session: Session, events: List[Event
     # Save session
     try:
         persist_session = False if tracker_payload.is_disabled('saveSession') else True
-        save_session_result = await storage.driver.session.save_session(session, profile, persist_session)
+        save_session_result = await storage.driver.session.save_session(session, profile, profile_less, persist_session)
     except StorageException as e:
         raise FieldTypeConflictException("Could not save session. Error: {}".format(e.message), rows=e.details)
 
@@ -79,7 +80,7 @@ async def _persist(console_log: ConsoleLog, session: Session, events: List[Event
     )
 
 
-async def validate_events_json_schemas(events, profile, session):
+async def validate_events_json_schemas(events, profile: Optional[Profile], session):
     for event in events:
         dot = DotAccessor(
             profile=profile,
@@ -101,7 +102,7 @@ async def validate_events_json_schemas(events, profile, session):
             validate(dot, validator=validation_data)
 
 
-async def track_event(tracker_payload: TrackerPayload, ip: str):
+async def track_event(tracker_payload: TrackerPayload, ip: str, profile_less: bool):
     tracker_payload.metadata.ip = ip
 
     try:
@@ -114,11 +115,14 @@ async def track_event(tracker_payload: TrackerPayload, ip: str):
         raise UnauthorizedException("Session must be set.")
 
     # Load session from storage
-    session = await StorageFor(tracker_payload.session).index("session").load(Session)  # type: Session
+    # session = await StorageFor(tracker_payload.session).index("session").load(Session)  # type: Session
+    session = await storage.driver.session.load(tracker_payload.session.id)  # type: Session
 
     # Get profile
     profile, session = await tracker_payload.get_profile_and_session(session,
-                                                                     storage.driver.profile.load_merged_profile)
+                                                                     storage.driver.profile.load_merged_profile,
+                                                                     profile_less
+                                                                     )
 
     # Get events
     events = tracker_payload.get_events(session, profile)
@@ -141,20 +145,30 @@ async def track_event(tracker_payload: TrackerPayload, ip: str):
     try:
 
         # Invoke rules engine
-        debug_info_by_event_type_and_rule_name, ran_event_types, console_log, post_invoke_events = await rules_engine.invoke(
+        debug_info_by_event_type_and_rule_name, ran_event_types, console_log, post_invoke_events, invoked_rules = await rules_engine.invoke(
             storage.driver.flow.load_production_flow,
             tracker_payload.source.id)
 
-        # Segment
-        segmentation_result = await segment(rules_engine.profile,
-                                            ran_event_types,
-                                            storage.driver.segment.load_segment_by_event_type)
+        # append invoked rules to event metadata
+
+        for event in events:
+            if event.type in invoked_rules:
+                event.metadata.processed_by.rules = invoked_rules[event.type]
+
+        # Profile less events can not be segmented as there is no profile to segment
+        # todo wf can return profile so the above may not be true
+
+        if profile_less is False:
+            # Segment
+            segmentation_result = await segment(rules_engine.profile,
+                                                ran_event_types,
+                                                storage.driver.segment.load_segment_by_event_type)
 
     except Exception as e:
         message = 'Rules engine or segmentation returned an error `{}`'.format(str(e))
         console_log.append(
             Console(
-                profile_id=rules_engine.profile.id,
+                profile_id=rules_engine.profile.id if isinstance(rules_engine.profile, Entity) else None,
                 origin='profile',
                 class_name='RulesEngine',
                 module='tracker',
@@ -177,7 +191,7 @@ async def track_event(tracker_payload: TrackerPayload, ip: str):
         logger.error(message)
         console_log.append(
             Console(
-                profile_id=rules_engine.profile.id,
+                profile_id=rules_engine.profile.id if isinstance(rules_engine.profile, Entity) else None,
                 origin='profile',
                 class_name='merge',
                 module='app.api.track.service',
@@ -188,13 +202,13 @@ async def track_event(tracker_payload: TrackerPayload, ip: str):
 
     # Must be the last operation
     try:
-        if rules_engine.profile.operation.needs_update():
+        if isinstance(rules_engine.profile, Profile) and rules_engine.profile.operation.needs_update():
             await storage.driver.profile.save_profile(profile)
     except Exception as e:
         message = "Profile update returned an error: `{}`".format(str(e))
         console_log.append(
             Console(
-                profile_id=rules_engine.profile.id,
+                profile_id=rules_engine.profile.id if isinstance(rules_engine.profile, Entity) else None,
                 origin='profile',
                 class_name='tracker',
                 module='tracker',
@@ -220,7 +234,7 @@ async def track_event(tracker_payload: TrackerPayload, ip: str):
         logger.error(message)
         console_log.append(
             Console(
-                profile_id=rules_engine.profile.id,
+                profile_id=rules_engine.profile.id if isinstance(rules_engine.profile, Entity) else None,
                 origin='profile',
                 class_name='tracker',
                 module='tracker',
@@ -246,11 +260,12 @@ async def track_event(tracker_payload: TrackerPayload, ip: str):
 
             events = synced_events
 
-        collect_result = await _persist(console_log, session, events, tracker_payload, profile)
+        collect_result = await _persist(profile_less, console_log, session, events, tracker_payload, profile)
 
         # Save console log
         if console_log:
-            save_tasks.append(asyncio.create_task(StorageForBulk(console_log).index('console-log').save()))
+            encoded_console_log = list(console_log.get_encoded())
+            save_tasks.append(asyncio.create_task(StorageForBulk(encoded_console_log).index('console-log').save()))
 
     # Prepare response
     result = {}
@@ -266,15 +281,19 @@ async def track_event(tracker_payload: TrackerPayload, ip: str):
         result['debugging'] = debug_result
 
     # Add profile to response
-    if tracker_payload.return_profile():
-        result["profile"] = profile.dict(
-            exclude={
-                "traits": {"private": ...},
-                "pii": ...,
-                "operation": ...
-            })
-    else:
-        result["profile"] = profile.dict(include={"id": ...})
+    if tracker_payload.return_profile() and profile_less is True:
+        logger.warning("It does not make sense to return profile on profile less event. There is no profile to return.")
+
+    if profile_less is False:
+        if tracker_payload.return_profile():
+            result["profile"] = profile.dict(
+                exclude={
+                    "traits": {"private": ...},
+                    "pii": ...,
+                    "operation": ...
+                })
+        else:
+            result["profile"] = profile.dict(include={"id": ...})
 
     # Add source to response
     result['source'] = source.dict(include={"consent": ...})
