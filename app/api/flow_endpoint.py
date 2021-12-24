@@ -3,8 +3,10 @@ from typing import List
 
 from fastapi import APIRouter
 from fastapi import HTTPException, Depends
+from tracardi.domain.time import Time
 
 from tracardi.domain.enum.production_draft import ProductionDraft
+from tracardi.domain.event_metadata import EventMetadata
 from tracardi.exceptions.exception import StorageException
 from tracardi.domain.console import Console
 from tracardi.service.secrets import encrypt
@@ -113,7 +115,8 @@ async def get_flow(id: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/flow/{production_draft}/{id}/restore", tags=["flow"], response_model=Flow, include_in_schema=server.expose_gui_api)
+@router.get("/flow/{production_draft}/{id}/restore", tags=["flow"], response_model=Flow,
+            include_in_schema=server.expose_gui_api)
 async def restore_production_flow_backup(id: str, production_draft: ProductionDraft):
     try:
         flow_record = await storage.driver.flow.load_record(id)  # type: FlowRecord
@@ -263,14 +266,14 @@ async def debug_flow(flow: GraphFlow):
         profile = Profile(id="@debug-profile-id")
         session = Session(id="@debug-session-id")
         session.operation.new = True
-        event = Event(
-            id='@debug-event-id',
-            type="@debug-event-type",
-            source=Resource(id="@debug-source-id", type="web-page"),
-            session=session,
-            profile=profile,
-            context=Context()
-        )
+        event = Event(metadata=EventMetadata(time=Time()),
+                      id='@debug-event-id',
+                      type="@debug-event-type",
+                      source=Resource(id="@debug-source-id", type="web-page"),
+                      session=session,
+                      profile=profile,
+                      context=Context()
+                      )
 
         workflow = WorkFlow(
             FlowHistory(history=[]),
@@ -291,7 +294,8 @@ async def debug_flow(flow: GraphFlow):
                     module=log.module,
                     class_name=log.class_name,
                     type=log.type,
-                    message=log.message
+                    message=log.message,
+                    traceback=log.traceback
                 )
                 console_log.append(console)
 

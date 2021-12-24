@@ -29,6 +29,19 @@
             "status": {
               "type": "keyword",
               "null_value": "NULL"
+            },
+            "processed_by": {
+              "properties": {
+                "rules": {
+                  "type": "keyword"
+                },
+                "third_party": {
+                  "type": "keyword"
+                }
+              }
+            },
+            "profile_less": {
+              "type": "boolean"
             }
           }
         },

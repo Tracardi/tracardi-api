@@ -38,7 +38,8 @@
         "type": "text"
       },
       "traceback": {
-        "type": "text"
+        "type": "text",
+        "index": false
       }
     }
   }

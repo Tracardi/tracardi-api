@@ -13,8 +13,9 @@ from tracardi.domain.event_payload_validator import EventPayloadValidator
 from tracardi.domain.value_object.bulk_insert_result import BulkInsertResult
 
 from tracardi.domain.console import Console
+from tracardi.exceptions.exception_service import get_traceback
 from tracardi.service.event_validator import validate
-from tracardi.domain.event import Event, VALIDATED, ERROR, WARNING, OK
+from tracardi.domain.event import Event, VALIDATED, ERROR, WARNING, PROCESSED
 from tracardi.domain.profile import Profile
 from app.api.track.service.merging import merge
 from app.api.track.service.segmentation import segment
@@ -67,7 +68,7 @@ async def _persist(profile_less, console_log: ConsoleLog, session: Session, even
                     event.metadata.status = WARNING
                     continue
                 else:
-                    event.metadata.status = OK
+                    event.metadata.status = PROCESSED
 
         save_events_result = await storage.driver.event.save_events(events, persist_events)
     except StorageException as e:
@@ -98,8 +99,8 @@ async def validate_events_json_schemas(events, profile: Optional[Profile], sessi
 
         validation_data = cache[event_type].data
         if validation_data is not None:
-            event.metadata.status = VALIDATED
             validate(dot, validator=validation_data)
+            event.metadata.status = VALIDATED
 
 
 async def track_event(tracker_payload: TrackerPayload, ip: str, profile_less: bool):
@@ -115,7 +116,6 @@ async def track_event(tracker_payload: TrackerPayload, ip: str, profile_less: bo
         raise UnauthorizedException("Session must be set.")
 
     # Load session from storage
-    # session = await StorageFor(tracker_payload.session).index("session").load(Session)  # type: Session
     session = await storage.driver.session.load(tracker_payload.session.id)  # type: Session
 
     # Get profile
@@ -124,8 +124,11 @@ async def track_event(tracker_payload: TrackerPayload, ip: str, profile_less: bo
                                                                      profile_less
                                                                      )
 
+    if profile_less is True and profile is not None:
+        logger.warning("Something is wrong - profile less events should not have profile attached.")
+
     # Get events
-    events = tracker_payload.get_events(session, profile)
+    events = tracker_payload.get_events(session, profile, profile_less)
 
     # Validates json schemas of events, throws exception if data is not valid
     await validate_events_json_schemas(events, profile, session)
@@ -173,7 +176,8 @@ async def track_event(tracker_payload: TrackerPayload, ip: str, profile_less: bo
                 class_name='RulesEngine',
                 module='tracker',
                 type='error',
-                message=message
+                message=message,
+                traceback=get_traceback(e)
             )
         )
         logger.error(message)
@@ -196,7 +200,8 @@ async def track_event(tracker_payload: TrackerPayload, ip: str, profile_less: bo
                 class_name='merge',
                 module='app.api.track.service',
                 type='error',
-                message=message
+                message=message,
+                traceback=get_traceback(e)
             )
         )
 
@@ -213,7 +218,8 @@ async def track_event(tracker_payload: TrackerPayload, ip: str, profile_less: bo
                 class_name='tracker',
                 module='tracker',
                 type='error',
-                message=message
+                message=message,
+                traceback=get_traceback(e)
             )
         )
         logger.error(message)
@@ -239,7 +245,8 @@ async def track_event(tracker_payload: TrackerPayload, ip: str, profile_less: bo
                 class_name='tracker',
                 module='tracker',
                 type='error',
-                message=message
+                message=message,
+                traceback=get_traceback(e)
             )
         )
 
