@@ -10,7 +10,7 @@ domain is simply ```example.com``` and you can send messages only to emails endi
 To get rid of this restriction, you need a paid plan on Mandrill.
 
 ## Input
-This plugin simply takes payload, so any data.
+This plugin simply takes payload, so any data in form of type JSON.
 
 ## Output
 This plugin returns given payload (without any changes) on port ```payload``` and 
@@ -19,15 +19,20 @@ list of responses from mailing API (so if messages were sent or not and things l
 ## Config
 Plugin's configuration requires information about API key, sender email, 
 message recipient's email(s), message subject and message content.
-#### Mailchimp API key
+#### Mailchimp resource
+Here you need to choose your resource (after adding it to Tracardi resources). When 
+adding resource for Mandrill, you'll need to provide test and production API key (token).
 You can get it in place where it's generated, so ```settings -> SMTP & API Info``` on
 mandrillapp.com, exactly as mentioned above in Requirements. API key is 22-characters long
 alphanumeric sequence, that you just need to copy from Mandrill and paste into plugin configuration.
 
 #### Sender email
 That's the email that you want to send emails from. It has to end with one of your domains
-registered in Mandrill. So, for instance, if you shop is ```exampleshop.com```, then you may
-want to send emails from address like ```office@exampleshop.com``` - and then that's the value that you
+registered in Mandrill. So, for instance, if you shop is 
+```exampleshop.com```, 
+then you may want to send emails from address like 
+```office@exampleshop.com```,
+and then that's the value that you
 want to insert into configuration. Please notice that this address __does not__ have to exist.
 
 #### Message recipient's email
@@ -45,27 +50,31 @@ That's just message subject, if you type in ```payment```, then recipient of the
 #### Message content
 You can select if your content should be HTML or just plain text. JSON is not supported.
 You can also use templates for your emails - both in HTML and text format. Examples:
-###### Example 1 - plain text
-````
+##### Example 1 - plain text
+```text
 Hello {{profile@pii.name}}, your order will be sent in next two days.
-````
-Will result in changing ```{{profile@pii.name}}``` to current profile's name, so John Doe will
-see ```Hello John, your order will be sent in next two days.``` in his message.
-
-###### Example 2 - HTML
 ```
+Will result in changing 
+```{{profile@pii.name}}``` 
+to current profile's name, so John Doe will
+see 
+```Hello John, your order will be sent in next two days.``` 
+in his message.
+
+##### Example 2 - HTML
+```html
 <h1>Hello {{profile@pii.name}}!</h1>
 <p>Thanks for visiting our website on {{profile@metadata.time.lastVisit}}!</p>
 <p style="color:red">To thank you, we wanted to send you a photo of cute dog. Enjoy:</p>
-<img src="<url-to-photo-of-cute-dog>"></img>
+<img src="<url-to-photo-of-cute-dog>"/>
 ```
-Like before, recipient will see his name in the header, then our text with date of their last visit,
-and then red text about photo of a dog, and a photo of this dog itself at the end.
+Like before, recipient will see their name in the header, then our text with date of their last visit,
+and then red text about photo of a dog, and a photo of this dog itself in the end.
 
 ## Tip
 On Mandrill, you can turn on the test mode after clicking on you username in up-right corner.
 In the test mode, you can generate test API key. You can use it in Tracardi for test purposes - 
-messages won't be sent, but Mandrill will act like they will, so you can test your
+messages won't be sent, but Mandrill will act like they are, so you can test your
 configuration without being charged a single cent.
 
 
