@@ -1,6 +1,8 @@
+import logging
 from typing import Callable
-
 from tracardi.domain.profile import Profile
+
+logger = logging.getLogger("Segmentation")
 
 
 async def segment(profile: Profile, event_types: list, load_segment_by_event_type: Callable) -> dict:
@@ -21,5 +23,6 @@ async def segment(profile: Profile, event_types: list, load_segment_by_event_typ
         # this error is a global segmentation error
         # todo log it.
         print(str(e))
+        logger.error(str(e))
     finally:
         return segmentation_result

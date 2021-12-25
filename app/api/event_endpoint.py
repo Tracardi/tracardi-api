@@ -3,6 +3,7 @@ from typing import List
 
 from fastapi import APIRouter, Depends
 from fastapi import HTTPException
+from tracardi.domain.console import Console
 
 from tracardi.service.storage.driver import storage
 from tracardi.service.storage.factory import StorageFor, StorageForBulk, storage_manager
@@ -116,7 +117,7 @@ async def get_event_debug_info(id: str):
 @router.get("/event/logs/{id}", tags=["event"], response_model=list, include_in_schema=server.expose_gui_api)
 async def get_event_logs(id: str):
     log_records = await storage.driver.console_log.load_by_event(id)
-    return list(log_records)
+    return [Console.decode_record(log) for log in log_records]
 
 
 @router.post("/event/schedule", tags=["event"], include_in_schema=server.expose_gui_api)

@@ -16,13 +16,13 @@ router = APIRouter()
 
 
 @router.post("/track", tags=['tracker'])
-async def track(tracker_payload: TrackerPayload, request: Request):
+async def track(tracker_payload: TrackerPayload, request: Request, profile_less: bool = False):
     try:
         if tracardi.sync_profile_tracks:
             async with ProfileTracksSynchronizer(tracker_payload.profile, wait=1):
-                return await track_event(tracker_payload, ip=request.client.host)
+                return await track_event(tracker_payload, ip=request.client.host, profile_less=profile_less)
         else:
-            return await track_event(tracker_payload, ip=request.client.host)
+            return await track_event(tracker_payload, ip=request.client.host, profile_less=profile_less)
     except UnauthorizedException as e:
         message = str(e)
         logger.error(message)

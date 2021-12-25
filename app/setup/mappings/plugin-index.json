@@ -163,10 +163,10 @@
                 "type": "keyword",
                 "ignore_above": 128
               },
-              "onErrorContinue": {
+              "on_error_continue": {
                 "type": "boolean"
               },
-              "onErrorRepeat": {
+              "on_error_repeat": {
                 "type": "integer"
               },
               "version": {

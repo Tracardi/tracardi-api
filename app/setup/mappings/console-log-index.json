@@ -36,6 +36,10 @@
       },
       "message": {
         "type": "text"
+      },
+      "traceback": {
+        "type": "text",
+        "index": false
       }
     }
   }
