@@ -50,7 +50,7 @@ async def get_resource_types(type: TypeEnum) -> dict:
                         "tags": service["tags"],
                         "config": {
                             "auth": endpoint.dict(exclude={"id": ...}),
-                            "services": "/{}/services/{}".format(service['prefix'], endpoint.token)
+                            "services": "/{}/actions/{}".format(service['prefix'], endpoint.token)
                         }
                     }
         except Exception as e:
