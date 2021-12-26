@@ -16,7 +16,6 @@ git+https://github.com/Tracardi/tracardi-plugin-sdk.git
 git+https://github.com/Tracardi/tracardi-wf.git
 git+https://github.com/Tracardi/tracardi.git
 
-git+https://github.com/Tracardi/tracardi-smtp-connector.git
 git+https://github.com/Tracardi/tracardi-maxmind-geolite2.git
 git+https://github.com/Tracardi/tracardi-fullcontact-webhook.git
 

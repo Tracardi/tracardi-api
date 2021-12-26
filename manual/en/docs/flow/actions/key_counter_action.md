@@ -6,7 +6,24 @@ device vs other devices like desktop or tablet.
 
 ## Examples
 
-For example if the key is a simple value and equals to:
+For example Lets assume the followng configuration:
+
+```json
+{
+  "key": "payload@value",
+  "save_in": "payload@traits.public.counts"
+}
+```
+
+if over time the value in payload (defined in config as payload@value) is equals to:
+
+```
+{"value": "a"}
+{"value": "b"}
+{"value": "a"}
+```
+
+or value in payload is a list of 
 
 ```json
 [
@@ -25,7 +42,9 @@ then the key count equals to
 }
 ```
 
-If the key values are:
+and will be saved in **payload@traits.public.counts**
+
+If the payload values are:
 
 ```json
 [

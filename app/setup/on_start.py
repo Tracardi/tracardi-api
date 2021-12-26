@@ -125,7 +125,7 @@ async def add_plugins():
         'tracardi_fullcontact_webhook.plugin',
         'tracardi_sentiment_analysis.plugin',
         'tracardi_text_classification.plugin',
-        'tracardi_smtp_connector.plugin',
+        'tracardi.process_engine.action.v1.connectors.smtp_call.plugin',
         'tracardi_event_scheduler.plugin',
         'tracardi_pushover_webhook.plugin',
         'tracardi_language_detection.plugin',
@@ -133,7 +133,7 @@ async def add_plugins():
         'tracardi_aws_sqs.plugin',
         'tracardi_resource.plugin',
         'tracardi.process_engine.action.v1.converters.payload_to_json.plugin',
-        'tracardi.process_engine.action.v1.connectors.mailchimp_transactional.plugin',
+        'tracardi.process_engine.action.v1.connectors.mailchimp.transactional_email.plugin',
 
         # Metrics
         'tracardi.process_engine.action.v1.metrics.key_counter.plugin',
