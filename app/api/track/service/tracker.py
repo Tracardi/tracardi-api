@@ -58,7 +58,13 @@ async def _persist(profile_less, console_log: ConsoleLog, session: Session, even
 
         # Set statuses
         log_event_journal = console_log.get_indexed_event_journal()
+        disabled_session = tracker_payload.is_disabled('saveSession')
         for event in events:
+
+            # Reset session id if session is not saved
+            if disabled_session is True:
+                event.session = None
+
             if event.id in log_event_journal:
                 log = log_event_journal[event.id]
                 if log.is_error():

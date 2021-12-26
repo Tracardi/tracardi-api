@@ -6,7 +6,7 @@ device vs other devices like desktop or tablet.
 
 ## Examples
 
-For example Lets assume the followng configuration:
+For example Lets assume the following configuration:
 
 ```json
 {
