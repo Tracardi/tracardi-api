@@ -57,7 +57,7 @@ async def _track(tracker_payload: TrackerPayload, host: str, profile_less: bool 
         api_instance.increase_track_requests()
 
 
-@router.post("/track/{event_type}/{source_id}", tags=['context-server'])
+@router.post("/collect/{event_type}/{source_id}", tags=['context-server'])
 async def track_webhook(event_type: str, source_id: str, request: Request):
 
     """

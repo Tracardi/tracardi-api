@@ -20,17 +20,13 @@ router = APIRouter(
 
 async def event_source_types():
     standard_inbound_sources = {
-        "web-page": {
-            "name": "Web/mobile page",
-            "tags": ["web-page", "inbound"]
+        "javascript": {
+            "name": "Javascript",
+            "tags": ["javascript", "inbound"]
         },
-        "mobile-app": {
-            "name": "Mobile application",
-            "tags": ["mobile-page", "inbound"]
-        },
-        "external-system": {
-            "name": "External system",
-            "tags": ["external-system", "inbound"]
+        "api-call": {
+            "name": "Api call",
+            "tags": ["api-call", "inbound"]
         },
     }
     try:
