@@ -131,9 +131,14 @@ async def add_plugins():
         'tracardi_language_detection.plugin',
         'tracardi.process_engine.action.v1.segments.profile_segmentation.plugin',
         'tracardi_aws_sqs.plugin',
-        'tracardi_resource.plugin',
+
         'tracardi.process_engine.action.v1.converters.payload_to_json.plugin',
         'tracardi.process_engine.action.v1.connectors.mailchimp.transactional_email.plugin',
+
+        # Internal
+        'tracardi.process_engine.action.v1.internal.event_source_fetcher.plugin',
+        'tracardi.process_engine.action.v1.internal.inject_event.plugin',
+        'tracardi.process_engine.action.v1.internal.inject_profile.plugin',
 
         # Metrics
         'tracardi.process_engine.action.v1.metrics.key_counter.plugin',
