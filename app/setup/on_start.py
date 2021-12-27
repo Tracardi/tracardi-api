@@ -134,6 +134,7 @@ async def add_plugins():
 
         'tracardi.process_engine.action.v1.converters.payload_to_json.plugin',
         'tracardi.process_engine.action.v1.connectors.mailchimp.transactional_email.plugin',
+        'tracardi.process_engine.action.v1.connectors.elasticsearch_query.plugin',
 
         # Internal
         'tracardi.process_engine.action.v1.internal.event_source_fetcher.plugin',
