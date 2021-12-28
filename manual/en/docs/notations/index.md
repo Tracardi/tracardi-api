@@ -36,7 +36,7 @@ For example if your profile data looks like this
 
 To access "value" your path will need to look like this: *key.data*.
 
-The full access dot notation notation is *profile@key.data*.
+The full access dot notation is *profile@key.data*.
 
 ## Path to part of data
 
