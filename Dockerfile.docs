@@ -1,0 +1,20 @@
+FROM python:3.8
+MAINTAINER office@tracardi.com
+
+RUN apt-get update
+RUN apt-get install -y git
+
+# update pip
+RUN /usr/local/bin/python -m pip install --upgrade pip
+
+## Copy manual
+COPY manual manual/
+
+## Install dependencies
+RUN pip install -r manual/requirements.txt
+WORKDIR /manual/en
+RUN mkdocs build
+
+EXPOSE 8585
+
+CMD ["mkdocs", "serve"]

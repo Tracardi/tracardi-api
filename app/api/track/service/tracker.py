@@ -230,16 +230,17 @@ async def track_event(tracker_payload: TrackerPayload, ip: str, profile_less: bo
         )
         logger.error(message)
 
+
     try:
+        if not tracker_payload.is_debugging_disabled():
+            # Save debug info
+            save_tasks.append(
+                asyncio.create_task(
+                    storage.driver.debug_info.save_debug_info(
+                        debug_info_by_event_type_and_rule_name)))
 
-        # Save debug info
-        save_tasks.append(
-            asyncio.create_task(
-                storage.driver.debug_info.save_debug_info(
-                    debug_info_by_event_type_and_rule_name)))
-
-        # Run tasks
-        await asyncio.gather(*save_tasks)
+            # Run tasks
+            await asyncio.gather(*save_tasks)
 
     except Exception as e:
         message = "Error during debug info or disabling profiles.: `{}`".format(str(e))
@@ -285,7 +286,7 @@ async def track_event(tracker_payload: TrackerPayload, ip: str, profile_less: bo
 
     # Debugging
     # todo save result to different index
-    if not tracardi.track_debug and not tracker_payload.is_disabled('debugger'):
+    if not tracker_payload.is_debugging_disabled():
         debug_result = TrackerPayloadResult(**collect_result.dict())
         debug_result = debug_result.dict()
         debug_result['execution'] = debug_info_by_event_type_and_rule_name

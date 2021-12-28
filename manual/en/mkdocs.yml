@@ -1,6 +1,7 @@
 site_name: Tracardi Documentation
 site_description: Open-source Data Platform
 site_url: https://www.tracardi.com
+dev_addr: "0.0.0.0:8585"
 theme:
   name: material
   features:
@@ -57,54 +58,71 @@ nav:
       - running/index.md
       - running/collecting_data.md
       - sources/index.md
-      - Actions:
-          - flow/actions/index.md
-          - Operations:
-              - flow/actions/update_profile_action.md
-              - flow/actions/merge_profiles_action.md
-              - flow/actions/segment_profiles_action.md
-          - flow/actions/if_action.md
-          - flow/actions/detect_client_agent_action.md
-          - flow/actions/debug_payload_action.md
-          - flow/actions/inject_action.md
-          - flow/actions/event_scheduler_action.md
-          - Stats:
-              - flow/actions/increment_action.md
-              - flow/actions/decrement_action.md
-              - flow/actions/increase_views_action.md
-              - flow/actions/increase_visits_action.md
-              - flow/actions/key_counter_action.md
-          - Connectors:
-              - flow/actions/zapier_webhook_action.md
-              - flow/actions/smtp_connector_action.md
-              - flow/actions/remote_call_action.md
-              - flow/actions/fullcontact_webhook_action.md
-              - flow/actions/send_pushover_msg_action.md
-              - flow/actions/rabbit_publisher_action.md
-              - flow/actions/discord_webhook_action.md
-              - flow/actions/weather_action.md
-              - flow/actions/mongo_query_action.md
-              - flow/actions/mysql_connector_action.md
-          - Regex:
-              - flow/actions/regex/regex_validator_action.md
-              - flow/actions/regex/regex_match.md
-          - Locations:
-              - flow/actions/geo_ip_locator.md
-          - Time:
-              - flow/actions/day_night_split_action.md
-              - flow/actions/local_time_span_action.md
-          - Processing:
-              - flow/actions/url_parser_action.md
-              - flow/actions/string_splitter_action.md
-              - flow/actions/string_properties_action.md
-              - flow/actions/profile_segment.md
-          - Machine Learning:
-              - flow/actions/text_classification_action.md
-              - flow/actions/lang_detection_action.md
-              - flow/actions/sentiment_analysis_action.md
-          - flow/actions/new_event_action.md
-          - flow/actions/event_counter_action.md
-          - flow/actions/purchase_add_action.md
+      - Workflow:
+        - flow/index.md
+        - Actions:
+            - flow/actions/index.md
+            - Operations:
+                - flow/actions/update_profile_action.md
+                - flow/actions/merge_profiles_action.md
+                - flow/actions/segment_profiles_action.md
+            - flow/actions/if_action.md
+            - flow/actions/detect_client_agent_action.md
+            - flow/actions/debug_payload_action.md
+            - flow/actions/inject_action.md
+            - flow/actions/event_scheduler_action.md
+            - Stats:
+                - flow/actions/increment_action.md
+                - flow/actions/decrement_action.md
+                - flow/actions/increase_views_action.md
+                - flow/actions/increase_visits_action.md
+                - flow/actions/key_counter_action.md
+            - Connectors:
+                - flow/actions/zapier_webhook_action.md
+                - flow/actions/smtp_connector_action.md
+                - flow/actions/remote_call_action.md
+                - flow/actions/fullcontact_webhook_action.md
+                - flow/actions/send_pushover_msg_action.md
+                - flow/actions/rabbit_publisher_action.md
+                - flow/actions/discord_webhook_action.md
+                - flow/actions/weather_action.md
+                - flow/actions/mongo_query_action.md
+                - flow/actions/mysql_connector_action.md
+            - Regex:
+                - flow/actions/regex/regex_validator_action.md
+                - flow/actions/regex/regex_match.md
+            - Locations:
+                - flow/actions/geo_ip_locator.md
+            - Time:
+                - flow/actions/day_night_split_action.md
+                - flow/actions/local_time_span_action.md
+            - Processing:
+                - flow/actions/url_parser_action.md
+                - flow/actions/string_splitter_action.md
+                - flow/actions/string_properties_action.md
+                - flow/actions/profile_segment.md
+            - Machine Learning:
+                - flow/actions/text_classification_action.md
+                - flow/actions/lang_detection_action.md
+                - flow/actions/sentiment_analysis_action.md
+            - flow/actions/new_event_action.md
+            - flow/actions/event_counter_action.md
+            - flow/actions/purchase_add_action.md
+            - flow/actions/add_consents_action.md
+            - flow/actions/add_to_mailchimp_audience_action.md
+            - flow/actions/calculate_time_difference_action.md
+            - flow/actions/calculator_action.md
+            - flow/actions/elasticsearch_query_action.md
+            - flow/actions/mailchimp_transactional_action.md
+            - flow/actions/new_profile_action.md
+            - flow/actions/new_visit_action.md
+            - flow/actions/rabbitmq_action.md
+            - flow/actions/remove_from_mailchimp_audience_action.md
+            - flow/actions/reshape_payload_action.md
+            - flow/actions/string_validator_action.md
+            - flow/actions/template_action.md
+            - flow/actions/today_action.md
+
       - notations/index.md
   - Integration:
       - integration/js-integration.md
