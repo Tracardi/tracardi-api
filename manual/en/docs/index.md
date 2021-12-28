@@ -25,19 +25,15 @@ a legacy system you can integrate TRACARDI easily. Use TRACARDI for:
 
 ### Browsing events
 
-![Screenshot 1](https://github.com/atompie/tracardi/raw/0.4.0-dev/screenshots/main.png)
+![Browsing events](images/browsing-events.png)
 
-### Workflow of consumer data collection and enhancement 
+### Workflows
 
-![Workflow](https://pbs.twimg.com/media/E3WHL7nWUAA7men?format=jpg&name=large)
+![Workflow](images/workflow.png)
 
-### Trigger rules
+### Test console
 
-![Screenshot 2](https://github.com/atompie/tracardi/raw/0.4.0-dev/screenshots/main1.png)
-
-### Editing plugins
-
-![Screenshot 3](https://pbs.twimg.com/media/E4FqslsVEAgRS6d?format=jpg&name=large)
+![Test Console](images/test-console.png)
 
 ## Video introduction
 

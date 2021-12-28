@@ -104,9 +104,9 @@ Could not save event. Error: 1 document(s) failed to index. - failed to parse fi
 in document with id '052df0ed-e719-457c-9de1-3b197c44b44e'. Preview of field's value: '21 years old'"
 ```
 
-## Connection to API issues
+## Issues with API connection
 
-There are errors that are connected to error: CORS request did not succeed
+Failed connection with error: CORS request did not succeed
 
 Why this happends.
 

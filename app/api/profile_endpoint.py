@@ -1,3 +1,5 @@
+from typing import List
+
 from fastapi import APIRouter
 from fastapi import HTTPException, Depends
 from fastapi.responses import Response
@@ -11,6 +13,14 @@ from ..config import server
 router = APIRouter(
     dependencies=[Depends(get_current_user)]
 )
+
+
+@router.post("/profiles/import", tags=["profile"], include_in_schema=server.expose_gui_api)
+async def import_profiles(profiles: List[Profile]):
+    try:
+        return await storage.driver.profile.save_profiles(profiles)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.get("/profiles/refresh", tags=["profile"], include_in_schema=server.expose_gui_api)

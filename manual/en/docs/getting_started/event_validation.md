@@ -1,9 +1,25 @@
 # Event validation
 
-Events can be validated. To do that you will need to provide a Json Schema validator that defines the model of event, or
-event session or loaded profile.
+Events can be validated. Event validation can be configured in the Tracardi GUI or via the API. The endpoints
+responsible for creating the validation schemes are located at the following endpoints:
 
-Validator consist of 2 elements. Data to be validated - expressed in a dotted notation, and a json schema itself.
+* POST /event/validation-schema
+* DELETE /event/validation-schema/{event_type}
+* GET /event/validation-schemas/{start=0}/{limit=10}
+
+As always, complete API documentation is available at:
+
+```
+http://tracardi-host:8686/docs
+```
+
+## New event validation schema
+
+To add new event validation schema that you will need to provide a Json Schema object that defines the model of event,
+or event session or loaded profile.
+
+Validator consist of 2 elements. Data to be validated - expressed in a [dotted notation](../notations/index.md), and a
+json schema itself.
 
 ```json
 {
@@ -31,7 +47,9 @@ Validator consist of 2 elements. Data to be validated - expressed in a dotted no
           "type": "string"
         }
       },
-      "required": ["name"]
+      "required": [
+        "name"
+      ]
     }
   },
   "event_type": "test"
@@ -40,10 +58,10 @@ Validator consist of 2 elements. Data to be validated - expressed in a dotted no
 
 ## Validation caching
 
-Validation is cached and the default Time to live for cache is 180 seconds. It means that validation schema will stay
-the same for 3 minutes even if it was change by the user. It will be  red again after 180 seconds. 
-To make the period longer or shorter, run Tracardi with environment variable EVENT_VALIDATOR_TTL set to the number 
-of seconds you would like the system to cache the validation. 
+Validation is cached and the default Time To Live for cache is 180 seconds. It means that validation schema will stay
+the same for 3 minutes even if it was change by the user. It will be red again after 180 seconds. To make the period
+longer or shorter, run Tracardi with environment variable EVENT_VALIDATOR_TTL set to the number of seconds you would
+like the system to cache the validation.
 
 ## Validation errors
 

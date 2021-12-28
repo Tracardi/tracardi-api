@@ -59,7 +59,7 @@ docker run -p 8686:80 -e ELASTIC_HOST=http://<your-laptop-ip>:9200 tracardi-api-
 ## Running Tracardi API with SSL certificates provided from outside container
 
 Sometimes you do not want to build the docker yourself. Then you can use the prebuild docker and attach
-value with your certificates. To do that pull `tracardi/tracardi-api-ssl`.
+your certificates. To do that pull `tracardi/tracardi-api-ssl`.
 
 ```
 docker pull tracardi/tracardi-api-ssl
