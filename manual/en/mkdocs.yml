@@ -75,13 +75,16 @@ nav:
           - configuration/elasticsearch/elastic_max_connections.md
           - configuration/elasticsearch/elastic_sniffing.md
       - configuration/tracardi_ssl.md
-
+  - Integration:
+      - integration/js-integration.md
+      - integration/api-integration.md
   - upgrade.md
   - trouble/index.md
   - Running:
       - running/index.md
-      - running/collecting_data.md
-      - sources/index.md
+      - Traffic:
+        - traffic/inbound/index.md
+        - traffic/outbound/index.md
       - Events:
         - events/index.md
         - events/event_tracking.md
@@ -156,9 +159,6 @@ nav:
             - flow/actions/today_action.md
 
       - notations/index.md
-  - Integration:
-      - integration/js-integration.md
-      - integration/api-integration.md
   - api/index.md
   - Developers:
       - plugins/index.md

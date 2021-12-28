@@ -9,7 +9,4 @@ There are basically 3 ways to install Tracardi:
 
 !!! Tip
 
-    The easiest way to run Tracardi is to run it as a docker container.
-    
-    In order to do that you must have docker installed on your local machine. Please refer to docker 
-    installation manual to see how to install docker.
+    If you encounter errors when installing Tracardi, see [trouble shooting section](../trouble/index.md)

@@ -41,7 +41,7 @@ with test resources, so it does not to make changes, that could cause problems i
 ## Session
 
 A session is a data often associated with a visit. As long as the session remains unchanged, the visit lasts. The session id is
-set when sending data to Tracari. It is under the control of the client program. The session often contains data about the 
+set when sending data to Tracardi. It is under the control of the client program. The session often contains data about the 
 context in which the event was launched, it can be, among others, the type of device, operating system, etc.
 
 !!! Note
