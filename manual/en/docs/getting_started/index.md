@@ -21,6 +21,7 @@ external systems. For the end user, it does not exist alone as such, but in conj
 The GUI is a graphical interface for the end user, it runs in the user's browser.
 
 Each of the elements of this system (API and GUI and Database) can be run in multiple instances.
+It can also be installed separately.
 
 
 
