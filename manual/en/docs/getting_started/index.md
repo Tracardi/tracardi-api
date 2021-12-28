@@ -1,25 +1,27 @@
-# What is Tracardi?
+# How to get started
 
-TRACARDI open-source customer data platform offers you excellent control over your customer data with its broad set of features.
+TRACARDI open-source customer data platform offers you excellent control over your customer data with its broad set of
+features.
 
-## Features
+Here we will describe the key terms that are used in tracardi. We will also describe the way of processing the event,
+through which elements of the system the event passes and what is its result.
 
-Tracardi allows for:
+## System architecture
 
- * **Customer Data Integration** - You can ingest, aggregate and store customer data
-   from multiple sources in real time at any scale and speed due to elastic search backend.
-   
- * **Customer Data Modelling** -  You can manage data. Define rules that will model data delivered
-   from your page and copy it into user profile. You can segment customers into custom segments.
-   
- * **User Experience Personalization** - You can personalize user experience with
-   real-time customer segmentation and targeting.
-   
- * **Profile Unification** - You can merge customer data from various sources to
-   single profile. Auto de-duplicate customer records. Blend customers in one account.
-   
- * **Automation** - TRACARDI is a great framework for creating
-   marketing automation apps. You can send your data to other systems easily
+Tracardi is a distributed system that consists of the following components.
+
+* Database where events are stored. Tracardi uses elasticsearch as its backend database.
+* Data processing library
+* RESTful API, GraphQL API - Application Programming Interface
+* GUI - Graphical User interface
+
+Data processing library is a library that deals with starting Workflow for selected events and transferring them to
+external systems. For the end user, it does not exist alone as such, but in conjunction with the API.
+
+The GUI is a graphical interface for the end user, it runs in the user's browser.
+
+Each of the elements of this system (API and GUI and Database) can be run in multiple instances.
+
 
 
 

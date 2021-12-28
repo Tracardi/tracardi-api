@@ -35,7 +35,7 @@ nav:
   - index.md
   - Getting started:
       - getting_started/index.md
-      - getting_started/code_definitions.md
+      - getting_started/core_definitions.md
       - getting_started/event_tracking.md
       - getting_started/event_validation.md
       - getting_started/profile_merging.md
