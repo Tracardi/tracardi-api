@@ -2,11 +2,29 @@ site_name: Tracardi Documentation
 site_description: Open-source Data Platform
 site_url: https://www.tracardi.com
 dev_addr: "0.0.0.0:8585"
+markdown_extensions:
+  - admonition
+  - abbr
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+  - pymdownx.details
+  - tables
+  - pymdownx.emoji:
+      emoji_index: !!python/name:materialx.emoji.twemoji
+      emoji_generator: !!python/name:materialx.emoji.to_svg
+
 theme:
   name: material
   features:
     - navigation.instant
     - navigation.top
+    - content.code.annotate
+    - content.tabs.link
   palette:
     - scheme: default
       toggle:
@@ -35,30 +53,44 @@ nav:
   - index.md
   - Getting started:
       - getting_started/index.md
+      - getting_started/architecture.md
       - getting_started/core_definitions.md
-      - getting_started/event_tracking.md
-      - getting_started/event_validation.md
-      - getting_started/profile_merging.md
-      - getting_started/profile_segmentation.md
+      - getting_started/data_flow.md
   - Installation:
       - installation/index.md
-      - installation/building_docker_from_source.md
-      - installation/tracardi_ssl.md
-      - Configuration:
-          - installation/tracardi_configuration.md
-          - installation/events/index.md
+      - installation/best_practises.md
+      - Docker:
+          - installation/docker/index.md
+          - installation/docker/building_docker_image.md
+      - Source:
+          - installation/source/index.md
+      - Kubernetes:
+          - installation/k8s/index.md
+  - Configuration:
+      - configuration/tracardi_configuration.md
+      - configuration/best_practises.md
       - Elasticsearch:
-          - installation/elasticsearch/connecting_elasticsearch_cluster.md
-          - installation/elasticsearch/elastic_authentication.md
-          - installation/elasticsearch/elastic_max_connections.md
-          - installation/elasticsearch/elastic_sniffing.md
+          - configuration/elasticsearch/connecting_elasticsearch_cluster.md
+          - configuration/elasticsearch/elastic_authentication.md
+          - configuration/elasticsearch/elastic_max_connections.md
+          - configuration/elasticsearch/elastic_sniffing.md
+      - configuration/tracardi_ssl.md
+
   - upgrade.md
   - trouble/index.md
   - Running:
       - running/index.md
       - running/collecting_data.md
       - sources/index.md
-      - Workflow:
+      - Events:
+        - events/index.md
+        - events/event_tracking.md
+        - events/event_validation.md
+        - events/synchronization.md
+      - Profiles:
+        - profiles/profile_merging.md
+        - profiles/profile_segmentation.md
+      - Workflows:
         - flow/index.md
         - Actions:
             - flow/actions/index.md
@@ -128,7 +160,7 @@ nav:
       - integration/js-integration.md
       - integration/api-integration.md
   - api/index.md
-  - Extending Tracardi:
+  - Developers:
       - plugins/index.md
       - Development:
           - development/index.md

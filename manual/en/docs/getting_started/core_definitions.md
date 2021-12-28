@@ -4,52 +4,68 @@ In order to understand how Tracardi CPD works you will need to learn the followi
 
 ## Traffic
 
-Tracardi is able to hold and send data. Therefore, the system defines two types of traffic. Incoming, i.e. systems that
+Tracardi is able to receive and send data. Therefore, the system defines two types of traffic. Incoming, i.e. systems that
 are able to send data to Tracardi. These will be websites, internal systems and services. Basically, logged inbound
 traffic is defined by the id that tracardi creates and which we use to identify the traffic.
 
-n the system, we call incoming traffic event sources.
-
 The second type of traffic is outgoing traffic. These are external systems to which we send data or send data inquiries.
-In the system, we call them resources.
 
-## Event source
+!!! Tip
+
+    In the system, we call incoming traffic - event sources.
+    In the system, we call outgoing traffic - resources.
+
+### Event source
 
 In order to kick-start your new project with Tracardi, you must create a new event source. That source will give you an
 identifier which when attached to your track calls will start collecting data about your users.
 
-Some sources may require user consent to collect data from this source. A web page requires consent from the user to
-collect and store their data.
+!!! Warning
 
-## Resource
+    Some sources may require user consent to collect data from this source. A web page requires consent from the user to
+    collect and store their data.
+
+### Resource
 
 Resources are data sets or services that we query for data. They often require authentication and therefore during their
-creation we will be asked for passwords or tokens. The part of the resource definition that contains sensitive data is
-encoded. Additionally, by creating resources we will be asked to provide access to test and production resources.
-Tracardi allows you to test your internal processes. Additionally, it enables [workflow staging](../flow/index.md).
-Therefore, sometimes a workflow has to be combined with test resources in order not to introduce changes, e.g. in
-production databases.
+creation we will be asked for passwords or tokens. Additionally, by creating resources we will be asked to provide 
+access to test and production resources.
+
+Tracardi allows you to [test your internal processes](../flow/index.md). Therefore, a workflow in test mode must connect 
+with test resources, so it does not to make changes, that could cause problems in production environment.
+
+!!! Info
+
+    The part of the resource definition that contains sensitive data is encrypted. 
 
 ## Session
 
-Session - an object that remembers the details of the connection with the client on the server for some time. A
-characteristic feature of the session is that the data assigned to it are usually temporary, volatile.
+A session is a data often associated with a visit. As long as the session remains unchanged, the visit lasts. The session id is
+set when sending data to Tracari. It is under the control of the client program. The session often contains data about the 
+context in which the event was launched, it can be, among others, the type of device, operating system, etc.
 
-A session is often associated with a visit. As long as the session remains unchanged, the visit lasts. The session id is
-set when sending data to Tracari. It is under the control of the client program.
+!!! Note
+    
+    A characteristic feature of the session is that the data assigned to it are usually temporary, volatile.
+
 
 ## Event
 
-Events represent something that is happening at a specific time (they are timestamped). They can be used to track
+Events represent something that is happening at a given time. They can be used to track
 visitor behaviour. Examples of events may include a click on a link on a web page, a login, a form submission, a page
 view or any other action that needs to be tracked, e.g. purchase order. Events can pass additional data such as user
 name, purchased item, viewed page, etc.
 
-Site events are triggered when JavaScript is executed on the selected page or an API query to /track endpoint is
+Site events are triggered when JavaScript is executed on the selected page or an API query to `/track` endpoint is
 made. Since the tracking code is on every page, it can emit events. The events and their types are configurable by you.
 Additionally, you configure what data is to be sent for each event.
 
 Events can be stored inside Tracardi or just passed to workflow to be processed outside Tracardi.
+
+!!! Note 
+
+    Tracardi has 2 types of event. Event with profile and without profile. Read about event 
+    in [Event's Core Definitions](../events/index.md)
 
 ## Rule
 
@@ -59,9 +75,9 @@ source. If the event is of a certain type and comes from a given source then the
 
 The rules link events to the workflow.
 
-## Flows (short for workflows)
+## Workflows
 
-Flow is a graph of actions that will run when an event is matched with workflow. Actions may run one after another or in
+Workflow is a graph of actions that will run when an event is matched with workflow. Actions may run one after another or in
 parallel. Workflow is represented as a graph of nodes and connections between them. Actions are assigned to nodes. Data
 flow from action to action is represented by connections between nodes. Actions may perform different tasks such as
 copying data from the event to profile, save profile, query for additional data, send to another system or emit another

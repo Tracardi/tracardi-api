@@ -3,9 +3,11 @@
 Events can be validated. Event validation can be configured in the Tracardi GUI or via the API. The endpoints
 responsible for creating the validation schemes are located at the following endpoints:
 
-* POST /event/validation-schema
-* DELETE /event/validation-schema/{event_type}
-* GET /event/validation-schemas/{start=0}/{limit=10}
+| Method      | Path                                  |                          |
+| ----------- | --------------------------------------|--------------------------|
+| `GET`       | /event/validation-schema              | Add validation schema    |
+| `DELETE`    | /event/validation-schema/{event_type} | Delete validation schema |
+| `GET`       | /event/validation-schemas             | List validation schemas  |
 
 As always, complete API documentation is available at:
 
