@@ -6,6 +6,7 @@ from app.api.auth.authentication import get_current_user
 from app.config import server
 from app.service.error_converter import convert_errors
 from tracardi.domain.record.flow_action_plugin_record import FlowActionPluginRecord
+from tracardi.service.module_loader import is_coroutine
 from tracardi.service.storage.driver import storage
 from tracardi.service.storage.factory import StorageForBulk
 from fastapi.encoders import jsonable_encoder
@@ -40,6 +41,8 @@ async def validate_plugin_configuration(id: str, config: dict = None):
             raise HTTPException(status_code=404, detail="No validate function provided. "
                                                         "Could not validate on server side.")
 
+        if is_coroutine(validate):
+            return await validate(config)
         return validate(config)
 
     except HTTPException as e:
