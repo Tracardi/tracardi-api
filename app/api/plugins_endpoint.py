@@ -40,7 +40,6 @@ async def validate_plugin_configuration(id: str, config: dict = None):
         if config is None:
             raise HTTPException(status_code=404, detail="No validate function provided. "
                                                         "Could not validate on server side.")
-
         if is_coroutine(validate):
             return await validate(config)
         return validate(config)
