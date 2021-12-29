@@ -3,7 +3,7 @@
 Plugin is configured with template:
 
 *Example*
-```
+``` 
 Hello {{profile@pii.name}}
 ```
 

@@ -48,3 +48,7 @@ docker run -v /home/risto/PycharmProjects/tracardi-api/ssl:/ssl -p 8686:443  -e 
 
 # Run GUI HTTPS and HTTP
 docker run -p 443:443 -p 80:80 -e API_URL=//127.0.0.1:8686 tracardi/tracardi-gui-https
+
+
+# Run Mkdocs
+docker run --rm -it -p 8000:8000 -v ${PWD}:/docs squidfunk/mkdocs-material

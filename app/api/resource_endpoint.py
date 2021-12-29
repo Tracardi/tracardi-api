@@ -184,7 +184,7 @@ async def get_resource_types(type: TypeEnum) -> dict:
                     "uri": "mongodb://127.0.0.1:27017/",
                     "timeout": 5000
                 },
-                "tags": ['mongodb', 'database', 'nosql'],
+                "tags": ['mongo', 'database', 'nosql'],
                 "name": "MongoDB server"
             },
             "token": {

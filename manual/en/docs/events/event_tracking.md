@@ -29,9 +29,7 @@ To register an event, connect to the /track endpoint on the server where Tracard
 You need to write a code that will connect to the POST method to the url e.g.
 http://tracardi.page.com/track and send the data about event plus additional information on the source and session.
 
-Example of track data payload.
-
-```json
+```json title="Example of track data payload" linenums="1" hl_lines="13-24"
 {
   "source": {
     "id": "source-id"
@@ -44,7 +42,7 @@ Example of track data payload.
   },
   "context": {},
   "properties": {},
-  "events": [
+  "events": [ 
     {
       "type": "purchase-order",
       "properties": {
@@ -56,13 +54,15 @@ Example of track data payload.
       "type": "page-view"
     }
   ],
-  "options": {}
+  "options": { 
+    
+  }
 } 
 ```
 
 Not all data is required. Below you can find only required data.
 
-```json
+```json title="Only required payload data"
 {
   "source": {
     "id": "source-id"
@@ -89,13 +89,13 @@ When registering an event, we need the following data.
 
 * Data about the event, i.e. `the type of the event` and its `properties`. There may be several events within one query.
 
-* `Source id`. It must match the event source ([inbound traffic](core_definitions.md#traffic)) defined in Tracardi.
+* `Source id`. It must match the event source ([inbound traffic](../getting_started/core_definitions.md#traffic)) defined in Tracardi.
   Otherwise the Authorization error wil be returned.
 
 * And the `session id`. The session id is the saved id of the last session. If this is the first visit, you should
   generate id, preferably using uuid4 and attach it to the payload. Visits are related with the session, so the session
   id should change with each new user visit. Read more on session in
-  the [core definitions section](core_definitions.md#session)
+  the [core definitions section](../getting_started/core_definitions.md#session)
 
 Additionally, the `profile id` should be sent to the system. For the first visit, there is no profile id so profile id
 field is not sent. After first connection Tracardi will return a profile id that should be attached with each subsequent
@@ -141,9 +141,26 @@ Example of event data payload with context `attached`.
 There is an `options` section in the data sent to tracardi. It allows you to configure how the server should respond to
 the query.
 
-```json
+```json title="Example of track data payload with options" linenums="1" hl_lines="20"
 {
-  ...,
+  "source": {
+    "id": "source-id"
+  },
+  "session": {
+    "id": "session-id"
+  },
+  "events": [
+    {
+      "type": "purchase-order",
+      "properties": {
+        "product": "Nike shoes",
+        "quantity": 1
+      }
+    },
+    {
+      "type": "page-view"
+    }
+  ],
   "options": {}
 } 
 ```
@@ -159,7 +176,7 @@ We have the following options.
 
 ### Example od debugger data
 
-```json
+```json title="Example od debugger data"
 {
   "debugging": {
     "session": {
@@ -229,14 +246,15 @@ where:
 In the body of the query, we send an ordinary object in the form of JSON, which will become the properties of this
 event.
 
-The event sent in this way will not create a session. Of course, it is possible to add a profile and a session while
-processing the event. In this way, we could connect the profile to the event dynamically in the workflow.
+!!! note
+
+    The event sent in this way will not create a session. Of course, it is possible to add a 
+    profile and a session while processing the event. In this way, we could connect the profile 
+    to the event dynamically in the workflow.
 
 # Response
 
-Example of the response without debugging information.
-
-```json
+```json title="Example of the response without debugging information"
 {
   "profile": {
     "id": "0d2d9dc5-0d60-471e-956f-8766dcb8aba2"
