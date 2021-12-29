@@ -163,7 +163,8 @@ nav:
   - Developers:
       - plugins/index.md
       - Development:
-          - development/index.md
+          - development/react_env.md
+          - development/python_env.md
   - support_us.md
   - attribution.md
   - software_license.md

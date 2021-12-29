@@ -23,11 +23,13 @@ docker run -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" docker.elas
 
 Pull and run Tracardi backend.
 
-```
-docker run -p 8686:80 -e ELASTIC_HOST=http://<your-laptop-ip>:9200 -e USER_NAME=admin -e PASSWORD=admin tracardi/tracardi-api
+```bash
+docker run -p 8686:80 -e ELASTIC_HOST=http://<your-laptop-ip>:9200 -e USER_NAME=admin -e PASSWORD=admin tracardi/tracardi-api  #(1)
 ```
 
-Tracardi must connect to elastic. To do that you have to set ELASTIC_HOST variable to reference your laptop's or server
+1. Replace <your-laptop-ip> with your local laptop IP
+
+Tracardi must connect to elasticsearch. To do that you have to set ELASTIC_HOST variable to reference your laptop's or server
 IP.
 
 !!! Note "Localhost issue"
@@ -40,7 +42,7 @@ IP.
 
 Pull and run Tracardi Graphical User Interface.
 
-```
+```bash
 docker run -p 8787:80 -e API_URL=//127.0.0.1:8686 tracardi/tracardi-gui
 ```
 
@@ -48,7 +50,7 @@ docker run -p 8787:80 -e API_URL=//127.0.0.1:8686 tracardi/tracardi-gui
 
 Pull and run Tracardi Documentation. This is the documentation you are reading right now
 
-```
+```bash
 docker run -p 8585:8585 tracardi/tracardi-docs
 ```
 
