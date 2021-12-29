@@ -30,7 +30,7 @@ Each action node has a reference to the following data:
 ## Accessing internal state
 
 Actions use dot notation to access the internal state of the node. Some date is not available via dot notations. See
-[dot notation](../../notations/index.md) for details.
+[dot notation](../../notations/dot_notation.md) for details.
 
 
 ## Action core methods

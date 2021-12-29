@@ -20,7 +20,7 @@ http://tracardi-host:8686/docs
 To add new event validation schema that you will need to provide a Json Schema object that defines the model of event,
 or event session or loaded profile.
 
-Validator consist of 2 elements. Data to be validated - expressed in a [dotted notation](../notations/index.md), and a
+Validator consist of 2 elements. Data to be validated - expressed in a [dotted notation](../notations/dot_notation.md), and a
 json schema itself.
 
 ```json
