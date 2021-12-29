@@ -113,6 +113,10 @@ async def add_plugins():
         'tracardi.process_engine.action.v1.time.local_time_span.plugin',
         'tracardi.process_engine.action.v1.time.time_difference.plugin',
 
+        # UX
+        'tracardi.process_engine.action.v1.ux.snackbar.plugin',
+        'tracardi.process_engine.action.v1.ux.consent.plugin',
+
         # Connectors
         'tracardi_rabbitmq_publisher.plugin',
         'tracardi_weather.plugin',

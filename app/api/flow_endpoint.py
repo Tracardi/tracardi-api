@@ -280,7 +280,10 @@ async def debug_flow(flow: GraphFlow):
             session,
             profile
         )
-        debug_info, log_list, event = await workflow.invoke(flow, event, debug=True)
+
+        ux = []
+
+        debug_info, log_list, event = await workflow.invoke(flow, event, ux, debug=True)
 
         console_log = []  # type: List[Console]
         profile_save_result = None
@@ -319,7 +322,8 @@ async def debug_flow(flow: GraphFlow):
         return {
             'logs': [log.dict() for log in console_log],
             "debugInfo": debug_info.dict(),
-            "update": profile_save_result
+            "update": profile_save_result,
+            "ux": ux
         }
 
     except Exception as e:

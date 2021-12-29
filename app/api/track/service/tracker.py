@@ -150,12 +150,15 @@ async def track_event(tracker_payload: TrackerPayload, ip: str, profile_less: bo
         console_log=console_log
     )
 
+    ux = []
     post_invoke_events = None
     try:
 
         # Invoke rules engine
-        debug_info_by_event_type_and_rule_name, ran_event_types, console_log, post_invoke_events, invoked_rules = await rules_engine.invoke(
+        debug_info_by_event_type_and_rule_name, ran_event_types, \
+        console_log, post_invoke_events, invoked_rules = await rules_engine.invoke(
             storage.driver.flow.load_production_flow,
+            ux,
             tracker_payload.source.id)
 
         # append invoked rules to event metadata
@@ -229,7 +232,6 @@ async def track_event(tracker_payload: TrackerPayload, ip: str, profile_less: bo
             )
         )
         logger.error(message)
-
 
     try:
         if not tracker_payload.is_debugging_disabled():
@@ -312,4 +314,7 @@ async def track_event(tracker_payload: TrackerPayload, ip: str, profile_less: bo
     # Add source to response
     result['source'] = source.dict(include={"consent": ...})
 
+    # Add UX to response
+    result['ux'] = ux
+    print(ux)
     return result
