@@ -15,9 +15,9 @@ router = APIRouter(
 
 
 @router.get("/flows/entity", tags=["flow"], include_in_schema=server.expose_gui_api)
-async def get_flows():
+async def get_flows(limit: int = 500):
     try:
-        result = await StorageForBulk().index('flow').load()
+        result = await StorageForBulk().index('flow').load(limit=limit)
         total = result.total
         result = [NamedEntity(**r) for r in result]
 

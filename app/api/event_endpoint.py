@@ -58,8 +58,8 @@ async def heatmap():
 
 
 @router.get("/events/metadata/type", tags=["event"], include_in_schema=server.expose_gui_api)
-async def event_types():
-    result = await StorageForBulk().index('event').uniq_field_value("type")
+async def event_types(query: str = None, limit: int = 1000):
+    result = await StorageForBulk().index('event').uniq_field_value("type", search=query, limit=limit)
     return {
         "total": result.total,
         "result": list(result)
