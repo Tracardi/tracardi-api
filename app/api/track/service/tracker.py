@@ -47,22 +47,22 @@ async def _persist(profile_less, console_log: ConsoleLog, session: Session, even
 
     # Save session
     try:
-        persist_session = False if tracker_payload.is_disabled('saveSession') else True
+        persist_session = tracker_payload.is_on('saveSession', default=True)
         save_session_result = await storage.driver.session.save_session(session, profile, profile_less, persist_session)
     except StorageException as e:
         raise FieldTypeConflictException("Could not save session. Error: {}".format(e.message), rows=e.details)
 
     # Save events
     try:
-        persist_events = False if tracker_payload.is_disabled('saveEvents') else True
+        persist_events = tracker_payload.is_on('saveEvents', default=True)
 
         # Set statuses
         log_event_journal = console_log.get_indexed_event_journal()
-        disabled_session = tracker_payload.is_disabled('saveSession')
+
         for event in events:
 
             # Reset session id if session is not saved
-            if disabled_session is True:
+            if tracker_payload.is_on('saveSession', default=True) is False:
                 event.session = None
 
             if event.id in log_event_journal:
@@ -77,6 +77,7 @@ async def _persist(profile_less, console_log: ConsoleLog, session: Session, even
                     event.metadata.status = PROCESSED
 
         save_events_result = await storage.driver.event.save_events(events, persist_events)
+
     except StorageException as e:
         raise FieldTypeConflictException("Could not save event. Error: {}".format(e.message), rows=e.details)
 
@@ -234,7 +235,7 @@ async def track_event(tracker_payload: TrackerPayload, ip: str, profile_less: bo
         logger.error(message)
 
     try:
-        if not tracker_payload.is_debugging_disabled():
+        if tracker_payload.is_debugging_on():
             # Save debug info
             save_tasks.append(
                 asyncio.create_task(
@@ -288,7 +289,7 @@ async def track_event(tracker_payload: TrackerPayload, ip: str, profile_less: bo
 
     # Debugging
     # todo save result to different index
-    if not tracker_payload.is_debugging_disabled():
+    if tracker_payload.is_debugging_on():
         debug_result = TrackerPayloadResult(**collect_result.dict())
         debug_result = debug_result.dict()
         debug_result['execution'] = debug_info_by_event_type_and_rule_name
@@ -316,5 +317,5 @@ async def track_event(tracker_payload: TrackerPayload, ip: str, profile_less: bo
 
     # Add UX to response
     result['ux'] = ux
-    print(ux)
+
     return result
