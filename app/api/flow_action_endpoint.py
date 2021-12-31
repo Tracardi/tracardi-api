@@ -6,7 +6,7 @@ from fastapi import HTTPException, Depends
 from tracardi.service.storage.driver import storage
 from tracardi.service.storage.factory import StorageFor, StorageForBulk
 from .auth.authentication import get_current_user
-from .grouper import search
+from app.service.grouper import search
 from tracardi.domain.enum.yes_no import YesNo
 from tracardi.domain.entity import Entity
 from tracardi.domain.flow_action_plugin import FlowActionPlugin

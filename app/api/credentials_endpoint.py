@@ -5,7 +5,7 @@ from fastapi import HTTPException, Depends
 
 from tracardi.service.storage.driver import storage
 from .auth.authentication import get_current_user
-from .grouper import search
+from app.service.grouper import search
 from tracardi.domain.resource import Resource
 from ..config import server
 

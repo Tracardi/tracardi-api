@@ -20,6 +20,9 @@
       },
       "default_value": {
         "type": "keyword"
+      },
+      "enabled": {
+        "type": "boolean"
       }
     }
   }

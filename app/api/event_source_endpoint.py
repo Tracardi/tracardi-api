@@ -7,7 +7,7 @@ from tracardi.domain.enum.type_enum import TypeEnum
 from tracardi.domain.event_source import EventSource
 from tracardi.service.storage.driver import storage
 from .auth.authentication import get_current_user
-from .grouper import search
+from app.service.grouper import search
 from ..config import server
 from ..service.tracardi_pro_inbound_sources import get_tracardi_pro_services
 
