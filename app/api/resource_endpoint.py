@@ -10,7 +10,7 @@ from tracardi.service.storage.factory import StorageFor, StorageForBulk
 from tracardi_graph_runner.domain.named_entity import NamedEntity
 
 from .auth.authentication import get_current_user
-from .grouper import search
+from app.service.grouper import search
 from tracardi.domain.resource import Resource, ResourceRecord
 from tracardi.domain.entity import Entity
 from tracardi.domain.enum.indexes_source_bool import IndexesSourceBool
