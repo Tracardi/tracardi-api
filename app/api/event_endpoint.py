@@ -71,9 +71,29 @@ async def event_types(profile_id: str):
     return await storage.driver.event.aggregate_profile_events_by_type(profile_id, bucket_name='by_type')
 
 
+@router.get("/events/by_type", tags=["event"], include_in_schema=server.expose_gui_api)
+async def aggregate_event_types():
+    return await storage.driver.event.aggregate_event_type()
+
+
+@router.get("/events/by_tag", tags=["event"], include_in_schema=server.expose_gui_api)
+async def aggregate_event_tags():
+    return await storage.driver.event.aggregate_event_tag()
+
+
+@router.get("/events/by_source", tags=["event"], include_in_schema=server.expose_gui_api)
+async def aggregate_event_tags():
+    return await storage.driver.event.aggregate_events_by_source()
+
+
 @router.get("/events/heatmap_by_profile/profile/{profile_id}", tags=["event"], include_in_schema=server.expose_gui_api)
 async def event_types(profile_id: str):
     return await storage.driver.event.load_events_heatmap(profile_id)
+
+
+@router.get("/events/heatmap", tags=["event"], include_in_schema=server.expose_gui_api)
+async def event_types():
+    return await storage.driver.event.load_events_heatmap()
 
 
 @router.get("/event/{id}", tags=["event"], include_in_schema=server.expose_gui_api)
