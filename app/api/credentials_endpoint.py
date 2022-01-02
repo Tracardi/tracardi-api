@@ -5,7 +5,7 @@ from fastapi import HTTPException, Depends
 
 from tracardi.service.storage.driver import storage
 from .auth.authentication import get_current_user
-from .grouper import search
+from app.service.grouper import search
 from tracardi.domain.resource import Resource
 from ..config import server
 
@@ -15,9 +15,9 @@ router = APIRouter(
 
 
 @router.get("/credentials/by_type", tags=["credential"], include_in_schema=server.expose_gui_api)
-async def get_credentials(query: str = None):
+async def get_credentials(query: str = None, limit: int = 500):
     try:
-        result, total = await storage.driver.resource.load_all()
+        result, total = await storage.driver.resource.load_all(limit=limit)
 
         # Filtering
         if query is not None and len(query) > 0:

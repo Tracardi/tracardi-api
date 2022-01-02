@@ -6,7 +6,7 @@ from tracardi.service.storage.driver import storage
 from tracardi.service.storage.factory import StorageFor, StorageForBulk
 
 from .auth.authentication import get_current_user
-from .grouper import search
+from app.service.grouper import search
 from tracardi.domain.entity import Entity
 from tracardi.domain.segment import Segment
 from tracardi.domain.value_object.bulk_insert_result import BulkInsertResult

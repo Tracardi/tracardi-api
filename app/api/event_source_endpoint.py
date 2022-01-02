@@ -7,7 +7,7 @@ from tracardi.domain.enum.type_enum import TypeEnum
 from tracardi.domain.event_source import EventSource
 from tracardi.service.storage.driver import storage
 from .auth.authentication import get_current_user
-from .grouper import search
+from app.service.grouper import search
 from ..config import server
 from ..service.tracardi_pro_inbound_sources import get_tracardi_pro_services
 
@@ -46,10 +46,10 @@ async def event_source_types():
 @router.get("/event-sources/by_type",
             tags=["event-source"],
             include_in_schema=server.expose_gui_api)
-async def list_resources(query: str = None):
+async def list_event_sources(query: str = None):
     try:
 
-        result, total = await storage.driver.event_source.load_all()
+        result, total = await storage.driver.event_source.load_all(limit=1000)
 
         # Filtering
         if query is not None and len(query) > 0:
@@ -157,13 +157,13 @@ async def refresh_event_sources():
 @router.get("/event-sources/entity",
             tags=["event-source"],
             include_in_schema=server.expose_gui_api)
-async def list_event_sources_names_and_ids():
+async def list_event_sources_names_and_ids(limit: int = 500):
     """
     Returns list of event sources. This list contains only id and name.
     """
 
     try:
-        result, total = await storage.driver.event_source.load_all()
+        result, total = await storage.driver.event_source.load_all(limit=limit)
         result = [NamedEntity(**r.dict()) for r in result]
 
         return {

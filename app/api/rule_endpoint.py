@@ -43,7 +43,6 @@ async def upsert_rule(rule: Rule):
 
     if event_source is None:
         raise HTTPException(status_code=422, detail='Incorrect source id: `{}`'.format(rule.source.id))
-
     try:
 
         entity = Entity(id=rule.flow.id)

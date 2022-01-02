@@ -32,7 +32,7 @@ docker run -p 8686:80 -e ELASTIC_HOST=http://<your-laptop-ip>:9200 -e USER_NAME=
 Tracardi must connect to elasticsearch. To do that you have to set ELASTIC_HOST variable to reference your laptop's or server
 IP.
 
-!!! Note "Localhost issue"
+!!! Warning "Waiting for application startup"
 
     Notice that when type `http://localhost:9200` you try to connect to Elastic on localhost. This means that you're
     connecting to the docker itself as localhost means local in docker. Obviously elastic is not there, so Tracardi will
