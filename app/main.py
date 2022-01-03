@@ -120,6 +120,12 @@ application.mount("/manual",
                       directory=os.path.join(_local_dir, "../manual")),
                   name="manual")
 
+application.mount("/uix",
+                  StaticFiles(
+                      html=True,
+                      directory=os.path.join(_local_dir, "../uix")),
+                  name="uix")
+
 application.include_router(event_server_endpoint.router)
 application.include_router(tql_endpoint.router)
 application.include_router(segments_endpoint.router)
