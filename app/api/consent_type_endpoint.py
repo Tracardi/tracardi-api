@@ -14,6 +14,7 @@ router = APIRouter()
 async def add_consent_type(data: ConsentType, depends=Depends(get_current_user)):
     try:
         result = await storage.driver.consent_type.add_consent(id=data.name.lower().replace(" ", "-"), **data.dict())
+        await storage.driver.consent_type.refresh()
     except ElasticsearchException as e:
         raise HTTPException(status_code=500, detail=str(e))
     return result
@@ -59,7 +60,7 @@ async def get_enabled_consent_types(limit: int = 100):
     return {"total": len(result), "result": list(result)}
 
 
-@router.get("/consents/type/refresh", tags=["consent"], include_in_schema=server.expose_gui_api,
+@router.put("/consents/type/refresh", tags=["consent"], include_in_schema=server.expose_gui_api,
             response_model=dict)
 async def refresh_consent_types(depends=Depends(get_current_user)):
     try:
@@ -73,6 +74,6 @@ async def refresh_consent_types(depends=Depends(get_current_user)):
 async def get_consent_types(query: str = None, start: int = 0, limit: int = 10):
     try:
         result = await storage.driver.consent_type.load_all(start=start, limit=limit)
-        return group_records(result, query, group_by='id', search_by='name', sort_by='name')
+        return group_records(result, query, group_by='tags', search_by='name', sort_by='name')
     except ElasticsearchException as e:
         raise HTTPException(status_code=500, detail=str(e))
