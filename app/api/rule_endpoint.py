@@ -13,6 +13,7 @@ from tracardi.domain.flow import FlowRecord
 from tracardi.domain.named_entity import NamedEntity
 from tracardi.domain.rule import Rule
 from ..config import server
+from ..service.grouping import group_records
 
 router = APIRouter(
     dependencies=[Depends(get_current_user)]
@@ -65,8 +66,9 @@ async def upsert_rule(rule: Rule):
 @router.delete("/rule/{id}", tags=["rule"], include_in_schema=server.expose_gui_api)
 async def delete_rule(id: str):
     try:
-        rule = Entity(id=id)
-        return await StorageFor(rule).index("rule").delete()
+        result = await StorageFor(Entity(id=id)).index("rule").delete()
+        await storage.driver.rule.refresh()
+        return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -82,3 +84,12 @@ async def get_rules_attached_to_flow(id: str) -> List[Rule]:
 @router.get("/rules/refresh", tags=["rules"], include_in_schema=server.expose_gui_api)
 async def refresh_rules():
     return await storage.driver.rule.refresh()
+
+
+@router.get("/rules/by_tag", tags=["rules"], response_model=dict, include_in_schema=server.expose_gui_api)
+async def get_rules_by_tag(query: str = None, start: int = 0, limit: int = 100) -> dict:
+    try:
+        result = await storage.driver.rule.load_all(start, limit=limit)
+        return group_records(result, query, group_by='tags', search_by='name', sort_by='name')
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

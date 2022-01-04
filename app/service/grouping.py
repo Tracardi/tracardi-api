@@ -20,6 +20,8 @@ def group_records(result, query, group_by, search_by="name", sort_by="name"):
                     groups[group].append(record)
             elif isinstance(record[group_by], str):
                 groups[record[group_by]].append(record)
+        else:
+            groups["General"].append(record)
 
     # Sort
     groups = {k: sorted(v, key=lambda r: r[sort_by], reverse=False) for k, v in groups.items()}
