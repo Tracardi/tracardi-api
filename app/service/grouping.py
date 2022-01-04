@@ -16,8 +16,11 @@ def group_records(result, query, group_by, search_by="name", sort_by="name"):
     for record in result:
         if group_by in record:
             if isinstance(record[group_by], list):
-                for group in record[group_by]:
-                    groups[group].append(record)
+                if len(record[group_by]) > 0:
+                    for group in record[group_by]:
+                        groups[group].append(record)
+                else:
+                    groups["General"].append(record)
             elif isinstance(record[group_by], str):
                 groups[record[group_by]].append(record)
         else:

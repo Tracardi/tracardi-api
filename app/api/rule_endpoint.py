@@ -57,8 +57,12 @@ async def upsert_rule(rule: Rule):
 
         if add_flow_task:
             await add_flow_task
-        return await add_rule_task
 
+        result = await add_rule_task
+
+        await storage.driver.rule.refresh()
+
+        return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
