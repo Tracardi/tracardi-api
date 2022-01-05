@@ -1,8 +1,9 @@
 from fastapi import APIRouter
-import tracardi.data.initial_data
+
 from app.config import server
 from tracardi.domain.event_source import EventSource
 from tracardi.service.storage.driver import storage
+from tracardi.test_data.initial_data import generate_fake_data, generate_random_date
 
 router = APIRouter()
 
@@ -21,9 +22,9 @@ async def create_test_data():
 
 @router.get("/test/data", tags=["test"], include_in_schema=server.expose_gui_api)
 async def make_fake_data():
-    for index, data in tracardi.data.initial_data.generate_fake_data().items():
+    for index, data in generate_fake_data().items():
         for record in data:
             record = record.dict()
             if index in ['event', 'session']:
-                record['metadata']['time']['insert'] = tracardi.data.initial_data.generate_random_date()
+                record['metadata']['time']['insert'] = generate_random_date()
             await storage.driver.raw.index(index).upsert(record)
