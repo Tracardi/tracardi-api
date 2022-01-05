@@ -12,9 +12,9 @@ prodict==0.8.18
 lark==1.0.0
 
 
-git+https://github.com/Tracardi/tracardi-plugin-sdk.git
-git+https://github.com/Tracardi/tracardi-wf.git
-git+https://github.com/Tracardi/tracardi.git
+git+https://github.com/Tracardi/tracardi-plugin-sdk.git@master
+git+https://github.com/Tracardi/tracardi-wf.git@master
+git+https://github.com/Tracardi/tracardi.git@master
 
 git+https://github.com/Tracardi/tracardi-maxmind-geolite2.git
 
