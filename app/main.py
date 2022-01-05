@@ -173,7 +173,10 @@ async def app_starts():
                 es = ElasticClient.instance()
                 index = resources.resources['action']
                 if await es.exists_index(index.get_write_index()):
-                    await es.remove_index(index.get_read_index())
+                    try:
+                        await es.remove_index(index.get_read_index())
+                    except elasticsearch.exceptions.NotFoundError:
+                        pass
 
             await create_indices()
             await update_api_instance()
