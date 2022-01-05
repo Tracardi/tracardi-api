@@ -11,7 +11,7 @@ from starlette.staticfiles import StaticFiles
 from app.api import token_endpoint, rule_endpoint, resource_endpoint, event_endpoint, \
     profile_endpoint, flow_endpoint, generic_endpoint, project_endpoint, \
     credentials_endpoint, segments_endpoint, \
-    tql_endpoint, health_endpoint, session_endpoint, instance_endpoint, plugins_endpoint, test_endpoint, \
+    tql_endpoint, health_endpoint, session_endpoint, instance_endpoint, plugins_endpoint, \
     settings_endpoint, event_source_endpoint, \
     purchases_endpoint, event_tag_endpoint, consent_type_endpoint, flow_action_endpoint, flows_endpoint, info_endpoint,\
     user_endpoint, pro_endpoint, event_schema_validation_endpoint
@@ -139,7 +139,6 @@ application.include_router(session_endpoint.router)
 application.include_router(tasks_endpoint.router)
 application.include_router(instance_endpoint.router)
 application.include_router(plugins_endpoint.router)
-application.include_router(test_endpoint.router)
 application.include_router(settings_endpoint.router)
 application.include_router(purchases_endpoint.router)
 application.include_router(event_tag_endpoint.router)
