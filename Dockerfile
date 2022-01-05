@@ -13,7 +13,7 @@ WORKDIR /app
 
 ## Install dependencies
 COPY app/requirements.txt .
-RUN pip install -r requirements.txt
+RUN pip --default-timeout=180 install -r requirements.txt
 
 RUN pip show tracardi
 RUN pip list
@@ -26,7 +26,7 @@ COPY app app/
 COPY manual manual/
 
 ## Install dependencies
-RUN pip install -r manual/requirements.txt
+RUN pip --default-timeout=180 install -r manual/requirements.txt
 WORKDIR /app/manual/en
 RUN mkdocs build
 
