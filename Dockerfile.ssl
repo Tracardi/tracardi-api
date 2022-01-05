@@ -13,6 +13,7 @@ RUN pip --default-timeout=180 install -r requirements.txt
 
 ## Copy application
 COPY app app/
+COPY uix uix/
 
 ## Copy manual
 COPY manual manual/

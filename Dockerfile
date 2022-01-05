@@ -21,6 +21,7 @@ RUN pip list
 
 ## Copy application
 COPY app app/
+COPY uix uix/
 
 ## Copy manual
 COPY manual manual/
