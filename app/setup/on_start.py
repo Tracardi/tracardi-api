@@ -141,6 +141,7 @@ async def add_plugins():
         'tracardi.process_engine.action.v1.connectors.elasticsearch.query.plugin',
         'tracardi.process_engine.action.v1.connectors.mailchimp.add_to_audience.plugin',
         'tracardi.process_engine.action.v1.connectors.mailchimp.remove_from_audience.plugin',
+        'tracardi.process_engine.action.v1.connectors.amplitude.send_events.plugin',
 
 
         # Internal
