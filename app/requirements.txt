@@ -21,12 +21,11 @@ git+https://github.com/Tracardi/tracardi-fullcontact-webhook.git
 
 git+https://github.com/Tracardi/tracardi-pushover-webhook.git
 git+https://github.com/Tracardi/tracardi-discord-webhook.git
-git+https://github.com/Tracardi/tracardi-mongodb-connector.git
 git+https://github.com/Tracardi/tracardi-mysql-connector.git
 git+https://github.com/Tracardi/tracardi-postgresql-connector.git
 git+https://github.com/Tracardi/tracardi-rabbitmq-publisher.git
 git+https://github.com/Tracardi/tracardi-weather.git
-git+https://github.com/Tracardi/tracardi-zapier-webhook.git
+
 git+https://github.com/Tracardi/tracardi-event-scheduler.git
 git+https://github.com/Tracardi/tracardi-sentiment-analysis.git
 git+https://github.com/Tracardi/tracardi-text-classification.git
