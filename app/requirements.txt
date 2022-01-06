@@ -16,9 +16,6 @@ git+https://github.com/Tracardi/tracardi-plugin-sdk.git@master
 git+https://github.com/Tracardi/tracardi-wf.git@master
 git+https://github.com/Tracardi/tracardi.git@master
 
-git+https://github.com/Tracardi/tracardi-maxmind-geolite2.git
-
-git+https://github.com/Tracardi/tracardi-mysql-connector.git
 git+https://github.com/Tracardi/tracardi-postgresql-connector.git
 git+https://github.com/Tracardi/tracardi-weather.git
 
