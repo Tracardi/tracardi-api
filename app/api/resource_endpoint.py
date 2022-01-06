@@ -82,7 +82,7 @@ async def get_resource_types(type: TypeEnum) -> dict:
                     "port": 5672
                 },
                 "tags": ['rabbitmq', 'queue'],
-                "name": "RabbitMQ server"
+                "name": "RabbitMQ"
             },
             "aws": {
                 "config": {
@@ -100,7 +100,7 @@ async def get_resource_types(type: TypeEnum) -> dict:
                     "password": "<password>"
                 },
                 "tags": ['mail', 'smtp'],
-                "name": "SMTP Server"
+                "name": "SMTP"
             },
             "ip-geo-locator": {
                 "config": {
@@ -109,7 +109,7 @@ async def get_resource_types(type: TypeEnum) -> dict:
                     "accountId": None
                 },
                 "tags": ['api', 'geo-locator'],
-                "name": "MaxMind GEO-LOCATION endpoint"
+                "name": "MaxMind Geo-Location"
             },
             "postgresql": {
                 "config": {
@@ -120,7 +120,7 @@ async def get_resource_types(type: TypeEnum) -> dict:
                     "database": "<database>"
                 },
                 "tags": ['database', 'postresql'],
-                "name": "PostgreSQL database"
+                "name": "PostgreSQL"
             },
             "elastic-search": {
                 "config": {
@@ -132,7 +132,7 @@ async def get_resource_types(type: TypeEnum) -> dict:
                     "verify_certs": True
                 },
                 "tags": ['elastic'],
-                "name": "Elasticsearch server"
+                "name": "Elasticsearch"
             },
             "pushover": {
                 "config": {
@@ -140,7 +140,7 @@ async def get_resource_types(type: TypeEnum) -> dict:
                     "user": "<user>"
                 },
                 "tags": ['pushover', 'message'],
-                "name": "Pushover service"
+                "name": "Pushover"
             },
             "mysql": {
                 "config": {
@@ -151,7 +151,7 @@ async def get_resource_types(type: TypeEnum) -> dict:
                     "database": "<database>"
                 },
                 "tags": ['mysql', 'database'],
-                "name": "MySQL database"
+                "name": "MySQL"
 
             },
             "mqtt": {
@@ -160,14 +160,14 @@ async def get_resource_types(type: TypeEnum) -> dict:
                     "port": "<port>"
                 },
                 "tags": ['mqtt', 'queue'],
-                "name": "MQTT Server"
+                "name": "MQTT"
             },
-            "twillo": {
+            "twilio": {
                 "config": {
                     "token": "<token>"
                 },
-                "tags": ['token', 'twillo'],
-                "name": "TWILLO credentials"
+                "tags": ['token', 'twilio'],
+                "name": "Twilio"
             },
             "redis": {
                 "config": {
@@ -176,7 +176,7 @@ async def get_resource_types(type: TypeEnum) -> dict:
                     "password": "<password>"
                 },
                 "tags": ['redis'],
-                "name": "Redis server"
+                "name": "Redis"
 
             },
             "mongodb": {
@@ -185,7 +185,7 @@ async def get_resource_types(type: TypeEnum) -> dict:
                     "timeout": 5000
                 },
                 "tags": ['mongo', 'database', 'nosql'],
-                "name": "MongoDB server"
+                "name": "MongoDB"
             },
             "trello": {
                 "config": {
