@@ -120,7 +120,7 @@ async def add_plugins():
         # Connectors
 
         'tracardi_weather.plugin',
-        'tracardi_maxmind_geolite2.plugin',
+
 
         'tracardi_mysql_connector.plugin',
         'tracardi_postgresql_connector.plugin',
@@ -150,6 +150,7 @@ async def add_plugins():
         'tracardi.process_engine.action.v1.connectors.pushover.push.plugin',
         'tracardi.process_engine.action.v1.connectors.discord.push.plugin',
         'tracardi.process_engine.action.v1.connectors.rabbitmq.publish.plugin',
+        'tracardi.process_engine.action.v1.connectors.maxmind.geoip.plugin',
 
         # Internal
         'tracardi.process_engine.action.v1.internal.event_source_fetcher.plugin',

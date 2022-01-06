@@ -94,8 +94,8 @@ async def get_resource_types(type: TypeEnum) -> dict:
             },
             "smtp-server": {
                 "config": {
-                    "smtp": None,
-                    "port": None,
+                    "smtp": "<smpt-server-host>",
+                    "port": "<port>",
                     "username": "<username>",
                     "password": "<password>"
                 },
@@ -105,8 +105,8 @@ async def get_resource_types(type: TypeEnum) -> dict:
             "ip-geo-locator": {
                 "config": {
                     "host": "geolite.info",
-                    "license": None,
-                    "accountId": None
+                    "license": "<license-key>",
+                    "accountId": "<accound-id>"
                 },
                 "tags": ['api', 'geo-locator'],
                 "name": "MaxMind Geo-Location"
