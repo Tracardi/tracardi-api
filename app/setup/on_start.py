@@ -118,7 +118,7 @@ async def add_plugins():
         'tracardi.process_engine.action.v1.ux.consent.plugin',
 
         # Connectors
-        'tracardi_rabbitmq_publisher.plugin',
+
         'tracardi_weather.plugin',
         'tracardi_maxmind_geolite2.plugin',
 
@@ -128,7 +128,6 @@ async def add_plugins():
         'tracardi_sentiment_analysis.plugin',
         'tracardi_text_classification.plugin',
         'tracardi.process_engine.action.v1.connectors.smtp_call.plugin',
-        'tracardi_event_scheduler.plugin',
 
         'tracardi_language_detection.plugin',
         'tracardi.process_engine.action.v1.segments.profile_segmentation.plugin',
@@ -150,6 +149,7 @@ async def add_plugins():
         'tracardi.process_engine.action.v1.connectors.zapier.webhook.plugin',
         'tracardi.process_engine.action.v1.connectors.pushover.push.plugin',
         'tracardi.process_engine.action.v1.connectors.discord.push.plugin',
+        'tracardi.process_engine.action.v1.connectors.rabbitmq.publish.plugin',
 
         # Internal
         'tracardi.process_engine.action.v1.internal.event_source_fetcher.plugin',
