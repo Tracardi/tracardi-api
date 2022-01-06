@@ -23,6 +23,15 @@
       },
       "enabled": {
         "type": "boolean"
+      },
+      "tags": {
+        "type": "keyword"
+      },
+      "required": {
+        "type": "boolean"
+      },
+      "auto_revoke": {
+        "type": "keyword"
       }
     }
   }

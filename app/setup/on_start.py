@@ -122,11 +122,9 @@ async def add_plugins():
         'tracardi_weather.plugin',
         'tracardi_maxmind_geolite2.plugin',
         'tracardi_discord_webhook.plugin',
-        'tracardi_zapier_webhook.plugin',
-        'tracardi_mongodb_connector.plugin',
         'tracardi_mysql_connector.plugin',
         'tracardi_postgresql_connector.plugin',
-        'tracardi_fullcontact_webhook.plugin',
+
         'tracardi_sentiment_analysis.plugin',
         'tracardi_text_classification.plugin',
         'tracardi.process_engine.action.v1.connectors.smtp_call.plugin',
@@ -141,7 +139,10 @@ async def add_plugins():
         'tracardi.process_engine.action.v1.connectors.elasticsearch.query.plugin',
         'tracardi.process_engine.action.v1.connectors.mailchimp.add_to_audience.plugin',
         'tracardi.process_engine.action.v1.connectors.mailchimp.remove_from_audience.plugin',
-
+        'tracardi.process_engine.action.v1.connectors.amplitude.send_events.plugin',
+        'tracardi.process_engine.action.v1.connectors.mongo.query.plugin',
+        'tracardi.process_engine.action.v1.connectors.full_contact.person_enrich.plugin',
+        'tracardi.process_engine.action.v1.connectors.zapier.webhook.plugin',
 
         # Internal
         'tracardi.process_engine.action.v1.internal.event_source_fetcher.plugin',

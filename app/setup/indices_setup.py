@@ -36,6 +36,16 @@ async def create_indices():
                     # Multi indices need templates. Index will be create automatically on first insert
                     result = await es.put_index_template(index.index, map)
                 else:
+                    # todo Error may occur
+                    """
+                    ERROR:app.setup.indices_setup:New index `tracardi-flow-action-plugins` was not created. The 
+                    following result was returned {'error': {'root_cause': [{'type': 'resource_already_exists_exception'
+                    , 'reason': 'index [tracardi-flow-action-plugins/fk4wGYqeROCd9Cp5vtfnaw] already exists', 
+                    'index_uuid': 'fk4wGYqeROCd9Cp5vtfnaw', 'index': 'tracardi-flow-action-plugins'}], 'type': 
+                    'resource_already_exists_exception', 'reason': 
+                    'index [tracardi-flow-action-plugins/fk4wGYqeROCd9Cp5vtfnaw] already exists', 'index_uuid': 
+                    'fk4wGYqeROCd9Cp5vtfnaw', 'index': 'tracardi-flow-action-plugins'}, 'status': 400}
+                    """
                     result = await es.create_index(index.get_write_index(), map)
 
                 if 'acknowledged' not in result or result['acknowledged'] is not True:

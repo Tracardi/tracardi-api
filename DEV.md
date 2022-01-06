@@ -44,7 +44,7 @@ docker run -e POSTGRES_PASSWORD=root -p 5432:5432 postgres
 
 # Run tracardi api with SSL
 
-docker run -v /home/risto/PycharmProjects/tracardi-api/ssl:/ssl -p 8686:443  -e ELASTIC_HOST=http://192.168.1.103:9200 -e GUNICORN_CMD_ARGS="--keyfile=/ssl/key.pem --certfile=/ssl/cert.pem" tracardi/tracardi-api-ssl
+docker run -v /home/risto/PycharmProjects/tracardi-api/ssl:/ssl -p 8686:443 -e USER_NAME=admin -e PASSWORD=admin -e WORKERS=2 -e ELASTIC_HOST=http://192.168.1.103:9200 -e GUNICORN_CMD_ARGS="--keyfile=/ssl/key.pem --certfile=/ssl/cert.pem" tracardi/tracardi-api-ssl
 
 # Run GUI HTTPS and HTTP
 docker run -p 443:443 -p 80:80 -e API_URL=//127.0.0.1:8686 tracardi/tracardi-gui-https

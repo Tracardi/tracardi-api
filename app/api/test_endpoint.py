@@ -1,9 +1,9 @@
-from fastapi import APIRouter, Request
+from fastapi import APIRouter
 
 from app.config import server
-from tracardi.data.initail_data import generate_fake_data, generate_random_date
 from tracardi.domain.event_source import EventSource
 from tracardi.service.storage.driver import storage
+from tracardi.test_data.initial_data import generate_fake_data, generate_random_date
 
 router = APIRouter()
 

@@ -9,14 +9,15 @@ WORKDIR /app
 
 ## Install dependencies
 COPY app/requirements.txt .
-RUN pip install -r requirements.txt
+RUN pip --default-timeout=180 install -r requirements.txt
 
 ## Copy application
 COPY app app/
+COPY uix uix/
 COPY ssl ssl/
 COPY manual manual/
 
-RUN pip install -r manual/requirements.txt
+RUN pip --default-timeout=180 install -r manual/requirements.txt
 WORKDIR /app/manual/en
 RUN mkdocs build
 

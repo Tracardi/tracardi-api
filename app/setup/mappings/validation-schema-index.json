@@ -12,6 +12,15 @@
       },
       "id": {
         "type": "keyword"
+      },
+      "enabled": {
+        "type": "boolean"
+      },
+      "description": {
+        "type": "keyword"
+      },
+      "name": {
+        "type": "keyword"
       }
     }
   }

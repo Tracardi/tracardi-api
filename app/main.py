@@ -11,7 +11,7 @@ from starlette.staticfiles import StaticFiles
 from app.api import token_endpoint, rule_endpoint, resource_endpoint, event_endpoint, \
     profile_endpoint, flow_endpoint, generic_endpoint, project_endpoint, \
     credentials_endpoint, segments_endpoint, \
-    tql_endpoint, health_endpoint, session_endpoint, instance_endpoint, plugins_endpoint, test_endpoint, \
+    tql_endpoint, health_endpoint, session_endpoint, instance_endpoint, plugins_endpoint, \
     settings_endpoint, event_source_endpoint, \
     purchases_endpoint, event_tag_endpoint, consent_type_endpoint, flow_action_endpoint, flows_endpoint, info_endpoint,\
     user_endpoint, pro_endpoint, event_schema_validation_endpoint
@@ -38,7 +38,7 @@ tags_metadata = [
         "description": "Manage profiles. Read more about core concepts of TRACARDI in documentation.",
         "externalDocs": {
             "description": "Profile external docs",
-            "url": "https://github/atompie/docs/en/docs",
+            "url": "http://docs.tracardi.com",
         },
     },
     {
@@ -46,7 +46,7 @@ tags_metadata = [
         "description": "Manage data resources. Read more about core concepts of TRACARDI in documentation.",
         "externalDocs": {
             "description": "Resource external docs",
-            "url": "https://github/atompie/docs/en/docs",
+            "url": "http://docs.tracardi.com",
         },
     },
     {
@@ -54,7 +54,7 @@ tags_metadata = [
         "description": "Manage flow rule triggers. Read more about core concepts of TRACARDI in documentation.",
         "externalDocs": {
             "description": "Rule external docs",
-            "url": "https://github/atompie/docs/en/docs",
+            "url": "http://docs.tracardi.com",
         },
     },
     {
@@ -62,7 +62,7 @@ tags_metadata = [
         "description": "Manage flows. Read more about core concepts of TRACARDI in documentation.",
         "externalDocs": {
             "description": "Flows external docs",
-            "url": "https://github/atompie/docs/en/docs",
+            "url": "http://docs.tracardi.com",
         },
     },
     {
@@ -70,7 +70,7 @@ tags_metadata = [
         "description": "Manage events. Read more about core concepts of TRACARDI in documentation.",
         "externalDocs": {
             "description": "Events external docs",
-            "url": "https://github/atompie/docs/en/docs",
+            "url": "http://docs.tracardi.com",
         },
     },
     {
@@ -79,22 +79,23 @@ tags_metadata = [
     },
     {
         "name": "tracker",
-        "description": "Read more about TRACARDI event server in documentation. http://localhost:8686/manual/en/site",
+        "description": "Read more about TRACARDI event server in documentation. http://docs.tracardi.com",
         "externalDocs": {
             "description": "External docs",
-            "url": "https://github/atompie/docs/en/docs",
+            "url": "http://docs.tracardi.com",
         },
     }
 ]
 
 application = FastAPI(
     title="Tracardi Customer Data Platform Project",
-    description="TRACARDI open-source customer data platform offers you excellent control over your customer data with its broad set of features",
-    version="0.6.0",
+    description="TRACARDI open-source customer data platform offers you excellent control over your customer data with "
+                "its broad set of features",
+    version=tracardi.version,
     openapi_tags=tags_metadata if server.expose_gui_api else None,
     contact={
         "name": "Risto Kowaczewski",
-        "url": "http://github.com/atompie/tracardi",
+        "url": "http://github.com/tracardi/tracardi",
         "email": "office@tracardi.com",
     },
 
@@ -120,6 +121,12 @@ application.mount("/manual",
                       directory=os.path.join(_local_dir, "../manual")),
                   name="manual")
 
+application.mount("/uix",
+                  StaticFiles(
+                      html=True,
+                      directory=os.path.join(_local_dir, "../uix")),
+                  name="uix")
+
 application.include_router(event_server_endpoint.router)
 application.include_router(tql_endpoint.router)
 application.include_router(segments_endpoint.router)
@@ -139,7 +146,7 @@ application.include_router(session_endpoint.router)
 application.include_router(tasks_endpoint.router)
 application.include_router(instance_endpoint.router)
 application.include_router(plugins_endpoint.router)
-application.include_router(test_endpoint.router)
+# application.include_router(test_endpoint.router)
 application.include_router(settings_endpoint.router)
 application.include_router(purchases_endpoint.router)
 application.include_router(event_tag_endpoint.router)
@@ -166,7 +173,10 @@ async def app_starts():
                 es = ElasticClient.instance()
                 index = resources.resources['action']
                 if await es.exists_index(index.get_write_index()):
-                    await es.remove_index(index.get_read_index())
+                    try:
+                        await es.remove_index(index.get_read_index())
+                    except elasticsearch.exceptions.NotFoundError:
+                        pass
 
             await create_indices()
             await update_api_instance()
