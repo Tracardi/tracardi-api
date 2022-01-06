@@ -25,7 +25,7 @@ from tracardi_graph_runner.domain.flow import Flow as GraphFlow
 from tracardi.domain.flow import FlowRecord
 from tracardi.domain.profile import Profile
 from tracardi.domain.rule import Rule
-from tracardi.domain.session import Session
+from tracardi.domain.session import Session, SessionMetadata, SessionTime
 from tracardi.domain.resource import Resource
 from tracardi.domain.value_object.bulk_insert_result import BulkInsertResult
 from ..config import server
@@ -264,7 +264,7 @@ async def debug_flow(flow: GraphFlow):
     try:
 
         profile = Profile(id="@debug-profile-id")
-        session = Session(id="@debug-session-id")
+        session = Session(id="@debug-session-id", metadata=SessionMetadata())
         session.operation.new = True
         event = Event(metadata=EventMetadata(time=Time()),
                       id='@debug-event-id',

@@ -2,7 +2,7 @@ import logging
 from json import JSONDecodeError
 
 from fastapi import APIRouter, Request, status, HTTPException
-from tracardi.domain.session import Session
+from tracardi.domain.session import Session, SessionMetadata
 
 from tracardi.domain.payload.event_payload import EventPayload
 
@@ -72,8 +72,7 @@ async def track_webhook(event_type: str, source_id: str, request: Request):
 
     tracker_payload = TrackerPayload(
         source=Entity(id=source_id),
-        session=Session(id="-1"),
-
+        session=Session(id="-1", metadata=SessionMetadata()),
         metadata=EventPayloadMetadata(time=Time()),
         profile=None,
         context={},

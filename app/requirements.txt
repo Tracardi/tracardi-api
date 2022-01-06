@@ -12,21 +12,19 @@ prodict==0.8.18
 lark==1.0.0
 
 
-git+https://github.com/Tracardi/tracardi-plugin-sdk.git
-git+https://github.com/Tracardi/tracardi-wf.git
-git+https://github.com/Tracardi/tracardi.git
+git+https://github.com/Tracardi/tracardi-plugin-sdk.git@master
+git+https://github.com/Tracardi/tracardi-wf.git@master
+git+https://github.com/Tracardi/tracardi.git@master
 
 git+https://github.com/Tracardi/tracardi-maxmind-geolite2.git
-git+https://github.com/Tracardi/tracardi-fullcontact-webhook.git
 
 git+https://github.com/Tracardi/tracardi-pushover-webhook.git
 git+https://github.com/Tracardi/tracardi-discord-webhook.git
-git+https://github.com/Tracardi/tracardi-mongodb-connector.git
 git+https://github.com/Tracardi/tracardi-mysql-connector.git
 git+https://github.com/Tracardi/tracardi-postgresql-connector.git
 git+https://github.com/Tracardi/tracardi-rabbitmq-publisher.git
 git+https://github.com/Tracardi/tracardi-weather.git
-git+https://github.com/Tracardi/tracardi-zapier-webhook.git
+
 git+https://github.com/Tracardi/tracardi-event-scheduler.git
 git+https://github.com/Tracardi/tracardi-sentiment-analysis.git
 git+https://github.com/Tracardi/tracardi-text-classification.git
