@@ -7,7 +7,7 @@ from fastapi import HTTPException, Depends
 from tracardi.domain.enum.type_enum import TypeEnum
 from tracardi.service.storage.driver import storage
 from tracardi.service.storage.factory import StorageFor, StorageForBulk
-from tracardi_graph_runner.domain.named_entity import NamedEntity
+from tracardi.service.wf.domain.named_entity import NamedEntity
 
 from .auth.authentication import get_current_user
 from app.service.grouper import search

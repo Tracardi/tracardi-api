@@ -17,7 +17,7 @@ from tracardi.domain.event_metadata import EventPayloadMetadata
 from tracardi.domain.payload.tracker_payload import TrackerPayload
 from tracardi.exceptions.exception import TracardiException, UnauthorizedException, FieldTypeConflictException, \
     EventValidationException
-from tracardi_graph_runner.domain.entity import Entity
+from tracardi.service.wf.domain.entity import Entity
 
 logger = logging.getLogger('tracardi.api.event_server')
 logger.setLevel(logging.WARNING)

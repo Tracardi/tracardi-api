@@ -8,7 +8,7 @@ from tracardi.domain.console import Console
 from tracardi.service.storage.driver import storage
 from tracardi.service.storage.factory import StorageFor, StorageForBulk, storage_manager
 from tracardi.domain.record.event_debug_record import EventDebugRecord
-from tracardi_graph_runner.domain.debug_info import DebugInfo
+from tracardi.service.wf.domain.debug_info import DebugInfo
 from .auth.authentication import get_current_user
 from tracardi.domain.entity import Entity
 from tracardi.domain.event import Event
