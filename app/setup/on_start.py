@@ -86,13 +86,7 @@ async def add_plugins():
         'tracardi.process_engine.action.v1.operations.update_event_action',
         'tracardi.process_engine.action.v1.calculator_action',
 
-        # Connectors
-
-        'tracardi.process_engine.action.v1.connectors.api_call.plugin',
-
-
         # Plugins
-
         'tracardi.process_engine.action.v1.traits.reshape_payload_action',
         'tracardi.process_engine.action.v1.detect_client_agent_action',
 
@@ -118,31 +112,33 @@ async def add_plugins():
         'tracardi.process_engine.action.v1.ux.consent.plugin',
 
         # Connectors
-        'tracardi_rabbitmq_publisher.plugin',
-        'tracardi_weather.plugin',
-        'tracardi_maxmind_geolite2.plugin',
-        'tracardi_discord_webhook.plugin',
-        'tracardi_mysql_connector.plugin',
-        'tracardi_postgresql_connector.plugin',
-
-        'tracardi_sentiment_analysis.plugin',
-        'tracardi_text_classification.plugin',
+        'tracardi.process_engine.action.v1.connectors.api_call.plugin',
         'tracardi.process_engine.action.v1.connectors.smtp_call.plugin',
-        'tracardi_event_scheduler.plugin',
-        'tracardi_pushover_webhook.plugin',
-        'tracardi_language_detection.plugin',
         'tracardi.process_engine.action.v1.segments.profile_segmentation.plugin',
-        'tracardi_aws_sqs.plugin',
-
         'tracardi.process_engine.action.v1.converters.payload_to_json.plugin',
         'tracardi.process_engine.action.v1.connectors.mailchimp.transactional_email.plugin',
         'tracardi.process_engine.action.v1.connectors.elasticsearch.query.plugin',
         'tracardi.process_engine.action.v1.connectors.mailchimp.add_to_audience.plugin',
         'tracardi.process_engine.action.v1.connectors.mailchimp.remove_from_audience.plugin',
+        'tracardi.process_engine.action.v1.connectors.trello.add_card_action.plugin',
+        'tracardi.process_engine.action.v1.connectors.trello.delete_card_action.plugin',
+        'tracardi.process_engine.action.v1.connectors.trello.move_card_action.plugin',
+        'tracardi.process_engine.action.v1.connectors.trello.add_member_action.plugin',
         'tracardi.process_engine.action.v1.connectors.amplitude.send_events.plugin',
         'tracardi.process_engine.action.v1.connectors.mongo.query.plugin',
         'tracardi.process_engine.action.v1.connectors.full_contact.person_enrich.plugin',
         'tracardi.process_engine.action.v1.connectors.zapier.webhook.plugin',
+        'tracardi.process_engine.action.v1.connectors.pushover.push.plugin',
+        'tracardi.process_engine.action.v1.connectors.discord.push.plugin',
+        'tracardi.process_engine.action.v1.connectors.rabbitmq.publish.plugin',
+        'tracardi.process_engine.action.v1.connectors.maxmind.geoip.plugin',
+        'tracardi.process_engine.action.v1.connectors.mysql.query.plugin',
+        'tracardi.process_engine.action.v1.connectors.postgresql.query.plugin',
+        'tracardi.process_engine.action.v1.connectors.weather.msn_weather.plugin',
+        'tracardi.process_engine.action.v1.connectors.aws.sqs.plugin',
+        'tracardi.process_engine.action.v1.connectors.meaningcloud.sentiment_analysis.plugin',
+        'tracardi.process_engine.action.v1.connectors.meaningcloud.language_detection.plugin',
+        'tracardi.process_engine.action.v1.connectors.meaningcloud.text_classification.plugin',
 
         # Internal
         'tracardi.process_engine.action.v1.internal.event_source_fetcher.plugin',

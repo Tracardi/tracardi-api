@@ -7,7 +7,7 @@ from fastapi import HTTPException, Depends
 from tracardi.domain.enum.type_enum import TypeEnum
 from tracardi.service.storage.driver import storage
 from tracardi.service.storage.factory import StorageFor, StorageForBulk
-from tracardi_graph_runner.domain.named_entity import NamedEntity
+from tracardi.service.wf.domain.named_entity import NamedEntity
 
 from .auth.authentication import get_current_user
 from app.service.grouper import search
@@ -82,7 +82,7 @@ async def get_resource_types(type: TypeEnum) -> dict:
                     "port": 5672
                 },
                 "tags": ['rabbitmq', 'queue'],
-                "name": "RabbitMQ server"
+                "name": "RabbitMQ"
             },
             "aws": {
                 "config": {
@@ -94,22 +94,22 @@ async def get_resource_types(type: TypeEnum) -> dict:
             },
             "smtp-server": {
                 "config": {
-                    "smtp": None,
-                    "port": None,
+                    "smtp": "<smpt-server-host>",
+                    "port": "<port>",
                     "username": "<username>",
                     "password": "<password>"
                 },
                 "tags": ['mail', 'smtp'],
-                "name": "SMTP Server"
+                "name": "SMTP"
             },
             "ip-geo-locator": {
                 "config": {
                     "host": "geolite.info",
-                    "license": None,
-                    "accountId": None
+                    "license": "<license-key>",
+                    "accountId": "<accound-id>"
                 },
                 "tags": ['api', 'geo-locator'],
-                "name": "MaxMind GEO-LOCATION endpoint"
+                "name": "MaxMind Geo-Location"
             },
             "postgresql": {
                 "config": {
@@ -119,8 +119,8 @@ async def get_resource_types(type: TypeEnum) -> dict:
                     "password": "<password>",
                     "database": "<database>"
                 },
-                "tags": ['database', 'postresql'],
-                "name": "PostgreSQL database"
+                "tags": ['database', 'postgresql'],
+                "name": "PostgreSQL"
             },
             "elastic-search": {
                 "config": {
@@ -132,7 +132,7 @@ async def get_resource_types(type: TypeEnum) -> dict:
                     "verify_certs": True
                 },
                 "tags": ['elastic'],
-                "name": "Elasticsearch server"
+                "name": "Elasticsearch"
             },
             "pushover": {
                 "config": {
@@ -140,7 +140,7 @@ async def get_resource_types(type: TypeEnum) -> dict:
                     "user": "<user>"
                 },
                 "tags": ['pushover', 'message'],
-                "name": "Pushover service"
+                "name": "Pushover"
             },
             "mysql": {
                 "config": {
@@ -151,7 +151,7 @@ async def get_resource_types(type: TypeEnum) -> dict:
                     "database": "<database>"
                 },
                 "tags": ['mysql', 'database'],
-                "name": "MySQL database"
+                "name": "MySQL"
 
             },
             "mqtt": {
@@ -160,14 +160,14 @@ async def get_resource_types(type: TypeEnum) -> dict:
                     "port": "<port>"
                 },
                 "tags": ['mqtt', 'queue'],
-                "name": "MQTT Server"
+                "name": "MQTT"
             },
-            "twillo": {
+            "twilio": {
                 "config": {
                     "token": "<token>"
                 },
-                "tags": ['token', 'twillo'],
-                "name": "TWILLO credentials"
+                "tags": ['token', 'twilio'],
+                "name": "Twilio"
             },
             "redis": {
                 "config": {
@@ -176,7 +176,7 @@ async def get_resource_types(type: TypeEnum) -> dict:
                     "password": "<password>"
                 },
                 "tags": ['redis'],
-                "name": "Redis server"
+                "name": "Redis"
 
             },
             "mongodb": {
@@ -185,7 +185,15 @@ async def get_resource_types(type: TypeEnum) -> dict:
                     "timeout": 5000
                 },
                 "tags": ['mongo', 'database', 'nosql'],
-                "name": "MongoDB server"
+                "name": "MongoDB"
+            },
+            "trello": {
+                "config": {
+                    "token": "<trello-api-token>",
+                    "api_key": "<trello-api-key>"
+                },
+                "tags": ["trello"],
+                "name": "Trello"
             },
             "token": {
                 "config": {

@@ -16,17 +16,3 @@ git+https://github.com/Tracardi/tracardi-plugin-sdk.git@master
 git+https://github.com/Tracardi/tracardi-wf.git@master
 git+https://github.com/Tracardi/tracardi.git@master
 
-git+https://github.com/Tracardi/tracardi-maxmind-geolite2.git
-
-git+https://github.com/Tracardi/tracardi-pushover-webhook.git
-git+https://github.com/Tracardi/tracardi-discord-webhook.git
-git+https://github.com/Tracardi/tracardi-mysql-connector.git
-git+https://github.com/Tracardi/tracardi-postgresql-connector.git
-git+https://github.com/Tracardi/tracardi-rabbitmq-publisher.git
-git+https://github.com/Tracardi/tracardi-weather.git
-
-git+https://github.com/Tracardi/tracardi-event-scheduler.git
-git+https://github.com/Tracardi/tracardi-sentiment-analysis.git
-git+https://github.com/Tracardi/tracardi-text-classification.git
-git+https://github.com/Tracardi/tracardi-language-detection.git
-git+https://github.com/Tracardi/tracardi-aws-sqs-connector.git

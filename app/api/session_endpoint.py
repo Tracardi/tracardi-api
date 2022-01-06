@@ -4,7 +4,7 @@ from fastapi import HTTPException, Depends
 from fastapi.responses import Response
 from tracardi.domain.session import Session
 from tracardi.service.storage.factory import StorageFor
-from tracardi_graph_runner.domain.entity import Entity
+from tracardi.service.wf.domain.entity import Entity
 from .auth.authentication import get_current_user
 from ..config import server
 

@@ -2,6 +2,8 @@ import logging
 import os
 
 import asyncio
+
+from elasticsearch.helpers.errors import BulkIndexError
 from time import time
 
 import elasticsearch
@@ -12,8 +14,8 @@ from app.api import token_endpoint, rule_endpoint, resource_endpoint, event_endp
     profile_endpoint, flow_endpoint, generic_endpoint, project_endpoint, \
     credentials_endpoint, segments_endpoint, \
     tql_endpoint, health_endpoint, session_endpoint, instance_endpoint, plugins_endpoint, \
-    settings_endpoint, event_source_endpoint, \
-    purchases_endpoint, event_tag_endpoint, consent_type_endpoint, flow_action_endpoint, flows_endpoint, info_endpoint,\
+    settings_endpoint, event_source_endpoint, test_endpoint, \
+    purchases_endpoint, event_tag_endpoint, consent_type_endpoint, flow_action_endpoint, flows_endpoint, info_endpoint, \
     user_endpoint, pro_endpoint, event_schema_validation_endpoint
 from app.api.auth.authentication import get_current_user
 from app.api.graphql.profile import graphql_profiles
@@ -21,7 +23,8 @@ from app.api.scheduler import tasks_endpoint
 from app.api.track import event_server_endpoint
 from app.config import server
 from app.setup.on_start import add_plugins, update_api_instance
-from tracardi.config import tracardi
+from tracardi.config import tracardi, elastic
+from tracardi.exceptions.exception import StorageException
 from tracardi.service.storage.elastic_client import ElasticClient
 from app.setup.indices_setup import create_indices
 from tracardi.service.storage.index import resources
@@ -146,7 +149,7 @@ application.include_router(session_endpoint.router)
 application.include_router(tasks_endpoint.router)
 application.include_router(instance_endpoint.router)
 application.include_router(plugins_endpoint.router)
-# application.include_router(test_endpoint.router)
+application.include_router(test_endpoint.router)
 application.include_router(settings_endpoint.router)
 application.include_router(purchases_endpoint.router)
 application.include_router(event_tag_endpoint.router)
@@ -165,10 +168,22 @@ application.include_router(graphql_profiles,
                            tags=["graphql"])
 
 
+def is_elastic_on_localhost():
+    local_hosts = {'127.0.0.1', 'localhost'}
+    if isinstance(elastic.host, list):
+        return set(elastic.host).intersection(local_hosts)
+    return elastic.host in local_hosts
+
+
 @application.on_event("startup")
 async def app_starts():
+    no_of_tries = 10
     while True:
         try:
+
+            if no_of_tries < 0:
+                break
+
             if server.reset_plugins is True:
                 es = ElasticClient.instance()
                 index = resources.resources['action']
@@ -184,8 +199,23 @@ async def app_starts():
                 await add_plugins()
 
             break
-        except elasticsearch.exceptions.ConnectionError:
+
+        except elasticsearch.exceptions.ConnectionError as e:
             await asyncio.sleep(5)
+            no_of_tries -= 1
+            logger.error(
+                f"Could not connect to elasticsearch. Number of tries left: {no_of_tries}. Waiting 5s to retry.")
+            if is_elastic_on_localhost():
+                logger.warning("You are trying to connect to 127.0.0.1. If this instance is running inside docker "
+                               "then you can not use localhost as elasticsearch is probably outside the container. Use "
+                               "external IP that docker can connect to.")
+            logger.error(f"Error details: {str(e)}")
+
+        except Exception as e:
+            await asyncio.sleep(1)
+            no_of_tries -= 1
+            logger.error(f"Could not save data. Number of tries left: {no_of_tries}. Waiting 1s to retry.")
+            logger.error(f"Error details: {str(e)}")
 
     report_i_am_alive()
     logger.info("START UP exits.")

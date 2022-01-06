@@ -1,11 +1,14 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 
+from app.api.auth.authentication import get_current_user
 from app.config import server
+from app.service.data_generator import generate_fake_data, generate_random_date
 from tracardi.domain.event_source import EventSource
 from tracardi.service.storage.driver import storage
-from tracardi.test_data.initial_data import generate_fake_data, generate_random_date
 
-router = APIRouter()
+router = APIRouter(
+    dependencies=[Depends(get_current_user)]
+)
 
 
 @router.get("/test/resource", tags=["test"], include_in_schema=server.expose_gui_api)
