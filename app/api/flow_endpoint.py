@@ -126,12 +126,13 @@ async def restore_production_flow_backup(id: str, production_draft: ProductionDr
     if flow_record is None:
         raise HTTPException(status_code=404, detail="Flow id: `{}` does not exist.".format(id))
 
-    if production_draft.value == ProductionDraft.production:
-        flow_record.restore_production_from_backup()
-    else:
-        flow_record.restore_draft_from_production()
-
     try:
+
+        if production_draft.value == ProductionDraft.production:
+            flow_record.restore_production_from_backup()
+        else:
+            flow_record.restore_draft_from_production()
+
         result = await storage.driver.flow.save_record(flow_record)
         if result.saved == 1:
             if production_draft.value == ProductionDraft.production:
