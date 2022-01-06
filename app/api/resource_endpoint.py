@@ -187,6 +187,14 @@ async def get_resource_types(type: TypeEnum) -> dict:
                 "tags": ['mongo', 'database', 'nosql'],
                 "name": "MongoDB server"
             },
+            "trello": {
+                "config": {
+                    "token": "<trello-api-token>",
+                    "api_key": "<trello-api-key>"
+                },
+                "tags": ["trello"],
+                "name": "Trello"
+            },
             "token": {
                 "config": {
                     "token": "<token>"
