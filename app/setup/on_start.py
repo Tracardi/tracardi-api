@@ -86,13 +86,7 @@ async def add_plugins():
         'tracardi.process_engine.action.v1.operations.update_event_action',
         'tracardi.process_engine.action.v1.calculator_action',
 
-        # Connectors
-
-        'tracardi.process_engine.action.v1.connectors.api_call.plugin',
-
-
         # Plugins
-
         'tracardi.process_engine.action.v1.traits.reshape_payload_action',
         'tracardi.process_engine.action.v1.detect_client_agent_action',
 
@@ -118,10 +112,7 @@ async def add_plugins():
         'tracardi.process_engine.action.v1.ux.consent.plugin',
 
         # Connectors
-
-        'tracardi_text_classification.plugin',
-
-
+        'tracardi.process_engine.action.v1.connectors.api_call.plugin',
         'tracardi.process_engine.action.v1.connectors.smtp_call.plugin',
         'tracardi.process_engine.action.v1.segments.profile_segmentation.plugin',
         'tracardi.process_engine.action.v1.converters.payload_to_json.plugin',
@@ -133,7 +124,6 @@ async def add_plugins():
         'tracardi.process_engine.action.v1.connectors.trello.delete_card_action.plugin',
         'tracardi.process_engine.action.v1.connectors.trello.move_card_action.plugin',
         'tracardi.process_engine.action.v1.connectors.trello.add_member_action.plugin',
-
         'tracardi.process_engine.action.v1.connectors.amplitude.send_events.plugin',
         'tracardi.process_engine.action.v1.connectors.mongo.query.plugin',
         'tracardi.process_engine.action.v1.connectors.full_contact.person_enrich.plugin',
@@ -148,6 +138,7 @@ async def add_plugins():
         'tracardi.process_engine.action.v1.connectors.aws.sqs.plugin',
         'tracardi.process_engine.action.v1.connectors.meaningcloud.sentiment_analysis.plugin',
         'tracardi.process_engine.action.v1.connectors.meaningcloud.language_detection.plugin',
+        'tracardi.process_engine.action.v1.connectors.meaningcloud.text_classification.plugin',
 
         # Internal
         'tracardi.process_engine.action.v1.internal.event_source_fetcher.plugin',

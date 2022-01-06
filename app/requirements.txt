@@ -16,5 +16,3 @@ git+https://github.com/Tracardi/tracardi-plugin-sdk.git@master
 git+https://github.com/Tracardi/tracardi-wf.git@master
 git+https://github.com/Tracardi/tracardi.git@master
 
-git+https://github.com/Tracardi/tracardi-text-classification.git
-
