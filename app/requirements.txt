@@ -17,7 +17,6 @@ git+https://github.com/Tracardi/tracardi-wf.git@master
 git+https://github.com/Tracardi/tracardi.git@master
 
 git+https://github.com/Tracardi/tracardi-postgresql-connector.git
-git+https://github.com/Tracardi/tracardi-weather.git
 
 git+https://github.com/Tracardi/tracardi-sentiment-analysis.git
 git+https://github.com/Tracardi/tracardi-text-classification.git
