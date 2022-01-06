@@ -119,8 +119,6 @@ async def add_plugins():
 
         # Connectors
 
-
-        'tracardi_sentiment_analysis.plugin',
         'tracardi_text_classification.plugin',
         'tracardi_language_detection.plugin',
 
@@ -148,6 +146,7 @@ async def add_plugins():
         'tracardi.process_engine.action.v1.connectors.postgresql.query.plugin',
         'tracardi.process_engine.action.v1.connectors.weather.msn_weather.plugin',
         'tracardi.process_engine.action.v1.connectors.aws.sqs.plugin',
+        'tracardi.process_engine.action.v1.connectors.meaningcloud.sentiment_analysis.plugin',
 
         # Internal
         'tracardi.process_engine.action.v1.internal.event_source_fetcher.plugin',
