@@ -139,6 +139,11 @@ async def add_plugins():
         'tracardi.process_engine.action.v1.connectors.elasticsearch.query.plugin',
         'tracardi.process_engine.action.v1.connectors.mailchimp.add_to_audience.plugin',
         'tracardi.process_engine.action.v1.connectors.mailchimp.remove_from_audience.plugin',
+        'tracardi.process_engine.action.v1.connectors.trello.add_card_action.plugin',
+        'tracardi.process_engine.action.v1.connectors.trello.delete_card_action.plugin',
+        'tracardi.process_engine.action.v1.connectors.trello.move_card_action.plugin',
+        'tracardi.process_engine.action.v1.connectors.trello.add_member_action.plugin',
+
         'tracardi.process_engine.action.v1.connectors.amplitude.send_events.plugin',
         'tracardi.process_engine.action.v1.connectors.mongo.query.plugin',
         'tracardi.process_engine.action.v1.connectors.full_contact.person_enrich.plugin',
