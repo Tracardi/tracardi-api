@@ -1,5 +1,6 @@
 import asyncio
 import logging
+from datetime import datetime
 from typing import List, Optional
 
 from tracardi.domain.entity import Entity
@@ -21,7 +22,6 @@ from app.api.track.service.merging import merge
 from app.api.track.service.segmentation import segment
 from tracardi.domain.session import Session
 from tracardi.domain.value_object.tracker_payload_result import TrackerPayloadResult
-from tracardi.config import tracardi
 from tracardi.exceptions.exception import UnauthorizedException, StorageException, FieldTypeConflictException
 from tracardi.process_engine.rules_engine import RulesEngine
 from tracardi.domain.value_object.collect_result import CollectResult
@@ -60,6 +60,9 @@ async def _persist(profile_less, console_log: ConsoleLog, session: Session, even
         log_event_journal = console_log.get_indexed_event_journal()
 
         for event in events:
+
+            event.metadata.time.process_time = datetime.timestamp(datetime.utcnow()) - datetime.timestamp(
+                event.metadata.time.insert)
 
             # Reset session id if session is not saved
             if tracker_payload.is_on('saveSession', default=True) is False:

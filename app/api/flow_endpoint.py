@@ -6,7 +6,7 @@ from fastapi import HTTPException, Depends
 from tracardi.domain.time import Time
 
 from tracardi.domain.enum.production_draft import ProductionDraft
-from tracardi.domain.event_metadata import EventMetadata
+from tracardi.domain.event_metadata import EventMetadata, EventTime
 from tracardi.exceptions.exception import StorageException
 from tracardi.domain.console import Console
 from tracardi.service.secrets import encrypt
@@ -19,7 +19,7 @@ from .auth.authentication import get_current_user
 from tracardi.domain.context import Context
 from tracardi.domain.flow_meta_data import FlowMetaData
 from tracardi.domain.entity import Entity
-from tracardi.domain.event import Event
+from tracardi.domain.event import Event, EventSession
 from tracardi.domain.flow import Flow
 from tracardi.service.wf.domain.flow import Flow as GraphFlow
 from tracardi.domain.flow import FlowRecord
@@ -266,12 +266,17 @@ async def debug_flow(flow: GraphFlow):
 
         profile = Profile(id="@debug-profile-id")
         session = Session(id="@debug-session-id", metadata=SessionMetadata())
+        event_session = EventSession(
+            id=session.id,
+            start=session.metadata.time.insert,
+            duration=session.metadata.time.duration
+        )
         session.operation.new = True
-        event = Event(metadata=EventMetadata(time=Time()),
+        event = Event(metadata=EventMetadata(time=EventTime()),
                       id='@debug-event-id',
                       type="@debug-event-type",
                       source=Resource(id="@debug-source-id", type="web-page"),
-                      session=session,
+                      session=event_session,
                       profile=profile,
                       context=Context()
                       )

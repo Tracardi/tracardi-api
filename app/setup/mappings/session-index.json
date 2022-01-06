@@ -22,9 +22,11 @@
                 }
               }
             },
-            "ip": {
-              "type": "keyword",
-              "null_value": "NULL"
+            "timestamp": {
+              "type": "integer"
+            },
+            "duration": {
+              "type": "float"
             }
           }
         },
