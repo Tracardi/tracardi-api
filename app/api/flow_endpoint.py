@@ -283,7 +283,7 @@ async def debug_flow(flow: GraphFlow):
 
         ux = []
 
-        debug_info, log_list, event = await workflow.invoke(flow, event, debug=True)
+        debug_info, log_list, event = await workflow.invoke(flow, event, ux, debug=True)
 
         console_log = []  # type: List[Console]
         profile_save_result = None
