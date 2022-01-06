@@ -129,7 +129,7 @@ async def add_plugins():
         'tracardi_text_classification.plugin',
         'tracardi.process_engine.action.v1.connectors.smtp_call.plugin',
         'tracardi_event_scheduler.plugin',
-        'tracardi_pushover_webhook.plugin',
+
         'tracardi_language_detection.plugin',
         'tracardi.process_engine.action.v1.segments.profile_segmentation.plugin',
         'tracardi_aws_sqs.plugin',
@@ -143,6 +143,7 @@ async def add_plugins():
         'tracardi.process_engine.action.v1.connectors.mongo.query.plugin',
         'tracardi.process_engine.action.v1.connectors.full_contact.person_enrich.plugin',
         'tracardi.process_engine.action.v1.connectors.zapier.webhook.plugin',
+        'tracardi.process_engine.action.v1.connectors.pushover.push.plugin',
 
         # Internal
         'tracardi.process_engine.action.v1.internal.event_source_fetcher.plugin',

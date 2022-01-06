@@ -18,7 +18,6 @@ git+https://github.com/Tracardi/tracardi.git@master
 
 git+https://github.com/Tracardi/tracardi-maxmind-geolite2.git
 
-git+https://github.com/Tracardi/tracardi-pushover-webhook.git
 git+https://github.com/Tracardi/tracardi-discord-webhook.git
 git+https://github.com/Tracardi/tracardi-mysql-connector.git
 git+https://github.com/Tracardi/tracardi-postgresql-connector.git
