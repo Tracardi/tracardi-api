@@ -120,19 +120,13 @@ async def add_plugins():
         # Connectors
 
         'tracardi_weather.plugin',
-
-
-
-        'tracardi_postgresql_connector.plugin',
-
         'tracardi_sentiment_analysis.plugin',
         'tracardi_text_classification.plugin',
-        'tracardi.process_engine.action.v1.connectors.smtp_call.plugin',
-
         'tracardi_language_detection.plugin',
-        'tracardi.process_engine.action.v1.segments.profile_segmentation.plugin',
         'tracardi_aws_sqs.plugin',
 
+        'tracardi.process_engine.action.v1.connectors.smtp_call.plugin',
+        'tracardi.process_engine.action.v1.segments.profile_segmentation.plugin',
         'tracardi.process_engine.action.v1.converters.payload_to_json.plugin',
         'tracardi.process_engine.action.v1.connectors.mailchimp.transactional_email.plugin',
         'tracardi.process_engine.action.v1.connectors.elasticsearch.query.plugin',
@@ -152,6 +146,7 @@ async def add_plugins():
         'tracardi.process_engine.action.v1.connectors.rabbitmq.publish.plugin',
         'tracardi.process_engine.action.v1.connectors.maxmind.geoip.plugin',
         'tracardi.process_engine.action.v1.connectors.mysql.query.plugin',
+        'tracardi.process_engine.action.v1.connectors.postgresql.query.plugin',
 
         # Internal
         'tracardi.process_engine.action.v1.internal.event_source_fetcher.plugin',

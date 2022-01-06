@@ -119,7 +119,7 @@ async def get_resource_types(type: TypeEnum) -> dict:
                     "password": "<password>",
                     "database": "<database>"
                 },
-                "tags": ['database', 'postresql'],
+                "tags": ['database', 'postgresql'],
                 "name": "PostgreSQL"
             },
             "elastic-search": {
