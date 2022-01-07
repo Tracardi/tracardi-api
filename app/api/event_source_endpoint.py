@@ -114,9 +114,14 @@ async def get_event_source_types(type: TypeEnum) -> dict:
             include_in_schema=server.expose_gui_api)
 async def load_event_source(id: str):
     try:
-        return await storage.driver.event_source.load(id)
+        result = await storage.driver.event_source.load(id)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+    if result is None:
+        raise HTTPException(status_code=404, detail="Event source not found")
+
+    return result
 
 
 @router.post("/event-source", tags=["event-source"],
@@ -128,8 +133,9 @@ async def save_event_source(event_source: EventSource):
             result = await storage.driver.event_source.save(event_source)
             if result.is_nothing_saved():
                 raise ValueError("Could not save event source.")
-
-        return True
+            return result
+        else:
+            raise ValueError("Unknown event source type {}. Available {}.".format(event_source.type, types))
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=repr(e))
@@ -140,8 +146,13 @@ async def save_event_source(event_source: EventSource):
 async def delete_event_source(id: str):
     try:
         result = await storage.driver.event_source.delete(id)
-        if result is None:
-            return False
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+    if result is None:
+        raise HTTPException(status_code=404, detail="Event source not found")
+    try:
+        await storage.driver.event_source.refresh()
         return True
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
