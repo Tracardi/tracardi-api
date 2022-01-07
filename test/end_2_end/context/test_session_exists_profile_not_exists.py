@@ -1,13 +1,15 @@
 from uuid import uuid4
+
 import pytest
+
 from ...api.test_event_source import create_event_source
 from ...utils import Endpoint, create_session
 
 endpoint = Endpoint()
 
 
-@pytest.mark.asyncio
 async def test_session_exists_profile_not_exists():
+
     source_id = 'test-source'
     session_id = str(uuid4())
     profile_id = str(uuid4())

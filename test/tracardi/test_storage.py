@@ -1,4 +1,3 @@
-import pytest
 from tracardi.domain.record.flow_action_plugin_record import FlowActionPluginRecord
 from tracardi.domain.record.event_debug_record import EventDebugRecord
 from tracardi.domain.segment import Segment
@@ -18,8 +17,8 @@ from tracardi.service.storage.factory import StorageFor
 from tracardi.service.wf.service.builders import action
 
 
-@pytest.mark.asyncio
-async def test_storage():
+async def test_storage(event_loop):
+    print(event_loop)
     # Create flow
 
     debug = action(DebugPayloadAction, {

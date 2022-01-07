@@ -1,20 +1,21 @@
 from uuid import uuid4
-import pytest
 from ...api.test_event_source import create_event_source
-from ...api.test_profile import create_profile
 from ...utils import Endpoint, create_session
 
 endpoint = Endpoint()
 
 
-@pytest.mark.asyncio
 async def test_session_exists_profile_exists():
     source_id = 'test-source'
     session_id = str(uuid4())
     profile_id = str(uuid4())
-    print(session_id)
+
     await create_session(session_id, profile_id)
-    await create_profile(profile_id)
+
+    response = endpoint.post('/profiles/import', data=[{"id": profile_id}])
+    result = response.json()
+    assert result["saved"] == 1
+    assert response.status_code == 200
 
     # Assert session and profile exists
 
