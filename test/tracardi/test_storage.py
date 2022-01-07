@@ -1,5 +1,4 @@
-import asyncio
-from tracardi.domain.entity import Entity
+import pytest
 from tracardi.domain.record.flow_action_plugin_record import FlowActionPluginRecord
 from tracardi.domain.record.event_debug_record import EventDebugRecord
 from tracardi.domain.segment import Segment
@@ -13,14 +12,14 @@ from tracardi.process_engine.action.v1.start_action import register, StartAction
 from tracardi.domain.flow_action_plugin import FlowActionPlugin
 from tracardi.domain.flow import Flow
 from tracardi.domain.profile import Profile
-from tracardi.domain.resource import  ResourceRecord
+from tracardi.domain.resource import ResourceRecord
 from tracardi.domain.session import Session, SessionMetadata
-from tracardi.service.storage.driver import storage
 from tracardi.service.storage.factory import StorageFor
 from tracardi.service.wf.service.builders import action
 
 
-def test_storage():
+@pytest.mark.asyncio
+async def test_storage():
     # Create flow
 
     debug = action(DebugPayloadAction, {
@@ -41,7 +40,7 @@ def test_storage():
 
     objects = [
         Profile(id="1"),
-        Session(id="1", profile=Profile(id="1"),metadata=SessionMetadata()),
+        Session(id="1", profile=Profile(id="1"), metadata=SessionMetadata()),
         flow_record,
         ResourceRecord(id="2", type="test"),
         Rule(id="1", name="rule",
@@ -53,24 +52,18 @@ def test_storage():
         FlowActionPluginRecord.encode(FlowActionPlugin(id="2", plugin=register())),
     ]
 
-    loop = asyncio.get_event_loop()
+    for instance in objects:
+        db = StorageFor(instance).index()
 
-    async def main():
-        for instance in objects:
-            db = StorageFor(instance).index()
+        result = await db.save()
+        assert result.saved == 1
 
-            result = await db.save()
-            assert result.saved == 1
+        await db.refresh()
 
-            await db.refresh()
+        result = await db.load()
 
-            result = await db.load()
+        assert isinstance(result, db.domain_class_ref)
 
-            assert isinstance(result, db.domain_class_ref)
-
-        for instance in objects:
-            db = StorageFor(instance).index()
-            await db.delete()
-
-    loop.run_until_complete(main())
-    loop.close()
+    for instance in objects:
+        db = StorageFor(instance).index()
+        await db.delete()
