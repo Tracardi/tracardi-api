@@ -1,6 +1,6 @@
 from time import sleep
 from .test_event_source import create_event_source
-from tracardi_tests.utils.utils import Endpoint
+from ..utils import Endpoint
 
 endpoint = Endpoint()
 

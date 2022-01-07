@@ -1,8 +1,8 @@
 import pytest
 
+from ...utils import Endpoint
 from tracardi.process_engine.action.v1.connectors.api_call.plugin import RemoteCallAction
 from tracardi.service.plugin.service.plugin_runner import run_plugin
-from tracardi_tests.utils.utils import Endpoint
 
 
 def test_remote_call_ok():

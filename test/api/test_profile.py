@@ -3,7 +3,7 @@ from uuid import uuid4
 from tracardi.domain.profile import Profile
 from tracardi.service.storage.driver import storage
 from tracardi.service.storage.factory import StorageFor
-from tracardi_tests.utils.utils import Endpoint
+from ..utils import Endpoint
 
 endpoint = Endpoint()
 

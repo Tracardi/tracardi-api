@@ -1,6 +1,6 @@
 from uuid import uuid4
 
-from tracardi_tests.utils.utils import Endpoint
+from ..utils import Endpoint
 
 endpoint = Endpoint()
 

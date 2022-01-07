@@ -4,7 +4,7 @@ from tracardi.domain.flow import Flow
 from tracardi.process_engine.action.v1.end_action import EndAction
 from tracardi.service.wf.service.builders import action
 
-from tracardi_tests.utils.utils import Endpoint
+from ..utils import Endpoint
 
 endpoint = Endpoint()
 
