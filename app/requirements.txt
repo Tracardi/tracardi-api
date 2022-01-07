@@ -13,6 +13,5 @@ lark==1.0.0
 
 
 git+https://github.com/Tracardi/tracardi-plugin-sdk.git@master
-git+https://github.com/Tracardi/tracardi-wf.git@master
 git+https://github.com/Tracardi/tracardi.git@master
 

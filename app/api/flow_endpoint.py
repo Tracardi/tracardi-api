@@ -14,7 +14,7 @@ from tracardi.service.storage.driver import storage
 from tracardi.service.storage.factory import StorageFor
 from tracardi.service.wf.domain.flow_history import FlowHistory
 from tracardi.service.wf.domain.work_flow import WorkFlow
-from tracardi_plugin_sdk.domain.console import Log
+from tracardi.service.plugin.domain.console import Log
 from .auth.authentication import get_current_user
 from tracardi.domain.context import Context
 from tracardi.domain.flow_meta_data import FlowMetaData

@@ -8,7 +8,7 @@ from tracardi.domain.entity import Entity
 from app.api.domain.console_log import ConsoleLog
 from app.config import server
 from tracardi.event_server.utils.memory_cache import MemoryCache, CacheItem
-from tracardi_dot_notation.dot_accessor import DotAccessor
+from tracardi.service.notation.dot_accessor import DotAccessor
 
 from tracardi.domain.event_payload_validator import EventPayloadValidator
 from tracardi.domain.value_object.bulk_insert_result import BulkInsertResult

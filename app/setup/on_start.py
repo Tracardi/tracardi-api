@@ -8,7 +8,7 @@ from tracardi.domain.api_instance import ApiInstance
 from tracardi.service.module_loader import pip_install, load_callable, import_package
 from tracardi.service.storage.driver import storage
 from tracardi.service.storage.factory import StorageFor
-from tracardi_plugin_sdk.domain.register import Plugin
+from tracardi.service.plugin.domain.register import Plugin
 
 
 __local_dir = os.path.dirname(__file__)
