@@ -1,6 +1,6 @@
 from uuid import uuid4
 from ...api.test_event_source import create_event_source
-from ...utils import Endpoint
+from ...utils import Endpoint, get_profile, get_session
 
 endpoint = Endpoint()
 
@@ -10,8 +10,8 @@ def test_session_not_exists_profile_not_exists():
     session_id = str(uuid4())
     profile_id = str(uuid4())
 
-    assert endpoint.get(f'/session/{session_id}').status_code == 404  # No session
-    assert endpoint.get(f'/profile/{profile_id}').status_code == 404  # No profile
+    assert get_session(session_id).status_code == 404  # No session
+    assert get_profile(profile_id).status_code == 404  # No profile
     assert create_event_source(source_id, 'javascript').status_code == 200
 
     response = endpoint.post("/track", data={

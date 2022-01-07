@@ -1,26 +1,22 @@
 from uuid import uuid4
 from ...api.test_event_source import create_event_source
-from ...utils import Endpoint, create_session
+from ...utils import Endpoint, create_session, create_profile, get_session, get_profile
 
 endpoint = Endpoint()
 
 
-async def test_session_exists_profile_exists():
+def test_session_exists_profile_exists():
     source_id = 'test-source'
     session_id = str(uuid4())
     profile_id = str(uuid4())
 
-    await create_session(session_id, profile_id)
-
-    response = endpoint.post('/profiles/import', data=[{"id": profile_id}])
-    result = response.json()
-    assert result["saved"] == 1
-    assert response.status_code == 200
+    create_session(session_id, profile_id)
+    create_profile(profile_id)
 
     # Assert session and profile exists
 
-    assert endpoint.get(f'/session/{session_id}').status_code == 200
-    assert endpoint.get(f'/profile/{profile_id}').status_code == 200
+    assert get_session(session_id).status_code == 200
+    assert get_profile(profile_id).status_code == 200
     assert create_event_source(source_id, 'javascript').status_code == 200
 
     response = endpoint.post("/track", data={

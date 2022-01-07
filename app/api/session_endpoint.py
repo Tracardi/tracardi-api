@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, List
 from fastapi import APIRouter
 from fastapi import HTTPException, Depends
 from fastapi.responses import Response
@@ -11,6 +11,14 @@ from ..config import server
 router = APIRouter(
     dependencies=[Depends(get_current_user)]
 )
+
+
+@router.post("/sessions/import", tags=["profile"], include_in_schema=server.expose_gui_api)
+async def import_profiles(sessions: List[Session]):
+    try:
+        return await storage.driver.session.save_sessions(sessions)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.get("/session/{id}",

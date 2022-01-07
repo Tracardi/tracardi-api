@@ -3,11 +3,8 @@ import json
 import os
 import requests
 from dotenv import load_dotenv
-
 from tracardi.domain.profile import Profile
 from tracardi.domain.session import Session, SessionMetadata
-from tracardi.service.storage.driver import storage
-from tracardi.service.storage.factory import StorageFor
 
 load_dotenv()
 
@@ -46,16 +43,42 @@ class Endpoint:
         return self.request(endpoint, json.dumps(data), params=params, method="delete")
 
 
-async def create_session(session_id, profile_id=None):
+def create_session(session_id, profile_id=None):
     if profile_id is not None:
         session = Session(id=session_id, profile=Profile(id=profile_id), metadata=SessionMetadata())
     else:
         session = Session(id=session_id, metadata=SessionMetadata())
 
-    result = await StorageFor(session).index().save()
-    assert result.saved == 1
-    await storage.driver.session.refresh()
+    session = json.loads(session.json())
+
+    endpoint = Endpoint()
+    response = endpoint.post("/sessions/import", data=[session])
+    result = response.json()
+    assert response.status_code == 200
+    assert result['saved'] == 1
+    assert endpoint.get("/sessions/refresh").status_code == 200
+
     return result
+
+
+def create_profile(profile_id):
+    endpoint = Endpoint()
+    response = endpoint.post('/profiles/import', data=[{"id": profile_id}])
+    result = response.json()
+    assert result["saved"] == 1
+    assert response.status_code == 200
+
+    assert endpoint.get("/profiles/refresh").status_code == 200
+
+
+def get_session(session_id):
+    endpoint = Endpoint()
+    return endpoint.get(f'/session/{session_id}')
+
+
+def get_profile(session_id):
+    endpoint = Endpoint()
+    return endpoint.get(f'/profile/{session_id}')
 
 
 def run_new_event_loop(func, **kwargs):
