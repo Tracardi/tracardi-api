@@ -19,6 +19,9 @@
               "properties": {
                 "insert": {
                   "type": "date"
+                },
+                "process_time": {
+                  "type": "float"
                 }
               }
             },
@@ -64,6 +67,12 @@
           "properties": {
             "id": {
               "type": "keyword"
+            },
+            "start": {
+              "type": "date"
+            },
+            "duration": {
+              "type": "float"
             }
           }
         },
