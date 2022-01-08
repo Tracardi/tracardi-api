@@ -37,6 +37,9 @@ def test_session_exists_profile_exists():
         })
         result = response.json()
 
+        assert endpoint.get(f'/profiles/refresh').status_code == 200
+        assert endpoint.get(f'/sessions/refresh').status_code == 200
+
         assert result['debugging']['session']['saved'] == 0  # session is not saved because it did not change
         assert result['debugging']['events']['saved'] == 1
         assert result['debugging']['profile']['saved'] == 0  # profile is not saved because it exists
@@ -49,6 +52,6 @@ def test_session_exists_profile_exists():
         assert endpoint.delete(f'/profile/{new_profile_id}').status_code == 200
 
     finally:
-        assert endpoint.delete(f'/session/{session_id}').status_code in [200, 404]
         assert endpoint.delete(f'/event-source/{source_id}').status_code in [200, 404]
         assert endpoint.delete(f'/profile/{profile_id}').status_code in [200, 404]
+        assert endpoint.delete(f'/session/{session_id}').status_code in [200, 404]

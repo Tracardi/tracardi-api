@@ -47,10 +47,10 @@ async def get_profile_by_id(id: str, response: Response):
 
 @router.delete("/profile/{id}", tags=["profile"], response_model=Optional[dict], include_in_schema=server.expose_gui_api)
 async def delete_profile(id: str, response: Response):
-    try:
-        result = await storage.driver.profile.delete(id)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    # try:
+    result = await storage.driver.profile.delete(id)
+    # except Exception as e:
+    #     raise HTTPException(status_code=500, detail=str(e))
 
     if result['deleted'] == 0:
         response.status_code = 404

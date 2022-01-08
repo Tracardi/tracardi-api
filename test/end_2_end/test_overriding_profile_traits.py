@@ -158,6 +158,12 @@ def test_source_rule_and_flow():
         profile_id = result['profile']['id']
 
     finally:
+        assert endpoint.get(f'/profiles/refresh').status_code == 200
+        assert endpoint.get(f'/sessions/refresh').status_code == 200
+        assert endpoint.get(f'/rules/refresh').status_code == 200
+        assert endpoint.get(f'/flows/refresh').status_code == 200
+        assert endpoint.get(f'/event-sources/refresh').status_code == 200
+
         assert endpoint.delete(f'/profile/{profile_id}').status_code in [200, 404]
         assert endpoint.delete(f'/flow/{flow_id_1}').status_code in [200, 404]
         assert endpoint.delete(f'/flow/{flow_id_2}').status_code in [200, 404]

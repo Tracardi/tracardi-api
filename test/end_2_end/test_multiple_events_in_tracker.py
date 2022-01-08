@@ -120,15 +120,24 @@ def test_source_rule_and_flow():
             }
 
         response = endpoint.post("/track", data=payload)
+
+        assert endpoint.get(f'/profiles/refresh').status_code == 200
+        assert endpoint.get(f'/sessions/refresh').status_code == 200
+
         assert response.status_code == 200
         result = response.json()
         profile_id = result['profile']['id']
+        assert endpoint.delete(f'/profile/{profile_id}').status_code in [200, 404]
 
         assert result['profile']['stats']['views'] == 30
 
     finally:
+        assert endpoint.get(f'/profiles/refresh').status_code == 200
+        assert endpoint.get(f'/sessions/refresh').status_code == 200
+        assert endpoint.get(f'/rules/refresh').status_code == 200
+        assert endpoint.get(f'/flows/refresh').status_code == 200
+        assert endpoint.get(f'/event-sources/refresh').status_code == 200
 
-        # Remove flow
         assert endpoint.delete(f'/flow/{flow_id}').status_code in [200, 404]
         assert endpoint.delete(f'/rule/{rule_id}').status_code in [200, 404]
         assert endpoint.delete(f'/event-source/{source_id}').status_code in [200, 404]

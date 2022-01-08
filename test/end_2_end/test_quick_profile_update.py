@@ -115,7 +115,12 @@ def test_should_correctly_update_profile_on_concurrent_events():
         print(time() - start)
 
     finally:
-        # Delete
+        assert endpoint.get(f'/profiles/refresh').status_code == 200
+        assert endpoint.get(f'/sessions/refresh').status_code == 200
+        assert endpoint.get(f'/rules/refresh').status_code == 200
+        assert endpoint.get(f'/flows/refresh').status_code == 200
+        assert endpoint.get(f'/event-sources/refresh').status_code == 200
+
         assert endpoint.delete(f'/profile/{profile_id}').status_code in [200, 404]
         assert endpoint.delete(f'/flow/{flow_id}').status_code in [200, 404]
         assert endpoint.delete(f'/rule/{rule_id}').status_code in [200, 404]

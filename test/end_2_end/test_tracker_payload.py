@@ -43,5 +43,9 @@ def test_track_payload():
         assert endpoint.delete(f'/profile/{profile_id}').status_code == 200
 
     finally:
+
+        assert endpoint.get(f'/sessions/refresh').status_code == 200
+        assert endpoint.get(f'/event-sources/refresh').status_code == 200
+
         assert endpoint.delete(f'/event-source/{source_id}').status_code in [200, 404]
         assert endpoint.delete(f'/session/{session_id}').status_code in [200, 404]

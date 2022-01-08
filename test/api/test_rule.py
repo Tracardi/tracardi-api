@@ -50,13 +50,15 @@ def test_should_create_new_rule():
 
     flow_id = str(uuid4())
     rule_id = str(uuid4())
+    source_id = str(uuid4())
+
     try:
         # Add source
 
-        assert create_event_source("2", "javascript").status_code == 200
+        assert create_event_source(source_id, "javascript").status_code == 200
         assert endpoint.get('/event-sources/refresh').status_code == 200
 
-        response = endpoint.get('/event-source/2')
+        response = endpoint.get(f'/event-source/{source_id}')
         assert response.status_code == 200
 
         # Create rule with new source
@@ -72,7 +74,7 @@ def test_should_create_new_rule():
                 "name": "string"
             },
             "source": {
-                "id": "2",
+                "id": source_id,
                 "name": "javascript"
             },
             "enabled": True
@@ -93,5 +95,10 @@ def test_should_create_new_rule():
         assert result['id'] == flow_id
 
     finally:
+        assert endpoint.get('/rules/refresh').status_code == 200
+        assert endpoint.get('/flows/refresh').status_code == 200
+        assert endpoint.get('/event-sources/refresh').status_code == 200
+
         assert endpoint.delete(f'/flow/{flow_id}').status_code in [200, 404]
         assert endpoint.delete(f'/rule/{rule_id}').status_code in [200, 404]
+        assert endpoint.delete(f'/event-source/{source_id}').status_code in [200, 404]

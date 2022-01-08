@@ -129,6 +129,12 @@ def test_source_rule_and_flow():
             print(time() - start)
 
         finally:
+            assert endpoint.get(f'/profiles/refresh').status_code == 200
+            assert endpoint.get(f'/sessions/refresh').status_code == 200
+            assert endpoint.get(f'/rules/refresh').status_code == 200
+            assert endpoint.get(f'/flows/refresh').status_code == 200
+            assert endpoint.get(f'/event-sources/refresh').status_code == 200
+
             if profile_id is not None:
                 # Delete profile
                 assert endpoint.delete(f'/profile/{profile_id}').status_code in [200, 404]
