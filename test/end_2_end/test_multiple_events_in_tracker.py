@@ -131,11 +131,6 @@ def test_source_rule_and_flow():
         # Remove flow
         assert endpoint.delete(f'/flow/{flow_id}').status_code in [200, 404]
         assert endpoint.delete(f'/rule/{rule_id}').status_code in [200, 404]
-        assert endpoint.delete(f'/event-source/{flow_id}').status_code in [200, 404]
+        assert endpoint.delete(f'/event-source/{source_id}').status_code in [200, 404]
         assert endpoint.delete(f'/session/{session_id}').status_code in [200, 404]
 
-        # Refresh
-        assert endpoint.get('/event-sources/refresh').status_code == 200
-        assert endpoint.get('/sessions/refresh').status_code == 200
-        assert endpoint.get('/rules/refresh').status_code == 200
-        assert endpoint.get('/flows/refresh').status_code == 200

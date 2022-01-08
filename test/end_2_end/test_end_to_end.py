@@ -73,7 +73,7 @@ def test_source_rule_and_flow():
         increase_views = action(IncreaseViewsAction)
         end = action(EndAction)
 
-        flow = Flow.build("End2End - flow", id=flow_id)
+        flow = Flow.build("End2End flow", id=flow_id)
         flow += debug('event') >> start('payload')
         flow += start('payload') >> increase_views('payload')
         flow += increase_views('payload') >> end('payload')

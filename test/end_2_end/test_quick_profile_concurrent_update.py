@@ -103,7 +103,10 @@ def test_source_rule_and_flow():
 
             # create profile_id
             result = call("none")
+
             assert endpoint.get('/profiles/refresh').status_code == 200
+            assert endpoint.get('/sessions/refresh').status_code == 200
+
             profile_id = result['profile']['id']
 
             loop = asyncio.get_event_loop()
@@ -118,7 +121,10 @@ def test_source_rule_and_flow():
             loop.run_until_complete(asyncio.gather(*coros))
 
             result = call(profile_id)
+
             assert endpoint.get('/profiles/refresh').status_code == 200
+            assert endpoint.get('/sessions/refresh').status_code == 200
+
             assert result['profile']['stats']['views'] == 22
             print(time() - start)
 
@@ -129,4 +135,6 @@ def test_source_rule_and_flow():
 
             # Delete flows and rules
             assert endpoint.delete(f'/flow/{flow_id_1}').status_code in [200, 404]
-
+            assert endpoint.delete(f'/rule/{rule_id_1}').status_code in [200, 404]
+            assert endpoint.delete(f'/event-source/{source_id}').status_code in [200, 404]
+            assert endpoint.delete(f'/session/{session_id}').status_code in [200, 404]

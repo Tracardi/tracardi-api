@@ -105,7 +105,10 @@ def test_should_correctly_update_profile_on_concurrent_events():
             print(profile_id, result['profile']['stats']['views'])
 
         response = endpoint.post("/track", data=payload)
+
         assert endpoint.get('/profiles/refresh').status_code == 200
+        assert endpoint.get('/sessions/refresh').status_code == 200
+
         assert response.status_code == 200
         result = response.json()
         assert result['profile']['stats']['views'] == 11
@@ -119,9 +122,3 @@ def test_should_correctly_update_profile_on_concurrent_events():
         assert endpoint.delete(f'/session/{session_id}').status_code in [200, 404, 500]
         assert endpoint.delete(f'/event-source/{source_id}').status_code in [200, 404]
 
-        # Refresh
-        assert endpoint.get('/event-sources/refresh').status_code == 200
-        assert endpoint.get('/profiles/refresh').status_code == 200
-        assert endpoint.get('/sessions/refresh').status_code == 200
-        assert endpoint.get('/rules/refresh').status_code == 200
-        assert endpoint.get('/flows/refresh').status_code == 200
