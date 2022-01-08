@@ -14,12 +14,12 @@ endpoint = Endpoint()
 
 
 def test_source_rule_and_flow():
-
     source_id = str(uuid4())
     flow_id = str(uuid4())
     rule_id = str(uuid4())
     event_type = 'my-event'
     session_id = str(uuid4())
+    segment_id = str(uuid4())
 
     try:
 
@@ -80,8 +80,6 @@ def test_source_rule_and_flow():
 
         assert endpoint.post('/flow/production', data=flow.dict()).status_code == 200
         assert endpoint.get('/flows/refresh').status_code == 200
-
-        segment_id = "segment-id"
 
         assert endpoint.post('/segment', data={
             "id": segment_id,
@@ -150,10 +148,4 @@ def test_source_rule_and_flow():
         assert endpoint.delete(f'/rule/{rule_id}').status_code in [200, 404]
         assert endpoint.delete(f'/event-source/{source_id}').status_code in [200, 404]
         assert endpoint.delete(f'/session/{session_id}').status_code in [200, 404]
-
-        # Refresh
-        assert endpoint.get('/event-sources/refresh').status_code == 200
-        assert endpoint.get('/sessions/refresh').status_code == 200
-        assert endpoint.get('/rules/refresh').status_code == 200
-        assert endpoint.get('/flows/refresh').status_code == 200
-
+        assert endpoint.delete(f'/segment/{segment_id}').status_code in [200, 404]
