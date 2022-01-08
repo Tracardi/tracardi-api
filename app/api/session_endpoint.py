@@ -13,7 +13,12 @@ router = APIRouter(
 )
 
 
-@router.post("/sessions/import", tags=["profile"], include_in_schema=server.expose_gui_api)
+@router.get("/sessions/refresh", tags=["session"], include_in_schema=server.expose_gui_api)
+async def session_refresh():
+    return await storage.driver.session.refresh()
+
+
+@router.post("/sessions/import", tags=["session"], include_in_schema=server.expose_gui_api)
 async def import_profiles(sessions: List[Session]):
     try:
         return await storage.driver.session.save_sessions(sessions)
@@ -37,6 +42,16 @@ async def get_session_by_id(id: str, response: Response):
     return result
 
 
-@router.get("/sessions/{id}", tags=["session"], include_in_schema=server.expose_gui_api)
-async def session_refresh():
-    return await storage.driver.session.refresh()
+@router.delete("/session/{id}", tags=["session"], include_in_schema=server.expose_gui_api)
+async def delete_session(id: str, response: Response):
+
+    # try:
+    result = await storage.driver.session.delete(id)
+    # except Exception as e:
+    #     raise HTTPException(status_code=500, detail=str(e))
+
+    if result['deleted'] == 0:
+        response.status_code = 404
+        return None
+
+    return result

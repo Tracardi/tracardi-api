@@ -1,11 +1,27 @@
-from time import sleep
+from uuid import uuid4
+
 from .test_event_source import create_event_source
 from ..utils import Endpoint
 
 endpoint = Endpoint()
 
 
-def test_new_rule():
+def test_should_return_404_on_get_rule_if_none():
+    session_id = str(uuid4())
+    response = endpoint.get(f'/rule/{session_id}')
+    assert response.status_code == 404
+    assert response.json() is None
+
+
+def test_should_return_404_on_delete_rule_if_none():
+    session_id = str(uuid4())
+    response = endpoint.delete(f'/rule/{session_id}')
+    assert response.status_code == 404
+    assert response.json() is None
+
+
+def test_should_return_error_if_incorrect_source_id():
+
     data = {
         "id": "rule_id",
         "name": "string",
@@ -29,32 +45,53 @@ def test_new_rule():
     result = response.json()
     assert result['detail'] == 'Incorrect source id: `string`'
 
-    # Add source
 
-    assert create_event_source("2", "javascript").status_code == 200
-    assert endpoint.get('/event-sources/refresh').status_code == 200
+def test_should_create_new_rule():
 
-    response = endpoint.get('/event-source/2')
-    assert response.status_code == 200
+    flow_id = str(uuid4())
+    rule_id = str(uuid4())
+    try:
+        # Add source
 
-    # Create rule with new source
+        assert create_event_source("2", "javascript").status_code == 200
+        assert endpoint.get('/event-sources/refresh').status_code == 200
 
-    data['source']['id'] = "2"
-    data['source']['name'] = "javascript"
+        response = endpoint.get('/event-source/2')
+        assert response.status_code == 200
 
-    response = endpoint.post('/rule', data=data)
-    result = response.json()
-    print(result)
-    print(data)
-    assert response.status_code == 200
-    assert result == {'saved': 1, 'errors': [], 'ids': ['rule_id']}
+        # Create rule with new source
 
-    # Check if flow was created
-    sleep(1)
-    response = endpoint.get('/flow/metadata/flow_id')
-    assert response.status_code == 200
-    result = response.json()
-    assert result['id'] == 'flow_id'
+        data = {
+            "id": rule_id,
+            "name": "string",
+            "event": {
+                "type": "string"
+            },
+            "flow": {
+                "id": flow_id,
+                "name": "string"
+            },
+            "source": {
+                "id": "2",
+                "name": "javascript"
+            },
+            "enabled": True
+        }
 
-    # Delete flow - it should delete also rule
-    assert endpoint.delete('/flow/flow_id').status_code == 200
+        response = endpoint.post('/rule', data=data)
+        result = response.json()
+
+        assert response.status_code == 200
+        assert result == {'saved': 1, 'errors': [], 'ids': [rule_id]}
+
+        # Check if flow was created
+        assert endpoint.get('/rules/refresh').status_code == 200
+
+        response = endpoint.get(f'/flow/metadata/{flow_id}')
+        assert response.status_code == 200
+        result = response.json()
+        assert result['id'] == flow_id
+
+    finally:
+        assert endpoint.delete(f'/flow/{flow_id}').status_code in [200, 404]
+        assert endpoint.delete(f'/rule/{rule_id}').status_code in [200, 404]

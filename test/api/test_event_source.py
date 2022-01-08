@@ -1,6 +1,22 @@
+from uuid import uuid4
+
 from ..utils import Endpoint
 
 endpoint = Endpoint()
+
+
+def test_should_return_404_on_get_event_source_if_none():
+    event_source_id = str(uuid4())
+    response = endpoint.get(f'/event-source/{event_source_id}')
+    assert response.status_code == 404
+    assert response.json() is None
+
+
+def test_should_return_404_on_delete_event_source_if_none():
+    event_source_id = str(uuid4())
+    response = endpoint.delete(f'/event-source/{event_source_id}')
+    assert response.status_code == 404
+    assert response.json() is None
 
 
 def create_event_source(id, type, name="Test", config=None):
@@ -34,32 +50,25 @@ def test_event_source_types():
 
 
 def test_event_source_create_ok():
-    id = "1"
+    id = str(uuid4())
 
-    response = create_event_source(id, "javascript")
-    result = response.json()
-    assert response.status_code == 200
-    assert result == {'errors': [], 'ids': ['1'], 'saved': 1}
+    try:
+        response = create_event_source(id, "javascript")
+        result = response.json()
+        assert response.status_code == 200
+        assert result == {'errors': [], 'ids': [id], 'saved': 1}
 
-    # refresh result and see if there is new data
-    response = endpoint.get('/event-sources/refresh')
-    assert response.status_code == 200
+        # refresh result and see if there is new data
+        assert endpoint.get('/event-sources/refresh').status_code == 200
 
-    # get new data
-    response = endpoint.get(f'/event-source/{id}')
-    assert response.status_code == 200
-    result = response.json()
-    assert result is not None
+        # get new data
+        response = endpoint.get(f'/event-source/{id}')
+        assert response.status_code == 200
+        result = response.json()
+        assert result is not None
 
-
-def test_resource_get_ok():
-    response = endpoint.delete('/event-source/2')
-    print(response.json(), response.status_code)
-    assert response.status_code in [404, 200]
-
-    response = endpoint.get('/event-source/2')
-    print(response.json(), response.status_code)
-    assert response.status_code == 404
+    finally:
+        assert endpoint.delete(f'/event-source/{id}').status_code in [200, 404]
 
 
 def test_resources_by_tag():

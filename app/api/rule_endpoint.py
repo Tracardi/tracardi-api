@@ -1,8 +1,7 @@
 import asyncio
 from typing import List
 
-from fastapi import APIRouter
-from fastapi import HTTPException, Depends
+from fastapi import APIRouter, Response, HTTPException, Depends
 
 from tracardi.domain.event_source import EventSource
 from tracardi.service.storage.driver import storage
@@ -21,16 +20,21 @@ router = APIRouter(
 
 
 @router.get("/rule/{id}", tags=["rule"], response_model=Rule, include_in_schema=server.expose_gui_api)
-async def get_rule(id: str):
+async def get_rule(id: str, response: Response):
     """
     Returns rule or None if rule does not exist.
     """
 
     try:
-        rule = Entity(id=id)
-        return await StorageFor(rule).index("rule").load(Rule)
+        result = await StorageFor(Entity(id=id)).index("rule").load(Rule)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+    if result is None:
+        response.status_code = 404
+        return None
+
+    return result
 
 
 @router.post("/rule", tags=["rule"], include_in_schema=server.expose_gui_api)
@@ -68,13 +72,18 @@ async def upsert_rule(rule: Rule):
 
 
 @router.delete("/rule/{id}", tags=["rule"], include_in_schema=server.expose_gui_api)
-async def delete_rule(id: str):
+async def delete_rule(id: str, response: Response):
     try:
         result = await StorageFor(Entity(id=id)).index("rule").delete()
-        await storage.driver.rule.refresh()
-        return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+    if result is None:
+        response.status_code = 404
+        return None
+
+    await storage.driver.rule.refresh()
+    return result
 
 
 @router.get("/rules/by_flow/{id}", tags=["rules"], response_model=List[Rule], include_in_schema=server.expose_gui_api)

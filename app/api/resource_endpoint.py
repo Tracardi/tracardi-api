@@ -1,8 +1,7 @@
 import logging
 from collections import defaultdict
 from typing import Optional
-from fastapi import APIRouter
-from fastapi import HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends, Response
 
 from tracardi.domain.enum.type_enum import TypeEnum
 from tracardi.service.storage.driver import storage
@@ -379,9 +378,9 @@ async def set_resource_property_off(id: str, type: IndexesSourceBool):
 
 @router.get("/resource/{id}",
             tags=["resource"],
-            response_model=Resource,
+            response_model=Optional[Resource],
             include_in_schema=server.expose_gui_api)
-async def get_resource_by_id(id: str) -> Optional[Resource]:
+async def get_resource_by_id(id: str, response: Response) -> Optional[Resource]:
     """
     Returns source data with given id.
 
@@ -396,7 +395,8 @@ async def get_resource_by_id(id: str) -> Optional[Resource]:
     if record is not None:
         return record.decode()
 
-    raise HTTPException(status_code=404, detail="Resource id: {} does not exist.".format(id))
+    response.status_code = 404
+    return None
 
 
 @router.post("/resource", tags=["resource"],
@@ -413,15 +413,15 @@ async def upsert_resource(resource: Resource):
 @router.delete("/resource/{id}", tags=["resource"],
                response_model=dict,
                include_in_schema=server.expose_gui_api)
-async def delete_resource(id: str):
+async def delete_resource(id: str, response: Response):
     try:
-        entity = Entity(id=id)
-        result = await StorageFor(entity).index("resource").delete()
+        result = await StorageFor(Entity(id=id)).index("resource").delete()
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
     if result is None:
-        raise HTTPException(status_code=404, detail="Resource id: {} does not exist.".format(id))
+        response.status_code = 404
+        return None
 
     return result
 

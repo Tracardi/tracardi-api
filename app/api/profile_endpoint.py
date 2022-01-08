@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 from fastapi import APIRouter
 from fastapi import HTTPException, Depends
@@ -45,13 +45,18 @@ async def get_profile_by_id(id: str, response: Response):
     return result
 
 
-@router.delete("/profile/{id}", tags=["profile"], response_model=dict, include_in_schema=server.expose_gui_api)
-async def delete_profile(id: str):
+@router.delete("/profile/{id}", tags=["profile"], response_model=Optional[dict], include_in_schema=server.expose_gui_api)
+async def delete_profile(id: str, response: Response):
     try:
-        profile = Profile(id=id)
-        return await StorageFor(profile).index().delete()
+        result = await storage.driver.profile.delete(id)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+    if result['deleted'] == 0:
+        response.status_code = 404
+        return None
+
+    return result
 
 
 @router.get("/profile/logs/{id}", tags=["profile"], response_model=list, include_in_schema=server.expose_gui_api)

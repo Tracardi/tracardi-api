@@ -81,8 +81,3 @@ def get_profile(session_id):
     return endpoint.get(f'/profile/{session_id}')
 
 
-def run_new_event_loop(func, **kwargs):
-    asyncio.set_event_loop(asyncio.new_event_loop())
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(func(**kwargs))
-    loop.close()

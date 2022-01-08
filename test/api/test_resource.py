@@ -1,10 +1,27 @@
+from uuid import uuid4
+
 from ..utils import Endpoint
 
 endpoint = Endpoint()
 
 
-def create_resource(id, type, name="Test", config=None):
+def test_should_return_404_on_get_resource_if_none():
+    resource_id = str(uuid4())
+    response = endpoint.get(f'/resource/{resource_id}')
+    assert response.status_code == 404
+    assert response.json() is None
 
+
+def test_should_return_404_on_delete_resource_if_none():
+    resource_id = str(uuid4())
+    response = endpoint.delete(f'/rule/{resource_id}')
+    assert response.status_code == 404
+    assert response.json() is None
+
+    assert endpoint.get(f'/resource/{resource_id}').status_code == 404
+
+
+def create_resource(id, type, name="Test", config=None):
     if config is None:
         config = {}
 
@@ -35,23 +52,27 @@ def test_source_list():
         assert 'result' in result
 
 
-def test_source_create_ok():
-    id = "1"
+def test_should_create_resource():
+    id = str(uuid4())
 
-    response = create_resource(id, "mysql")
-    assert response.status_code == 200
-    result = response.json()
-    assert result == {'saved': 1, 'errors': [], 'ids': [id]}
+    try:
+        response = create_resource(id, "mysql")
+        assert response.status_code == 200
+        result = response.json()
+        assert result == {'saved': 1, 'errors': [], 'ids': [id]}
 
-    # refresh result and see if there is new data
-    response = endpoint.get('/resources/refresh')
-    assert response.status_code == 200
+        # refresh result and see if there is new data
+        response = endpoint.get('/resources/refresh')
+        assert response.status_code == 200
 
-    # get new data
-    response = endpoint.get(f'/resource/{id}')
-    assert response.status_code == 200
-    result = response.json()
-    assert result is not None
+        # get new data
+        response = endpoint.get(f'/resource/{id}')
+        assert response.status_code == 200
+        result = response.json()
+        assert result is not None
+
+    finally:
+        assert endpoint.delete(f'/resource/{id}').status_code in [200, 404]
 
 
 def test_resource_get_ok():
@@ -63,52 +84,48 @@ def test_resource_get_ok():
 
 
 def test_source_toggle_on_off_ok():
-    # Enable on
+    resource_id = str(uuid4())
 
-    result = endpoint.get('/resource/1/enabled/on').json()
-    assert result == {'saved': 1, 'errors': [], 'ids': ['1']}
-
-    result = endpoint.get('/resource/1').json()
-    assert result['enabled'] is True
-
-    # Enable off
-
-    result = endpoint.get('/resource/1/enabled/off').json()
-    assert result == {'saved': 1, 'errors': [], 'ids': ['1']}
-
-    result = endpoint.get('/resource/1').json()
-    assert result['enabled'] is False
-
-    # Consent on
-
-    result = endpoint.get('/resource/1/consent/on').json()
-    assert result == {'saved': 1, 'errors': [], 'ids': ['1']}
-
-    result = endpoint.get('/resource/1').json()
-    assert result['consent'] is True
-
-    # Consent off
-
-    result = endpoint.get('/resource/1/consent/off').json()
-    assert result == {'saved': 1, 'errors': [], 'ids': ['1']}
-
-    result = endpoint.get('/resource/1').json()
-    assert (result['consent'] is False)
-
-
-def test_source_delete_ok():
-    response = endpoint.delete('/resource/1')
-    if response.status_code == 200:
+    try:
+        response = create_resource(resource_id, "mysql")
+        assert response.status_code == 200
         result = response.json()
-        assert result['result'] == 'deleted'
-    else:
-        response = endpoint.delete('/resource/1')
-        assert response.status_code == 404
+        assert result == {'saved': 1, 'errors': [], 'ids': [resource_id]}
 
+        # Enable on
 
-def test_resources_refresh():
-    response = endpoint.get('/resources/refresh')
-    assert response.status_code == 200
+        result = endpoint.get(f'/resource/{resource_id}/enabled/on').json()
+        assert result == {'saved': 1, 'errors': [], 'ids': [resource_id]}
+
+        result = endpoint.get(f'/resource/{resource_id}').json()
+        assert result['enabled'] is True
+
+        # Enable off
+
+        result = endpoint.get(f'/resource/{resource_id}/enabled/off').json()
+        assert result == {'saved': 1, 'errors': [], 'ids': [resource_id]}
+
+        result = endpoint.get(f'/resource/{resource_id}').json()
+        assert result['enabled'] is False
+
+        # Consent on
+
+        result = endpoint.get(f'/resource/{resource_id}/consent/on').json()
+        assert result == {'saved': 1, 'errors': [], 'ids': [resource_id]}
+
+        result = endpoint.get(f'/resource/{resource_id}').json()
+        assert result['consent'] is True
+
+        # Consent off
+
+        result = endpoint.get(f'/resource/{resource_id}/consent/off').json()
+        assert result == {'saved': 1, 'errors': [], 'ids': [resource_id]}
+
+        result = endpoint.get(f'/resource/{resource_id}').json()
+        assert (result['consent'] is False)
+
+    finally:
+        assert endpoint.delete(f'/resource/{resource_id}').status_code in [200, 404]
 
 
 def test_resources_by_tag():

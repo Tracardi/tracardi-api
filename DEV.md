@@ -1,6 +1,6 @@
 # Run local server
 
-USER_NAME=admin PASSWORD=admin uvicorn app.main:application --reload --host 0.0.0.0 --port 8686
+USER_NAME=admin PASSWORD=admin uvicorn app.main:application --reload --host 0.0.0.0 --port 8686 
 gunicorn -b 0.0.0.0:8001 -k uvicorn.workers.UvicornWorker app.main:application
 
 uvicorn app.main:application --reload --host 0.0.0.0 --port 8686 --ssl-keyfile ssl/key.pem --ssl-certfile ssl/cert.pem  --ssl-keyfile-password 12345
