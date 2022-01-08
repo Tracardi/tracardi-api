@@ -140,6 +140,7 @@ async def add_plugins():
         'tracardi.process_engine.action.v1.connectors.meaningcloud.language_detection.plugin',
         'tracardi.process_engine.action.v1.connectors.meaningcloud.text_classification.plugin',
         'tracardi.process_engine.action.v1.connectors.oauth2_token.plugin',
+        'tracardi.process_engine.action.v1.connectors.slack.send_message.plugin',
 
         # Internal
         'tracardi.process_engine.action.v1.internal.event_source_fetcher.plugin',
