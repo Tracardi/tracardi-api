@@ -1,26 +1,29 @@
 # Add Trello card plugin
 
-This plugin adds a card to a given list in Trello.
+This plugin adds a card to a list in Trello.
 
 ## Input
+
 This plugin takes any payload object.
 
 ## Output
+
 This plugin returns response from Trello API on port **response**, or empty payload
 on **error** port, if an error occurs.
 
 ## Configuration
 
-#### With form
-- Trello resource - Here select your resource, tagged **trello**, containing your API key
+#### Form fields
+
+- Trello resource - Select any resource, tagged **trello**, containing your API key
   and token.
-- URL of Trello board - Here paste in your Trello board's URL. That's the same URL you can see
+- URL of Trello board - Trello board's URL. That's the same URL you can see
   on top of your browser window while seeing the board.
-- Name of Trello list - Here type in the name of the list that you want to add card to.
+- Name of Trello list - The name of the list that you want to add card to.
   In fact, Trello requires its ID, but Tracardi will find it for you, using provided list name.
-- Name of your card - That's dot path to field that contains text. This text will become your
+- Name of your card - Dot path to field that contains text. This text will become your
   card's name.
-- Card description - That's description of your card. Here you can type in normal text, or 
+- Card description - Card description. Here you can type in regular text, or 
   dot template, so for example **Customer {{profile@pii.name}} has ordered something**.
   This configuration parameter is optional.
 - Card link - You can add link to your card as an attachment. This configuration parameter is optional.
@@ -31,7 +34,8 @@ on **error** port, if an error occurs.
   containing date. Best format to use is UTC, but for example **YYYY-MM-DD** should also work.
   This configuration parameter is optional.
 
-#### Advanced configuration
+#### Advanced JSON configuration
+
 ```json
 {
   "source": {
@@ -54,5 +58,6 @@ on **error** port, if an error occurs.
 It should be left as **""** or **null**.
 
 ## Warning
+
 If you have two lists with same names on one board, then Tracardi will pick one of them,
-without a method of specifying which one will be picked.
+There is no method of specifying which one will be picked.
