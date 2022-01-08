@@ -1,7 +1,8 @@
 import logging
 from collections import defaultdict
-from fastapi import APIRouter
-from fastapi import HTTPException, Depends
+from typing import Optional
+
+from fastapi import APIRouter, HTTPException, Depends, Response
 from tracardi.domain.named_entity import NamedEntity
 from tracardi.domain.enum.type_enum import TypeEnum
 from tracardi.domain.event_source import EventSource
@@ -110,13 +111,19 @@ async def get_event_source_types(type: TypeEnum) -> dict:
 
 
 @router.get("/event-source/{id}", tags=["event-source"],
-            response_model=EventSource,
+            response_model=Optional[EventSource],
             include_in_schema=server.expose_gui_api)
-async def load_event_source(id: str):
+async def load_event_source(id: str, response: Response):
     try:
-        return await storage.driver.event_source.load(id)
+        result = await storage.driver.event_source.load(id)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+    if result is None:
+        response.status_code = 404
+        return None
+
+    return result
 
 
 @router.post("/event-source", tags=["event-source"],
@@ -128,8 +135,9 @@ async def save_event_source(event_source: EventSource):
             result = await storage.driver.event_source.save(event_source)
             if result.is_nothing_saved():
                 raise ValueError("Could not save event source.")
-
-        return True
+            return result
+        else:
+            raise ValueError("Unknown event source type {}. Available {}.".format(event_source.type, types))
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=repr(e))
@@ -137,11 +145,18 @@ async def save_event_source(event_source: EventSource):
 
 @router.delete("/event-source/{id}", tags=["event-source"],
                include_in_schema=server.expose_gui_api)
-async def delete_event_source(id: str):
+async def delete_event_source(id: str, response: Response):
     try:
         result = await storage.driver.event_source.delete(id)
-        if result is None:
-            return False
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+    if result is None:
+        response.status_code = 404
+        return None
+
+    try:
+        await storage.driver.event_source.refresh()
         return True
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

@@ -1,12 +1,9 @@
 import asyncio
-from typing import List
+from typing import List, Optional
 
-from fastapi import APIRouter
-from fastapi import HTTPException, Depends
-from tracardi.domain.time import Time
-
+from fastapi import APIRouter, HTTPException, Depends, Response
 from tracardi.domain.enum.production_draft import ProductionDraft
-from tracardi.domain.event_metadata import EventMetadata
+from tracardi.domain.event_metadata import EventMetadata, EventTime
 from tracardi.exceptions.exception import StorageException
 from tracardi.domain.console import Console
 from tracardi.service.secrets import encrypt
@@ -14,18 +11,18 @@ from tracardi.service.storage.driver import storage
 from tracardi.service.storage.factory import StorageFor
 from tracardi.service.wf.domain.flow_history import FlowHistory
 from tracardi.service.wf.domain.work_flow import WorkFlow
-from tracardi_plugin_sdk.domain.console import Log
+from tracardi.service.plugin.domain.console import Log
 from .auth.authentication import get_current_user
 from tracardi.domain.context import Context
 from tracardi.domain.flow_meta_data import FlowMetaData
 from tracardi.domain.entity import Entity
-from tracardi.domain.event import Event
+from tracardi.domain.event import Event, EventSession
 from tracardi.domain.flow import Flow
 from tracardi.service.wf.domain.flow import Flow as GraphFlow
 from tracardi.domain.flow import FlowRecord
 from tracardi.domain.profile import Profile
 from tracardi.domain.rule import Rule
-from tracardi.domain.session import Session, SessionMetadata, SessionTime
+from tracardi.domain.session import Session, SessionMetadata
 from tracardi.domain.resource import Resource
 from tracardi.domain.value_object.bulk_insert_result import BulkInsertResult
 from ..config import server
@@ -35,14 +32,9 @@ router = APIRouter(
 )
 
 
-@router.get("/flow/metadata/refresh", tags=["flow"], include_in_schema=server.expose_gui_api)
+@router.get("/flows/refresh", tags=["flow"], include_in_schema=server.expose_gui_api)
 async def flow_refresh():
     return await storage.driver.flow.refresh()
-
-
-@router.get("/flow/metadata/flush", tags=["flow"], include_in_schema=server.expose_gui_api)
-async def flow_flush():
-    return await storage.driver.flow.flush()
 
 
 @router.post("/flow/draft", tags=["flow"], response_model=BulkInsertResult, include_in_schema=server.expose_gui_api)
@@ -72,15 +64,16 @@ async def upsert_flow_draft(draft: Flow):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/flow/draft/{id}", tags=["flow"], response_model=Flow, include_in_schema=server.expose_gui_api)
-async def load_flow_draft(id: str):
+@router.get("/flow/draft/{id}", tags=["flow"], response_model=Optional[Flow], include_in_schema=server.expose_gui_api)
+async def load_flow_draft(id: str, response: Response):
     try:
         flow_record = await storage.driver.flow.load_record(id)  # type: FlowRecord
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
     if flow_record is None:
-        raise HTTPException(status_code=404, detail="Workflow `{}` does not exists.".format(id))
+        response.status_code = 404
+        return None
 
     try:
         # Return draft if exists
@@ -97,14 +90,15 @@ async def load_flow_draft(id: str):
 
 
 @router.get("/flow/production/{id}", tags=["flow"], response_model=Flow, include_in_schema=server.expose_gui_api)
-async def get_flow(id: str):
+async def get_flow(id: str, response: Response):
     try:
         flow_record = await storage.driver.flow.load_record(id)  # type: FlowRecord
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
     if flow_record is None:
-        raise HTTPException(status_code=404, detail="Flow id: `{}` does not exist.".format(id))
+        response.status_code = 404
+        return None
 
     try:
         if flow_record.production:
@@ -266,12 +260,17 @@ async def debug_flow(flow: GraphFlow):
 
         profile = Profile(id="@debug-profile-id")
         session = Session(id="@debug-session-id", metadata=SessionMetadata())
+        event_session = EventSession(
+            id=session.id,
+            start=session.metadata.time.insert,
+            duration=session.metadata.time.duration
+        )
         session.operation.new = True
-        event = Event(metadata=EventMetadata(time=Time()),
+        event = Event(metadata=EventMetadata(time=EventTime()),
                       id='@debug-event-id',
                       type="@debug-event-type",
                       source=Resource(id="@debug-source-id", type="web-page"),
-                      session=session,
+                      session=event_session,
                       profile=profile,
                       context=Context()
                       )
@@ -332,18 +331,22 @@ async def debug_flow(flow: GraphFlow):
 
 
 @router.delete("/flow/{id}", tags=["flow"], response_model=dict, include_in_schema=server.expose_gui_api)
-async def delete_flow(id: str):
+async def delete_flow(id: str, response: Response):
     try:
         # delete rule before flow
         crud = StorageFor.crud('rule', Rule)
-        rule_delete_task = asyncio.create_task(crud.delete_by('flow.id.keyword', id))
+        rule_delete_result = await crud.delete_by('flow.id.keyword', id)
 
         flow = Entity(id=id)
-        flow_delete_task = asyncio.create_task(StorageFor(flow).index("flow").delete())
+        flow_delete_result = await StorageFor(flow).index("flow").delete()
+
+        if flow_delete_result is None:
+            response.status_code = 404
+            return None
 
         return {
-            "rule": await rule_delete_task,
-            "flow": await flow_delete_task
+            "rule": rule_delete_result,
+            "flow": flow_delete_result
         }
 
     except Exception as e:
