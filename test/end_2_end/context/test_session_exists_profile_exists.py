@@ -48,17 +48,7 @@ def test_session_exists_profile_exists():
 
         assert endpoint.delete(f'/profile/{new_profile_id}').status_code == 200
 
-
     finally:
-
-        # Remove flow
         assert endpoint.delete(f'/session/{session_id}').status_code in [200, 404]
         assert endpoint.delete(f'/event-source/{source_id}').status_code in [200, 404]
         assert endpoint.delete(f'/profile/{profile_id}').status_code in [200, 404]
-
-        # Refresh
-        assert endpoint.get('/event-sources/refresh').status_code == 200
-        assert endpoint.get('/profiles/refresh').status_code == 200
-        assert endpoint.get('/sessions/refresh').status_code == 200
-        assert endpoint.get('/rules/refresh').status_code == 200
-        assert endpoint.get('/flows/refresh').status_code == 200

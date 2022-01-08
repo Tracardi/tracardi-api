@@ -12,10 +12,11 @@ def test_session_exists_profile_not_exists():
     profile_id = str(uuid4())
 
     try:
+        assert create_event_source(source_id, 'javascript').status_code == 200
+
         create_session(session_id)
 
         assert get_session(session_id).status_code == 200
-        assert create_event_source(source_id, 'javascript').status_code == 200
         assert get_profile(profile_id).status_code == 404  # No profile
 
         response = endpoint.post("/track", data={
