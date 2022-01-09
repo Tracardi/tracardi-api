@@ -11,6 +11,12 @@ on **error** port, if an error occurs.
 
 ## Configuration
 
+### Resource configuration
+
+To begin the authentication process, you need an API key. Every Trello user is given an API key. You can retrieve your 
+API key by logging into Trello and visiting https://trello.com/app-key/.
+
+
 #### With form
 - Trello resource - Here select your resource, tagged **trello**, containing your API key
   and token.
