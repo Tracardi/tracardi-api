@@ -11,16 +11,69 @@ This plugin takes any payload object.
 This plugin returns response from Trello API on port **response**, or empty payload
 on **error** port, if an error occurs.
 
-## Configuration
+## Trello Resource Configuration
 
-#### Form fields
+To begin working with Trello inside Tracardi, you need an API key and token. These can be typed inside Tracardi resources.
+Resources can be found under Traffic -> Outbound resources. More information on how to create a resource can be found below.
+
+### Trello API KEY
+
+Every Trello user is given an API key. You can retrieve your 
+API key by logging into Trello and visiting https://trello.com/app-key/.
+
+When the page loads you should see the header __Developer API Keys__ and a __Key__ which looks like this:
+
+```
+164a9547a52d0951f3ed781b723d03c1b60d9abd
+```
+
+You will need this key to copy to Trello Resource in Tracardi.
+
+### Trello TOKEN
+
+The below the key you will see the following message:
+
+```
+  Most developers will need to ask each user to authorize your application. If you are looking to build an application 
+  for yourself, or are doing local testing, you can manually generate a Token. 
+```
+
+Click on Token link. It will move you to the page with the information on the scope of the token. Click allow at the
+bottom of the page. 
+
+You should see the message *You have granted access to your Trello account via the token below* and the token that looks 
+like this:
+
+```
+b723d03c1b60d9abd164a9547a52d0951f3ed781b164a9547a52d0951f3ed781723d0
+```
+
+### Trello Resource
+
+Now it is time to create a Tracardi Trello Resource.
+
+* Go to Traffic -> Outbound resources. 
+* Click new resource
+* Fill the form and replace __<token>__ with the generated token and __<api-key__> with api key in the credentials section.
+* Replace it int the test and production tab. 
+
+*Example of the credentials JSON*
+
+```json
+{
+  "token": "<token>",
+  "api_key": "<api-key>"
+}
+
+```
+
+#### Trello Configuration Form
 
 - Trello resource - Select any resource, tagged **trello**, containing your API key
   and token.
 - URL of Trello board - Trello board's URL. That's the same URL you can see
-  on top of your browser window while seeing the board.
+  on top of your browser window while visiting the board.
 - Name of Trello list - The name of the list that you want to add card to.
-  In fact, Trello requires its ID, but Tracardi will find it for you, using provided list name.
 - Name of your card - Dot path to field that contains text. This text will become your
   card's name.
 - Card description - Card description. Here you can type in regular text, or 
