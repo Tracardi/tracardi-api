@@ -14,6 +14,7 @@ markdown_extensions:
   - pymdownx.superfences
   - pymdownx.details
   - tables
+  - footnotes
   - pymdownx.emoji:
       emoji_index: !!python/name:materialx.emoji.twemoji
       emoji_generator: !!python/name:materialx.emoji.to_svg
@@ -51,6 +52,7 @@ repo_url: https://github.com/tracardi/tracardi
 repo_name: tracardi/tracardi
 nav:
   - index.md
+  - what_is_tracardi.md
   - Getting started:
       - getting_started/index.md
       - getting_started/architecture.md
@@ -123,6 +125,14 @@ nav:
                   - flow/actions/weather_action.md
                   - flow/actions/mongo_query_action.md
                   - flow/actions/mysql_connector_action.md
+                  - flow/actions/oauth2_token_action.md
+                  - flow/actions/send_to_slack_channel_action.md
+                  - Trello:
+                    - flow/actions/trello/add_trello_card_action.md
+                    - flow/actions/trello/add_trello_member_action.md
+                    - flow/actions/trello/delete_trello_card_action.md
+                    - flow/actions/trello/move_trello_card_action.md
+
               - Regex:
                   - flow/actions/regex/regex_validator_action.md
                   - flow/actions/regex/regex_match.md
@@ -166,6 +176,8 @@ nav:
       - DevEnv set-up:
           - development/react_env.md
           - development/python_env.md
+      - Mirco frontend apps developement:
+          - development/micro_frontend.md
       - plugins/index.md
 
   - support_us.md
