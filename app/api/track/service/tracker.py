@@ -65,8 +65,6 @@ async def _persist(profile_less, console_log: ConsoleLog, session: Session, even
             event.metadata.time.process_time = datetime.timestamp(datetime.utcnow()) - datetime.timestamp(
                 event.metadata.time.insert)
 
-            event.metadata.debugged = debugged
-
             # Reset session id if session is not saved
             if tracker_payload.is_on('saveSession', default=True) is False:
                 event.session = None
