@@ -85,6 +85,7 @@ async def add_plugins():
         'tracardi.process_engine.action.v1.operations.segment_profile_action',
         'tracardi.process_engine.action.v1.operations.update_event_action',
         'tracardi.process_engine.action.v1.calculator_action',
+        'tracardi.process_engine.action.v1.return_random_element_action',
 
         # Plugins
         'tracardi.process_engine.action.v1.traits.reshape_payload_action',
