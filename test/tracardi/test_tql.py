@@ -65,6 +65,8 @@ def test_tql_equal():
 def test_tql_greater_then():
     tree = parser.parse("payload@a.b >= 1")
     assert ExprTransformer(dot=dot).transform(tree)
+    tree = parser.parse("payload@a.b => 1")
+    assert ExprTransformer(dot=dot).transform(tree)
     tree = parser.parse("payload@a.b > 0")
     assert ExprTransformer(dot=dot).transform(tree)
 
@@ -72,7 +74,8 @@ def test_tql_greater_then():
 def test_tql_lower_then():
     tree = parser.parse("payload@a.b <= 1")
     assert ExprTransformer(dot=dot).transform(tree)
-
+    tree = parser.parse("payload@a.b =< 1")
+    assert ExprTransformer(dot=dot).transform(tree)
     tree = parser.parse("payload@a.b < 2")
     assert ExprTransformer(dot=dot).transform(tree)
 
@@ -231,3 +234,28 @@ def test_tql_no_value():
         assert False
     except Exception as e:
         assert 'Invalid dot notation' in str(e)
+
+
+def test_tql_float_value():
+    tree = parser.parse("payload@a.b > .54543")
+    assert ExprTransformer(dot=dot).transform(tree)
+
+    tree = parser.parse("payload@a.b > 1.54543")
+    assert not ExprTransformer(dot=dot).transform(tree)
+
+    tree = parser.parse("payload@a.b < 2.5")
+    assert ExprTransformer(dot=dot).transform(tree)
+
+    tree = parser.parse("payload@a.b <= 2.5")
+    assert ExprTransformer(dot=dot).transform(tree)
+
+    tree = parser.parse("payload@a.b =< 1.5")
+    assert ExprTransformer(dot=dot).transform(tree)
+
+
+def test_tql_negative_value():
+    tree = parser.parse("payload@a.b < -1")
+    assert not ExprTransformer(dot=dot).transform(tree)
+
+    tree = parser.parse("payload@a.b < -1.845")
+    assert not ExprTransformer(dot=dot).transform(tree)
