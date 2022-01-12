@@ -58,11 +58,14 @@ async def _persist(profile_less, console_log: ConsoleLog, session: Session, even
 
         # Set statuses
         log_event_journal = console_log.get_indexed_event_journal()
+        debugged = tracker_payload.is_debugging_on()
 
         for event in events:
 
             event.metadata.time.process_time = datetime.timestamp(datetime.utcnow()) - datetime.timestamp(
                 event.metadata.time.insert)
+
+            event.metadata.debugged = debugged
 
             # Reset session id if session is not saved
             if tracker_payload.is_on('saveSession', default=True) is False:
@@ -249,7 +252,7 @@ async def track_event(tracker_payload: TrackerPayload, ip: str, profile_less: bo
             await asyncio.gather(*save_tasks)
 
     except Exception as e:
-        message = "Error during debug info or disabling profiles.: `{}`".format(str(e))
+        message = "Error during saving debug info: `{}`".format(str(e))
         logger.error(message)
         console_log.append(
             Console(

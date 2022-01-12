@@ -19,9 +19,9 @@ def test_should_read_the_whole_object():
 
 
 def test_should_read_the_part_of_object():
-    dot = DotAccessor(payload={"test": 1})
+    dot = DotAccessor(payload={"test": {"a": 1}})
     validator = EventPayloadValidator(
-        validation={"payload@test": {"type": "integer"}},
+        validation={"payload@test": {"type": "object"}},
         event_type="page-view",
         name="test",
         enabled=True

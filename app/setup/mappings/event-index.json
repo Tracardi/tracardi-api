@@ -45,6 +45,9 @@
             },
             "profile_less": {
               "type": "boolean"
+            },
+            "debugged": {
+              "type": "boolean"
             }
           }
         },
