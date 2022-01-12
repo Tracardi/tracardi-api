@@ -91,7 +91,8 @@ async def get_segments(query: str = None):
              include_in_schema=server.expose_gui_api)
 async def upsert_source(segment: Segment):
     try:
-        return await StorageFor(segment).index().save()
-        # return await segment.storage().save()
+        result = await storage.driver.segment.save(segment.dict())
+        await storage.driver.segment.refresh()
+        return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
