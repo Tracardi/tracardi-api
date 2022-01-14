@@ -3,6 +3,7 @@ import logging
 from datetime import datetime
 from typing import List, Optional
 
+from tracardi.config import tracardi
 from tracardi.domain.entity import Entity
 
 from app.api.domain.console_log import ConsoleLog
@@ -58,6 +59,7 @@ async def _persist(profile_less, console_log: ConsoleLog, session: Session, even
 
         # Set statuses
         log_event_journal = console_log.get_indexed_event_journal()
+        debugged = tracker_payload.is_debugging_on()
 
         for event in events:
 
@@ -143,7 +145,7 @@ async def track_event(tracker_payload: TrackerPayload, ip: str, profile_less: bo
     # Validates json schemas of events, throws exception if data is not valid
     await validate_events_json_schemas(events, profile, session)
 
-    debug_info_by_event_type_and_rule_name = None
+    debugger = None
     segmentation_result = None
 
     console_log = ConsoleLog()
@@ -159,11 +161,12 @@ async def track_event(tracker_payload: TrackerPayload, ip: str, profile_less: bo
     try:
 
         # Invoke rules engine
-        debug_info_by_event_type_and_rule_name, ran_event_types, \
+        debugger, ran_event_types, \
         console_log, post_invoke_events, invoked_rules = await rules_engine.invoke(
             storage.driver.flow.load_production_flow,
             ux,
-            tracker_payload.source.id)
+            tracker_payload.source.id
+        )
 
         # append invoked rules to event metadata
 
@@ -238,18 +241,22 @@ async def track_event(tracker_payload: TrackerPayload, ip: str, profile_less: bo
         logger.error(message)
 
     try:
-        if tracker_payload.is_debugging_on():
-            # Save debug info
-            save_tasks.append(
-                asyncio.create_task(
-                    storage.driver.debug_info.save_debug_info(
-                        debug_info_by_event_type_and_rule_name)))
+        if tracardi.track_debug or tracker_payload.is_on('debugger', default=False):
+            if debugger.has_call_debug_trace():
+                # Save debug info
+                save_tasks.append(
+                    asyncio.create_task(
+                        storage.driver.debug_info.save_debug_info(
+                            debugger
+                        )
+                    )
+                )
 
             # Run tasks
             await asyncio.gather(*save_tasks)
 
     except Exception as e:
-        message = "Error during debug info or disabling profiles.: `{}`".format(str(e))
+        message = "Error during saving debug info: `{}`".format(str(e))
         logger.error(message)
         console_log.append(
             Console(
@@ -295,7 +302,7 @@ async def track_event(tracker_payload: TrackerPayload, ip: str, profile_less: bo
     if tracker_payload.is_debugging_on():
         debug_result = TrackerPayloadResult(**collect_result.dict())
         debug_result = debug_result.dict()
-        debug_result['execution'] = debug_info_by_event_type_and_rule_name
+        debug_result['execution'] = debugger
         debug_result['segmentation'] = segmentation_result
         debug_result['logs'] = console_log
         result['debugging'] = debug_result

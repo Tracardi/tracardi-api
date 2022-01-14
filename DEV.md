@@ -10,7 +10,7 @@ gunicorn -b 0.0.0.0:443 --keyfile ssl/key.pem --certfile ssl/cert.pem -k uvicorn
 docker run -p 5601:5601 -e ELASTICSEARCH_HOSTS=http://192.168.1.103:9200 docker.elastic.co/kibana/kibana:7.13.2
 
 # Run local ElasticSearch
-docker run -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" docker.elastic.co/elasticsearch/elasticsearch:7.13.2
+docker run -p 9200:9200 -p 9300:9300 -m 8g -e "discovery.type=single-node" docker.elastic.co/elasticsearch/elasticsearch:7.13.2
 docker run -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" docker.elastic.co/elasticsearch/elasticsearch:7.10.1
 
 # Run local Tracardi GUI

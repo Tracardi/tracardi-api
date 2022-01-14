@@ -266,14 +266,16 @@ async def debug_flow(flow: GraphFlow):
             duration=session.metadata.time.duration
         )
         session.operation.new = True
-        event = Event(metadata=EventMetadata(time=EventTime()),
-                      id='@debug-event-id',
-                      type="@debug-event-type",
-                      source=Resource(id="@debug-source-id", type="web-page"),
-                      session=event_session,
-                      profile=profile,
-                      context=Context()
-                      )
+
+        event = Event(
+            metadata=EventMetadata(time=EventTime()),
+            id='@debug-event-id',
+            type="@debug-event-type",
+            source=Resource(id="@debug-source-id", type="web-page"),
+            session=event_session,
+            profile=profile,
+            context=Context()
+        )
 
         workflow = WorkFlow(
             FlowHistory(history=[]),
