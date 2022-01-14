@@ -1,9 +1,8 @@
-import jsonschema
-
 from tracardi.domain.event_payload_validator import EventPayloadValidator
 from tracardi.service.event_validator import validate
 from tracardi.service.notation.dot_accessor import DotAccessor
 from tracardi.exceptions.exception import EventValidationException
+
 
 def test_should_read_the_whole_object():
     dot = DotAccessor(payload={"test": 1})
@@ -14,10 +13,10 @@ def test_should_read_the_whole_object():
         enabled=True
     )
 
-    # try:
-    validate(dot, validator)
-    # except Exception:
-    #     assert False
+    try:
+        validate(dot, validator)
+    except Exception:
+        assert False
 
 
 def test_should_read_the_part_of_object():
@@ -55,4 +54,3 @@ def test_should_differentiate_types():
         validate(dot, validator)
     except EventValidationException:
         assert True
-

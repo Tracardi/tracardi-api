@@ -8,18 +8,16 @@ This plugin outputs a random value from provided list, accessible by key **value
 
 ## Configuration
 
-#### With form
-- List of items - here provide a list of paths to fields containing values, that plugin will
-  choose randomly from. You can provide constant (not-path) values as well.
+This plugin takes a list of paths to fields containing values. It will
+choose a list item randomly and return it. You can provide constant values as well.
 
-#### Advanced configuration
-```json
+
+```json title="Example"
 {
   "list_of_items": [
-    "<example-path-1>",
-    "<example-path-2>",
-    "<constant-value-1>",
-    "<constant-value-2>"
+    "value-1",
+    "payload@value",
+    "profile@traits.public.value"
   ]
 }
 ```
