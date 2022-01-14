@@ -2,6 +2,8 @@ import logging
 from json import JSONDecodeError
 
 from fastapi import APIRouter, Request, status, HTTPException
+
+from app.api.track.service.ip_address import get_ip_address
 from tracardi.domain.session import Session, SessionMetadata
 
 from tracardi.domain.payload.event_payload import EventPayload
@@ -82,9 +84,9 @@ async def track_webhook(event_type: str, source_id: str, request: Request):
         ],
         options={"saveSession": False}
     )
-    return await _track(tracker_payload, request.client.host, profile_less=True)
+    return await _track(tracker_payload, get_ip_address(request), profile_less=True)
 
 
 @router.post("/track", tags=['context-server'])
 async def track(tracker_payload: TrackerPayload, request: Request, profile_less: bool = False):
-    return await _track(tracker_payload, request.client.host, profile_less)
+    return await _track(tracker_payload, get_ip_address(request), profile_less)
