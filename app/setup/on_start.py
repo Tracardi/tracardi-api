@@ -87,6 +87,7 @@ async def add_plugins():
         'tracardi.process_engine.action.v1.calculator_action',
         'tracardi.process_engine.action.v1.mapping_action',
         'tracardi.process_engine.action.v1.return_random_element_action',
+        'tracardi.process_engine.action.v1.log_action',
 
 
         # Plugins
