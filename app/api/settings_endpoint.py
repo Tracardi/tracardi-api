@@ -84,6 +84,14 @@ system_settings = [
     ),
     SystemSettings(
         **{
+            "label": "QUERY_LANGUAGE",
+            "value": tracardi.query_language,
+            "desc": "Defines what type of query language to use for filtering data. Default: Kibana Query Language (kql)."
+                    " Other possible values Tracardi Query Language (tql)"
+        }
+    ),
+    SystemSettings(
+        **{
             "label": "CACHE_PROFILE",
             "value": tracardi.cache_profiles,
             "desc": "Default: no. Profiles can be cached, but it is not recommended as this option is experimental."

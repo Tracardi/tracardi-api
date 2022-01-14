@@ -3,6 +3,7 @@ from typing import Optional
 from fastapi import APIRouter
 from fastapi import HTTPException, Depends
 
+from tracardi.config import tracardi
 from tracardi.service.storage.driver import storage
 from .auth.authentication import get_current_user
 from tracardi.domain.enum.indexes_histogram import IndexesHistogram
@@ -34,13 +35,18 @@ async def select_by_sql(index: IndexesSearch, query: Optional[SqlQuery] = None):
 @router.post("/{index}/select/range",
              tags=["generic", "event", "profile", "resource", "rule", "session", "flow", "segment"],
              include_in_schema=server.expose_gui_api)
-async def time_range_with_sql(index: IndexesHistogram, query: DatetimeRangePayload, page: Optional[int] = None):
+async def time_range_with_sql(index: IndexesHistogram, query: DatetimeRangePayload, page: Optional[int] = None,
+                              query_type: str = None):
     try:
+
+        if query_type is None:
+            query_type = tracardi.query_language
+
         if page is not None:
             page_size = 25
             query.start = page_size * page
             query.limit = page_size
-        return await storage.driver.raw.index(index.value).query_by_sql_in_time_range(query)
+        return await storage.driver.raw.index(index.value).query_by_sql_in_time_range(query, query_type)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -48,8 +54,12 @@ async def time_range_with_sql(index: IndexesHistogram, query: DatetimeRangePaylo
 @router.post("/{index}/select/histogram",
              tags=["generic", "event", "profile", "resource", "rule", "session", "flow", "segment"],
              include_in_schema=server.expose_gui_api)
-async def histogram_with_sql(index: IndexesHistogram, query: DatetimeRangePayload):
+async def histogram_with_sql(index: IndexesHistogram, query: DatetimeRangePayload, query_type: str = None):
     try:
-        return await storage.driver.raw.index(index.value).histogram_by_sql_in_time_range(query)
+
+        if query_type is None:
+            query_type = tracardi.query_language
+
+        return await storage.driver.raw.index(index.value).histogram_by_sql_in_time_range(query, query_type)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
