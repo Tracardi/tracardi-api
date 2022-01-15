@@ -103,6 +103,7 @@ async def add_plugins():
         'tracardi.process_engine.action.v1.strings.string_validator.plugin',
         'tracardi.process_engine.action.v1.strings.string_splitter.plugin',
         'tracardi.process_engine.action.v1.strings.url_parser.plugin',
+        'tracardi.process_engine.action.v1.strings.regex_replace.plugin',
 
         # Time
         'tracardi.process_engine.action.v1.time.sleep_action',
