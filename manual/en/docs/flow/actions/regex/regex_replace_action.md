@@ -14,8 +14,8 @@ matching given regex.
 ## Configuration
 
 #### With form
-- String - Here provide a path to the string that you want to perform substitution on.
-- Replace with - Here provide a path to a string that you want to replace other string's fragments with.
+- String - Type a path to the string that you want to substitute.
+- Replace with - Type a path to a string to substitue with.
 - Regex - Here provide the regex that will match the fragments that you want to replace.
 
 #### Advanced configuration
