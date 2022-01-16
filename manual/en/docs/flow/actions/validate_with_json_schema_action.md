@@ -11,9 +11,6 @@ on port **ERROR** if validation fails.
 
 ## Configuration
 
-#### With form
-- JSON validation schema - Here provide validation schema in form of JSON.
-
 #### Advanced configuration
 ```json
 {
