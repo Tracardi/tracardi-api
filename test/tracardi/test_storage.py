@@ -6,8 +6,8 @@ from tracardi.domain.type import Type
 from tracardi.domain.rule import Rule
 from tracardi.process_engine.action.v1.debug_payload_action import DebugPayloadAction
 from tracardi.process_engine.action.v1.end_action import EndAction
+from tracardi.process_engine.action.v1.flow.start.start_action import StartAction, register
 from tracardi.process_engine.action.v1.increase_views_action import IncreaseViewsAction
-from tracardi.process_engine.action.v1.start_action import register, StartAction
 from tracardi.domain.flow_action_plugin import FlowActionPlugin
 from tracardi.domain.flow import Flow
 from tracardi.domain.profile import Profile
