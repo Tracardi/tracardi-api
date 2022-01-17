@@ -22,7 +22,6 @@ async def segment(profile: Profile, event_types: list, load_segment_by_event_typ
     except Exception as e:
         # this error is a global segmentation error
         # todo log it.
-        print(str(e))
         logger.error(str(e))
     finally:
         return segmentation_result

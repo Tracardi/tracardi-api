@@ -88,6 +88,10 @@ async def add_plugins():
         'tracardi.process_engine.action.v1.mapping_action',
         'tracardi.process_engine.action.v1.return_random_element_action',
         'tracardi.process_engine.action.v1.log_action',
+        'tracardi.process_engine.action.v1.scrapper.xpath.plugin',
+
+        # Geo
+        'tracardi.process_engine.action.v1.geo.fence.circular.plugin',
 
 
         # Plugins
@@ -118,6 +122,7 @@ async def add_plugins():
         'tracardi.process_engine.action.v1.ux.consent.plugin',
 
         # Connectors
+        'tracardi.process_engine.action.v1.connectors.html.fetch.plugin',
         'tracardi.process_engine.action.v1.connectors.api_call.plugin',
         'tracardi.process_engine.action.v1.connectors.smtp_call.plugin',
         'tracardi.process_engine.action.v1.segments.profile_segmentation.plugin',
