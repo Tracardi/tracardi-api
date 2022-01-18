@@ -21,13 +21,7 @@
       "name": {
         "type": "keyword"
       },
-      "current_value": {
-        "type": "keyword"
-      },
       "last_value": {
-        "type": "keyword"
-      },
-      "default_value": {
         "type": "keyword"
       }
     }
