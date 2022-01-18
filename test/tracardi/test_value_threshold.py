@@ -1,4 +1,4 @@
-from tracardi.service.value_threshold_manager import ValueThresholdManager
+from tracardi.process_engine.action.v1.operations.threshold.service.value_threshold_manager import ValueThresholdManager
 
 
 async def test_should_save_and_load_value_threshold():

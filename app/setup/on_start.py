@@ -89,6 +89,7 @@ async def add_plugins():
         'tracardi.process_engine.action.v1.return_random_element_action',
         'tracardi.process_engine.action.v1.log_action',
         'tracardi.process_engine.action.v1.scrapper.xpath.plugin',
+        'tracardi.process_engine.action.v1.operations.threshold.plugin',
 
         # Geo
         'tracardi.process_engine.action.v1.geo.fence.circular.plugin',
