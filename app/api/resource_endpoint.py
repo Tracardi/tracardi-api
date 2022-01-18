@@ -216,6 +216,14 @@ async def get_resource_types(type: TypeEnum) -> dict:
                 },
                 "tags": ['gcp-service-account'],
                 "name": "Google Cloud Service Account"
+            },
+            "influxdb": {
+                "config": {
+                    "url": "http://localhost:8086",
+                    "token": "<API-token>"
+                },
+                "tags": ["influx"],
+                "name": "InfluxDB"
             }
         })
 
