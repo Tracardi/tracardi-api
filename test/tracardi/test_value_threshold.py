@@ -1,21 +1,24 @@
-from tracardi.process_engine.action.v1.operations.threshold.service.value_threshold_manager import ValueThresholdManager
+from time import sleep
+
+from tracardi.service.value_threshold_manager import ValueThresholdManager
 
 
 async def test_should_save_and_load_value_threshold():
-    vtm = ValueThresholdManager(node_id=1, profile_id=2, name="test_threshold", ttl=3)
+    vtm = ValueThresholdManager(node_id=1, profile_id=2, name="test_threshold", ttl=0, debug=True)
     result = await vtm.save_current_value(current_value=1)
     assert result.saved == 1
 
     record = await vtm.load_last_value()
+    assert record is not None
     assert record.name == "test_threshold"
     assert record.last_value == 1
-    assert record.ttl == 3
+    assert record.ttl == 0
 
     await vtm.delete()
 
 
-async def test_should_should_pass_threshold_once():
-    vtm = ValueThresholdManager(node_id=1, profile_id=2, name="test_threshold", ttl=3)
+async def test_should_pass_threshold_once():
+    vtm = ValueThresholdManager(node_id=1, profile_id=2, name="test_threshold", ttl=0, debug=True)
     await vtm.delete()
     assert await vtm.load_last_value() is None
     results = [await vtm.pass_threshold(x) for x in [1, 1, 1, 1]]
@@ -23,8 +26,8 @@ async def test_should_should_pass_threshold_once():
     await vtm.delete()
 
 
-async def test_should_should_pass_threshold_with_every_change():
-    vtm = ValueThresholdManager(node_id=1, profile_id=2, name="test_threshold", ttl=3)
+async def test_should_pass_threshold_with_every_change():
+    vtm = ValueThresholdManager(node_id=1, profile_id=2, name="test_threshold", ttl=0, debug=True)
     await vtm.delete()
     assert await vtm.load_last_value() is None
     results = [await vtm.pass_threshold(x) for x in [1, 1, 2, 1, 1, 1, -1, 2]]
@@ -32,8 +35,8 @@ async def test_should_should_pass_threshold_with_every_change():
     await vtm.delete()
 
 
-async def test_should_should_pass_threshold_once_on_object():
-    vtm = ValueThresholdManager(node_id=1, profile_id=2, name="test_threshold", ttl=3)
+async def test_should_pass_threshold_once_on_object():
+    vtm = ValueThresholdManager(node_id=1, profile_id=2, name="test_threshold", ttl=0, debug=True)
     await vtm.delete()
     assert await vtm.load_last_value() is None
     results = [await vtm.pass_threshold(x) for x in
@@ -42,11 +45,22 @@ async def test_should_should_pass_threshold_once_on_object():
     await vtm.delete()
 
 
-async def test_should_should_pass_threshold_once_on_condition():
-    vtm = ValueThresholdManager(node_id=1, profile_id=2, name="test_threshold", ttl=3)
+async def test_should_pass_threshold_once_on_condition():
+    vtm = ValueThresholdManager(node_id=1, profile_id=2, name="test_threshold", ttl=0, debug=True)
     await vtm.delete()
     assert await vtm.load_last_value() is None
     results = [await vtm.pass_threshold(x) for x in
                ["a" == "a", "a" != "a", "a" == "a", "a" == "a"]]
     assert results == [True, True, True, False]
+    await vtm.delete()
+
+
+async def test_should_pass_threshold_after_ttl():
+    vtm = ValueThresholdManager(node_id=1, profile_id=2, name="test_threshold", ttl=1, debug=True)
+    await vtm.delete()
+    assert await vtm.load_last_value() is None
+    assert await vtm.pass_threshold("1") is True
+    assert await vtm.pass_threshold("1") is False
+    sleep(2)
+    assert await vtm.pass_threshold("1") is True
     await vtm.delete()
