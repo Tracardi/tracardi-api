@@ -93,6 +93,7 @@ async def add_plugins():
 
         # Geo
         'tracardi.process_engine.action.v1.geo.fence.circular.plugin',
+        'tracardi.process_engine.action.v1.geo.distance.plugin',
 
 
         # Plugins
