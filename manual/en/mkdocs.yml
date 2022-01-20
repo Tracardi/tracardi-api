@@ -167,6 +167,8 @@ nav:
               - flow/actions/string_validator_action.md
               - flow/actions/template_action.md
               - flow/actions/today_action.md
+      - Filtering
+        - running/filtering.md
       - Notations:
           - notations/dot_notation.md
           - notations/logic_notation.md
