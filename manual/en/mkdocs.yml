@@ -136,20 +136,32 @@ nav:
               - Regex:
                   - flow/actions/regex/regex_validator_action.md
                   - flow/actions/regex/regex_match.md
+                  - flow/actions/regex/regex_replace_action.md
+
               - Locations:
                   - flow/actions/geo_ip_locator.md
+
               - Time:
                   - flow/actions/day_night_split_action.md
                   - flow/actions/local_time_span_action.md
+
               - Processing:
                   - flow/actions/url_parser_action.md
                   - flow/actions/string_splitter_action.md
                   - flow/actions/string_properties_action.md
                   - flow/actions/profile_segment.md
+                  - flow/actions/mapping_action.md
+
+
+              - Validators:
+                  - flow/actions/validate_with_json_schema_action.md
+                  - flow/actions/string_validator_action.md
+
               - Machine Learning:
                   - flow/actions/text_classification_action.md
                   - flow/actions/lang_detection_action.md
                   - flow/actions/sentiment_analysis_action.md
+
               - flow/actions/new_event_action.md
               - flow/actions/event_counter_action.md
               - flow/actions/purchase_add_action.md
@@ -164,10 +176,11 @@ nav:
               - flow/actions/rabbitmq_action.md
               - flow/actions/remove_from_mailchimp_audience_action.md
               - flow/actions/reshape_payload_action.md
-              - flow/actions/string_validator_action.md
+              - flow/actions/random_element_action.md
               - flow/actions/template_action.md
               - flow/actions/today_action.md
-      - Filtering
+
+      - Filtering:
         - running/filtering.md
       - Notations:
           - notations/dot_notation.md
