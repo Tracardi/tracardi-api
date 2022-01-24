@@ -154,6 +154,8 @@ async def add_plugins():
         'tracardi.process_engine.action.v1.connectors.oauth2_token.plugin',
         'tracardi.process_engine.action.v1.connectors.slack.send_message.plugin',
         'tracardi.process_engine.action.v1.connectors.google.sheets.modify.plugin',
+        'tracardi.process_engine.action.v1.connectors.mixpanel.send.plugin',
+        'tracardi.process_engine.action.v1.connectors.mixpanel.fetch_funnel.plugin',
 
         # Internal
         'tracardi.process_engine.action.v1.internal.event_source_fetcher.plugin',

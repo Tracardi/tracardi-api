@@ -216,6 +216,16 @@ async def get_resource_types(type: TypeEnum) -> dict:
                 },
                 "tags": ['gcp-service-account'],
                 "name": "Google Cloud Service Account"
+            },
+            "mixpanel": {
+                "config": {
+                    "token": "<your-project-token>",
+                    "server_prefix": "US | EU",
+                    "username": "<service-account-username>",
+                    "password": "<service-account-password>"
+                },
+                "tags": ["mixpanel"],
+                "name": "MixPanel"
             }
         })
 
