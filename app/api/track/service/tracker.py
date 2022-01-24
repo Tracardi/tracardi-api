@@ -152,7 +152,7 @@ async def track_event(tracker_payload: TrackerPayload, ip: str, profile_less: bo
     rules_engine = RulesEngine(
         session,
         profile,
-        events_rules=storage.driver.rule.load_rules(events),
+        events_rules=storage.driver.rule.load_rules(tracker_payload.source, events),
         console_log=console_log
     )
 
