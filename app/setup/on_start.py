@@ -122,6 +122,7 @@ async def add_plugins():
         # UX
         'tracardi.process_engine.action.v1.ux.snackbar.plugin',
         'tracardi.process_engine.action.v1.ux.consent.plugin',
+        'tracardi.process_engine.action.v1.ux.cta_message.plugin',
 
         # Connectors
         'tracardi.process_engine.action.v1.connectors.html.fetch.plugin',
