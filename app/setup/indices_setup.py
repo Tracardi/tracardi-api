@@ -1,7 +1,7 @@
 import json
 import os
 
-from tracardi.config import tracardi
+from tracardi.config import tracardi, elastic
 from tracardi.service.storage.elastic_client import ElasticClient
 from tracardi.service.storage.index import resources, Index
 import logging
@@ -33,6 +33,12 @@ async def create_indices():
             if not await es.exists_index(index.get_write_index()):
 
                 if index.multi_index is True:
+
+                    # Replace prefix
+                    map_index_patterns = [pattern.replace("%%PREFIX%%", elastic.instance_prefix) for pattern in
+                                          map["index_patterns"]]
+                    map["index_patterns"] = map_index_patterns
+
                     # Multi indices need templates. Index will be create automatically on first insert
                     result = await es.put_index_template(index.index, map)
                 else:

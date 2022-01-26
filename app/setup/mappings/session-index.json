@@ -1,6 +1,6 @@
 {
   "index_patterns": [
-    "tracardi-session-*-*"
+    "%%PREFIX%%-tracardi-session-*-*"
   ],
   "template": {
     "settings": {

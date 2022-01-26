@@ -1,6 +1,6 @@
 {
   "index_patterns": [
-    "tracardi-event-*-*"
+    "%%PREFIX%%-tracardi-event-*-*"
   ],
   "template": {
     "settings": {

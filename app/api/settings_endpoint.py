@@ -137,6 +137,13 @@ system_settings = [
     ),
     SystemSettings(
         **{
+            "label": "INSTANCE_PREFIX",
+            "value": elastic.instance_prefix,
+            "desc": "Default: None. This setting defines a prefix for all tracardi indices."
+        }
+    ),
+    SystemSettings(
+        **{
             "label": "ELASTIC_SNIFF_ON_START",
             "value": elastic.sniff_on_start,
             "desc": "Default: None. When you enable this option, the client will attempt to execute an elasitcsearch "
