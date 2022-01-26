@@ -6,13 +6,14 @@ from fastapi import APIRouter, Depends, HTTPException
 
 from app.api.track.service.tracker import track_event
 from app.config import server
+from tracardi.config import tracardi
 from tracardi.domain.task import Task
 from tracardi.service.network import local_ip
 from tracardi.service.storage.driver import storage
 from app.api.auth.authentication import get_current_user
 
 logger = logging.getLogger('app.api.scheduler.tasks_endpoint')
-logger.setLevel(logging.INFO)
+logger.setLevel(tracardi.logging_level)
 
 router = APIRouter(
     dependencies=[Depends(get_current_user)]

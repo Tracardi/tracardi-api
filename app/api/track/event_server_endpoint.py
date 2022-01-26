@@ -22,7 +22,7 @@ from tracardi.exceptions.exception import TracardiException, UnauthorizedExcepti
 from tracardi.service.wf.domain.entity import Entity
 
 logger = logging.getLogger('tracardi.api.event_server')
-logger.setLevel(logging.WARNING)
+logger.setLevel(tracardi.logging_level)
 
 router = APIRouter()
 
