@@ -9,6 +9,7 @@ from tracardi.domain.entity import Entity
 from app.api.domain.console_log import ConsoleLog
 from app.config import server
 from tracardi.event_server.utils.memory_cache import MemoryCache, CacheItem
+from tracardi.exceptions.log_handler import log_handler
 from tracardi.service.notation.dot_accessor import DotAccessor
 
 from tracardi.domain.event_payload_validator import EventPayloadValidator
@@ -32,6 +33,8 @@ from tracardi.service.storage.factory import StorageForBulk
 from tracardi.service.storage.helpers.source_cacher import source_cache
 
 logger = logging.getLogger('app.api.track.service.tracker')
+logger.setLevel(tracardi.logging_level)
+logger.addHandler(log_handler)
 cache = MemoryCache()
 
 

@@ -1,9 +1,6 @@
 import logging
-import os
-
 import asyncio
-
-from elasticsearch.helpers.errors import BulkIndexError
+import os
 from time import time
 
 import elasticsearch
@@ -16,7 +13,7 @@ from app.api import token_endpoint, rule_endpoint, resource_endpoint, event_endp
     tql_endpoint, health_endpoint, session_endpoint, instance_endpoint, plugins_endpoint, \
     settings_endpoint, event_source_endpoint, test_endpoint, \
     purchases_endpoint, event_tag_endpoint, consent_type_endpoint, flow_action_endpoint, flows_endpoint, info_endpoint, \
-    user_endpoint, pro_endpoint, event_schema_validation_endpoint, debug_endpoint
+    user_endpoint, pro_endpoint, event_schema_validation_endpoint, debug_endpoint, log_endpoint
 from app.api.auth.authentication import get_current_user
 from app.api.graphql.profile import graphql_profiles
 from app.api.scheduler import tasks_endpoint
@@ -24,7 +21,7 @@ from app.api.track import event_server_endpoint
 from app.config import server
 from app.setup.on_start import add_plugins, update_api_instance
 from tracardi.config import tracardi, elastic
-from tracardi.exceptions.log_handler import ElasticLogHandler
+from tracardi.exceptions.log_handler import log_handler
 from tracardi.service.storage.elastic_client import ElasticClient
 from app.setup.indices_setup import create_indices
 from tracardi.service.storage.index import resources
@@ -32,7 +29,7 @@ from tracardi.service.storage.index import resources
 logging.basicConfig(level=logging.ERROR)
 logger = logging.getLogger('app.main')
 logger.setLevel(tracardi.logging_level)
-# logger.addHandler(ElasticLogHandler())
+logger.addHandler(log_handler)
 
 _local_dir = os.path.dirname(__file__)
 
@@ -161,6 +158,8 @@ application.include_router(event_source_endpoint.router)
 application.include_router(pro_endpoint.router)
 application.include_router(event_schema_validation_endpoint.router)
 application.include_router(debug_endpoint.router)
+application.include_router(log_endpoint.router)
+
 
 # GraphQL
 
@@ -231,6 +230,7 @@ async def add_process_time_header(request: Request, call_next):
     response = await call_next(request)
     process_time = time() - start_time
     response.headers["X-Process-Time"] = str(process_time)
+    await log_handler.save()
     return response
 
 

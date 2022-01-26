@@ -1,8 +1,13 @@
 import logging
 from typing import Callable
+
+from tracardi.config import tracardi
 from tracardi.domain.profile import Profile
+from tracardi.exceptions.log_handler import log_handler
 
 logger = logging.getLogger("Segmentation")
+logger.setLevel(tracardi.logging_level)
+logger.addHandler(log_handler)
 
 
 async def segment(profile: Profile, event_types: list, load_segment_by_event_type: Callable) -> dict:

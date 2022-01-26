@@ -3,10 +3,12 @@ import logging
 from typing import Optional
 from tracardi.domain.entity import Entity
 from tracardi.config import redis_config, tracardi
+from tracardi.exceptions.log_handler import log_handler
 from tracardi.service.storage.redis_client import AsyncRedisClient, RedisClient
 
 logger = logging.getLogger('tracardi.api.event_server')
 logger.setLevel(tracardi.logging_level)
+logger.addHandler(log_handler)
 
 
 # todo try to use this.

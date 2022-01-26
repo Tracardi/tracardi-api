@@ -10,6 +10,9 @@
     "mappings": {
       "dynamic": false,
       "properties": {
+        "date": {
+          "type": "date"
+        },
         "message": {
           "type": "keyword"
         },
@@ -23,7 +26,7 @@
           "type": "integer"
         },
         "level": {
-          "type": "integer"
+          "type": "keyword"
         }
       }
     }
