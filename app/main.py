@@ -178,6 +178,7 @@ def is_elastic_on_localhost():
 
 @application.on_event("startup")
 async def app_starts():
+    logger.info("TRACARDI set-up starts.")
     no_of_tries = 10
     while True:
         try:
@@ -219,7 +220,7 @@ async def app_starts():
             logger.error(f"Error details: {str(e)}")
 
     report_i_am_alive()
-    logger.info("START UP exits.")
+    logger.info("TRACARDI set-up finished.")
 
 
 @application.middleware("http")
