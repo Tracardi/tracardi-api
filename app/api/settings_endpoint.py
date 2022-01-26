@@ -9,14 +9,14 @@ system_settings = [
     SystemSettings(
         **{
             "label": "USER_NAME",
-            "value": auth.user,
+            "value": "set" if auth.user is not None else "not set",
             "desc": "Default: admin. Login to Tracardi API"
         }
     ),
     SystemSettings(
         **{
             "label": "PASSWORD",
-            "value": auth.password,
+            "value": "set" if auth.password is not None else "not set",
             "desc": "Default: admin. Password to Tracardi API"
         }
     ),
