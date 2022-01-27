@@ -214,11 +214,12 @@ async def app_starts():
                                "external IP that docker can connect to.")
             logger.error(f"Error details: {str(e)}")
 
+        # todo check if this is needed when we make a single thread startup.
         except Exception as e:
             await asyncio.sleep(1)
             no_of_tries -= 1
             logger.error(f"Could not save data. Number of tries left: {no_of_tries}. Waiting 1s to retry.")
-            logger.error(f"Error details: {str(e)}")
+            logger.error(f"Error details: {repr(e)}")
 
     report_i_am_alive()
     logger.info("TRACARDI set-up finished.")
