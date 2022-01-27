@@ -22,6 +22,7 @@ from app.config import server
 from app.setup.on_start import add_plugins, update_api_instance
 from tracardi.config import tracardi, elastic
 from tracardi.exceptions.log_handler import log_handler
+from tracardi.service.storage.driver import storage
 from tracardi.service.storage.elastic_client import ElasticClient
 from app.setup.indices_setup import create_indices
 from tracardi.service.storage.index import resources
@@ -231,7 +232,15 @@ async def add_process_time_header(request: Request, call_next):
     response = await call_next(request)
     process_time = time() - start_time
     response.headers["X-Process-Time"] = str(process_time)
-    await log_handler.save()
+
+    # todo this should run in background
+    try:
+        if log_handler.has_logs():
+            await storage.driver.raw.collection('log', log_handler.collection).save()
+            log_handler.reset()
+    except Exception as e:
+        print(str(e))
+
     return response
 
 
