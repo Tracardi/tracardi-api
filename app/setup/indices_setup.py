@@ -23,8 +23,9 @@ logger.addHandler(log_handler)
 
 async def create_indices():
     def add_prefix(map):
-        map_index_patterns = [pattern.replace("%%PREFIX%%", elastic.instance_prefix) for pattern in
-                              map["index_patterns"]]
+        map_index_patterns = [
+            pattern.replace("%%PREFIX%%-", f"{elastic.instance_prefix}-" if elastic.instance_prefix else "") for pattern
+            in map["index_patterns"]]
         map["index_patterns"] = map_index_patterns
         return map
 
@@ -71,16 +72,16 @@ async def create_indices():
 
                 if 'acknowledged' not in result or result['acknowledged'] is not True:
                     logger.error("New {} `{}` was not created. The following result was returned {}".format(
-                                     'template' if index.multi_index else 'index',
-                                     index.get_write_index(),
-                                     result)
-                                 )
+                        'template' if index.multi_index else 'index',
+                        index.get_write_index(),
+                        result)
+                    )
                 else:
                     logger.info("New {} `{}` created. Mapping from `{}` was used.".format(
-                                   'template' if index.multi_index else 'index',
-                                   index.get_write_index(),
-                                   map_file)
-                               )
+                        'template' if index.multi_index else 'index',
+                        index.get_write_index(),
+                        map_file)
+                    )
 
                 if key in index_mapping and 'on-start' in index_mapping[key]:
                     if index_mapping[key]['on-start'] is not None:
@@ -89,4 +90,3 @@ async def create_indices():
                             await on_start()
             else:
                 logger.info("Index `{}` exists.".format(index.get_write_index()))
-
