@@ -158,6 +158,10 @@ async def add_plugins():
         'tracardi.process_engine.action.v1.connectors.oauth2_token.plugin',
         'tracardi.process_engine.action.v1.connectors.slack.send_message.plugin',
         'tracardi.process_engine.action.v1.connectors.google.sheets.modify.plugin',
+        'tracardi.process_engine.action.v1.connectors.meaningcloud.deep_categorization.plugin',
+        'tracardi.process_engine.action.v1.connectors.meaningcloud.corporate_reputation.plugin',
+        'tracardi.process_engine.action.v1.connectors.meaningcloud.topics_extraction.plugin',
+        'tracardi.process_engine.action.v1.connectors.meaningcloud.summarization.plugin',
 
         # Internal
         'tracardi.process_engine.action.v1.internal.event_source_fetcher.plugin',
