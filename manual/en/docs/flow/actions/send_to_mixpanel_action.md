@@ -16,13 +16,15 @@ port **error** if one occurs.
 
 ## Configuration
 
-#### With form
+#### Form fields
+
 - MixPanel resource - Select your MixPanel resource, containing project's token and server
   prefix (either EU or US)
 - Additional fields mapping - Here you can add custom mapping for your event. Feel free to use dotted
   notation.
 
 #### Advanced configuration
+
 ```json
 {
   "source": {

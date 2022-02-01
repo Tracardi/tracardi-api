@@ -4,20 +4,24 @@ This plugin fetches funnel created in MixPanel, for current profile.
 
 
 ## Requirements
+
 This plugin requires MixPanel account with created project, and a service account
 created for this project. Credentials for the service account must be included in 
 resource, as well as server prefix (either EU or US).
 
 ## Input
+
 This plugin takes any payload as input.
 
 ## Outputs
+
 This plugin outputs fetched funnel on port **success**, or an error message (if it's known one) on port
 **error** if one occurs.
 
 ## Configuration
 
-#### With form
+#### Form fields
+
 - MixPanel resource - Select your MixPanel resource, containing service account username, password
   and server prefix.
 - Project ID - Here paste your MixPanel project ID. You can find it under Settings > Project settings > 
@@ -31,6 +35,7 @@ This plugin outputs fetched funnel on port **success**, or an error message (if 
   as Lower time bound.
 
 #### Advanced configuration
+
 ```json
 {
   "source": {
