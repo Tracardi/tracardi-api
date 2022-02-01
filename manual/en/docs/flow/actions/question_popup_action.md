@@ -1,6 +1,7 @@
 # Show question popup plugin
 
-This plugin shows a question to user, with two possible answers.
+This plugin shows a question to user, with two possible answers. The answer click by user will be sent back to tracardi 
+as a new event type. User can define the type in __Event type__ field in the configuration form.  
 
 ## Input
 This plugin takes any payload as input.
@@ -10,7 +11,8 @@ This plugin returns given payload on port **payload** without any changes.
 
 ## Plugin configuration
 
-#### With form
+#### Form fields 
+
 - UIX Source - provide a URL, where UIX elements are located. Usually it's
   **http://localhost:8686** (Tracardi API).
 - API URL - question popup sends an event after user has answered given question.
@@ -31,6 +33,7 @@ This plugin returns given payload on port **payload** without any changes.
 - Dark theme - you can switch your popup into dark mode. ON - dark theme, OFF - bright theme.
 
 #### Advanced configuration
+
 ```json
 {
   "api_url": "<url-of-api-for-event-to-be-sent-to>",
