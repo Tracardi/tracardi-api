@@ -125,6 +125,7 @@ async def add_plugins():
         'tracardi.process_engine.action.v1.ux.snackbar.plugin',
         'tracardi.process_engine.action.v1.ux.consent.plugin',
         'tracardi.process_engine.action.v1.ux.cta_message.plugin',
+        'tracardi.process_engine.action.v1.ux.rating_popup.plugin',
         'tracardi.process_engine.action.v1.ux.question_popup.plugin',
 
         # Connectors
