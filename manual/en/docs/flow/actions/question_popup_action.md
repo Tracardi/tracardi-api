@@ -4,9 +4,11 @@ This plugin shows a question to user, with two possible answers. The answer clic
 as a new event type. User can define the type in __Event type__ field in the configuration form.  
 
 ## Input
+
 This plugin takes any payload as input.
 
 ## Output 
+
 This plugin returns given payload on port **payload** without any changes.
 
 ## Plugin configuration
