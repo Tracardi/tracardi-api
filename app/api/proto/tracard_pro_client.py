@@ -56,7 +56,7 @@ class TracardiProClient(object):
 
 if __name__ == '__main__':
     client = TracardiProClient()
-    r = client.authorize("a", "b")
-    print(r)
+    # r = client.authorize("a", "b")
+    # print(r)
     result = client.get_available_services()
     print(f'{result}')
