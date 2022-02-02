@@ -11,23 +11,25 @@ from google.protobuf import symbol_database as _symbol_database
 _sym_db = _symbol_database.Default()
 
 
+from google.protobuf import struct_pb2 as google_dot_protobuf_dot_struct__pb2
 
 
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='tracardi_pro_services.proto',
-  package='service',
+  package='tracardi_pro',
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x1btracardi_pro_services.proto\x12\x07service\"\r\n\x0b\x45mptyParams\"t\n\x12ServiceDescription\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x13\n\x0b\x64\x65scription\x18\x02 \x01(\t\x12\x0f\n\x07traffic\x18\x03 \x01(\t\x12\x0c\n\x04icon\x18\x04 \x01(\t\x12\x0c\n\x04tags\x18\x05 \x03(\t\x12\x0e\n\x06prefix\x18\x06 \x01(\t\"\xa7\x01\n\x16ServiceDescriptionDict\x12?\n\x08services\x18\x01 \x03(\x0b\x32-.service.ServiceDescriptionDict.ServicesEntry\x1aL\n\rServicesEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12*\n\x05value\x18\x02 \x01(\x0b\x32\x1b.service.ServiceDescription:\x02\x38\x01\"1\n\x0b\x43redentials\x12\x10\n\x08username\x18\x01 \x01(\t\x12\x10\n\x08password\x18\x02 \x01(\t\"\x16\n\x05Token\x12\r\n\x05token\x18\x01 \x01(\t2\x91\x01\n\x07Service\x12Q\n\x16get_available_services\x12\x14.service.EmptyParams\x1a\x1f.service.ServiceDescriptionDict\"\x00\x12\x33\n\tauthorize\x12\x14.service.Credentials\x1a\x0e.service.Token\"\x00\x62\x06proto3'
-)
+  serialized_pb=b'\n\x1btracardi_pro_services.proto\x12\x0ctracardi_pro\x1a\x1cgoogle/protobuf/struct.proto\"\r\n\x0b\x45mptyParams\"q\n\x0fServiceMetadata\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x13\n\x0b\x64\x65scription\x18\x02 \x01(\t\x12\x0f\n\x07traffic\x18\x03 \x01(\t\x12\x0c\n\x04icon\x18\x04 \x01(\t\x12\x0c\n\x04tags\x18\x05 \x03(\t\x12\x0e\n\x06prefix\x18\x06 \x01(\t\"I\n\x0fServiceCallBack\x12\x0f\n\x07service\x18\x01 \x01(\t\x12%\n\x04\x64\x61ta\x18\x02 \x01(\x0b\x32\x17.google.protobuf.Struct\"\x91\x01\n\x08Services\x12\x36\n\x08services\x18\x01 \x03(\x0b\x32$.tracardi_pro.Services.ServicesEntry\x1aM\n\rServicesEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12+\n\x05value\x18\x02 \x01(\x0b\x32\x1c.tracardi_pro.ServiceEnvelop:\x02\x38\x01\"\x97\x01\n\x0eServiceEnvelop\x12/\n\x08metadata\x18\x01 \x01(\x0b\x32\x1d.tracardi_pro.ServiceMetadata\x12%\n\x04\x66orm\x18\x02 \x01(\x0b\x32\x17.google.protobuf.Struct\x12-\n\x06remote\x18\x03 \x01(\x0b\x32\x1d.tracardi_pro.ServiceCallBack\"1\n\x0b\x43redentials\x12\x10\n\x08username\x18\x01 \x01(\t\x12\x10\n\x08password\x18\x02 \x01(\t\"\x16\n\x05Token\x12\r\n\x05token\x18\x01 \x01(\t2\x97\x01\n\x07Service\x12M\n\x16get_available_services\x12\x19.tracardi_pro.EmptyParams\x1a\x16.tracardi_pro.Services\"\x00\x12=\n\tauthorize\x12\x19.tracardi_pro.Credentials\x1a\x13.tracardi_pro.Token\"\x00\x62\x06proto3'
+  ,
+  dependencies=[google_dot_protobuf_dot_struct__pb2.DESCRIPTOR,])
 
 
 
 
 _EMPTYPARAMS = _descriptor.Descriptor(
   name='EmptyParams',
-  full_name='service.EmptyParams',
+  full_name='tracardi_pro.EmptyParams',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
@@ -45,56 +47,56 @@ _EMPTYPARAMS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=40,
-  serialized_end=53,
+  serialized_start=75,
+  serialized_end=88,
 )
 
 
-_SERVICEDESCRIPTION = _descriptor.Descriptor(
-  name='ServiceDescription',
-  full_name='service.ServiceDescription',
+_SERVICEMETADATA = _descriptor.Descriptor(
+  name='ServiceMetadata',
+  full_name='tracardi_pro.ServiceMetadata',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='name', full_name='service.ServiceDescription.name', index=0,
+      name='name', full_name='tracardi_pro.ServiceMetadata.name', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='description', full_name='service.ServiceDescription.description', index=1,
+      name='description', full_name='tracardi_pro.ServiceMetadata.description', index=1,
       number=2, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='traffic', full_name='service.ServiceDescription.traffic', index=2,
+      name='traffic', full_name='tracardi_pro.ServiceMetadata.traffic', index=2,
       number=3, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='icon', full_name='service.ServiceDescription.icon', index=3,
+      name='icon', full_name='tracardi_pro.ServiceMetadata.icon', index=3,
       number=4, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='tags', full_name='service.ServiceDescription.tags', index=4,
+      name='tags', full_name='tracardi_pro.ServiceMetadata.tags', index=4,
       number=5, type=9, cpp_type=9, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='prefix', full_name='service.ServiceDescription.prefix', index=5,
+      name='prefix', full_name='tracardi_pro.ServiceMetadata.prefix', index=5,
       number=6, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -112,28 +114,67 @@ _SERVICEDESCRIPTION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=55,
-  serialized_end=171,
+  serialized_start=90,
+  serialized_end=203,
 )
 
 
-_SERVICEDESCRIPTIONDICT_SERVICESENTRY = _descriptor.Descriptor(
-  name='ServicesEntry',
-  full_name='service.ServiceDescriptionDict.ServicesEntry',
+_SERVICECALLBACK = _descriptor.Descriptor(
+  name='ServiceCallBack',
+  full_name='tracardi_pro.ServiceCallBack',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='key', full_name='service.ServiceDescriptionDict.ServicesEntry.key', index=0,
+      name='service', full_name='tracardi_pro.ServiceCallBack.service', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='value', full_name='service.ServiceDescriptionDict.ServicesEntry.value', index=1,
+      name='data', full_name='tracardi_pro.ServiceCallBack.data', index=1,
+      number=2, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=205,
+  serialized_end=278,
+)
+
+
+_SERVICES_SERVICESENTRY = _descriptor.Descriptor(
+  name='ServicesEntry',
+  full_name='tracardi_pro.Services.ServicesEntry',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='key', full_name='tracardi_pro.Services.ServicesEntry.key', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='value', full_name='tracardi_pro.Services.ServicesEntry.value', index=1,
       number=2, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
@@ -151,20 +192,20 @@ _SERVICEDESCRIPTIONDICT_SERVICESENTRY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=265,
-  serialized_end=341,
+  serialized_start=349,
+  serialized_end=426,
 )
 
-_SERVICEDESCRIPTIONDICT = _descriptor.Descriptor(
-  name='ServiceDescriptionDict',
-  full_name='service.ServiceDescriptionDict',
+_SERVICES = _descriptor.Descriptor(
+  name='Services',
+  full_name='tracardi_pro.Services',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='services', full_name='service.ServiceDescriptionDict.services', index=0,
+      name='services', full_name='tracardi_pro.Services.services', index=0,
       number=1, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
@@ -173,7 +214,7 @@ _SERVICEDESCRIPTIONDICT = _descriptor.Descriptor(
   ],
   extensions=[
   ],
-  nested_types=[_SERVICEDESCRIPTIONDICT_SERVICESENTRY, ],
+  nested_types=[_SERVICES_SERVICESENTRY, ],
   enum_types=[
   ],
   serialized_options=None,
@@ -182,28 +223,74 @@ _SERVICEDESCRIPTIONDICT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=174,
-  serialized_end=341,
+  serialized_start=281,
+  serialized_end=426,
 )
 
 
-_CREDENTIALS = _descriptor.Descriptor(
-  name='Credentials',
-  full_name='service.Credentials',
+_SERVICEENVELOP = _descriptor.Descriptor(
+  name='ServiceEnvelop',
+  full_name='tracardi_pro.ServiceEnvelop',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='username', full_name='service.Credentials.username', index=0,
+      name='metadata', full_name='tracardi_pro.ServiceEnvelop.metadata', index=0,
+      number=1, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='form', full_name='tracardi_pro.ServiceEnvelop.form', index=1,
+      number=2, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='remote', full_name='tracardi_pro.ServiceEnvelop.remote', index=2,
+      number=3, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=429,
+  serialized_end=580,
+)
+
+
+_CREDENTIALS = _descriptor.Descriptor(
+  name='Credentials',
+  full_name='tracardi_pro.Credentials',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='username', full_name='tracardi_pro.Credentials.username', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='password', full_name='service.Credentials.password', index=1,
+      name='password', full_name='tracardi_pro.Credentials.password', index=1,
       number=2, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -221,21 +308,21 @@ _CREDENTIALS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=343,
-  serialized_end=392,
+  serialized_start=582,
+  serialized_end=631,
 )
 
 
 _TOKEN = _descriptor.Descriptor(
   name='Token',
-  full_name='service.Token',
+  full_name='tracardi_pro.Token',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='token', full_name='service.Token.token', index=0,
+      name='token', full_name='tracardi_pro.Token.token', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -253,16 +340,22 @@ _TOKEN = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=394,
-  serialized_end=416,
+  serialized_start=633,
+  serialized_end=655,
 )
 
-_SERVICEDESCRIPTIONDICT_SERVICESENTRY.fields_by_name['value'].message_type = _SERVICEDESCRIPTION
-_SERVICEDESCRIPTIONDICT_SERVICESENTRY.containing_type = _SERVICEDESCRIPTIONDICT
-_SERVICEDESCRIPTIONDICT.fields_by_name['services'].message_type = _SERVICEDESCRIPTIONDICT_SERVICESENTRY
+_SERVICECALLBACK.fields_by_name['data'].message_type = google_dot_protobuf_dot_struct__pb2._STRUCT
+_SERVICES_SERVICESENTRY.fields_by_name['value'].message_type = _SERVICEENVELOP
+_SERVICES_SERVICESENTRY.containing_type = _SERVICES
+_SERVICES.fields_by_name['services'].message_type = _SERVICES_SERVICESENTRY
+_SERVICEENVELOP.fields_by_name['metadata'].message_type = _SERVICEMETADATA
+_SERVICEENVELOP.fields_by_name['form'].message_type = google_dot_protobuf_dot_struct__pb2._STRUCT
+_SERVICEENVELOP.fields_by_name['remote'].message_type = _SERVICECALLBACK
 DESCRIPTOR.message_types_by_name['EmptyParams'] = _EMPTYPARAMS
-DESCRIPTOR.message_types_by_name['ServiceDescription'] = _SERVICEDESCRIPTION
-DESCRIPTOR.message_types_by_name['ServiceDescriptionDict'] = _SERVICEDESCRIPTIONDICT
+DESCRIPTOR.message_types_by_name['ServiceMetadata'] = _SERVICEMETADATA
+DESCRIPTOR.message_types_by_name['ServiceCallBack'] = _SERVICECALLBACK
+DESCRIPTOR.message_types_by_name['Services'] = _SERVICES
+DESCRIPTOR.message_types_by_name['ServiceEnvelop'] = _SERVICEENVELOP
 DESCRIPTOR.message_types_by_name['Credentials'] = _CREDENTIALS
 DESCRIPTOR.message_types_by_name['Token'] = _TOKEN
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
@@ -270,72 +363,86 @@ _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 EmptyParams = _reflection.GeneratedProtocolMessageType('EmptyParams', (_message.Message,), {
   'DESCRIPTOR' : _EMPTYPARAMS,
   '__module__' : 'tracardi_pro_services_pb2'
-  # @@protoc_insertion_point(class_scope:service.EmptyParams)
+  # @@protoc_insertion_point(class_scope:tracardi_pro.EmptyParams)
   })
 _sym_db.RegisterMessage(EmptyParams)
 
-ServiceDescription = _reflection.GeneratedProtocolMessageType('ServiceDescription', (_message.Message,), {
-  'DESCRIPTOR' : _SERVICEDESCRIPTION,
+ServiceMetadata = _reflection.GeneratedProtocolMessageType('ServiceMetadata', (_message.Message,), {
+  'DESCRIPTOR' : _SERVICEMETADATA,
   '__module__' : 'tracardi_pro_services_pb2'
-  # @@protoc_insertion_point(class_scope:service.ServiceDescription)
+  # @@protoc_insertion_point(class_scope:tracardi_pro.ServiceMetadata)
   })
-_sym_db.RegisterMessage(ServiceDescription)
+_sym_db.RegisterMessage(ServiceMetadata)
 
-ServiceDescriptionDict = _reflection.GeneratedProtocolMessageType('ServiceDescriptionDict', (_message.Message,), {
+ServiceCallBack = _reflection.GeneratedProtocolMessageType('ServiceCallBack', (_message.Message,), {
+  'DESCRIPTOR' : _SERVICECALLBACK,
+  '__module__' : 'tracardi_pro_services_pb2'
+  # @@protoc_insertion_point(class_scope:tracardi_pro.ServiceCallBack)
+  })
+_sym_db.RegisterMessage(ServiceCallBack)
+
+Services = _reflection.GeneratedProtocolMessageType('Services', (_message.Message,), {
 
   'ServicesEntry' : _reflection.GeneratedProtocolMessageType('ServicesEntry', (_message.Message,), {
-    'DESCRIPTOR' : _SERVICEDESCRIPTIONDICT_SERVICESENTRY,
+    'DESCRIPTOR' : _SERVICES_SERVICESENTRY,
     '__module__' : 'tracardi_pro_services_pb2'
-    # @@protoc_insertion_point(class_scope:service.ServiceDescriptionDict.ServicesEntry)
+    # @@protoc_insertion_point(class_scope:tracardi_pro.Services.ServicesEntry)
     })
   ,
-  'DESCRIPTOR' : _SERVICEDESCRIPTIONDICT,
+  'DESCRIPTOR' : _SERVICES,
   '__module__' : 'tracardi_pro_services_pb2'
-  # @@protoc_insertion_point(class_scope:service.ServiceDescriptionDict)
+  # @@protoc_insertion_point(class_scope:tracardi_pro.Services)
   })
-_sym_db.RegisterMessage(ServiceDescriptionDict)
-_sym_db.RegisterMessage(ServiceDescriptionDict.ServicesEntry)
+_sym_db.RegisterMessage(Services)
+_sym_db.RegisterMessage(Services.ServicesEntry)
+
+ServiceEnvelop = _reflection.GeneratedProtocolMessageType('ServiceEnvelop', (_message.Message,), {
+  'DESCRIPTOR' : _SERVICEENVELOP,
+  '__module__' : 'tracardi_pro_services_pb2'
+  # @@protoc_insertion_point(class_scope:tracardi_pro.ServiceEnvelop)
+  })
+_sym_db.RegisterMessage(ServiceEnvelop)
 
 Credentials = _reflection.GeneratedProtocolMessageType('Credentials', (_message.Message,), {
   'DESCRIPTOR' : _CREDENTIALS,
   '__module__' : 'tracardi_pro_services_pb2'
-  # @@protoc_insertion_point(class_scope:service.Credentials)
+  # @@protoc_insertion_point(class_scope:tracardi_pro.Credentials)
   })
 _sym_db.RegisterMessage(Credentials)
 
 Token = _reflection.GeneratedProtocolMessageType('Token', (_message.Message,), {
   'DESCRIPTOR' : _TOKEN,
   '__module__' : 'tracardi_pro_services_pb2'
-  # @@protoc_insertion_point(class_scope:service.Token)
+  # @@protoc_insertion_point(class_scope:tracardi_pro.Token)
   })
 _sym_db.RegisterMessage(Token)
 
 
-_SERVICEDESCRIPTIONDICT_SERVICESENTRY._options = None
+_SERVICES_SERVICESENTRY._options = None
 
 _SERVICE = _descriptor.ServiceDescriptor(
   name='Service',
-  full_name='service.Service',
+  full_name='tracardi_pro.Service',
   file=DESCRIPTOR,
   index=0,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=419,
-  serialized_end=564,
+  serialized_start=658,
+  serialized_end=809,
   methods=[
   _descriptor.MethodDescriptor(
     name='get_available_services',
-    full_name='service.Service.get_available_services',
+    full_name='tracardi_pro.Service.get_available_services',
     index=0,
     containing_service=None,
     input_type=_EMPTYPARAMS,
-    output_type=_SERVICEDESCRIPTIONDICT,
+    output_type=_SERVICES,
     serialized_options=None,
     create_key=_descriptor._internal_create_key,
   ),
   _descriptor.MethodDescriptor(
     name='authorize',
-    full_name='service.Service.authorize',
+    full_name='tracardi_pro.Service.authorize',
     index=1,
     containing_service=None,
     input_type=_CREDENTIALS,

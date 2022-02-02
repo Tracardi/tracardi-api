@@ -7,7 +7,7 @@ from tracardi.service.storage.driver import storage
 
 from app.api.auth.authentication import get_current_user
 from app.config import server
-from tracardi_pro_services_pb2 import ServiceDescriptionDict
+from tracardi_pro_services_pb2 import Services
 
 router = APIRouter(
     dependencies=[Depends(get_current_user)]
@@ -34,8 +34,8 @@ async def authorized_tracardi_pro(username: str, password: str):
 @router.get("/tpro/available_services", tags=["tpro"], include_in_schema=server.expose_gui_api)
 async def get_tracardi_pro_endpoint():
     try:
-        service_description_dict = tracardi_pro_client.get_available_services()  # type: ServiceDescriptionDict
-        return json_format.MessageToDict(service_description_dict)
+        services = tracardi_pro_client.get_available_services()  # type: Services
+        return json_format.MessageToDict(services)
 
     except grpc.RpcError as e:
         raise HTTPException(detail=e.details(), status_code=401 if e.code().name == 'UNAUTHENTICATED' else 500)

@@ -15,12 +15,12 @@ class ServiceStub(object):
             channel: A grpc.Channel.
         """
         self.get_available_services = channel.unary_unary(
-                '/service.Service/get_available_services',
+                '/tracardi_pro.Service/get_available_services',
                 request_serializer=tracardi__pro__services__pb2.EmptyParams.SerializeToString,
-                response_deserializer=tracardi__pro__services__pb2.ServiceDescriptionDict.FromString,
+                response_deserializer=tracardi__pro__services__pb2.Services.FromString,
                 )
         self.authorize = channel.unary_unary(
-                '/service.Service/authorize',
+                '/tracardi_pro.Service/authorize',
                 request_serializer=tracardi__pro__services__pb2.Credentials.SerializeToString,
                 response_deserializer=tracardi__pro__services__pb2.Token.FromString,
                 )
@@ -47,7 +47,7 @@ def add_ServiceServicer_to_server(servicer, server):
             'get_available_services': grpc.unary_unary_rpc_method_handler(
                     servicer.get_available_services,
                     request_deserializer=tracardi__pro__services__pb2.EmptyParams.FromString,
-                    response_serializer=tracardi__pro__services__pb2.ServiceDescriptionDict.SerializeToString,
+                    response_serializer=tracardi__pro__services__pb2.Services.SerializeToString,
             ),
             'authorize': grpc.unary_unary_rpc_method_handler(
                     servicer.authorize,
@@ -56,7 +56,7 @@ def add_ServiceServicer_to_server(servicer, server):
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'service.Service', rpc_method_handlers)
+            'tracardi_pro.Service', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
 
 
@@ -75,9 +75,9 @@ class Service(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/service.Service/get_available_services',
+        return grpc.experimental.unary_unary(request, target, '/tracardi_pro.Service/get_available_services',
             tracardi__pro__services__pb2.EmptyParams.SerializeToString,
-            tracardi__pro__services__pb2.ServiceDescriptionDict.FromString,
+            tracardi__pro__services__pb2.Services.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -92,7 +92,7 @@ class Service(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/service.Service/authorize',
+        return grpc.experimental.unary_unary(request, target, '/tracardi_pro.Service/authorize',
             tracardi__pro__services__pb2.Credentials.SerializeToString,
             tracardi__pro__services__pb2.Token.FromString,
             options, channel_credentials,
