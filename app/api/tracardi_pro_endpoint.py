@@ -11,7 +11,7 @@ from app.config import server
 from tracardi_pro_services_pb2 import Services
 
 router = APIRouter(
-    # dependencies=[Depends(get_current_user)]
+    dependencies=[Depends(get_current_user)]
 )
 
 tracardi_pro_client = TracardiProClient(host="localhost", port=12345)
