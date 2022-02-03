@@ -1,8 +1,7 @@
 import os
 
 import grpc
-import tracardi_pro_services_pb2_grpc as pb2_grpc
-import tracardi_pro_services_pb2 as pb2
+from app.api.proto.stubs import tracardi_pro_services_pb2 as pb2, tracardi_pro_services_pb2_grpc as pb2_grpc
 
 _local_path = os.path.dirname(__file__)
 

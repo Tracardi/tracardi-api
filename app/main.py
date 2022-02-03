@@ -1,7 +1,10 @@
 import logging
 import asyncio
-import os
+import os, sys
 from time import time
+
+_local_dir = os.path.dirname(__file__)
+sys.path.append(f"{_local_dir}/api/proto/stubs")
 
 import elasticsearch
 from fastapi.middleware.cors import CORSMiddleware
@@ -32,7 +35,6 @@ logger = logging.getLogger('app.main')
 logger.setLevel(tracardi.logging_level)
 logger.addHandler(log_handler)
 
-_local_dir = os.path.dirname(__file__)
 
 tags_metadata = [
     {

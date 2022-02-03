@@ -8,7 +8,7 @@ from tracardi.service.storage.driver import storage
 
 from app.api.auth.authentication import get_current_user
 from app.config import server
-from tracardi_pro_services_pb2 import Services
+from app.api.proto.stubs.tracardi_pro_services_pb2 import Services
 
 router = APIRouter(
     dependencies=[Depends(get_current_user)]
