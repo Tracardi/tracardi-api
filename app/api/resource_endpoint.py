@@ -230,6 +230,15 @@ async def get_resource_types(type: TypeEnum) -> dict:
                 },
                 "tags": ["mixpanel"],
                 "name": "MixPanel"
+            },
+            "scheduler": {
+                "config": {
+                    "host": "<tracardi-pro-host>",
+                    "callback_host": "<callback-host>",
+                    "token": "<token>"
+                },
+                "tags": ["pro", "scheduler"],
+                "name": "Scheduler"
             }
         })
 

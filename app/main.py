@@ -5,7 +5,7 @@ from time import time
 
 _local_dir = os.path.dirname(__file__)
 sys.path.append(f"{_local_dir}/api/proto/stubs")
-
+print(sys.path)
 import elasticsearch
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI, Request, Depends
