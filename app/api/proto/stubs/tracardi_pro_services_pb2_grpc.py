@@ -27,11 +27,16 @@ class ServiceStub(object):
         self.sign_up = channel.unary_unary(
                 '/tracardi_pro.Service/sign_up',
                 request_serializer=tracardi__pro__services__pb2.Credentials.SerializeToString,
-                response_deserializer=tracardi__pro__services__pb2.Hosts.FromString,
+                response_deserializer=tracardi__pro__services__pb2.Token.FromString,
                 )
-        self.authorize = channel.unary_unary(
-                '/tracardi_pro.Service/authorize',
+        self.sign_in = channel.unary_unary(
+                '/tracardi_pro.Service/sign_in',
                 request_serializer=tracardi__pro__services__pb2.Credentials.SerializeToString,
+                response_deserializer=tracardi__pro__services__pb2.Token.FromString,
+                )
+        self.validate = channel.unary_unary(
+                '/tracardi_pro.Service/validate',
+                request_serializer=tracardi__pro__services__pb2.EmptyParams.SerializeToString,
                 response_deserializer=tracardi__pro__services__pb2.Token.FromString,
                 )
 
@@ -57,7 +62,13 @@ class ServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def authorize(self, request, context):
+    def sign_in(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def validate(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -79,11 +90,16 @@ def add_ServiceServicer_to_server(servicer, server):
             'sign_up': grpc.unary_unary_rpc_method_handler(
                     servicer.sign_up,
                     request_deserializer=tracardi__pro__services__pb2.Credentials.FromString,
-                    response_serializer=tracardi__pro__services__pb2.Hosts.SerializeToString,
+                    response_serializer=tracardi__pro__services__pb2.Token.SerializeToString,
             ),
-            'authorize': grpc.unary_unary_rpc_method_handler(
-                    servicer.authorize,
+            'sign_in': grpc.unary_unary_rpc_method_handler(
+                    servicer.sign_in,
                     request_deserializer=tracardi__pro__services__pb2.Credentials.FromString,
+                    response_serializer=tracardi__pro__services__pb2.Token.SerializeToString,
+            ),
+            'validate': grpc.unary_unary_rpc_method_handler(
+                    servicer.validate,
+                    request_deserializer=tracardi__pro__services__pb2.EmptyParams.FromString,
                     response_serializer=tracardi__pro__services__pb2.Token.SerializeToString,
             ),
     }
@@ -143,12 +159,12 @@ class Service(object):
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/tracardi_pro.Service/sign_up',
             tracardi__pro__services__pb2.Credentials.SerializeToString,
-            tracardi__pro__services__pb2.Hosts.FromString,
+            tracardi__pro__services__pb2.Token.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def authorize(request,
+    def sign_in(request,
             target,
             options=(),
             channel_credentials=None,
@@ -158,8 +174,25 @@ class Service(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/tracardi_pro.Service/authorize',
+        return grpc.experimental.unary_unary(request, target, '/tracardi_pro.Service/sign_in',
             tracardi__pro__services__pb2.Credentials.SerializeToString,
+            tracardi__pro__services__pb2.Token.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def validate(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/tracardi_pro.Service/validate',
+            tracardi__pro__services__pb2.EmptyParams.SerializeToString,
             tracardi__pro__services__pb2.Token.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

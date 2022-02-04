@@ -20,7 +20,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x1btracardi_pro_services.proto\x12\x0ctracardi_pro\x1a\x1cgoogle/protobuf/struct.proto\"\r\n\x0b\x45mptyParams\"q\n\x0fServiceMetadata\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x13\n\x0b\x64\x65scription\x18\x02 \x01(\t\x12\x0f\n\x07traffic\x18\x03 \x01(\t\x12\x0c\n\x04icon\x18\x04 \x01(\t\x12\x0c\n\x04tags\x18\x05 \x03(\t\x12\x0e\n\x06prefix\x18\x06 \x01(\t\"[\n\x0fServiceCallBack\x12\x10\n\x08\x65ndpoint\x18\x01 \x01(\t\x12\x0f\n\x07service\x18\x02 \x01(\t\x12%\n\x04\x64\x61ta\x18\x03 \x01(\x0b\x32\x17.google.protobuf.Struct\"\x91\x01\n\x08Services\x12\x36\n\x08services\x18\x01 \x03(\x0b\x32$.tracardi_pro.Services.ServicesEntry\x1aM\n\rServicesEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12+\n\x05value\x18\x02 \x01(\x0b\x32\x1c.tracardi_pro.ServiceEnvelop:\x02\x38\x01\"\x16\n\x05Hosts\x12\r\n\x05hosts\x18\x01 \x03(\t\"\x97\x01\n\x0eServiceEnvelop\x12/\n\x08metadata\x18\x01 \x01(\x0b\x32\x1d.tracardi_pro.ServiceMetadata\x12%\n\x04\x66orm\x18\x02 \x01(\x0b\x32\x17.google.protobuf.Struct\x12-\n\x06remote\x18\x03 \x01(\x0b\x32\x1d.tracardi_pro.ServiceCallBack\"1\n\x0b\x43redentials\x12\x10\n\x08username\x18\x01 \x01(\t\x12\x10\n\x08password\x18\x02 \x01(\t\"\x16\n\x05Token\x12\r\n\x05token\x18\x01 \x01(\t2\x9d\x02\n\x07Service\x12G\n\x13get_available_hosts\x12\x19.tracardi_pro.EmptyParams\x1a\x13.tracardi_pro.Hosts\"\x00\x12M\n\x16get_available_services\x12\x19.tracardi_pro.EmptyParams\x1a\x16.tracardi_pro.Services\"\x00\x12;\n\x07sign_up\x12\x19.tracardi_pro.Credentials\x1a\x13.tracardi_pro.Hosts\"\x00\x12=\n\tauthorize\x12\x19.tracardi_pro.Credentials\x1a\x13.tracardi_pro.Token\"\x00\x62\x06proto3'
+  serialized_pb=b'\n\x1btracardi_pro_services.proto\x12\x0ctracardi_pro\x1a\x1cgoogle/protobuf/struct.proto\"\r\n\x0b\x45mptyParams\"q\n\x0fServiceMetadata\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x13\n\x0b\x64\x65scription\x18\x02 \x01(\t\x12\x0f\n\x07traffic\x18\x03 \x01(\t\x12\x0c\n\x04icon\x18\x04 \x01(\t\x12\x0c\n\x04tags\x18\x05 \x03(\t\x12\x0e\n\x06prefix\x18\x06 \x01(\t\"[\n\x0fServiceCallBack\x12\x10\n\x08\x65ndpoint\x18\x01 \x01(\t\x12\x0f\n\x07service\x18\x02 \x01(\t\x12%\n\x04\x64\x61ta\x18\x03 \x01(\x0b\x32\x17.google.protobuf.Struct\"\x91\x01\n\x08Services\x12\x36\n\x08services\x18\x01 \x03(\x0b\x32$.tracardi_pro.Services.ServicesEntry\x1aM\n\rServicesEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12+\n\x05value\x18\x02 \x01(\x0b\x32\x1c.tracardi_pro.ServiceEnvelop:\x02\x38\x01\"\x16\n\x05Hosts\x12\r\n\x05hosts\x18\x01 \x03(\t\"\x97\x01\n\x0eServiceEnvelop\x12/\n\x08metadata\x18\x01 \x01(\x0b\x32\x1d.tracardi_pro.ServiceMetadata\x12%\n\x04\x66orm\x18\x02 \x01(\x0b\x32\x17.google.protobuf.Struct\x12-\n\x06remote\x18\x03 \x01(\x0b\x32\x1d.tracardi_pro.ServiceCallBack\"1\n\x0b\x43redentials\x12\x10\n\x08username\x18\x01 \x01(\t\x12\x10\n\x08password\x18\x02 \x01(\t\"\x16\n\x05Token\x12\r\n\x05token\x18\x01 \x01(\t2\xd9\x02\n\x07Service\x12G\n\x13get_available_hosts\x12\x19.tracardi_pro.EmptyParams\x1a\x13.tracardi_pro.Hosts\"\x00\x12M\n\x16get_available_services\x12\x19.tracardi_pro.EmptyParams\x1a\x16.tracardi_pro.Services\"\x00\x12;\n\x07sign_up\x12\x19.tracardi_pro.Credentials\x1a\x13.tracardi_pro.Token\"\x00\x12;\n\x07sign_in\x12\x19.tracardi_pro.Credentials\x1a\x13.tracardi_pro.Token\"\x00\x12<\n\x08validate\x12\x19.tracardi_pro.EmptyParams\x1a\x13.tracardi_pro.Token\"\x00\x62\x06proto3'
   ,
   dependencies=[google_dot_protobuf_dot_struct__pb2.DESCRIPTOR,])
 
@@ -475,7 +475,7 @@ _SERVICE = _descriptor.ServiceDescriptor(
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
   serialized_start=700,
-  serialized_end=985,
+  serialized_end=1045,
   methods=[
   _descriptor.MethodDescriptor(
     name='get_available_hosts',
@@ -503,16 +503,26 @@ _SERVICE = _descriptor.ServiceDescriptor(
     index=2,
     containing_service=None,
     input_type=_CREDENTIALS,
-    output_type=_HOSTS,
+    output_type=_TOKEN,
     serialized_options=None,
     create_key=_descriptor._internal_create_key,
   ),
   _descriptor.MethodDescriptor(
-    name='authorize',
-    full_name='tracardi_pro.Service.authorize',
+    name='sign_in',
+    full_name='tracardi_pro.Service.sign_in',
     index=3,
     containing_service=None,
     input_type=_CREDENTIALS,
+    output_type=_TOKEN,
+    serialized_options=None,
+    create_key=_descriptor._internal_create_key,
+  ),
+  _descriptor.MethodDescriptor(
+    name='validate',
+    full_name='tracardi_pro.Service.validate',
+    index=4,
+    containing_service=None,
+    input_type=_EMPTYPARAMS,
     output_type=_TOKEN,
     serialized_options=None,
     create_key=_descriptor._internal_create_key,

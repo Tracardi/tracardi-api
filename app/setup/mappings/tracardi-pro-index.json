@@ -12,7 +12,13 @@
       "url": {
         "type": "keyword"
       },
+      "type": {
+        "type": "keyword"
+      },
       "token": {
+        "type": "keyword"
+      },
+      "name": {
         "type": "keyword"
       },
       "username": {

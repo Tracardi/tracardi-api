@@ -1,4 +1,5 @@
 import os
+from typing import Optional
 
 import grpc
 from app.api.proto.stubs import tracardi_pro_services_pb2 as pb2, tracardi_pro_services_pb2_grpc as pb2_grpc
@@ -30,10 +31,20 @@ class TracardiProClient(object):
     def save_token(self, token):
         self.token = token
 
-    def authorize(self, username, password):
-        response = self.stub.authorize(pb2.Credentials(username=username, password=password))
-        self.save_token(response.token)
-        return True
+    def validate(self, token) -> Optional[str]:
+        try:
+            message = pb2.EmptyParams()
+            response = self.stub.validate(message, metadata=[('token', token)])
+            return response.token if response.token != "" else None
+        except grpc.RpcError as e:
+            return None
+
+    def sign_in(self, username, password) -> str:
+        try:
+            response = self.stub.sign_in(pb2.Credentials(username=username, password=password))
+            return response.token
+        except grpc.RpcError as e:
+            raise PermissionError(e.details())
 
     def get_available_services(self):
         message = pb2.EmptyParams()
@@ -45,8 +56,9 @@ class TracardiProClient(object):
         hosts = self.stub.get_available_hosts(message, metadata=[('token', self.token)])
         return json_format.MessageToDict(hosts)
 
-    def sing_up(self, username, password):
-        return self.stub.sign_up(pb2.Credentials(username=username, password=password))
+    def sign_up(self, username, password):
+        response = self.stub.sign_up(pb2.Credentials(username=username, password=password))
+        return response.token
 
 
 if __name__ == '__main__':
