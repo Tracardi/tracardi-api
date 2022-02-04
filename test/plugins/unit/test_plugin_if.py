@@ -10,7 +10,7 @@ def test_plugin_if_true():
     payload = {}
 
     result = run_plugin(IfAction, init, payload, profile=Profile(id="1"))
-    assert result.output.value == {}
+    assert result.output.value == payload
     assert result.output.port == 'true'
 
 
