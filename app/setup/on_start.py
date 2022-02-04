@@ -162,6 +162,9 @@ async def add_plugins():
         'tracardi.process_engine.action.v1.connectors.google.sheets.modify.plugin',
         'tracardi.process_engine.action.v1.connectors.mixpanel.send.plugin',
         'tracardi.process_engine.action.v1.connectors.mixpanel.fetch_funnel.plugin',
+        'tracardi.process_engine.action.v1.connectors.mautic.add_contact.plugin',
+        'tracardi.process_engine.action.v1.connectors.mautic.fetch_contact_by_id.plugin',
+        'tracardi.process_engine.action.v1.connectors.mautic.fetch_contact_by_email.plugin',
 
         # Internal
         'tracardi.process_engine.action.v1.internal.event_source_fetcher.plugin',
