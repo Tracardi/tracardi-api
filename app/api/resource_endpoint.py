@@ -3,7 +3,9 @@ from collections import defaultdict
 from typing import Optional
 from fastapi import APIRouter, HTTPException, Depends, Response
 
+from tracardi.config import tracardi
 from tracardi.domain.enum.type_enum import TypeEnum
+from tracardi.exceptions.log_handler import log_handler
 from tracardi.service.storage.driver import storage
 from tracardi.service.storage.factory import StorageFor, StorageForBulk
 from tracardi.service.wf.domain.named_entity import NamedEntity
@@ -18,6 +20,8 @@ from ..config import server
 from ..service.tracardi_pro_inbound_sources import get_tracardi_pro_services
 
 logger = logging.getLogger(__name__)
+logger.setLevel(tracardi.logging_level)
+logger.addHandler(log_handler)
 
 router = APIRouter(
     dependencies=[Depends(get_current_user)]
@@ -224,6 +228,25 @@ async def get_resource_types(type: TypeEnum) -> dict:
                 },
                 "tags": ["influx"],
                 "name": "InfluxDB"
+            },
+            "mixpanel": {
+                "config": {
+                    "token": "<your-project-token>",
+                    "server_prefix": "US | EU",
+                    "username": "<service-account-username>",
+                    "password": "<service-account-password>"
+                },
+                "tags": ["mixpanel"],
+                "name": "MixPanel"
+            },
+            "scheduler": {
+                "config": {
+                    "host": "<tracardi-pro-host>",
+                    "callback_host": "<callback-host>",
+                    "token": "<token>"
+                },
+                "tags": ["pro", "scheduler"],
+                "name": "Scheduler"
             }
         })
 

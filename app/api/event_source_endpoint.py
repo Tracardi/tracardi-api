@@ -3,9 +3,12 @@ from collections import defaultdict
 from typing import Optional
 
 from fastapi import APIRouter, HTTPException, Depends, Response
+
+from tracardi.config import tracardi
 from tracardi.domain.named_entity import NamedEntity
 from tracardi.domain.enum.type_enum import TypeEnum
 from tracardi.domain.event_source import EventSource
+from tracardi.exceptions.log_handler import log_handler
 from tracardi.service.storage.driver import storage
 from .auth.authentication import get_current_user
 from app.service.grouper import search
@@ -13,6 +16,8 @@ from ..config import server
 from ..service.tracardi_pro_inbound_sources import get_tracardi_pro_services
 
 logger = logging.getLogger(__name__)
+logger.setLevel(tracardi.logging_level)
+logger.addHandler(log_handler)
 
 router = APIRouter(
     dependencies=[Depends(get_current_user)]

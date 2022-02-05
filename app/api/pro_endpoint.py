@@ -22,7 +22,6 @@ router = APIRouter(
 
 @router.get("/tracardi-pro", tags=["tracardi-pro"], include_in_schema=server.expose_gui_api)
 async def get_tracardi_pro_endpoint():
-    await sleep(1)
     return await storage.driver.pro.read_pro_service_endpoint()
 
 

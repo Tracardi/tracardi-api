@@ -1,11 +1,11 @@
 import logging
-import os
-
 import asyncio
-
-from elasticsearch.helpers.errors import BulkIndexError
+import os, sys
 from time import time
 
+_local_dir = os.path.dirname(__file__)
+sys.path.append(f"{_local_dir}/api/proto/stubs")
+print(sys.path)
 import elasticsearch
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI, Request, Depends
@@ -16,7 +16,7 @@ from app.api import token_endpoint, rule_endpoint, resource_endpoint, event_endp
     tql_endpoint, health_endpoint, session_endpoint, instance_endpoint, plugins_endpoint, \
     settings_endpoint, event_source_endpoint, test_endpoint, \
     purchases_endpoint, event_tag_endpoint, consent_type_endpoint, flow_action_endpoint, flows_endpoint, info_endpoint, \
-    user_endpoint, pro_endpoint, event_schema_validation_endpoint
+    user_endpoint, pro_endpoint, event_schema_validation_endpoint, debug_endpoint, log_endpoint, tracardi_pro_endpoint
 from app.api.auth.authentication import get_current_user
 from app.api.graphql.profile import graphql_profiles
 from app.api.scheduler import tasks_endpoint
@@ -24,7 +24,8 @@ from app.api.track import event_server_endpoint
 from app.config import server
 from app.setup.on_start import add_plugins, update_api_instance
 from tracardi.config import tracardi, elastic
-from tracardi.exceptions.exception import StorageException
+from tracardi.exceptions.log_handler import log_handler
+from tracardi.service.storage.driver import storage
 from tracardi.service.storage.elastic_client import ElasticClient
 from app.setup.indices_setup import create_indices
 from tracardi.service.storage.index import resources
@@ -32,8 +33,8 @@ from tracardi.service.storage.index import resources
 logging.basicConfig(level=logging.ERROR)
 logger = logging.getLogger('app.main')
 logger.setLevel(tracardi.logging_level)
+logger.addHandler(log_handler)
 
-_local_dir = os.path.dirname(__file__)
 
 tags_metadata = [
     {
@@ -106,7 +107,7 @@ application = FastAPI(
 
 application.add_middleware(
     CORSMiddleware,
-    allow_origins=['*'],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -159,6 +160,10 @@ application.include_router(user_endpoint.router)
 application.include_router(event_source_endpoint.router)
 application.include_router(pro_endpoint.router)
 application.include_router(event_schema_validation_endpoint.router)
+application.include_router(debug_endpoint.router)
+application.include_router(log_endpoint.router)
+application.include_router(tracardi_pro_endpoint.router)
+
 
 # GraphQL
 
@@ -177,6 +182,7 @@ def is_elastic_on_localhost():
 
 @application.on_event("startup")
 async def app_starts():
+    logger.info("TRACARDI set-up starts.")
     no_of_tries = 10
     while True:
         try:
@@ -211,14 +217,15 @@ async def app_starts():
                                "external IP that docker can connect to.")
             logger.error(f"Error details: {str(e)}")
 
+        # todo check if this is needed when we make a single thread startup.
         except Exception as e:
             await asyncio.sleep(1)
             no_of_tries -= 1
             logger.error(f"Could not save data. Number of tries left: {no_of_tries}. Waiting 1s to retry.")
-            logger.error(f"Error details: {str(e)}")
+            logger.error(f"Error details: {repr(e)}")
 
     report_i_am_alive()
-    logger.info("START UP exits.")
+    logger.info("TRACARDI set-up finished.")
 
 
 @application.middleware("http")
@@ -229,6 +236,15 @@ async def add_process_time_header(request: Request, call_next):
     response = await call_next(request)
     process_time = time() - start_time
     response.headers["X-Process-Time"] = str(process_time)
+
+    # todo this should run in background
+    try:
+        if log_handler.has_logs():
+            await storage.driver.raw.collection('log', log_handler.collection).save()
+            log_handler.reset()
+    except Exception as e:
+        print(str(e))
+
     return response
 
 

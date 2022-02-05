@@ -9,14 +9,14 @@ system_settings = [
     SystemSettings(
         **{
             "label": "USER_NAME",
-            "value": auth.user,
+            "value": "set" if auth.user is not None else "not set",
             "desc": "Default: admin. Login to Tracardi API"
         }
     ),
     SystemSettings(
         **{
             "label": "PASSWORD",
-            "value": auth.password,
+            "value": "set" if auth.password is not None else "not set",
             "desc": "Default: admin. Password to Tracardi API"
         }
     ),
@@ -133,6 +133,13 @@ system_settings = [
             "value": elastic.host,
             "desc": "Default: 127.0.0.1. This setting defines a IP address of elastic search instance. See Connecting "
                     "to elastic cluster for more information how to connect to a cluster of servers."
+        }
+    ),
+    SystemSettings(
+        **{
+            "label": "INSTANCE_PREFIX",
+            "value": elastic.instance_prefix,
+            "desc": "Default: None. This setting defines a prefix for all tracardi indices."
         }
     ),
     SystemSettings(
