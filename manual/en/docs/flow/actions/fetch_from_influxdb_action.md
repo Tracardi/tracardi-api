@@ -12,17 +12,14 @@ error info on **error** port if one occurs.
 ## Configuration
 
 #### With form
-- InfluxDB resource - Here select your InfluxDB resource, containing you token and your
-  database URL.
-- Organization - Here type in the name of your InfluxDB resource that you want to fetch data
-  from. This field does not support the dotted notation.
-- Bucket - Here type in the name of your InfluxDB bucket that you want to fetch data from.
-  This field does not support the dotted notation as well.
-- Filters - Here insert key-value pairs. Key is the name of your field in InfluxDB, and
-  value is just its value. If values match, then the record will be returned from InfluxDB.
-- Lower time bound - That's the lower bound of your search. It can be either relative (so for example -1d), or
+- InfluxDB resource - InfluxDB resource, containing your token and database URL to the database instance.
+- Organization - The name of your organization, it is the equivalent of database instance.
+- Bucket - The name of the bucket that you want to write to.
+- Filters - Insert key-value pairs. Key is the name of your field in InfluxDB, and
+  value is its value. If values match, then the record will be returned from InfluxDB.
+- Lower time bound - That's the lower time bound of your search. It can be either relative (so for example -1d), or
   fixed (2022-01-12). Path notation is fully supported.
-- Upper time bound - That is the upper bound of your search. It can be relative or fixed, path is
+- Upper time bound - That is the upper time bound of your search. It can be relative or fixed, path is
   supported as well.
 
 #### Advanced configuration
@@ -36,7 +33,7 @@ error info on **error** port if one occurs.
   "bucket": "<name-of-your-influxdb-bucket>",
   "filters": {
     "<field-name-1>": "payload@example.value",
-    "<field-name-2>": "profile@value.example"
+    "<field-name-2>": "1"
   },
   "start": "<lower-time-bound-for-searching>",
   "stop": "<upper-time-bound-for-searching>"
