@@ -10,6 +10,8 @@ router = APIRouter(
 
 @router.get("/storage/mapping/{index}", tags=["storage"], include_in_schema=server.expose_gui_api, response_model=list)
 async def get_index_mapping(index: str):
-    mapping = await storage_manager(index).get_mapping()
-    return mapping.get_field_names()
-
+    try:
+        mapping = await storage_manager(index).get_mapping()
+        return mapping.get_field_names()
+    except Exception as e:
+        raise HTTPException(detail=str(e), status_code=500)
