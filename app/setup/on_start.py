@@ -167,6 +167,7 @@ async def add_plugins():
         'tracardi.process_engine.action.v1.connectors.mautic.fetch_contact_by_email.plugin',
         'tracardi.process_engine.action.v1.connectors.mautic.add_points.plugin',
         'tracardi.process_engine.action.v1.connectors.mautic.subtract_points.plugin',
+        'tracardi.process_engine.action.v1.connectors.mautic.change_segment.plugin',
 
         # Internal
         'tracardi.process_engine.action.v1.internal.event_source_fetcher.plugin',
