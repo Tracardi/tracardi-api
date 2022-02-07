@@ -164,6 +164,7 @@ async def add_plugins():
         'tracardi.process_engine.action.v1.connectors.influxdb.fetch.plugin',
         'tracardi.process_engine.action.v1.connectors.mixpanel.send.plugin',
         'tracardi.process_engine.action.v1.connectors.mixpanel.fetch_funnel.plugin',
+        'tracardi.process_engine.action.v1.test_plugin.plugin',
 
         # Internal
         'tracardi.process_engine.action.v1.internal.event_source_fetcher.plugin',
