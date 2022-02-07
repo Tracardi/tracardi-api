@@ -7,7 +7,7 @@ from google.protobuf import json_format
 
 _local_path = os.path.dirname(__file__)
 
-with open(os.path.join(_local_path,'certs/server.crt'), 'rb') as f:
+with open(os.path.join(_local_path, 'certs/server.crt'), 'rb') as f:
     trusted_certs = f.read()
 credentials = grpc.ssl_channel_credentials(root_certificates=trusted_certs)
 
@@ -59,15 +59,3 @@ class TracardiProClient(object):
     def sign_up(self, username, password):
         response = self.stub.sign_up(pb2.Credentials(username=username, password=password))
         return response.token
-
-
-if __name__ == '__main__':
-    import sys
-    sys.path.append(os.path.dirname(__file__) + "/stubs")
-
-    print(sys.path)
-    client = TracardiProClient()
-    # r = client.authorize("a", "b")
-    # print(r)
-    result = client.get_available_hosts()
-    print(f'{result}')

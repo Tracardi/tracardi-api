@@ -118,27 +118,7 @@ async def validate_events_json_schemas(events, profile: Optional[Profile], sessi
             event.metadata.status = VALIDATED
 
 
-async def track_event(tracker_payload: TrackerPayload, ip: str, profile_less: bool):
-    tracker_payload.metadata.ip = ip
-
-    try:
-        source = await source_cache.validate_source(source_id=tracker_payload.source.id)
-    except ValueError as e:
-        raise UnauthorizedException(e)
-
-    # Get session
-    if tracker_payload.session.id is None:
-        raise UnauthorizedException("Session must be set.")
-
-    # Load session from storage
-    session = await storage.driver.session.load(tracker_payload.session.id)  # type: Session
-
-    # Get profile
-    profile, session = await tracker_payload.get_profile_and_session(session,
-                                                                     storage.driver.profile.load_merged_profile,
-                                                                     profile_less
-                                                                     )
-
+async def invoke_track_process(tracker_payload: TrackerPayload, source, profile_less: bool, profile=None, session=None):
     if profile_less is True and profile is not None:
         logger.warning("Something is wrong - profile less events should not have profile attached.")
 
@@ -332,3 +312,27 @@ async def track_event(tracker_payload: TrackerPayload, ip: str, profile_less: bo
     result['ux'] = ux
 
     return result
+
+
+async def track_event(tracker_payload: TrackerPayload, ip: str, profile_less: bool):
+    tracker_payload.metadata.ip = ip
+
+    try:
+        source = await source_cache.validate_source(source_id=tracker_payload.source.id)
+    except ValueError as e:
+        raise UnauthorizedException(e)
+
+    # Get session
+    if tracker_payload.session.id is None:
+        raise UnauthorizedException("Session must be set.")
+
+    # Load session from storage
+    session = await storage.driver.session.load(tracker_payload.session.id)  # type: Session
+
+    # Get profile
+    profile, session = await tracker_payload.get_profile_and_session(session,
+                                                                     storage.driver.profile.load_merged_profile,
+                                                                     profile_less
+                                                                     )
+
+    return await invoke_track_process(tracker_payload, source, profile_less, profile, session)
