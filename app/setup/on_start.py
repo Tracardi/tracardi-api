@@ -81,6 +81,7 @@ async def add_plugins():
         'tracardi.process_engine.action.v1.traits.append_trait_action',
         'tracardi.process_engine.action.v1.traits.cut_out_trait_action',
         'tracardi.process_engine.action.v1.traits.delete_trait_action',
+        'tracardi.process_engine.action.v1.traits.auto_merge_properties_to_profile_action',
 
         'tracardi.process_engine.action.v1.operations.update_profile_action',
         'tracardi.process_engine.action.v1.operations.merge_profiles_action',
