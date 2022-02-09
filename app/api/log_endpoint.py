@@ -20,9 +20,10 @@ async def all_api_instances(page: Optional[int] = None):
             page = 0
             page_size = 100
         else:
-            page_size = server.page_size
+            page_size = server.page_size * 2
         start = page * page_size
         limit = page_size
+
         result = await storage.driver.log.load_all(start, limit)
 
         return {
