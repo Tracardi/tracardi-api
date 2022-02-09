@@ -66,8 +66,11 @@ async def get_segments(query: str = None):
         groups = defaultdict(list)
         for segment in result:  # type: Segment
             if isinstance(segment.eventType, list):
-                for group in segment.eventType:
-                    groups[group].append(segment)
+                if not segment.eventType:
+                    groups["Global"].append(segment)
+                else:
+                    for group in segment.eventType:
+                        groups[group].append(segment)
             elif isinstance(segment.eventType, str):
                 groups[segment.eventType].append(segment)
             else:

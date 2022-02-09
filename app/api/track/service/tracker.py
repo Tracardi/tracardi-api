@@ -164,7 +164,7 @@ async def invoke_track_process(tracker_payload: TrackerPayload, source, profile_
             # Segment
             segmentation_result = await segment(rules_engine.profile,
                                                 ran_event_types,
-                                                storage.driver.segment.load_segment_by_event_type)
+                                                storage.driver.segment.load_segments)
 
     except Exception as e:
         message = 'Rules engine or segmentation returned an error `{}`'.format(str(e))

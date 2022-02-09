@@ -10,16 +10,15 @@ logger.setLevel(tracardi.logging_level)
 logger.addHandler(log_handler)
 
 
-async def segment(profile: Profile, event_types: list, load_segment_by_event_type: Callable) -> dict:
+async def segment(profile: Profile, event_types: list, load_segments: Callable) -> dict:
     segmentation_result = {"errors": [], "ids": []}
     try:
         # Segmentation
         if profile.operation.needs_update() or profile.operation.needs_segmentation():
-
             # Segmentation runs only if profile was updated or flow forced it
             async for event_type, segment_id, error in profile.segment(
                     event_types,
-                    load_segment_by_event_type):
+                    load_segments):
                 # Segmentation triggered
                 if error:
                     segmentation_result['errors'].append(error)
