@@ -9,6 +9,8 @@ WORKDIR /app
 
 ## Install dependencies
 COPY app/requirements.txt .
+
+RUN pip install wheel
 RUN pip --default-timeout=180 install -r requirements.txt
 
 ## Copy application
