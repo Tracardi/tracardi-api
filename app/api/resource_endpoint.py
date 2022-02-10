@@ -247,6 +247,15 @@ async def get_resource_types(type: TypeEnum) -> dict:
                 },
                 "tags": ["pro", "scheduler"],
                 "name": "Scheduler"
+            },
+            "mautic": {
+                "config": {
+                    "public_key": "<client-public-key>",
+                    "private_key": "<client-private-key>",
+                    "api_url": "<url-of-mautic-instance>"
+                },
+                "tags": ["mautic"],
+                "name": "Mautic"
             }
         })
 
