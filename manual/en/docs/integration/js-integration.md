@@ -156,6 +156,35 @@ the context configuration.
 different cookies and local data that will lead to the 1000 fields per record limit in elastic. This will stop writing
 new sessions to the system.
 
+### Respect Do Not Track (DNT) browser setting
+
+Do Not Track (DNT) is a web browser setting that adds a signal to the browser, telling websites that the user don’t 
+want to be tracked. By 2011, DNT had been adopted by all the major browsers, but it’s not enforceable. That means
+its default value is set to track the user.
+
+You can respect the browser setting and do not to track the user. If you decide to do this 
+Tracardi will not load the tracking script if the user sets DNT. To respect the DNT set `respectDoNotTrack: true` 
+in settings section of tracker options.
+
+```javascript title="Example" linenums="1" hl_lines="10-12"
+    const options = {
+      tracker: {
+        url: {
+            script: 'http://localhost:8686/tracker',
+            api: 'http://localhost:8686'
+        },
+        source: {
+            id: "3ee63fc6-490a-4fd8-bfb3-bf0c8c8d3387"
+        },
+        settings: {
+          respectDoNotTrack: true
+        }
+    }
+}
+```
+
+If the `respectDoNotTrack` is missing in the settings than Tracardi sets default setting and loads tracking script. 
+
 ## Sending events
 
 Events are defined in a separate script. Below you may find an example of such script.

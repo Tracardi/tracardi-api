@@ -81,6 +81,7 @@ async def add_plugins():
         'tracardi.process_engine.action.v1.traits.append_trait_action',
         'tracardi.process_engine.action.v1.traits.cut_out_trait_action',
         'tracardi.process_engine.action.v1.traits.delete_trait_action',
+        'tracardi.process_engine.action.v1.traits.auto_merge_properties_to_profile_action',
 
         'tracardi.process_engine.action.v1.operations.update_profile_action',
         'tracardi.process_engine.action.v1.operations.merge_profiles_action',
@@ -160,6 +161,8 @@ async def add_plugins():
         'tracardi.process_engine.action.v1.connectors.oauth2_token.plugin',
         'tracardi.process_engine.action.v1.connectors.slack.send_message.plugin',
         'tracardi.process_engine.action.v1.connectors.google.sheets.modify.plugin',
+        'tracardi.process_engine.action.v1.connectors.influxdb.send.plugin',
+        'tracardi.process_engine.action.v1.connectors.influxdb.fetch.plugin',
         'tracardi.process_engine.action.v1.connectors.mixpanel.send.plugin',
         'tracardi.process_engine.action.v1.connectors.mixpanel.fetch_funnel.plugin',
         'tracardi.process_engine.action.v1.connectors.mautic.add_contact.plugin',

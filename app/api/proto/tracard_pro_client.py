@@ -1,12 +1,13 @@
 import os
+from typing import Optional
 
 import grpc
-import tracardi_pro_services_pb2_grpc as pb2_grpc
-import tracardi_pro_services_pb2 as pb2
+from app.api.proto.stubs import tracardi_pro_services_pb2 as pb2, tracardi_pro_services_pb2_grpc as pb2_grpc
+from google.protobuf import json_format
 
 _local_path = os.path.dirname(__file__)
 
-with open(os.path.join(_local_path,'certs/server.crt'), 'rb') as f:
+with open(os.path.join(_local_path, 'certs/server.crt'), 'rb') as f:
     trusted_certs = f.read()
 credentials = grpc.ssl_channel_credentials(root_certificates=trusted_certs)
 
@@ -30,33 +31,31 @@ class TracardiProClient(object):
     def save_token(self, token):
         self.token = token
 
-    def authorize(self, username, password):
+    def validate(self, token) -> Optional[str]:
         try:
-            response = self.stub.authorize(pb2.Credentials(username=username, password=password))
-            self.save_token(response.token)
-            return True
+            message = pb2.EmptyParams()
+            response = self.stub.validate(message, metadata=[('token', token)])
+            return response.token if response.token != "" else None
         except grpc.RpcError as e:
-            # ouch!
-            # lets print the gRPC error message
-            # which is "Length of `Name` cannot be more than 10 characters"
-            print(e.details())
-            # lets access the error code, which is `INVALID_ARGUMENT`
-            # `type` of `status_code` is `grpc.StatusCode`
-            status_code = e.code()
-            # should print `INVALID_ARGUMENT`
-            print(status_code.name)
-            # should print `(3, 'invalid argument')`
-            print(status_code.value)
-            return False
+            return None
+
+    def sign_in(self, username, password) -> str:
+        try:
+            response = self.stub.sign_in(pb2.Credentials(username=username, password=password))
+            return response.token
+        except grpc.RpcError as e:
+            raise PermissionError(e.details())
 
     def get_available_services(self):
         message = pb2.EmptyParams()
-        return self.stub.get_available_services(message, metadata=[('token', self.token)])
+        services = self.stub.get_available_services(message, metadata=[('token', self.token)])
+        return json_format.MessageToDict(services)
 
+    def get_available_hosts(self):
+        message = pb2.EmptyParams()
+        hosts = self.stub.get_available_hosts(message, metadata=[('token', self.token)])
+        return json_format.MessageToDict(hosts)
 
-if __name__ == '__main__':
-    client = TracardiProClient()
-    r = client.authorize("a", "b")
-    print(r)
-    result = client.get_available_services()
-    print(f'{result}')
+    def sign_up(self, username, password):
+        response = self.stub.sign_up(pb2.Credentials(username=username, password=password))
+        return response.token
