@@ -55,6 +55,7 @@ async def add_user(user: NewUserPayload):
                 roles=user.roles,
                 disabled=user.disabled
             )
+            await storage.driver.user.refresh()
         except ElasticsearchException as e:
             raise HTTPException(status_code=500, detail=str(e))
         return {"inserted": result.saved}
@@ -68,6 +69,7 @@ async def delete_user(id: UUID):
         result = await storage.driver.user.del_user(id)
         if result is None:
             raise HTTPException(status_code=404, detail=f"Profile with id '{id}' not found")
+        await storage.driver.user.refresh()
     except ElasticsearchException as e:
         raise HTTPException(status_code=500, detail=str(e))
     return {"deleted": 1 if result["result"] == "deleted" else 0}
@@ -113,6 +115,7 @@ async def edit_user(id: UUID, user: UserPayload):
                 disabled=user.disabled,
                 password_change=user.password != current_user["password"]
             )
+            await storage.driver.user.refresh()
         except ElasticsearchException as e:
             raise HTTPException(status_code=500, detail=str(e))
         return {"inserted": result.saved}
