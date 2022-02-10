@@ -6,9 +6,6 @@
   "mappings": {
     "dynamic": false,
     "properties": {
-      "username": {
-        "type": "keyword"
-      },
       "password": {
         "type": "keyword"
       },

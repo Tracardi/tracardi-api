@@ -2,10 +2,11 @@ from fastapi import APIRouter, Depends, HTTPException
 from .auth.authentication import get_current_user
 from app.config import server
 from tracardi.service.storage.driver import storage
-from pydantic import BaseModel
+from pydantic import BaseModel, validator
 from typing import List, Optional
 from uuid import UUID
 from elasticsearch import ElasticsearchException
+import re
 
 
 class UserPayload(BaseModel):
@@ -15,10 +16,15 @@ class UserPayload(BaseModel):
     roles: List[str]
     disabled: bool = False
 
+    @validator("email")
+    def validate_email(cls, value):
+        if not re.fullmatch(r'([A-Za-z0-9]+[.-_])*[A-Za-z0-9]+@[A-Za-z0-9-]+(\.[A-Z|a-z]{2,})+', value):
+            raise ValueError("Given email is invalid.")
+        return value
+
 
 class NewUserPayload(UserPayload):
     id: UUID
-    username: str
 
 
 router = APIRouter(
@@ -41,14 +47,13 @@ async def flush_users():
 @router.post("/user", tags=["user"], include_in_schema=server.expose_gui_api, response_model=dict)
 async def add_user(user: NewUserPayload):
     try:
-        user_exists = await storage.driver.user.check_if_exists(user.username, user.id)
+        user_exists = await storage.driver.user.check_if_exists(user.email, user.id)
     except ElasticsearchException as e:
         raise HTTPException(status_code=500, detail=str(e))
     if not user_exists:
         try:
             result = await storage.driver.user.add_user(
                 id=str(user.id),
-                username=user.username,
                 password=user.password,
                 full_name=user.full_name,
                 email=user.email,
@@ -60,7 +65,7 @@ async def add_user(user: NewUserPayload):
             raise HTTPException(status_code=500, detail=str(e))
         return {"inserted": result.saved}
     else:
-        raise HTTPException(status_code=409, detail=f"User with username '{user.username}' already exists.")
+        raise HTTPException(status_code=409, detail=f"User with email '{user.email}' already exists.")
 
 
 @router.delete("/user/{id}", tags=["user"], include_in_schema=server.expose_gui_api, response_model=dict)
@@ -107,7 +112,6 @@ async def edit_user(id: UUID, user: UserPayload):
         try:
             result = await storage.driver.user.edit_user(
                 id=str(id),
-                username=current_user["username"],
                 password=user.password if user.password != current_user["password"] else current_user["password"],
                 full_name=user.full_name,
                 email=user.email,
