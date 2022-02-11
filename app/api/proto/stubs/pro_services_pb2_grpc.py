@@ -2,7 +2,7 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-import tracardi_pro_services_pb2 as tracardi__pro__services__pb2
+import pro_services_pb2 as pro__services__pb2
 
 
 class ServiceStub(object):
@@ -16,28 +16,28 @@ class ServiceStub(object):
         """
         self.get_available_hosts = channel.unary_unary(
                 '/tracardi_pro.Service/get_available_hosts',
-                request_serializer=tracardi__pro__services__pb2.EmptyParams.SerializeToString,
-                response_deserializer=tracardi__pro__services__pb2.Hosts.FromString,
+                request_serializer=pro__services__pb2.EmptyParams.SerializeToString,
+                response_deserializer=pro__services__pb2.Hosts.FromString,
                 )
         self.get_available_services = channel.unary_unary(
                 '/tracardi_pro.Service/get_available_services',
-                request_serializer=tracardi__pro__services__pb2.EmptyParams.SerializeToString,
-                response_deserializer=tracardi__pro__services__pb2.Services.FromString,
+                request_serializer=pro__services__pb2.EmptyParams.SerializeToString,
+                response_deserializer=pro__services__pb2.Services.FromString,
                 )
         self.sign_up = channel.unary_unary(
                 '/tracardi_pro.Service/sign_up',
-                request_serializer=tracardi__pro__services__pb2.HostCredentials.SerializeToString,
-                response_deserializer=tracardi__pro__services__pb2.Token.FromString,
+                request_serializer=pro__services__pb2.HostCredentials.SerializeToString,
+                response_deserializer=pro__services__pb2.Token.FromString,
                 )
         self.sign_in = channel.unary_unary(
                 '/tracardi_pro.Service/sign_in',
-                request_serializer=tracardi__pro__services__pb2.Credentials.SerializeToString,
-                response_deserializer=tracardi__pro__services__pb2.UserData.FromString,
+                request_serializer=pro__services__pb2.Credentials.SerializeToString,
+                response_deserializer=pro__services__pb2.UserData.FromString,
                 )
         self.validate = channel.unary_unary(
                 '/tracardi_pro.Service/validate',
-                request_serializer=tracardi__pro__services__pb2.EmptyParams.SerializeToString,
-                response_deserializer=tracardi__pro__services__pb2.Token.FromString,
+                request_serializer=pro__services__pb2.EmptyParams.SerializeToString,
+                response_deserializer=pro__services__pb2.Token.FromString,
                 )
 
 
@@ -79,28 +79,28 @@ def add_ServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'get_available_hosts': grpc.unary_unary_rpc_method_handler(
                     servicer.get_available_hosts,
-                    request_deserializer=tracardi__pro__services__pb2.EmptyParams.FromString,
-                    response_serializer=tracardi__pro__services__pb2.Hosts.SerializeToString,
+                    request_deserializer=pro__services__pb2.EmptyParams.FromString,
+                    response_serializer=pro__services__pb2.Hosts.SerializeToString,
             ),
             'get_available_services': grpc.unary_unary_rpc_method_handler(
                     servicer.get_available_services,
-                    request_deserializer=tracardi__pro__services__pb2.EmptyParams.FromString,
-                    response_serializer=tracardi__pro__services__pb2.Services.SerializeToString,
+                    request_deserializer=pro__services__pb2.EmptyParams.FromString,
+                    response_serializer=pro__services__pb2.Services.SerializeToString,
             ),
             'sign_up': grpc.unary_unary_rpc_method_handler(
                     servicer.sign_up,
-                    request_deserializer=tracardi__pro__services__pb2.HostCredentials.FromString,
-                    response_serializer=tracardi__pro__services__pb2.Token.SerializeToString,
+                    request_deserializer=pro__services__pb2.HostCredentials.FromString,
+                    response_serializer=pro__services__pb2.Token.SerializeToString,
             ),
             'sign_in': grpc.unary_unary_rpc_method_handler(
                     servicer.sign_in,
-                    request_deserializer=tracardi__pro__services__pb2.Credentials.FromString,
-                    response_serializer=tracardi__pro__services__pb2.UserData.SerializeToString,
+                    request_deserializer=pro__services__pb2.Credentials.FromString,
+                    response_serializer=pro__services__pb2.UserData.SerializeToString,
             ),
             'validate': grpc.unary_unary_rpc_method_handler(
                     servicer.validate,
-                    request_deserializer=tracardi__pro__services__pb2.EmptyParams.FromString,
-                    response_serializer=tracardi__pro__services__pb2.Token.SerializeToString,
+                    request_deserializer=pro__services__pb2.EmptyParams.FromString,
+                    response_serializer=pro__services__pb2.Token.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -124,8 +124,8 @@ class Service(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/tracardi_pro.Service/get_available_hosts',
-            tracardi__pro__services__pb2.EmptyParams.SerializeToString,
-            tracardi__pro__services__pb2.Hosts.FromString,
+            pro__services__pb2.EmptyParams.SerializeToString,
+            pro__services__pb2.Hosts.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -141,8 +141,8 @@ class Service(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/tracardi_pro.Service/get_available_services',
-            tracardi__pro__services__pb2.EmptyParams.SerializeToString,
-            tracardi__pro__services__pb2.Services.FromString,
+            pro__services__pb2.EmptyParams.SerializeToString,
+            pro__services__pb2.Services.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -158,8 +158,8 @@ class Service(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/tracardi_pro.Service/sign_up',
-            tracardi__pro__services__pb2.HostCredentials.SerializeToString,
-            tracardi__pro__services__pb2.Token.FromString,
+            pro__services__pb2.HostCredentials.SerializeToString,
+            pro__services__pb2.Token.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -175,8 +175,8 @@ class Service(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/tracardi_pro.Service/sign_in',
-            tracardi__pro__services__pb2.Credentials.SerializeToString,
-            tracardi__pro__services__pb2.UserData.FromString,
+            pro__services__pb2.Credentials.SerializeToString,
+            pro__services__pb2.UserData.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -192,7 +192,7 @@ class Service(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/tracardi_pro.Service/validate',
-            tracardi__pro__services__pb2.EmptyParams.SerializeToString,
-            tracardi__pro__services__pb2.Token.FromString,
+            pro__services__pb2.EmptyParams.SerializeToString,
+            pro__services__pb2.Token.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

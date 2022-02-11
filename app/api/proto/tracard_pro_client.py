@@ -2,7 +2,7 @@ import os
 from typing import Optional
 
 import grpc
-from app.api.proto.stubs import tracardi_pro_services_pb2 as pb2, tracardi_pro_services_pb2_grpc as pb2_grpc
+from app.api.proto.stubs import pro_services_pb2 as pb2, pro_services_pb2_grpc as pb2_grpc
 from google.protobuf import json_format
 
 _local_path = os.path.dirname(__file__)
@@ -17,13 +17,16 @@ class TracardiProClient(object):
     Client for gRPC functionality
     """
 
-    def __init__(self, host='localhost', port=12345):
+    def __init__(self, host, port=50000, secure=False):
         self.host = host
         self.server_port = port
         self.token = None
 
-        # instantiate a secure channel
-        self.channel = grpc.secure_channel('{}:{}'.format(self.host, self.server_port), credentials)
+        host = '{}:{}'.format(self.host, self.server_port)
+        if secure:
+            self.channel = grpc.secure_channel(host, credentials)
+        else:
+            self.channel = grpc.insecure_channel(host)
 
         # bind the client and the server
         self.stub = pb2_grpc.ServiceStub(self.channel)

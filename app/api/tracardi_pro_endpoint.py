@@ -13,7 +13,6 @@ from tracardi.service.storage.driver import storage
 
 from app.api.auth.authentication import get_current_user
 from app.config import server
-from app.api.proto.stubs.tracardi_pro_services_pb2 import Services
 
 logging.basicConfig(level=logging.ERROR)
 logger = logging.getLogger(__name__)
@@ -24,7 +23,9 @@ router = APIRouter(
     dependencies=[Depends(get_current_user)]
 )
 
-tracardi_pro_client = TracardiProClient(host="localhost", port=50000)
+tracardi_pro_client = TracardiProClient(host=tracardi.tracardi_pro_host,
+                                        port=50000,
+                                        secure=False)
 
 
 @router.get("/tpro/validate", tags=["tpro"], include_in_schema=server.expose_gui_api, response_model=bool)
@@ -97,7 +98,7 @@ async def tracardi_pro_sign_up(sign_up_data: SignUpData):
 @router.get("/tpro/available_services", tags=["tpro"], include_in_schema=server.expose_gui_api)
 async def get_tracardi_pro_endpoint():
     try:
-        return tracardi_pro_client.get_available_services()  # type: Services
+        return tracardi_pro_client.get_available_services()
 
     except grpc.RpcError as e:
         # Must be 403 because 401 logs out gui
@@ -107,7 +108,7 @@ async def get_tracardi_pro_endpoint():
 @router.get("/tpro/available_hosts", tags=["tpro"], include_in_schema=server.expose_gui_api)
 async def get_tracardi_pro_endpoint():
     try:
-        return tracardi_pro_client.get_available_hosts()  # type: Services
+        return tracardi_pro_client.get_available_hosts()
 
     except grpc.RpcError as e:
         # Must be 403 because 401 logs out gui

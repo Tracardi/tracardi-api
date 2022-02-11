@@ -17,7 +17,6 @@ from tracardi.domain.entity import Entity
 from tracardi.domain.enum.indexes_source_bool import IndexesSourceBool
 from tracardi.domain.value_object.bulk_insert_result import BulkInsertResult
 from ..config import server
-from ..service.tracardi_pro_inbound_sources import get_tracardi_pro_services
 
 logger = logging.getLogger(__name__)
 logger.setLevel(tracardi.logging_level)
@@ -42,24 +41,7 @@ async def get_resource_types(type: TypeEnum) -> dict:
     """
 
     try:
-        types = {}
-        try:
-
-            endpoint = await storage.driver.pro.read_pro_service_endpoint()
-            if endpoint is not None:
-                for service in await get_tracardi_pro_services(endpoint):
-                    types[service["id"]] = {
-                        "name": "{} ({})".format(service["name"], service['prefix']),
-                        "tags": service["tags"],
-                        "config": {
-                            "auth": endpoint.dict(exclude={"id": ...}),
-                            "services": "/{}/actions/{}".format(service['prefix'], endpoint.token)
-                        }
-                    }
-        except Exception as e:
-            logger.error(repr(e))
-
-        types.update({
+        resource_types = {
             "web-page": {
                 "config": {
                     "user": "<user>",
@@ -257,14 +239,14 @@ async def get_resource_types(type: TypeEnum) -> dict:
                 "tags": ["mautic"],
                 "name": "Mautic"
             }
-        })
+        }
 
         if type.value == 'name':
-            types = {id: t['name'] for id, t in types.items()}
+            resource_types = {id: t['name'] for id, t in resource_types.items()}
 
         return {
-            "total": len(types),
-            "result": types
+            "total": len(resource_types),
+            "result": resource_types
         }
 
     except Exception as e:

@@ -92,6 +92,13 @@ system_settings = [
     ),
     SystemSettings(
         **{
+            "label": "TRACARDI_PRO_HOST",
+            "value": tracardi.tracardi_pro_host,
+            "desc": "Defines the Tracardi Pro Services Host."
+        }
+    ),
+    SystemSettings(
+        **{
             "label": "CACHE_PROFILE",
             "value": tracardi.cache_profiles,
             "desc": "Default: no. Profiles can be cached, but it is not recommended as this option is experimental."

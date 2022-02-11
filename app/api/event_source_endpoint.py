@@ -13,7 +13,6 @@ from tracardi.service.storage.driver import storage
 from .auth.authentication import get_current_user
 from app.service.grouper import search
 from ..config import server
-from ..service.tracardi_pro_inbound_sources import get_tracardi_pro_services
 
 logger = logging.getLogger(__name__)
 logger.setLevel(tracardi.logging_level)
@@ -35,16 +34,6 @@ async def event_source_types():
             "tags": ["api-call", "inbound"]
         },
     }
-    try:
-        endpoint = await storage.driver.pro.read_pro_service_endpoint()
-        if endpoint is not None:
-            for service in await get_tracardi_pro_services(endpoint):
-                standard_inbound_sources[service["id"]] = {
-                    "name": "{} ({})".format(service["name"], service['prefix']),
-                    "tags": service["tags"] if "tags" in service else []
-                }
-    except Exception as e:
-        logger.error(repr(e))
 
     return standard_inbound_sources
 
