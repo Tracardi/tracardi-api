@@ -9,22 +9,10 @@
       "id": {
         "type": "keyword"
       },
-      "url": {
-        "type": "keyword"
-      },
-      "type": {
+      "host": {
         "type": "keyword"
       },
       "token": {
-        "type": "keyword"
-      },
-      "name": {
-        "type": "keyword"
-      },
-      "username": {
-        "type": "keyword"
-      },
-      "password": {
         "type": "keyword"
       }
     }

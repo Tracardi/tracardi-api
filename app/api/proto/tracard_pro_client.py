@@ -39,10 +39,10 @@ class TracardiProClient(object):
         except grpc.RpcError as e:
             return None
 
-    def sign_in(self, username, password) -> str:
+    def sign_in(self, username, password) -> tuple:
         try:
             response = self.stub.sign_in(pb2.Credentials(username=username, password=password))
-            return response.token
+            return response.token, response.host
         except grpc.RpcError as e:
             raise PermissionError(e.details())
 

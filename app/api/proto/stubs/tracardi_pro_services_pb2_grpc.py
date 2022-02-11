@@ -26,13 +26,13 @@ class ServiceStub(object):
                 )
         self.sign_up = channel.unary_unary(
                 '/tracardi_pro.Service/sign_up',
-                request_serializer=tracardi__pro__services__pb2.Credentials.SerializeToString,
+                request_serializer=tracardi__pro__services__pb2.HostCredentials.SerializeToString,
                 response_deserializer=tracardi__pro__services__pb2.Token.FromString,
                 )
         self.sign_in = channel.unary_unary(
                 '/tracardi_pro.Service/sign_in',
                 request_serializer=tracardi__pro__services__pb2.Credentials.SerializeToString,
-                response_deserializer=tracardi__pro__services__pb2.Token.FromString,
+                response_deserializer=tracardi__pro__services__pb2.UserData.FromString,
                 )
         self.validate = channel.unary_unary(
                 '/tracardi_pro.Service/validate',
@@ -89,13 +89,13 @@ def add_ServiceServicer_to_server(servicer, server):
             ),
             'sign_up': grpc.unary_unary_rpc_method_handler(
                     servicer.sign_up,
-                    request_deserializer=tracardi__pro__services__pb2.Credentials.FromString,
+                    request_deserializer=tracardi__pro__services__pb2.HostCredentials.FromString,
                     response_serializer=tracardi__pro__services__pb2.Token.SerializeToString,
             ),
             'sign_in': grpc.unary_unary_rpc_method_handler(
                     servicer.sign_in,
                     request_deserializer=tracardi__pro__services__pb2.Credentials.FromString,
-                    response_serializer=tracardi__pro__services__pb2.Token.SerializeToString,
+                    response_serializer=tracardi__pro__services__pb2.UserData.SerializeToString,
             ),
             'validate': grpc.unary_unary_rpc_method_handler(
                     servicer.validate,
@@ -158,7 +158,7 @@ class Service(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/tracardi_pro.Service/sign_up',
-            tracardi__pro__services__pb2.Credentials.SerializeToString,
+            tracardi__pro__services__pb2.HostCredentials.SerializeToString,
             tracardi__pro__services__pb2.Token.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
@@ -176,7 +176,7 @@ class Service(object):
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/tracardi_pro.Service/sign_in',
             tracardi__pro__services__pb2.Credentials.SerializeToString,
-            tracardi__pro__services__pb2.Token.FromString,
+            tracardi__pro__services__pb2.UserData.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
