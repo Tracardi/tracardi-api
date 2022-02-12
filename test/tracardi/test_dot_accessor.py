@@ -31,7 +31,7 @@ def test_should_cast_values():
     dot = DotAccessor(
         profile={"a": "1", "b": "false"},
         session={"f": "true"},
-        event={"c": "null", "d": "None", "e": {"key": "1.02"}}
+        event={"c": "null", "d": "None", "e": {"key": "1.02"}, "g": [1, 2, 3]}
     )
 
     casted_true_value = dot["`true`"]
@@ -66,6 +66,8 @@ def test_should_cast_values():
     e_casted = dot["`event@e.key`"]
     f = dot["session@f"]
     f_casted = dot["`session@f`"]
+    array_value = dot["`event@g`"]
+    object_value = dot["`event@e`"]
 
     assert a == "1"
     assert a_casted == 1
@@ -99,3 +101,5 @@ def test_should_cast_values():
     assert uppercase_null_string == "NULL"
     assert uppercase_casted_none_value is None
     assert uppercase_none_string == "NONE"
+    assert array_value == [1, 2, 3]
+    assert object_value == {"key": "1.02"}
