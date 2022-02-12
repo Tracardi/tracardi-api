@@ -46,6 +46,14 @@ def test_should_cast_values():
     int_string = dot["10"]
     casted_float_value = dot["`4.16`"]
     float_string = dot["4.16"]
+    uppercase_casted_true_value = dot["`TRUE`"]
+    uppercase_true_string = dot["TRUE"]
+    uppercase_casted_false_value = dot["`FALSE`"]
+    uppercase_false_string = dot["FALSE"]
+    uppercase_casted_null_value = dot["`NULL`"]
+    uppercase_null_string = dot["NULL"]
+    uppercase_casted_none_value = dot["`NONE`"]
+    uppercase_none_string = dot["NONE"]
     a = dot["profile@a"]
     a_casted = dot["`profile@a`"]
     b = dot["profile@b"]
@@ -83,3 +91,11 @@ def test_should_cast_values():
     assert none_string == "none"
     assert int_string == "10"
     assert float_string == "4.16"
+    assert uppercase_casted_true_value is True
+    assert uppercase_true_string == "TRUE"
+    assert uppercase_casted_false_value is False
+    assert uppercase_false_string == "FALSE"
+    assert uppercase_casted_null_value is None
+    assert uppercase_null_string == "NULL"
+    assert uppercase_casted_none_value is None
+    assert uppercase_none_string == "NONE"
