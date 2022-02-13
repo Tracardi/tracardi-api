@@ -461,7 +461,11 @@ async def delete_resource(id: str, response: Response):
         response.status_code = 404
         return None
 
-    return result
+    try:
+        await storage.driver.resource.refresh()
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.get("/resources/refresh",

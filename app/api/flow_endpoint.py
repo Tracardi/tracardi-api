@@ -346,6 +346,8 @@ async def delete_flow(id: str, response: Response):
             response.status_code = 404
             return None
 
+        await storage.driver.flow.refresh()
+
         return {
             "rule": rule_delete_result,
             "flow": flow_delete_result

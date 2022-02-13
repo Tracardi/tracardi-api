@@ -34,7 +34,11 @@ async def get_segment(id: str):
 async def delete_segment(id: str):
     try:
         entity = Entity(id=id)
-        return await StorageFor(entity).index('segment').delete()
+        result = await StorageFor(entity).index('segment').delete()
+
+        await storage.driver.segment.refresh()
+        return result
+
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
