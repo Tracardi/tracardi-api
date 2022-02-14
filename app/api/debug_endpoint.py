@@ -23,4 +23,8 @@ async def get_elastic_indices():
 
 @router.get("/debug/server/time", tags=["debug"], include_in_schema=server.expose_gui_api)
 async def get_server_time():
+    """
+    Returns current server time.
+    """
+
     return datetime.utcnow()
