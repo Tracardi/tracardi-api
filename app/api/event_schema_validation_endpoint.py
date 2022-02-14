@@ -40,6 +40,8 @@ async def add_schema(schema: EventPayloadValidator):
 async def get_schema(event_type: str):
     try:
         record = await storage.driver.validation_schema.get_schema(event_type)
+        if record is None:
+            raise HTTPException(status_code=404, detail=f"Validation schema for {event_type} not found.")
         return EventPayloadValidator.decode(EventPayloadValidatorRecord(**record))
     except ElasticsearchException as e:
         raise HTTPException(status_code=500, detail=str(e))
