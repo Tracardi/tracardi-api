@@ -185,6 +185,7 @@ def is_elastic_on_localhost():
 async def app_starts():
     logger.info("TRACARDI set-up starts.")
     no_of_tries = 10
+    success = False
     while True:
         try:
 
@@ -205,6 +206,7 @@ async def app_starts():
             if server.update_plugins_on_start_up is not False:
                 await add_plugins()
 
+            success = True
             break
 
         except elasticsearch.exceptions.ConnectionError as e:
@@ -224,6 +226,10 @@ async def app_starts():
             no_of_tries -= 1
             logger.error(f"Could not save data. Number of tries left: {no_of_tries}. Waiting 1s to retry.")
             logger.error(f"Error details: {repr(e)}")
+
+    if not success:
+        logger.error(f"Could not connect to elasticsearch")
+        exit()
 
     report_i_am_alive()
     logger.info("TRACARDI set-up finished.")
