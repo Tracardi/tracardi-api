@@ -3,6 +3,8 @@ import logging
 from datetime import datetime
 from typing import List, Optional
 
+from deepdiff import DeepDiff
+
 from tracardi.config import tracardi
 from tracardi.domain.entity import Entity
 
@@ -119,6 +121,9 @@ async def validate_events_json_schemas(events, profile: Optional[Profile], sessi
 
 
 async def invoke_track_process(tracker_payload: TrackerPayload, source, profile_less: bool, profile=None, session=None):
+
+    profile_copy = profile.dict(exclude={"operation": ...})
+
     if profile_less is True and profile is not None:
         logger.warning("Something is wrong - profile less events should not have profile attached.")
 
@@ -222,6 +227,14 @@ async def invoke_track_process(tracker_payload: TrackerPayload, source, profile_
             )
         )
         logger.error(message)
+
+    # Send to destination
+
+    profile_delta = DeepDiff(profile.dict(exclude={"operation": ...}), profile_copy, ignore_order=True)
+    if profile_delta:
+        logger.info("Profile changed")
+        print(profile_delta)
+
 
     try:
         if tracardi.track_debug or tracker_payload.is_on('debugger', default=False):
