@@ -238,6 +238,13 @@ async def get_resource_types(type: TypeEnum) -> dict:
                 },
                 "tags": ["mautic"],
                 "name": "Mautic"
+            },
+            "airtable": {
+                "config": {
+                    "api_key": "<your-api-key>"
+                },
+                "tags": ["airtable"],
+                "name": "Airtable"
             }
         }
 
