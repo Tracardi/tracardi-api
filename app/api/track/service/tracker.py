@@ -12,6 +12,7 @@ from app.api.domain.console_log import ConsoleLog
 from app.config import server
 from tracardi.event_server.utils.memory_cache import MemoryCache, CacheItem
 from tracardi.exceptions.log_handler import log_handler
+from tracardi.service.destination_manager import DestinationManager
 from tracardi.service.notation.dot_accessor import DotAccessor
 
 from tracardi.domain.event_payload_validator import EventPayloadValidator
@@ -121,7 +122,6 @@ async def validate_events_json_schemas(events, profile: Optional[Profile], sessi
 
 
 async def invoke_track_process(tracker_payload: TrackerPayload, source, profile_less: bool, profile=None, session=None):
-
     profile_copy = profile.dict(exclude={"operation": ...})
 
     if profile_less is True and profile is not None:
@@ -149,8 +149,7 @@ async def invoke_track_process(tracker_payload: TrackerPayload, source, profile_
     try:
 
         # Invoke rules engine
-        debugger, ran_event_types, \
-        console_log, post_invoke_events, invoked_rules = await rules_engine.invoke(
+        debugger, ran_event_types, console_log, post_invoke_events, invoked_rules = await rules_engine.invoke(
             storage.driver.flow.load_production_flow,
             ux,
             tracker_payload.source.id
@@ -230,11 +229,23 @@ async def invoke_track_process(tracker_payload: TrackerPayload, source, profile_
 
     # Send to destination
 
-    profile_delta = DeepDiff(profile.dict(exclude={"operation": ...}), profile_copy, ignore_order=True)
+    profile_delta = DeepDiff(profile_copy, profile.dict(exclude={"operation": ...}), ignore_order=True)
     if profile_delta:
         logger.info("Profile changed")
-        print(profile_delta)
-
+        try:
+            destination_manager = DestinationManager(profile_delta, profile, session, payload=None, event=None,
+                                                     flow=None)
+            await destination_manager.send_data()
+        except Exception as e:
+            console_log.append(Console(
+                profile_id=rules_engine.profile.id if isinstance(rules_engine.profile, Entity) else None,
+                origin='destination',
+                class_name='DestinationManager',
+                module='tracker',
+                type='error',
+                message=str(e),
+                traceback=get_traceback(e)
+            ))
 
     try:
         if tracardi.track_debug or tracker_payload.is_on('debugger', default=False):

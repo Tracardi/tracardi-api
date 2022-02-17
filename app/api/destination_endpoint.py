@@ -1,4 +1,6 @@
 from fastapi import APIRouter, Response, HTTPException, Depends
+
+from tracardi.service.resources import get_destinations
 from tracardi.service.storage.driver import storage
 from tracardi.domain.destination import Destination, DestinationRecord
 from .auth.authentication import get_current_user
@@ -48,8 +50,7 @@ async def get_destination(id: str, response: Response):
 
 @router.get("/destinations", tags=["destination"], response_model=dict,
             include_in_schema=server.expose_gui_api)
-async def get_destinations():
-
+async def get_destinations_list():
     """
     Returns destinations.
     """
@@ -62,6 +63,14 @@ async def get_destinations():
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/destinations/type", tags=["destination"], response_model=dict, include_in_schema=server.expose_gui_api)
+async def get_destinations_type_list():
+    """
+    Returns destination types.
+    """
+    return {key: value for key, value in get_destinations()}
 
 
 @router.get("/destinations/by_tag", tags=["destination"], response_model=dict, include_in_schema=server.expose_gui_api)
