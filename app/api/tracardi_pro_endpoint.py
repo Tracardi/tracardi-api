@@ -142,6 +142,8 @@ async def save_tracardi_pro_resource(resource: Resource):
 
     try:
         record = ResourceRecord.encode(resource)
-        return await StorageFor(record).index().save()
+        result = await StorageFor(record).index().save()
+        await storage.driver.resource.refresh()
+        return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

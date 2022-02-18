@@ -6,7 +6,7 @@ from fastapi import APIRouter, HTTPException, Depends, Response
 from tracardi.config import tracardi
 from tracardi.domain.enum.type_enum import TypeEnum
 from tracardi.exceptions.log_handler import log_handler
-from tracardi.service.resources import get_resource_types
+from tracardi.service.resources import get_type_of_resources
 from tracardi.service.storage.driver import storage
 from tracardi.service.storage.factory import StorageFor, StorageForBulk
 from tracardi.service.wf.domain.named_entity import NamedEntity
@@ -42,10 +42,10 @@ async def resource_types_list(type: TypeEnum) -> dict:
     """
 
     try:
-        resource_types = get_resource_types()
+        resource_types = list(get_type_of_resources())
 
         if type.value == 'name':
-            resource_types = {id: t['name'] for id, t in resource_types.items()}
+            resource_types = {id: t['name'] for id, t in resource_types}
 
         return {
             "total": len(resource_types),
