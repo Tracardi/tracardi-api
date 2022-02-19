@@ -12,6 +12,9 @@ router = APIRouter()
 
 @router.post("/consent/type", tags=["consent"], include_in_schema=server.expose_gui_api, response_model=dict)
 async def add_consent_type(data: ConsentType, depends=Depends(get_current_user)):
+    """
+    Adds new consent type to the database
+    """
     try:
         result = await storage.driver.consent_type.add_consent(id=data.name.lower().replace(" ", "-"), **data.dict())
         await storage.driver.consent_type.refresh()
@@ -23,6 +26,9 @@ async def add_consent_type(data: ConsentType, depends=Depends(get_current_user))
 @router.get("/consent/type/{consent_id}", tags=["consent"], include_in_schema=server.expose_gui_api,
             response_model=dict)
 async def get_consent_type(consent_id: str, depends=Depends(get_current_user)):
+    """
+    Returns consent type with given id (lowercase name with dashes instead of spaces)
+    """
     try:
         return await storage.driver.consent_type.get_by_id(consent_id)
     except ElasticsearchException as e:
@@ -32,6 +38,9 @@ async def get_consent_type(consent_id: str, depends=Depends(get_current_user)):
 @router.delete("/consent/type/{consent_id}", tags=["consent"], include_in_schema=server.expose_gui_api,
                response_model=dict)
 async def delete_consent_type(consent_id: str, depends=Depends(get_current_user)):
+    """
+    Deletes consent type with given id (lowercase name with dashes instead of spaces)
+    """
     try:
         result = await storage.driver.consent_type.delete_by_id(consent_id)
         await storage.driver.consent_type.refresh()
@@ -43,6 +52,9 @@ async def delete_consent_type(consent_id: str, depends=Depends(get_current_user)
 @router.get("/consents/type", tags=["consent"], include_in_schema=server.expose_gui_api,
             response_model=dict)
 async def get_consent_types(start: int = 0, limit: int = 100, depends=Depends(get_current_user)):
+    """
+    Lists consent types with defined start (int) and limit (int)
+    """
     try:
         result = await storage.driver.consent_type.load_all(start=start, limit=limit)
     except ElasticsearchException as e:
@@ -53,6 +65,9 @@ async def get_consent_types(start: int = 0, limit: int = 100, depends=Depends(ge
 @router.get("/consents/type/enabled", tags=["consent"], include_in_schema=server.expose_gui_api,
             response_model=dict)
 async def get_enabled_consent_types(limit: int = 100):
+    """
+    Lists only enabled consent types with defined limit (int)
+    """
     try:
         result = await storage.driver.consent_type.load_all_active(limit=limit)
     except ElasticsearchException as e:
@@ -63,6 +78,9 @@ async def get_enabled_consent_types(limit: int = 100):
 @router.put("/consents/type/refresh", tags=["consent"], include_in_schema=server.expose_gui_api,
             response_model=dict)
 async def refresh_consent_types(depends=Depends(get_current_user)):
+    """
+    Refreshes database consent type index
+    """
     try:
         return await storage.driver.consent_type.refresh()
     except ElasticsearchException as e:
@@ -72,6 +90,9 @@ async def refresh_consent_types(depends=Depends(get_current_user)):
 @router.get("/consents/type/by_tag", tags=["consent"], include_in_schema=server.expose_gui_api,
             response_model=dict)
 async def get_consent_types(query: str = None, start: int = 0, limit: int = 10):
+    """
+    Returns consent types grouped by query on name field
+    """
     try:
         result = await storage.driver.consent_type.load_all(start=start, limit=limit)
         return group_records(result, query, group_by='tags', search_by='name', sort_by='name')

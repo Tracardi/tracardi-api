@@ -15,11 +15,17 @@ router = APIRouter(
 
 @router.get("/sessions/refresh", tags=["session"], include_in_schema=server.expose_gui_api)
 async def session_refresh():
+    """
+    Refreshes session index
+    """
     return await storage.driver.session.refresh()
 
 
 @router.post("/sessions/import", tags=["session"], include_in_schema=server.expose_gui_api)
 async def import_profiles(sessions: List[Session]):
+    """
+    Adds given sessions to database
+    """
     try:
         return await storage.driver.session.save_sessions(sessions)
     except Exception as e:
@@ -31,6 +37,9 @@ async def import_profiles(sessions: List[Session]):
             response_model=Optional[Session],
             include_in_schema=server.expose_gui_api)
 async def get_session_by_id(id: str, response: Response):
+    """
+    Returns session with given ID (str)
+    """
     try:
         result = await storage_manager("session").load(id)
     except Exception as e:
@@ -44,7 +53,9 @@ async def get_session_by_id(id: str, response: Response):
 
 @router.delete("/session/{id}", tags=["session"], include_in_schema=server.expose_gui_api)
 async def delete_session(id: str, response: Response):
-
+    """
+    Deletes session with given ID (str)
+    """
     # try:
     result = await storage.driver.session.delete(id)
     # except Exception as e:

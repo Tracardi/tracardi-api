@@ -16,6 +16,9 @@ router = APIRouter(
 
 @router.get("/credentials/by_type", tags=["credential"], include_in_schema=server.expose_gui_api)
 async def get_credentials(query: str = None, limit: int = 500):
+    """
+    Returns resources that have match with query in name
+    """
     try:
         result, total = await storage.driver.resource.load_all(limit=limit)
 
