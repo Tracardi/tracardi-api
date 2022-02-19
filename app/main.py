@@ -17,7 +17,7 @@ from app.api import token_endpoint, rule_endpoint, resource_endpoint, event_endp
     settings_endpoint, event_source_endpoint, test_endpoint, \
     purchases_endpoint, event_tag_endpoint, consent_type_endpoint, flow_action_endpoint, flows_endpoint, info_endpoint, \
     user_endpoint, event_schema_validation_endpoint, debug_endpoint, log_endpoint, tracardi_pro_endpoint, \
-    storage_endpoint
+    storage_endpoint, destination_endpoint
 from app.api.auth.authentication import get_current_user
 from app.api.graphql.profile import graphql_profiles
 from app.api.scheduler import tasks_endpoint
@@ -164,6 +164,7 @@ application.include_router(debug_endpoint.router)
 application.include_router(log_endpoint.router)
 application.include_router(tracardi_pro_endpoint.router)
 application.include_router(storage_endpoint.router)
+application.include_router(destination_endpoint.router)
 
 # GraphQL
 
@@ -184,6 +185,7 @@ def is_elastic_on_localhost():
 async def app_starts():
     logger.info("TRACARDI set-up starts.")
     no_of_tries = 10
+    success = False
     while True:
         try:
 
@@ -204,6 +206,7 @@ async def app_starts():
             if server.update_plugins_on_start_up is not False:
                 await add_plugins()
 
+            success = True
             break
 
         except elasticsearch.exceptions.ConnectionError as e:
@@ -223,6 +226,10 @@ async def app_starts():
             no_of_tries -= 1
             logger.error(f"Could not save data. Number of tries left: {no_of_tries}. Waiting 1s to retry.")
             logger.error(f"Error details: {repr(e)}")
+
+    if not success:
+        logger.error(f"Could not connect to elasticsearch")
+        exit()
 
     report_i_am_alive()
     logger.info("TRACARDI set-up finished.")

@@ -36,16 +36,25 @@ router = APIRouter(
 
 @router.get("/user/refresh", tags=["user"], include_in_schema=server.expose_gui_api, response_model=dict)
 async def refresh_users():
+    """
+    Refreshes users index
+    """
     return await storage.driver.user.refresh()
 
 
 @router.get("/user/flush", tags=["user"], include_in_schema=server.expose_gui_api, response_model=dict)
 async def flush_users():
+    """
+    Flushes users index
+    """
     return await storage.driver.user.flush()
 
 
 @router.post("/user", tags=["user"], include_in_schema=server.expose_gui_api, response_model=dict)
 async def add_user(user: NewUserPayload):
+    """
+    Creates new user in database
+    """
     try:
         user_exists = await storage.driver.user.check_if_exists(user.email, user.id)
     except ElasticsearchException as e:
@@ -70,6 +79,9 @@ async def add_user(user: NewUserPayload):
 
 @router.delete("/user/{id}", tags=["user"], include_in_schema=server.expose_gui_api, response_model=dict)
 async def delete_user(id: UUID):
+    """
+    Deletes user with given ID (uuid4)
+    """
     try:
         result = await storage.driver.user.del_user(id)
         if result is None:
@@ -82,6 +94,9 @@ async def delete_user(id: UUID):
 
 @router.get("/user/{id}", tags=["user"], include_in_schema=server.expose_gui_api, response_model=dict)
 async def get_user(id: UUID):
+    """
+    Returns user with given ID (uuid4)
+    """
     try:
         result = await storage.driver.user.get_by_id(id)
         if result is None:
@@ -93,6 +108,9 @@ async def get_user(id: UUID):
 
 @router.get("/users/{start}/{limit}", tags=["user"], include_in_schema=server.expose_gui_api, response_model=list)
 async def get_users(start: int = 0, limit: int = 100, query: Optional[str] = ""):
+    """
+    Lists users according to given query (str), start (int) and limit (int) parameters
+    """
     try:
         result = await storage.driver.user.search_by_name(start, limit, query) if query else \
             await storage.driver.user.load(start, limit)
@@ -104,6 +122,9 @@ async def get_users(start: int = 0, limit: int = 100, query: Optional[str] = "")
 
 @router.post("/users/{id}/edit", tags=["user"], include_in_schema=server.expose_gui_api, response_model=dict)
 async def edit_user(id: UUID, user: UserPayload):
+    """
+    Edits existing user with given ID (uuid4)
+    """
     try:
         current_user = await storage.driver.user.get_by_id(id)
     except ElasticsearchException as e:

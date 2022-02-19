@@ -54,6 +54,9 @@ async def is_token_valid():
 
 @router.post("/tpro/sign_in", tags=["tpro"], include_in_schema=server.expose_gui_api)
 async def tracardi_pro_sign_in(credentials: Credentials):
+    """
+    Handles signing in to Tracardi PRO service
+    """
     try:
         token, host = tracardi_pro_client.sign_in(credentials.username, credentials.password)
         result = await storage.driver.pro.read_pro_service_endpoint()
@@ -79,6 +82,9 @@ async def tracardi_pro_sign_in(credentials: Credentials):
 
 @router.post("/tpro/sign_up", tags=["tpro"], include_in_schema=server.expose_gui_api, response_model=bool)
 async def tracardi_pro_sign_up(sign_up_data: SignUpData):
+    """
+    Handles signing up to Tracardi PRO service
+    """
     try:
         token = tracardi_pro_client.sign_up(sign_up_data.username, sign_up_data.password)
 
@@ -100,6 +106,9 @@ async def tracardi_pro_sign_up(sign_up_data: SignUpData):
 
 @router.get("/tpro/available_services", tags=["tpro"], include_in_schema=server.expose_gui_api)
 async def get_available_services():
+    """
+    Returns available Tracardi PRO services
+    """
     try:
         return tracardi_pro_client.get_available_services()
 
@@ -110,6 +119,9 @@ async def get_available_services():
 
 @router.get("/tpro/available_hosts", tags=["tpro"], include_in_schema=server.expose_gui_api)
 async def get_available_hosts():
+    """
+    Returns available Tracardi PRO hosts
+    """
     try:
         return tracardi_pro_client.get_available_hosts()
 
@@ -120,7 +132,9 @@ async def get_available_hosts():
 
 @router.post("/tpro/resource", tags=["tpro"], include_in_schema=server.expose_gui_api)
 async def save_tracardi_pro_resource(resource: Resource):
-
+    """
+    Adds new Tracardi PRO resource
+    """
     try:
         sign_up_record = await storage.driver.pro.read_pro_service_endpoint()
     except ValidationError as e:
@@ -142,6 +156,8 @@ async def save_tracardi_pro_resource(resource: Resource):
 
     try:
         record = ResourceRecord.encode(resource)
-        return await StorageFor(record).index().save()
+        result = await StorageFor(record).index().save()
+        await storage.driver.resource.refresh()
+        return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

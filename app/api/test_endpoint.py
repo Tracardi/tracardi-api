@@ -13,6 +13,9 @@ router = APIRouter(
 
 @router.get("/test/resource", tags=["test"], include_in_schema=server.expose_gui_api)
 async def create_test_data():
+    """
+    Creates test resource data and saves it to database
+    """
     resource = EventSource(
         id="@test-resource",
         type="web-page",
@@ -25,6 +28,9 @@ async def create_test_data():
 
 @router.get("/test/data", tags=["test"], include_in_schema=server.expose_gui_api)
 async def make_fake_data():
+    """
+    Creates fake data and saves it to database
+    """
     for index, data in generate_fake_data().items():
         for record in data:
             record = record.dict()

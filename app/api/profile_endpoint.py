@@ -17,6 +17,9 @@ router = APIRouter(
 
 @router.post("/profiles/import", tags=["profile"], include_in_schema=server.expose_gui_api)
 async def import_profiles(profiles: List[Profile]):
+    """
+    Saves given profiles (list of profiles) to database
+    """
     try:
         return await storage.driver.profile.save_profiles(profiles)
     except Exception as e:
@@ -25,6 +28,9 @@ async def import_profiles(profiles: List[Profile]):
 
 @router.get("/profiles/refresh", tags=["profile"], include_in_schema=server.expose_gui_api)
 async def refresh_profile():
+    """
+    Refreshes profile index
+    """
     try:
         return await storage.driver.profile.refresh()
     except Exception as e:
@@ -33,6 +39,9 @@ async def refresh_profile():
 
 @router.get("/profile/{id}", tags=["profile"], response_model=Profile, include_in_schema=server.expose_gui_api)
 async def get_profile_by_id(id: str, response: Response):
+    """
+    Returns profile with given ID (str)
+    """
     try:
         profile = Profile(id=id)
         result = await StorageFor(profile).index().load()
@@ -47,6 +56,9 @@ async def get_profile_by_id(id: str, response: Response):
 
 @router.delete("/profile/{id}", tags=["profile"], response_model=Optional[dict], include_in_schema=server.expose_gui_api)
 async def delete_profile(id: str, response: Response):
+    """
+    Deletes profile with given ID (str)
+    """
     # try:
     result = await storage.driver.profile.delete(id)
     # except Exception as e:
@@ -61,5 +73,8 @@ async def delete_profile(id: str, response: Response):
 
 @router.get("/profile/logs/{id}", tags=["profile"], response_model=list, include_in_schema=server.expose_gui_api)
 async def get_profile_logs(id: str):
+    """
+    Gets logs for profile with given ID (str)
+    """
     log_records = await storage.driver.console_log.load_by_profile(id)
     return list(log_records)

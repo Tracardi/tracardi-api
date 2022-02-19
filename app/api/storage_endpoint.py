@@ -15,6 +15,9 @@ memory_cache = MemoryCache()
 @router.get("/storage/mapping/{index}/metadata", tags=["storage"], include_in_schema=server.expose_gui_api,
             response_model=dict)
 async def get_index_mapping(index: str):
+    """
+    Returns metadata of given index (str)
+    """
     try:
         memory_key = f"{index}-mapping-cache"
         if memory_key not in memory_cache:
@@ -28,6 +31,9 @@ async def get_index_mapping(index: str):
 
 @router.get("/storage/mapping/{index}", tags=["storage"], include_in_schema=server.expose_gui_api, response_model=list)
 async def get_index_mapping(index: str):
+    """
+    Returns mapping of given index (str)
+    """
     try:
         mapping = await storage_manager(index).get_mapping()
         return mapping.get_field_names()
