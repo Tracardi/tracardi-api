@@ -172,6 +172,8 @@ async def add_plugins():
         'tracardi.process_engine.action.v1.connectors.mautic.subtract_points.plugin',
         'tracardi.process_engine.action.v1.connectors.mautic.add_to_segment.plugin',
         'tracardi.process_engine.action.v1.connectors.mautic.remove_from_segment.plugin',
+        'tracardi.process_engine.action.v1.connectors.airtable.send_record.plugin',
+        'tracardi.process_engine.action.v1.connectors.airtable.fetch_records.plugin',
 
         # Internal
         'tracardi.process_engine.action.v1.internal.event_source_fetcher.plugin',

@@ -42,6 +42,7 @@ async def resource_types_list(type: TypeEnum) -> dict:
     """
 
     try:
+      
         resource_types = list(get_type_of_resources())
 
         if type.value == 'name':
