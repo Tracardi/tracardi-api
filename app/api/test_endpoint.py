@@ -1,9 +1,12 @@
+import asyncio
+
 from fastapi import APIRouter, Depends
 
 from app.api.auth.authentication import get_current_user
 from app.config import server
 from app.service.data_generator import generate_fake_data, generate_random_date
 from tracardi.domain.event_source import EventSource
+from tracardi.service.postpone_call import postponed_call
 from tracardi.service.storage.driver import storage
 
 router = APIRouter(
@@ -37,3 +40,9 @@ async def make_fake_data():
             if index in ['event', 'session']:
                 record['metadata']['time']['insert'] = generate_random_date()
             await storage.driver.raw.index(index).upsert(record)
+
+
+@router.get("/test/postpone", tags=["test"], include_in_schema=server.expose_gui_api)
+async def run_postponded_call():
+    loop = asyncio.get_running_loop()
+    postponed_call.run(loop)
