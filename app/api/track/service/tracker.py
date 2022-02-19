@@ -237,6 +237,7 @@ async def invoke_track_process(tracker_payload: TrackerPayload, source, profile_
                                                      flow=None)
             await destination_manager.send_data()
         except Exception as e:
+            # todo - this appends error to the same profile - it rather should be en event error
             console_log.append(Console(
                 profile_id=rules_engine.profile.id if isinstance(rules_engine.profile, Entity) else None,
                 origin='destination',
