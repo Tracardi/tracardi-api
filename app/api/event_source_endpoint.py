@@ -42,6 +42,9 @@ async def event_source_types():
             tags=["event-source"],
             include_in_schema=server.expose_gui_api)
 async def list_event_sources(query: str = None):
+    """
+    Lists all event sources that match given query (str) parameter
+    """
     try:
 
         result, total = await storage.driver.event_source.load_all(limit=1000)
@@ -108,6 +111,9 @@ async def get_event_source_types(type: TypeEnum) -> dict:
             response_model=Optional[EventSource],
             include_in_schema=server.expose_gui_api)
 async def load_event_source(id: str, response: Response):
+    """
+    Returns event source with given ID (str)
+    """
     try:
         result = await storage.driver.event_source.load(id)
     except Exception as e:
@@ -123,6 +129,9 @@ async def load_event_source(id: str, response: Response):
 @router.post("/event-source", tags=["event-source"],
              include_in_schema=server.expose_gui_api)
 async def save_event_source(event_source: EventSource):
+    """
+    Adds new event source in database
+    """
     try:
         types = await event_source_types()
         if event_source.type in types:
@@ -140,6 +149,9 @@ async def save_event_source(event_source: EventSource):
 @router.delete("/event-source/{id}", tags=["event-source"],
                include_in_schema=server.expose_gui_api)
 async def delete_event_source(id: str, response: Response):
+    """
+    Deletes event source with given ID (str)
+    """
     try:
         result = await storage.driver.event_source.delete(id)
     except Exception as e:
@@ -160,6 +172,9 @@ async def delete_event_source(id: str, response: Response):
             tags=["event-source"],
             include_in_schema=server.expose_gui_api)
 async def refresh_event_sources():
+    """
+    Refreshes event source index in database
+    """
     return await storage.driver.event_source.refresh()
 
 

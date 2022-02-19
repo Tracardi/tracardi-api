@@ -294,6 +294,9 @@ router = APIRouter(
             include_in_schema=server.expose_gui_api,
             response_model=Optional[SystemSettings])
 async def get_system_settings(name: str) -> Optional[SystemSettings]:
+    """
+    Returns setting with given name (str)
+    """
     for setting in system_settings:
         if setting.label == name:
             return setting
@@ -304,4 +307,7 @@ async def get_system_settings(name: str) -> Optional[SystemSettings]:
             include_in_schema=server.expose_gui_api,
             response_model=List[SystemSettings])
 async def get_system_settings() -> List[SystemSettings]:
+    """
+    Lists all system settings
+    """
     return system_settings

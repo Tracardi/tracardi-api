@@ -21,6 +21,9 @@ router = APIRouter(
             tags=["segment"],
             include_in_schema=server.expose_gui_api)
 async def get_segment(id: str):
+    """
+    Returns segment with given ID (str)
+    """
     try:
         entity = Entity(id=id)
         return await StorageFor(entity).index('segment').load(Segment)
@@ -32,6 +35,9 @@ async def get_segment(id: str):
                tags=["segment"],
                include_in_schema=server.expose_gui_api)
 async def delete_segment(id: str):
+    """
+    Deletes segment with given ID (str)
+    """
     try:
         entity = Entity(id=id)
         result = await StorageFor(entity).index('segment').delete()
@@ -47,6 +53,9 @@ async def delete_segment(id: str):
             tags=["segment"],
             include_in_schema=server.expose_gui_api)
 async def refresh_segments():
+    """
+    Refreshes segments index
+    """
     return await storage.driver.segment.refresh()
 
 
@@ -54,6 +63,9 @@ async def refresh_segments():
             tags=["segment"],
             include_in_schema=server.expose_gui_api)
 async def get_segments(query: str = None):
+    """
+    Returns segments with match of given query (str) on name of event type
+    """
     try:
         result = await StorageForBulk().index('segment').load()
         total = result.total
@@ -97,6 +109,9 @@ async def get_segments(query: str = None):
              response_model=BulkInsertResult,
              include_in_schema=server.expose_gui_api)
 async def upsert_source(segment: Segment):
+    """
+    Adds new segment to database
+    """
     try:
         result = await storage.driver.segment.save(segment.dict())
         await storage.driver.segment.refresh()

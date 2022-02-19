@@ -15,6 +15,9 @@ router = APIRouter(
 
 @router.get("/debug/es/indices", tags=["debug"], include_in_schema=server.expose_gui_api, response_model=dict)
 async def get_elastic_indices():
+    """
+    Returns list of Elasticsearch indices
+    """
     try:
         return await storage.driver.raw.indices()
     except ElasticsearchException as e:

@@ -84,6 +84,9 @@ async def get_destinations_by_tag(query: str = None, start: int = 0, limit: int 
 
 @router.delete("/destination/{id}", tags=["destination"], include_in_schema=server.expose_gui_api)
 async def delete_destination(id: str, response: Response):
+    """
+    Deletes destination with given id
+    """
     try:
         result = await storage.driver.destination.delete(id)
     except Exception as e:

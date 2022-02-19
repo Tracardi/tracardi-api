@@ -15,6 +15,9 @@ router = APIRouter(
 @router.get("/logs/page/{page}", tags=["logs"], include_in_schema=server.expose_gui_api)
 @router.get("/logs", tags=["logs"], include_in_schema=server.expose_gui_api)
 async def all_api_instances(page: Optional[int] = None):
+    """
+    Returns list of all Tracardi API logs
+    """
     try:
         if page is None:
             page = 0
