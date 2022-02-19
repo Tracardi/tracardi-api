@@ -42,11 +42,11 @@ async def resource_types_list(type: TypeEnum) -> dict:
     """
 
     try:
-      
-        resource_types = list(get_type_of_resources())
 
         if type.value == 'name':
-            resource_types = {id: t['name'] for id, t in resource_types}
+            resource_types = {id: value['name'] for id, value in get_type_of_resources()}
+        else:
+            resource_types = {id: value for id, value in get_type_of_resources()}
 
         return {
             "total": len(resource_types),
