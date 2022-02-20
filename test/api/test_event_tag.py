@@ -12,6 +12,8 @@ def test_post_event_tag_add():
 
     assert result.status_code == 200
 
+    endpoint.delete("/event/tag/delete/test-type")
+
 
 def test_delete_event_tag():
     data = {
@@ -31,6 +33,8 @@ def test_delete_event_tag():
 
     assert result["removed"] == 2
     assert result["total"] == 1
+
+    endpoint.delete("/event/tag/delete/test-type")
 
 
 def test_get_event_tag():

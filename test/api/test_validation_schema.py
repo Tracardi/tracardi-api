@@ -27,6 +27,8 @@ def test_post_validation_schema():
 
     assert "added" in result
 
+    endpoint.delete("/validation-schema/test-type")
+
 
 def test_get_validation_schema_by_type():
     try:

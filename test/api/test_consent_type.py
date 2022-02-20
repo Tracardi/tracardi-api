@@ -56,6 +56,8 @@ def test_post_consent_type():
     assert result["detail"][0]["loc"][1] == "default_value"
     assert result["detail"][1]["loc"][1] == "auto_revoke"
 
+    endpoint.delete("/consent/type/test-name")
+
 
 def test_get_consent_type_id():
     data = {
@@ -79,6 +81,8 @@ def test_get_consent_type_id():
     result = result.json()
 
     assert "id" in result and result["id"] == "test-name"
+
+    endpoint.delete("/consent/type/test-name")
 
 
 def test_delete_consent_type_id():
