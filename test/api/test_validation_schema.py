@@ -76,3 +76,4 @@ def test_get_validation_schemas():
 
 def test_get_validation_schemas_by_tag():
     endpoint.get("/validation_schemas/by_tag")
+
