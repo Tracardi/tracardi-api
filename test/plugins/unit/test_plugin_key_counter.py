@@ -11,7 +11,12 @@ def test_key_counter():
     c.count('a')
     c.count('b')
     c.count(['a', 'c'])
-    c.count({"a": 10, "b": 1, "f": 1, "g": "asas"})
+    c.count({"a": 10, "b": 1, "f": 1})
+    try:
+        c.count({"g": "asas"})
+        assert False
+    except ValueError:
+        assert True
 
     result = c.counts
 
