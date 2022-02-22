@@ -11,6 +11,20 @@ router = APIRouter(
 )
 
 
+@router.post("/event/tag/replace", tags=["event"], include_in_schema=server.expose_gui_api, response_model=dict)
+async def replace_tags(tag_form: EventTag):
+    try:
+        result = await storage.driver.tag.replace(
+            event_type=tag_form.type,
+            tags=tag_form.tags
+        )
+        await storage.driver.tag.refresh()
+        await update_tags(tag_form.type)
+    except StorageException as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    return {"replaced": result.saved}
+
+
 @router.post("/event/tag/add", tags=["event"], include_in_schema=server.expose_gui_api, response_model=dict)
 async def add_tags(tag_form: EventTag):
     """
@@ -22,6 +36,8 @@ async def add_tags(tag_form: EventTag):
     )
     if result.errors:
         raise HTTPException(status_code=500, detail=result.errors)
+    await storage.driver.tag.refresh()
+    await update_tags(tag_form.type)
     return {"new": result.saved, "updated": 1 - result.saved}
 
 
@@ -41,11 +57,11 @@ async def delete_tags(tag_form: EventTag):
 
 
 @router.get("/event/tag/get", tags=["event"], include_in_schema=server.expose_gui_api, response_model=List[dict])
-async def get_tags(limit: int = 100):
+async def get_tags(limit: int = 100, query: str = ""):
     """
     Loads event tags with defined limit (int)
     """
-    return (await storage.driver.tag.load_tags(limit=limit)).dict()["result"]
+    return await storage.driver.tag.load_tags(limit=limit, query_string=query)
 
 
 @router.put("/event/tag/type/{event_type}", tags=["event"],
@@ -74,6 +90,7 @@ async def delete_record(event_type: str):
     """
     try:
         delete_result = await storage.driver.tag.delete(event_type)
+        await storage.driver.tag.refresh()
     except StorageException as e:
         raise HTTPException(status_code=500, detail=str(e))
     return {"deleted": 0 if delete_result is None else 1}
