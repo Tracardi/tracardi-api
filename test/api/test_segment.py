@@ -10,9 +10,9 @@ def test_create_and_delete_segment():
             "id": segment_id,
             "name": "Test segment",
             "condition": "profile@stat.views>0",
-            "eventType": 'my-event'
+            "eventType": ['my-event']
         })
-
+        print(response.json())
         assert response.status_code == 200
 
     finally:

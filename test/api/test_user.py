@@ -5,7 +5,7 @@ from uuid import uuid4
 endpoint = Endpoint()
 
 
-def test_should_work():
+def test_should_add_read_and_delete_user():
     try:
         data = {
             "password": "password",
@@ -41,6 +41,7 @@ def test_should_work():
         result = result.json()
 
         assert result["deleted"] == 1
-    except Exception as e:
+
+    finally:
         endpoint.delete("/user/1d29217f-b636-4c54-a133-db1d6f66e696")
-        raise e
+

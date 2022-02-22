@@ -86,32 +86,37 @@ def test_get_consent_type_id():
 
 
 def test_delete_consent_type_id():
-    data = {
-        "name": "test-name",
-        "description": "test-description",
-        "revokable": True,
-        "default_value": "grant",
-        "enabled": True,
-        "tags": ["tag1", "tag2", "tag3"],
-        "required": True,
-        "auto_revoke": "15m"
-    }
-    result = endpoint.post("/consent/type", data)
-    result = result.json()
+    try:
 
-    assert not result["errors"]
-    assert result["saved"] == 1
-    assert result["ids"] == ["test-name"]
+        data = {
+            "name": "test-name",
+            "description": "test-description",
+            "revokable": True,
+            "default_value": "grant",
+            "enabled": True,
+            "tags": ["tag1", "tag2", "tag3"],
+            "required": True,
+            "auto_revoke": "15m"
+        }
+        result = endpoint.post("/consent/type", data)
+        result = result.json()
 
-    result = endpoint.delete("/consent/type/test-name")
-    result = result.json()
+        assert not result["errors"]
+        assert result["saved"] == 1
+        assert result["ids"] == ["test-name"]
 
-    assert result == {"deleted": 1}
+        result = endpoint.delete("/consent/type/test-name")
+        result = result.json()
 
-    result = endpoint.delete("/consent/type/test-name")
-    result = result.json()
+        assert result == {"deleted": 1}
 
-    assert result == {"deleted": 0}
+        result = endpoint.delete("/consent/type/test-name")
+        result = result.json()
+
+        assert result == {"deleted": 0}
+
+    finally:
+        endpoint.delete("/consent/type/test-name")
 
 
 def test_get_consents_type():
@@ -119,10 +124,31 @@ def test_get_consents_type():
 
 
 def test_get_consents_type_enabled():
-    result = endpoint.get("/consents/type/enabled")
-    result = result.json()
+    try:
+        data = {
+            "name": "test-name",
+            "description": "test-description",
+            "revokable": True,
+            "default_value": "grant",
+            "enabled": True,
+            "tags": ["tag1", "tag2", "tag3"],
+            "required": True,
+            "auto_revoke": "15m"
+        }
+        result = endpoint.post("/consent/type", data)
+        result = result.json()
 
-    assert {consent["enabled"] for consent in result["result"]} == {True}
+        assert not result["errors"]
+        assert result["saved"] == 1
+        assert result["ids"] == ["test-name"]
+
+        result = endpoint.get("/consents/type/enabled")
+        result = result.json()
+
+        assert {consent["enabled"] for consent in result["result"]} == {True}
+
+    finally:
+        endpoint.delete("/consent/type/test-name")
 
 
 def test_put_consents_type_refresh():

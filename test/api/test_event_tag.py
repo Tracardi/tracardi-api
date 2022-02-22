@@ -4,37 +4,40 @@ endpoint = Endpoint()
 
 
 def test_post_event_tag_add():
-    data = {
-        "type": "test-type",
-        "tags": ["tag1", "tag2", "tag3"]
-    }
-    result = endpoint.post("/event/tag/add", data)
+    try:
+        data = {
+            "type": "test-type",
+            "tags": ["tag1", "tag2", "tag3"]
+        }
+        result = endpoint.post("/event/tag/add", data)
 
-    assert result.status_code == 200
+        assert result.status_code == 200
 
-    endpoint.delete("/event/tag/delete/test-type")
+    finally:
+        endpoint.delete("/event/tag/delete/test-type")
 
 
 def test_delete_event_tag():
-    data = {
-        "type": "test-type",
-        "tags": ["tag1", "tag2", "tag3"]
-    }
-    result = endpoint.post("/event/tag/add", data)
+    try:
+        data = {
+            "type": "test-type",
+            "tags": ["tag1", "tag2", "tag3"]
+        }
+        result = endpoint.post("/event/tag/add", data)
 
-    assert result.status_code == 200
+        assert result.status_code == 200
 
-    data = {
-        "type": "test-type",
-        "tags": ["tag1", "tag2"]
-    }
-    result = endpoint.delete("/event/tag/delete", data)
-    result = result.json()
+        data = {
+            "type": "test-type",
+            "tags": ["tag1", "tag2"]
+        }
+        result = endpoint.delete("/event/tag/delete", data)
+        result = result.json()
 
-    assert result["removed"] == 2
-    assert result["total"] == 1
-
-    endpoint.delete("/event/tag/delete/test-type")
+        assert result["removed"] == 2
+        assert result["total"] == 1
+    finally:
+        endpoint.delete("/event/tag/delete/test-type")
 
 
 def test_get_event_tag():

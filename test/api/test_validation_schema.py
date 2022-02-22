@@ -5,7 +5,7 @@ endpoint = Endpoint()
 
 
 def test_put_validation_schema_refresh():
-    endpoint.put("/validation-schema/refresh")
+    endpoint.put("/event/validation-schema/refresh")
 
 
 def test_post_validation_schema():
@@ -22,17 +22,17 @@ def test_post_validation_schema():
         }
     }
 
-    result = endpoint.post("/validation-schema", data)
+    result = endpoint.post("/event/validation-schema", data)
     result = result.json()
 
     assert "added" in result
 
-    endpoint.delete("/validation-schema/test-type")
+    endpoint.delete("/event/validation-schema/test-type")
 
 
 def test_get_validation_schema_by_type():
     try:
-        result = endpoint.get("/validation-schema/test-type")
+        result = endpoint.get("/event/validation-schema/test-type")
         result = result.json()
         assert result["event_type"] == "test-type"
 
@@ -54,26 +54,28 @@ def test_delete_validation_schema_by_type():
         }
     }
 
-    result = endpoint.post("/validation-schema", data)
+    result = endpoint.post("/event/validation-schema", data)
     result = result.json()
+
+    print(result)
 
     assert "added" in result
 
-    result = endpoint.delete("/validation-schema/test-type")
+    result = endpoint.delete("/event/validation-schema/test-type")
     result = result.json()
 
     assert result["deleted"] == 1
 
-    result = endpoint.delete("/validation-schema/test-type")
+    result = endpoint.delete("/event/validation-schema/test-type")
     result = result.json()
 
     assert result["deleted"] == 0
 
 
 def test_get_validation_schemas():
-    endpoint.get("/validation-schemas")
+    endpoint.get("/event/validation-schemas")
 
 
 def test_get_validation_schemas_by_tag():
-    endpoint.get("/validation_schemas/by_tag")
+    endpoint.get("/event/validation_schemas/by_tag")
 
