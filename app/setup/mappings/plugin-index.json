@@ -63,19 +63,12 @@
                 "type": "boolean"
               },
               "documentation": {
-                "properties": {
-                  "tutorial": {
-                    "type": "keyword"
-                  },
-                  "inputs": {
-                    "dynamic": true,
-                    "type": "object"
-                  },
-                  "outputs": {
-                    "dynamic": true,
-                    "type": "object"
-                  }
-                }
+                "type": "keyword",
+                "index": false
+              },
+              "emits_event": {
+                "type": "keyword",
+                "index": false
               }
             }
           },
@@ -90,54 +83,8 @@
                 "ignore_above": 32
               },
               "form": {
-                "properties": {
-                  "title": {
-                    "index": false,
-                    "type": "keyword",
-                    "ignore_above": 128
-                  },
-                  "groups": {
-                    "properties": {
-                      "description": {
-                        "index": false,
-                        "type": "keyword"
-                      },
-                      "fields": {
-                        "properties": {
-                          "component": {
-                            "properties": {
-                              "props": {
-                                "dynamic": true,
-                                "type": "object"
-                              },
-                              "type": {
-                                "type": "keyword",
-                                "index": false
-                              }
-                            }
-                          },
-                          "description": {
-                            "type": "text",
-                            "index": false
-                          },
-                          "id": {
-                            "type": "keyword",
-                            "ignore_above": 64
-                          },
-                          "name": {
-                            "type": "keyword"
-                          },
-                          "required": {
-                            "type": "boolean"
-                          }
-                        }
-                      },
-                      "name": {
-                        "type": "keyword"
-                      }
-                    }
-                  }
-                }
+                "type": "keyword",
+                "index": false
               },
               "id": {
                 "type": "keyword",
@@ -149,7 +96,7 @@
               },
               "node": {
                 "properties": {
-                  "on_error": {
+                  "on_remove": {
                     "type": "keyword",
                     "ignore_above": 128,
                     "index": false
