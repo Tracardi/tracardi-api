@@ -1,29 +1,35 @@
 # Check conditions plugin
-This plugin return results for conditions check.
+
+This plugin return results with resolved condition set.
 
 ## Configuration
-It takes key-value pairs where value is a condition and key can be a string.
+
+It takes key-value pairs where value is a condition and key is a string.
 
 *Example*
+
 ```json
 {
- "conditions": {
+  "conditions": {
     "marketing-consent": "profile@consents.marketing EXISTS",
-    "is-it-raining": "lowercase(payload@weather.condition)"
-    }
+    "is-it-raining": "lowercase(payload@weather.condition) == 'rain'"
+  }
 }
 ```
+
 ## Input
+
 This plugin takes any type of payload as input.
 
 ## Output
 
-Plugin outputs object with conditions evaluated to false or true. 
+Plugin outputs object with conditions evaluated to value false or true.
 
 Example:
+
 ```json
 {
-    "marketing-consent": true,
-    "is-it-raining": false
+  "marketing-consent": true,
+  "is-it-raining": false
 }
 ```
