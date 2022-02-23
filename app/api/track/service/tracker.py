@@ -3,6 +3,8 @@ import logging
 from datetime import datetime
 from typing import List, Optional
 
+from deepdiff import DeepDiff
+
 from tracardi.config import tracardi
 from tracardi.domain.entity import Entity
 
@@ -10,6 +12,7 @@ from app.api.domain.console_log import ConsoleLog
 from app.config import server
 from tracardi.event_server.utils.memory_cache import MemoryCache, CacheItem
 from tracardi.exceptions.log_handler import log_handler
+from tracardi.service.destination_manager import DestinationManager
 from tracardi.service.notation.dot_accessor import DotAccessor
 
 from tracardi.domain.event_payload_validator import EventPayloadValidator
@@ -118,26 +121,8 @@ async def validate_events_json_schemas(events, profile: Optional[Profile], sessi
             event.metadata.status = VALIDATED
 
 
-async def track_event(tracker_payload: TrackerPayload, ip: str, profile_less: bool):
-    tracker_payload.metadata.ip = ip
-
-    try:
-        source = await source_cache.validate_source(source_id=tracker_payload.source.id)
-    except ValueError as e:
-        raise UnauthorizedException(e)
-
-    # Get session
-    if tracker_payload.session.id is None:
-        raise UnauthorizedException("Session must be set.")
-
-    # Load session from storage
-    session = await storage.driver.session.load(tracker_payload.session.id)  # type: Session
-
-    # Get profile
-    profile, session = await tracker_payload.get_profile_and_session(session,
-                                                                     storage.driver.profile.load_merged_profile,
-                                                                     profile_less
-                                                                     )
+async def invoke_track_process(tracker_payload: TrackerPayload, source, profile_less: bool, profile=None, session=None):
+    profile_copy = profile.dict(exclude={"operation": ...})
 
     if profile_less is True and profile is not None:
         logger.warning("Something is wrong - profile less events should not have profile attached.")
@@ -164,8 +149,7 @@ async def track_event(tracker_payload: TrackerPayload, ip: str, profile_less: bo
     try:
 
         # Invoke rules engine
-        debugger, ran_event_types, \
-        console_log, post_invoke_events, invoked_rules = await rules_engine.invoke(
+        debugger, ran_event_types, console_log, post_invoke_events, invoked_rules = await rules_engine.invoke(
             storage.driver.flow.load_production_flow,
             ux,
             tracker_payload.source.id
@@ -184,7 +168,7 @@ async def track_event(tracker_payload: TrackerPayload, ip: str, profile_less: bo
             # Segment
             segmentation_result = await segment(rules_engine.profile,
                                                 ran_event_types,
-                                                storage.driver.segment.load_segment_by_event_type)
+                                                storage.driver.segment.load_segments)
 
     except Exception as e:
         message = 'Rules engine or segmentation returned an error `{}`'.format(str(e))
@@ -242,6 +226,27 @@ async def track_event(tracker_payload: TrackerPayload, ip: str, profile_less: bo
             )
         )
         logger.error(message)
+
+    # Send to destination
+
+    profile_delta = DeepDiff(profile_copy, profile.dict(exclude={"operation": ...}), ignore_order=True)
+    if profile_delta:
+        logger.info("Profile changed")
+        try:
+            destination_manager = DestinationManager(profile_delta, profile, session, payload=None, event=None,
+                                                     flow=None)
+            await destination_manager.send_data()
+        except Exception as e:
+            # todo - this appends error to the same profile - it rather should be en event error
+            console_log.append(Console(
+                profile_id=rules_engine.profile.id if isinstance(rules_engine.profile, Entity) else None,
+                origin='destination',
+                class_name='DestinationManager',
+                module='tracker',
+                type='error',
+                message=str(e),
+                traceback=get_traceback(e)
+            ))
 
     try:
         if tracardi.track_debug or tracker_payload.is_on('debugger', default=False):
@@ -332,3 +337,27 @@ async def track_event(tracker_payload: TrackerPayload, ip: str, profile_less: bo
     result['ux'] = ux
 
     return result
+
+
+async def track_event(tracker_payload: TrackerPayload, ip: str, profile_less: bool):
+    tracker_payload.metadata.ip = ip
+
+    try:
+        source = await source_cache.validate_source(source_id=tracker_payload.source.id)
+    except ValueError as e:
+        raise UnauthorizedException(e)
+
+    # Get session
+    if tracker_payload.session.id is None:
+        raise UnauthorizedException("Session must be set.")
+
+    # Load session from storage
+    session = await storage.driver.session.load(tracker_payload.session.id)  # type: Session
+
+    # Get profile
+    profile, session = await tracker_payload.get_profile_and_session(session,
+                                                                     storage.driver.profile.load_merged_profile,
+                                                                     profile_less
+                                                                     )
+
+    return await invoke_track_process(tracker_payload, source, profile_less, profile, session)

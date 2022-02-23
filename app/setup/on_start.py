@@ -81,6 +81,8 @@ async def add_plugins():
         'tracardi.process_engine.action.v1.traits.append_trait_action',
         'tracardi.process_engine.action.v1.traits.cut_out_trait_action',
         'tracardi.process_engine.action.v1.traits.delete_trait_action',
+        'tracardi.process_engine.action.v1.traits.auto_merge_properties_to_profile_action',
+        'tracardi.process_engine.action.v1.traits.assign_condition_result.plugin',
 
         'tracardi.process_engine.action.v1.operations.update_profile_action',
         'tracardi.process_engine.action.v1.operations.merge_profiles_action',
@@ -125,6 +127,8 @@ async def add_plugins():
         'tracardi.process_engine.action.v1.ux.snackbar.plugin',
         'tracardi.process_engine.action.v1.ux.consent.plugin',
         'tracardi.process_engine.action.v1.ux.cta_message.plugin',
+        'tracardi.process_engine.action.v1.ux.rating_popup.plugin',
+        'tracardi.process_engine.action.v1.ux.question_popup.plugin',
 
         # Connectors
         'tracardi.process_engine.action.v1.connectors.html.fetch.plugin',
@@ -162,6 +166,19 @@ async def add_plugins():
         'tracardi.process_engine.action.v1.connectors.meaningcloud.corporate_reputation.plugin',
         'tracardi.process_engine.action.v1.connectors.meaningcloud.topics_extraction.plugin',
         'tracardi.process_engine.action.v1.connectors.meaningcloud.summarization.plugin',
+        'tracardi.process_engine.action.v1.connectors.influxdb.send.plugin',
+        'tracardi.process_engine.action.v1.connectors.influxdb.fetch.plugin',
+        'tracardi.process_engine.action.v1.connectors.mixpanel.send.plugin',
+        'tracardi.process_engine.action.v1.connectors.mixpanel.fetch_funnel.plugin',
+        'tracardi.process_engine.action.v1.connectors.mautic.add_contact.plugin',
+        'tracardi.process_engine.action.v1.connectors.mautic.fetch_contact_by_id.plugin',
+        'tracardi.process_engine.action.v1.connectors.mautic.fetch_contact_by_email.plugin',
+        'tracardi.process_engine.action.v1.connectors.mautic.add_points.plugin',
+        'tracardi.process_engine.action.v1.connectors.mautic.subtract_points.plugin',
+        'tracardi.process_engine.action.v1.connectors.mautic.add_to_segment.plugin',
+        'tracardi.process_engine.action.v1.connectors.mautic.remove_from_segment.plugin',
+        'tracardi.process_engine.action.v1.connectors.airtable.send_record.plugin',
+        'tracardi.process_engine.action.v1.connectors.airtable.fetch_records.plugin',
 
         # Internal
         'tracardi.process_engine.action.v1.internal.event_source_fetcher.plugin',

@@ -6,6 +6,7 @@ from fastapi import APIRouter, HTTPException, Depends, Response
 from tracardi.config import tracardi
 from tracardi.domain.enum.type_enum import TypeEnum
 from tracardi.exceptions.log_handler import log_handler
+from tracardi.service.resources import get_type_of_resources
 from tracardi.service.storage.driver import storage
 from tracardi.service.storage.factory import StorageFor, StorageForBulk
 from tracardi.service.wf.domain.named_entity import NamedEntity
@@ -17,7 +18,6 @@ from tracardi.domain.entity import Entity
 from tracardi.domain.enum.indexes_source_bool import IndexesSourceBool
 from tracardi.domain.value_object.bulk_insert_result import BulkInsertResult
 from ..config import server
-from ..service.tracardi_pro_inbound_sources import get_tracardi_pro_services
 
 logger = logging.getLogger(__name__)
 logger.setLevel(tracardi.logging_level)
@@ -32,7 +32,7 @@ router = APIRouter(
             tags=["resource"],
             response_model=dict,
             include_in_schema=server.expose_gui_api)
-async def get_resource_types(type: TypeEnum) -> dict:
+async def resource_types_list(type: TypeEnum) -> dict:
     """
     Returns a list of source types. Each source requires a source type to define what kind of data is
     that source holding.
@@ -42,193 +42,15 @@ async def get_resource_types(type: TypeEnum) -> dict:
     """
 
     try:
-        types = {}
-        try:
-
-            endpoint = await storage.driver.pro.read_pro_service_endpoint()
-            if endpoint is not None:
-                for service in await get_tracardi_pro_services(endpoint):
-                    types[service["id"]] = {
-                        "name": "{} ({})".format(service["name"], service['prefix']),
-                        "tags": service["tags"],
-                        "config": {
-                            "auth": endpoint.dict(exclude={"id": ...}),
-                            "services": "/{}/actions/{}".format(service['prefix'], endpoint.token)
-                        }
-                    }
-        except Exception as e:
-            logger.error(repr(e))
-
-        types.update({
-            "web-page": {
-                "config": {
-                    "user": "<user>",
-                    "password": "<password>"
-                },
-                "tags": ['web-page', "input", "output"],
-                "name": "Web page"
-            },
-            "api": {
-                "config": {
-                    "url": "<url>",
-                    "username": "<username>",
-                    "password": "<password>"
-                },
-                "tags": ['api'],
-                "name": "API endpoint"
-            },
-            "rabbitMQ": {
-                "config": {
-                    "uri": "amqp://127.0.0.1:5672//",
-                    "timeout": 5,
-                    "virtual_host": None,
-                    "port": 5672
-                },
-                "tags": ['rabbitmq', 'queue'],
-                "name": "RabbitMQ"
-            },
-            "aws": {
-                "config": {
-                    "aws_access_key_id": "<key-id>",
-                    "aws_secret_access_key": "<access-key>",
-                },
-                "tags": ['aws', 'cloud', 'token'],
-                "name": "AWS IAM Credentials"
-            },
-            "smtp-server": {
-                "config": {
-                    "smtp": "<smpt-server-host>",
-                    "port": "<port>",
-                    "username": "<username>",
-                    "password": "<password>"
-                },
-                "tags": ['mail', 'smtp'],
-                "name": "SMTP"
-            },
-            "ip-geo-locator": {
-                "config": {
-                    "host": "geolite.info",
-                    "license": "<license-key>",
-                    "accountId": "<accound-id>"
-                },
-                "tags": ['api', 'geo-locator'],
-                "name": "MaxMind Geo-Location"
-            },
-            "postgresql": {
-                "config": {
-                    "host": "<url>",
-                    "port": 5432,
-                    "user": "<username>",
-                    "password": "<password>",
-                    "database": "<database>"
-                },
-                "tags": ['database', 'postgresql'],
-                "name": "PostgreSQL"
-            },
-            "elastic-search": {
-                "config": {
-                    "url": "<url>",
-                    "port": 9200,
-                    "scheme": "http",
-                    "username": "<username>",
-                    "password": "<password>",
-                    "verify_certs": True
-                },
-                "tags": ['elastic'],
-                "name": "Elasticsearch"
-            },
-            "pushover": {
-                "config": {
-                    "token": "<token>",
-                    "user": "<user>"
-                },
-                "tags": ['pushover', 'message'],
-                "name": "Pushover"
-            },
-            "mysql": {
-                "config": {
-                    "host": "localhost",
-                    "port": 3306,
-                    "user": "<username>",
-                    "password": "<password>",
-                    "database": "<database>"
-                },
-                "tags": ['mysql', 'database'],
-                "name": "MySQL"
-
-            },
-            "mqtt": {
-                "config": {
-                    "url": "<url>",
-                    "port": "<port>"
-                },
-                "tags": ['mqtt', 'queue'],
-                "name": "MQTT"
-            },
-            "twilio": {
-                "config": {
-                    "token": "<token>"
-                },
-                "tags": ['token', 'twilio'],
-                "name": "Twilio"
-            },
-            "redis": {
-                "config": {
-                    "url": "<url>",
-                    "user": "<user>",
-                    "password": "<password>"
-                },
-                "tags": ['redis'],
-                "name": "Redis"
-
-            },
-            "mongodb": {
-                "config": {
-                    "uri": "mongodb://127.0.0.1:27017/",
-                    "timeout": 5000
-                },
-                "tags": ['mongo', 'database', 'nosql'],
-                "name": "MongoDB"
-            },
-            "trello": {
-                "config": {
-                    "token": "<trello-api-token>",
-                    "api_key": "<trello-api-key>"
-                },
-                "tags": ["trello"],
-                "name": "Trello"
-            },
-            "token": {
-                "config": {
-                    "token": "<token>"
-                },
-                "tags": ['token'],
-                "name": "Token"
-            },
-            "google-cloud-service-account": {
-                "config": {
-                    "type": "service_account",
-                    "project_id": "<project-id>",
-                    "private_key_id": "<private-key-id>",
-                    "private_key": "<private-key>",
-                    "client_email": "<client-email>",
-                    "client_id": "<client-id>",
-                    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-                    "token_uri": "https://oauth2.googleapis.com/token",
-                    "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-                    "client_x509_cert_url": "<client-x509-cert-url>"
-                },
-                "tags": ['gcp-service-account'],
-                "name": "Google Cloud Service Account"
-            }
-        })
 
         if type.value == 'name':
-            types = {id: t['name'] for id, t in types.items()}
+            resource_types = {id: value['name'] for id, value in get_type_of_resources()}
+        else:
+            resource_types = {id: value for id, value in get_type_of_resources()}
 
         return {
-            "total": len(types),
-            "result": types
+            "total": len(resource_types),
+            "result": resource_types
         }
 
     except Exception as e:
@@ -443,7 +265,11 @@ async def delete_resource(id: str, response: Response):
         response.status_code = 404
         return None
 
-    return result
+    try:
+        await storage.driver.resource.refresh()
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.get("/resources/refresh",

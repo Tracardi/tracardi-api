@@ -66,6 +66,9 @@ async def upsert_flow_draft(draft: Flow):
 
 @router.get("/flow/draft/{id}", tags=["flow"], response_model=Optional[Flow], include_in_schema=server.expose_gui_api)
 async def load_flow_draft(id: str, response: Response):
+    """
+    Loads draft version of flow with given ID (str)
+    """
     try:
         flow_record = await storage.driver.flow.load_record(id)  # type: FlowRecord
     except Exception as e:
@@ -91,6 +94,9 @@ async def load_flow_draft(id: str, response: Response):
 
 @router.get("/flow/production/{id}", tags=["flow"], response_model=Flow, include_in_schema=server.expose_gui_api)
 async def get_flow(id: str, response: Response):
+    """
+    Returns production version of flow with given ID (str)
+    """
     try:
         flow_record = await storage.driver.flow.load_record(id)  # type: FlowRecord
     except Exception as e:
@@ -112,6 +118,9 @@ async def get_flow(id: str, response: Response):
 @router.get("/flow/{production_draft}/{id}/restore", tags=["flow"], response_model=Flow,
             include_in_schema=server.expose_gui_api)
 async def restore_production_flow_backup(id: str, production_draft: ProductionDraft):
+    """
+    Returns previous version of production flow with given ID (str)
+    """
     try:
         flow_record = await storage.driver.flow.load_record(id)  # type: FlowRecord
     except Exception as e:
@@ -155,6 +164,9 @@ async def upsert_flow(flow: Flow):
 
 @router.get("/flow/metadata/{id}", tags=["flow"], response_model=FlowRecord, include_in_schema=server.expose_gui_api)
 async def get_flow_details(id: str):
+    """
+    Returns flow metadata of flow with given ID (str)
+    """
     try:
         entity = Entity(id=id)
         flow_record = await StorageFor(entity).index("flow").load(FlowRecord)  # type: FlowRecord
@@ -169,6 +181,9 @@ async def get_flow_details(id: str):
 
 @router.post("/flow/metadata", tags=["flow"], response_model=BulkInsertResult, include_in_schema=server.expose_gui_api)
 async def upsert_flow_details(flow_metadata: FlowMetaData):
+    """
+    Adds new flow metadata for flow with given id (str)
+    """
     try:
         entity = Entity(id=flow_metadata.id)
         flow_record = await StorageFor(entity).index("flow").load(FlowRecord)  # type: FlowRecord
@@ -188,6 +203,9 @@ async def upsert_flow_details(flow_metadata: FlowMetaData):
 @router.post("/flow/draft/metadata", tags=["flow"], response_model=BulkInsertResult,
              include_in_schema=server.expose_gui_api)
 async def upsert_flow_details(flow_metadata: FlowMetaData):
+    """
+    Adds new draft metadata to flow with defined ID (str)
+    """
     try:
         entity = Entity(id=flow_metadata.id)
         flow_record = await StorageFor(entity).index("flow").load(FlowRecord)  # type: FlowRecord
@@ -334,6 +352,9 @@ async def debug_flow(flow: GraphFlow):
 
 @router.delete("/flow/{id}", tags=["flow"], response_model=dict, include_in_schema=server.expose_gui_api)
 async def delete_flow(id: str, response: Response):
+    """
+    Deletes flow with given id (str)
+    """
     try:
         # delete rule before flow
         crud = StorageFor.crud('rule', Rule)
@@ -345,6 +366,8 @@ async def delete_flow(id: str, response: Response):
         if flow_delete_result is None:
             response.status_code = 404
             return None
+
+        await storage.driver.flow.refresh()
 
         return {
             "rule": rule_delete_result,

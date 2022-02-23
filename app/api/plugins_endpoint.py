@@ -18,11 +18,17 @@ router = APIRouter(
 
 @router.get("/action/plugins", tags=["action"], include_in_schema=server.expose_gui_api)
 async def plugins():
+    """
+    Returns plugins from database
+    """
     return await StorageForBulk().index('action').load()
 
 
 @router.post("/action/{id}/config/validate", tags=["action"], include_in_schema=server.expose_gui_api)
 async def validate_plugin_configuration(id: str, config: dict = None):
+    """
+    Validates given configuration (obj) of plugin with given ID (str)
+    """
     try:
         record = await storage.driver.action.load_by_id(id)
 

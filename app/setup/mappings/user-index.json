@@ -6,14 +6,11 @@
   "mappings": {
     "dynamic": false,
     "properties": {
-      "username": {
-        "type": "keyword"
-      },
       "password": {
         "type": "keyword"
       },
       "full_name": {
-        "type": "text"
+        "type": "keyword"
       },
       "email": {
         "type": "keyword"

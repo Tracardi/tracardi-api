@@ -53,8 +53,16 @@ docker build . -f Dockerfile.ssl-internal -t tracardi-api-ssl
 Once built you can run Tracardi with the following command:
 
 ```
-docker run -p 8686:80 -e ELASTIC_HOST=http://<your-laptop-ip>:9200 tracardi-api-ssl
+docker run -p 8686:443 -e ELASTIC_HOST=http://<your-laptop-ip>:9200 tracardi-api-ssl
 ```
+
+This will make API available at __https://localhost:8686__. If you want it on the standard HTTPS port run:
+
+```
+docker run -p 443:443 -e ELASTIC_HOST=http://<your-laptop-ip>:9200 tracardi-api-ssl
+```
+
+And the API will be available __https://localhost__.
 
 ## Running Tracardi API with SSL certificates provided from outside container
 

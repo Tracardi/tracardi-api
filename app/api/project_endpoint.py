@@ -15,6 +15,9 @@ router = APIRouter(
 
 @router.get("/projects", tags=["project"], include_in_schema=server.expose_gui_api)
 async def get_projects(query: str = None):
+    """
+    Returns list of existing projects
+    """
     try:
         result = await StorageForBulk().index('project').load()
         return list(result)
@@ -24,6 +27,9 @@ async def get_projects(query: str = None):
 
 @router.get("/project/{id}", tags=["project"], response_model=Project, include_in_schema=server.expose_gui_api)
 async def get_project_by_id(id: str):
+    """
+    Returns project with given ID (str)
+    """
     try:
         project = Entity(id=id)
         return await StorageFor(project).index('project').load()
@@ -33,6 +39,9 @@ async def get_project_by_id(id: str):
 
 @router.post("/project", tags=["project"], response_model=BulkInsertResult, include_in_schema=server.expose_gui_api)
 async def add_project(project: Project):
+    """
+    Creates new project in database
+    """
     try:
         return await StorageFor(project).index().save()
         # return await project.storage().save()
@@ -42,6 +51,9 @@ async def add_project(project: Project):
 
 @router.delete("/project/{id}", tags=["project"], response_model=dict, include_in_schema=server.expose_gui_api)
 async def delete_project(id: str):
+    """
+    Deletes project with given ID (str)
+    """
     try:
         project = Entity(id=id)
         return await StorageFor(project).index('project').delete()

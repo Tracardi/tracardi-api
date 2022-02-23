@@ -12,6 +12,9 @@ router = APIRouter(
 @router.get("/purchases/profile/{profile_id}", tags=["purchases"],
             include_in_schema=server.expose_gui_api, response_model=dict)
 async def get_purchases_by_id(profile_id: str, limit: int = 0) -> dict:
+    """
+    Deprecated for now
+    """
     return await storage.driver.purchase.load(
         profile_id,
         limit

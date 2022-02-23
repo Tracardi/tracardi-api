@@ -1,7 +1,10 @@
 import logging
 import asyncio
-import os
+import os, sys
 from time import time
+
+_local_dir = os.path.dirname(__file__)
+sys.path.append(f"{_local_dir}/api/proto/stubs")
 
 import elasticsearch
 from fastapi.middleware.cors import CORSMiddleware
@@ -13,7 +16,8 @@ from app.api import token_endpoint, rule_endpoint, resource_endpoint, event_endp
     tql_endpoint, health_endpoint, session_endpoint, instance_endpoint, plugins_endpoint, \
     settings_endpoint, event_source_endpoint, test_endpoint, \
     purchases_endpoint, event_tag_endpoint, consent_type_endpoint, flow_action_endpoint, flows_endpoint, info_endpoint, \
-    user_endpoint, pro_endpoint, event_schema_validation_endpoint, debug_endpoint, log_endpoint
+    user_endpoint, event_schema_validation_endpoint, debug_endpoint, log_endpoint, tracardi_pro_endpoint, \
+    storage_endpoint, destination_endpoint
 from app.api.auth.authentication import get_current_user
 from app.api.graphql.profile import graphql_profiles
 from app.api.scheduler import tasks_endpoint
@@ -32,7 +36,6 @@ logger = logging.getLogger('app.main')
 logger.setLevel(tracardi.logging_level)
 logger.addHandler(log_handler)
 
-_local_dir = os.path.dirname(__file__)
 
 tags_metadata = [
     {
@@ -105,7 +108,7 @@ application = FastAPI(
 
 application.add_middleware(
     CORSMiddleware,
-    allow_origins=['*'],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -156,11 +159,12 @@ application.include_router(consent_type_endpoint.router)
 application.include_router(info_endpoint.router)
 application.include_router(user_endpoint.router)
 application.include_router(event_source_endpoint.router)
-application.include_router(pro_endpoint.router)
 application.include_router(event_schema_validation_endpoint.router)
 application.include_router(debug_endpoint.router)
 application.include_router(log_endpoint.router)
-
+application.include_router(tracardi_pro_endpoint.router)
+application.include_router(storage_endpoint.router)
+application.include_router(destination_endpoint.router)
 
 # GraphQL
 
@@ -181,6 +185,7 @@ def is_elastic_on_localhost():
 async def app_starts():
     logger.info("TRACARDI set-up starts.")
     no_of_tries = 10
+    success = False
     while True:
         try:
 
@@ -201,6 +206,7 @@ async def app_starts():
             if server.update_plugins_on_start_up is not False:
                 await add_plugins()
 
+            success = True
             break
 
         except elasticsearch.exceptions.ConnectionError as e:
@@ -214,11 +220,16 @@ async def app_starts():
                                "external IP that docker can connect to.")
             logger.error(f"Error details: {str(e)}")
 
+        # todo check if this is needed when we make a single thread startup.
         except Exception as e:
             await asyncio.sleep(1)
             no_of_tries -= 1
             logger.error(f"Could not save data. Number of tries left: {no_of_tries}. Waiting 1s to retry.")
-            logger.error(f"Error details: {str(e)}")
+            logger.error(f"Error details: {repr(e)}")
+
+    if not success:
+        logger.error(f"Could not connect to elasticsearch")
+        exit()
 
     report_i_am_alive()
     logger.info("TRACARDI set-up finished.")

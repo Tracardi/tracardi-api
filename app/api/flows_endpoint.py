@@ -17,6 +17,9 @@ router = APIRouter(
 
 @router.get("/flows/entity", tags=["flow"], include_in_schema=server.expose_gui_api)
 async def get_flows(limit: int = 500):
+    """
+    Loads flows according to given limit (int) parameter
+    """
     try:
         result = await StorageForBulk().index('flow').load(limit=limit)
         total = result.total
@@ -33,6 +36,9 @@ async def get_flows(limit: int = 500):
 
 @router.get("/flows", tags=["flow"], include_in_schema=server.expose_gui_api)
 async def get_flows(query: str = None):
+    """
+    Gets flows that match given query (str) with their name
+    """
     try:
         result = await StorageForBulk().index('flow').load()
         total = result.total
@@ -55,6 +61,9 @@ async def get_flows(query: str = None):
 
 @router.get("/flows/refresh", tags=["flow"], include_in_schema=server.expose_gui_api)
 async def refresh_flows():
+    """
+    Refreshed flow index
+    """
     try:
         return await storage.driver.flow.refresh()
     except Exception as e:
@@ -63,6 +72,9 @@ async def refresh_flows():
 
 @router.get("/flows/by_tag", tags=["flow"], include_in_schema=server.expose_gui_api)
 async def get_grouped_flows(query: str = None, limit: int = 100):
+    """
+    Returns workflows grouped according to given query (str) and limit (int) parameters
+    """
     try:
         result = await StorageForBulk().index('flow').load(limit=limit)
         return group_records(result, query, group_by='projects', search_by='name', sort_by='name')

@@ -63,19 +63,12 @@
                 "type": "boolean"
               },
               "documentation": {
-                "properties": {
-                  "tutorial": {
-                    "type": "keyword"
-                  },
-                  "inputs": {
-                    "dynamic": true,
-                    "type": "object"
-                  },
-                  "outputs": {
-                    "dynamic": true,
-                    "type": "object"
-                  }
-                }
+                "type": "keyword",
+                "index": false
+              },
+              "emits_event": {
+                "type": "keyword",
+                "index": false
               }
             }
           },
@@ -90,66 +83,38 @@
                 "ignore_above": 32
               },
               "form": {
-                "properties": {
-                  "title": {
-                    "type": "keyword",
-                    "ignore_above": 128
-                  },
-                  "groups": {
-                    "properties": {
-                      "description": {
-                        "type": "keyword"
-                      },
-                      "fields": {
-                        "properties": {
-                          "component": {
-                            "properties": {
-                              "props": {
-                                "dynamic": true,
-                                "type": "object"
-                              },
-                              "type": {
-                                "type": "keyword"
-                              }
-                            }
-                          },
-                          "description": {
-                            "type": "text"
-                          },
-                          "id": {
-                            "type": "keyword",
-                            "ignore_above": 64
-                          },
-                          "name": {
-                            "type": "keyword"
-                          },
-                          "required": {
-                            "type": "boolean"
-                          }
-                        }
-                      },
-                      "name": {
-                        "type": "keyword"
-                      }
-                    }
-                  }
-                }
+                "type": "keyword",
+                "index": false
               },
               "id": {
                 "type": "keyword",
                 "ignore_above": 64
               },
               "init": {
-                "type": "keyword",
-                "ignore_above": 1024
+                "index": false,
+                "type": "keyword"
+              },
+              "node": {
+                "properties": {
+                  "on_remove": {
+                    "type": "keyword",
+                    "ignore_above": 128,
+                    "index": false
+                  },
+                  "on_create": {
+                    "type": "keyword",
+                    "ignore_above": 128,
+                    "index": false
+                  }
+                }
               },
               "inputs": {
                 "type": "keyword",
-                "ignore_above": 32
+                "ignore_above": 48
               },
               "outputs": {
                 "type": "keyword",
-                "ignore_above": 32
+                "ignore_above": 48
               },
               "license": {
                 "type": "keyword",
@@ -157,7 +122,8 @@
               },
               "manual": {
                "type": "keyword",
-                "ignore_above": 32
+                "ignore_above": 32,
+                "index": false
               },
               "module": {
                 "type": "keyword",
