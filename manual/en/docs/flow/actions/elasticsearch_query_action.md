@@ -29,13 +29,13 @@ empty payload on port **error** if error occurs. Error details are logged, pleas
 
 ## Configuration
 
-#### Configuration in form
+#### Form fields
 
-- *Elasticsearch resource* - here please provide your Elasticsearch resource.
-- *Elasticsearch index* - here provide name of the index you wish to search.
-- *Query* - here provide DSL query that you want to use to search provided index.
+- *Elasticsearch resource* - your Elasticsearch resource.
+- *Elasticsearch index* - name of the index you wish to search.
+- *Query* - DSL query that you want to use to search provided index.
 
-#### Configuration in JSON
+#### JSON Configuration
 
 ```
 {

@@ -3,26 +3,29 @@
 This plugin fetches data from InfluxDB resource.
 
 ## Input
+
 This plugin takes any payload as input.
 
 ## Output
-Plugin returns fetched records on port **success**, or object with some
-error info on **error** port if one occurs.
+
+Plugin returns fetched records on port **success**, or object with some error info on **error** port if one occurs.
 
 ## Configuration
 
-#### With form
+#### Form fields
+
 - InfluxDB resource - InfluxDB resource, containing your token and database URL to the database instance.
 - Organization - The name of your organization, it is the equivalent of database instance.
 - Bucket - The name of the bucket that you want to write to.
-- Filters - Insert key-value pairs. Key is the name of your field in InfluxDB, and
-  value is its value. If values match, then the record will be returned from InfluxDB.
+- Filters - Insert key-value pairs. Key is the name of your field in InfluxDB, and value is its value. If values match,
+  then the record will be returned from InfluxDB.
 - Lower time bound - That's the lower time bound of your search. It can be either relative (so for example -1d), or
   fixed (2022-01-12). Path notation is fully supported.
-- Upper time bound - That is the upper time bound of your search. It can be relative or fixed, path is
-  supported as well.
+- Upper time bound - That is the upper time bound of your search. It can be relative or fixed, path is supported as
+  well.
 
-#### Advanced configuration
+#### JSON configuration
+
 ```json
 {
   "source": {

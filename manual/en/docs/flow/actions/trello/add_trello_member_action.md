@@ -67,7 +67,7 @@ Now it is time to create a Tracardi Trello Resource.
 
 ```
 
-#### Trello Plugin Form
+#### Form fields
 
 - Trello resource - Select your resource, tagged **trello**, containing your API key
   and token.
@@ -80,7 +80,7 @@ Now it is time to create a Tracardi Trello Resource.
 - ID of the member - Provide the path to the field containing the ID of Trello member, that
   you want to add to your card.
 
-#### Advanced configuration
+#### JSON configuration
 
 ```json
 {

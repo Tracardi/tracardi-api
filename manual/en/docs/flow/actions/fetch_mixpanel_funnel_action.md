@@ -34,7 +34,7 @@ This plugin outputs fetched funnel on port **success**, or an error message (if 
 - Upper time bound - That's the upper bound for your funnel. It's optional. It works according to same rules
   as Lower time bound.
 
-#### Advanced configuration
+#### JSON configuration
 
 ```json
 {

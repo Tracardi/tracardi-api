@@ -1,26 +1,31 @@
 # Assign condition results plugin
 
-This plugin assigns the result from given condition to a given field in profile.
+This plugin resolves a set of conditions and set profile fields.
 
 ## Input
+
 This plugin takes any payload as input.
 
 ## Output
+
 This plugin returns given payload on port **payload** without any changes.
 
 ## Plugin configuration
-#### With form
-- Conditions - here provide key-value pairs, where key is a path to some field in
-  profile, and value is a condition whose result will be assigned to given
-  field. (e.g. profile@consents.marketing-consent: profile@consents.marketing EXISTS).
-  Every key must start with 'profile@'.
 
-#### Advanced configuration
+#### Form fields
+
+- Conditions - key-value pairs, where key is a path to field in profile, and value is a condition to be resolved. 
+  (e.g. profile@consents.marketing-consent: profile@consents.marketing EXISTS). Every key must start with 'profile@'.
+
+#### JSON configuration
+
+Example
+
 ```json
 {
   "conditions": {
    "profile@consents.marketing-consent": "profile@consents.marketing EXISTS",
-   "profile@interests.computers": "session@context.browser.url == \"http://comps.com.pl\""
+   "profile@interests.computers": "session@context.browser.url == \"http://computers.com\""
   }
 }
 ```
