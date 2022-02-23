@@ -92,12 +92,14 @@
               "form": {
                 "properties": {
                   "title": {
+                    "index": false,
                     "type": "keyword",
                     "ignore_above": 128
                   },
                   "groups": {
                     "properties": {
                       "description": {
+                        "index": false,
                         "type": "keyword"
                       },
                       "fields": {
@@ -109,12 +111,14 @@
                                 "type": "object"
                               },
                               "type": {
-                                "type": "keyword"
+                                "type": "keyword",
+                                "index": false
                               }
                             }
                           },
                           "description": {
-                            "type": "text"
+                            "type": "text",
+                            "index": false
                           },
                           "id": {
                             "type": "keyword",
@@ -140,16 +144,30 @@
                 "ignore_above": 64
               },
               "init": {
-                "type": "keyword",
-                "ignore_above": 1024
+                "index": false,
+                "type": "keyword"
+              },
+              "node": {
+                "properties": {
+                  "on_error": {
+                    "type": "keyword",
+                    "ignore_above": 128,
+                    "index": false
+                  },
+                  "on_create": {
+                    "type": "keyword",
+                    "ignore_above": 128,
+                    "index": false
+                  }
+                }
               },
               "inputs": {
                 "type": "keyword",
-                "ignore_above": 32
+                "ignore_above": 48
               },
               "outputs": {
                 "type": "keyword",
-                "ignore_above": 32
+                "ignore_above": 48
               },
               "license": {
                 "type": "keyword",
@@ -157,7 +175,8 @@
               },
               "manual": {
                "type": "keyword",
-                "ignore_above": 32
+                "ignore_above": 32,
+                "index": false
               },
               "module": {
                 "type": "keyword",
