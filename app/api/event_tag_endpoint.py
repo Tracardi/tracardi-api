@@ -51,6 +51,7 @@ async def delete_tags(tag_form: EventTag):
             event_type=tag_form.type,
             tags=tag_form.tags
         )
+        await storage.driver.tag.refresh()
     except StorageException as e:
         raise HTTPException(status_code=500, detail=str(e))
     return {"removed": removed, "total": total}
