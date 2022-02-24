@@ -66,8 +66,8 @@ nav:
           - installation/docker/building_docker_image.md
       - Source:
           - installation/source/index.md
-      - Kubernetes:
-          - installation/k8s/index.md
+      - Production:
+          - installation/production/index.md
   - Configuration:
       - configuration/tracardi_configuration.md
       - configuration/best_practises.md

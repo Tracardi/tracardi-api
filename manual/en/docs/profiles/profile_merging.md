@@ -49,15 +49,15 @@ has been changed on all devices.
 ## Profile propagation
 
 Consider the following example. I use the online store with two devices:
-a laptop and a mobile phone. The devices have references to my profiles. On laptop it is profile id: 1, on the mobile
-phone it is profile id: 2
+a laptop and a mobile phone. I used both of the devices, and they have references to my profile, but on laptop it is
+profile id: 1, and on the mobile phone it is profile id: 2
 
-At one point I entered my e-mail in to the web-shop using a laptop. New merged profile is created and it has id: 3. The
+At some point in time I entered my e-mail in to the web-shop using a laptop. New merged profile is created and it has id: 3. The
 reference to this profile will be saved in the browser.
 
 However, the reference to the old profile is still stored on my mobile phone.
 
-Next thime when I use my mobile, the old profile will be downloaded, but Tracardi will recognize that it has the
+Next time when I use my mobile phone, the old profile will be downloaded, but Tracardi will recognize that it has the
 mergedWith field set. The system will replace the old profile with the new one (defined in mergedWith)
 and the device will receive the new merged profile.
 
