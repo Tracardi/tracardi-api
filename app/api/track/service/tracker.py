@@ -21,13 +21,14 @@ from tracardi.domain.value_object.bulk_insert_result import BulkInsertResult
 from tracardi.domain.console import Console
 from tracardi.exceptions.exception_service import get_traceback
 from tracardi.service.event_validator import validate
-from tracardi.domain.event import Event, VALIDATED, ERROR, WARNING, PROCESSED
+from tracardi.domain.event import Event, VALIDATED, ERROR, WARNING, PROCESSED, INVALID
 from tracardi.domain.profile import Profile
 from app.api.track.service.merging import merge
 from app.api.track.service.segmentation import segment
 from tracardi.domain.session import Session
 from tracardi.domain.value_object.tracker_payload_result import TrackerPayloadResult
-from tracardi.exceptions.exception import UnauthorizedException, StorageException, FieldTypeConflictException
+from tracardi.exceptions.exception import UnauthorizedException, StorageException, FieldTypeConflictException, \
+    EventValidationException
 from tracardi.process_engine.rules_engine import RulesEngine
 from tracardi.domain.value_object.collect_result import CollectResult
 from tracardi.domain.payload.tracker_payload import TrackerPayload
@@ -99,7 +100,7 @@ async def _persist(profile_less, console_log: ConsoleLog, session: Session, even
     )
 
 
-async def validate_events_json_schemas(events, profile: Optional[Profile], session):
+async def validate_events_json_schemas(events, profile: Optional[Profile], session, console_log: ConsoleLog):
     for event in events:
         dot = DotAccessor(
             profile=profile,
@@ -111,17 +112,37 @@ async def validate_events_json_schemas(events, profile: Optional[Profile], sessi
         event_type = dot.event['type']
 
         if event_type not in cache:
+            logger.info(f"Refreshed validation schema for event type {event_type}.")
             event_payload_validator = await storage.driver.validation_schema.load_schema(
                 dot.event['type'])  # type: EventPayloadValidator
             cache[event_type] = CacheItem(data=event_payload_validator, ttl=server.event_validator_ttl)
 
         validation_data = cache[event_type].data
+
         if validation_data is not None:
-            validate(dot, validator=validation_data)
-            event.metadata.status = VALIDATED
+            try:
+                validate(dot, validator=validation_data)
+                event.metadata.status = VALIDATED
+            except EventValidationException as e:
+                event.metadata.status = INVALID
+                console_log.append(
+                    Console(
+                        profile_id=profile.id if isinstance(profile, Entity) else None,
+                        origin='profile',
+                        class_name='EventValidator',
+                        module='tracker',
+                        type='error',
+                        message=str(e),
+                        traceback=get_traceback(e)
+                    )
+                )
+
+    return console_log
 
 
 async def invoke_track_process(tracker_payload: TrackerPayload, source, profile_less: bool, profile=None, session=None):
+    console_log = ConsoleLog()
+
     profile_copy = profile.dict(exclude={"operation": ...})
 
     if profile_less is True and profile is not None:
@@ -131,12 +152,11 @@ async def invoke_track_process(tracker_payload: TrackerPayload, source, profile_
     events = tracker_payload.get_events(session, profile, profile_less)
 
     # Validates json schemas of events, throws exception if data is not valid
-    await validate_events_json_schemas(events, profile, session)
+    console_log = await validate_events_json_schemas(events, profile, session, console_log)
 
     debugger = None
     segmentation_result = None
 
-    console_log = ConsoleLog()
     rules_engine = RulesEngine(
         session,
         profile,

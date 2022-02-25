@@ -54,3 +54,23 @@ def test_should_differentiate_types():
         validate(dot, validator)
     except EventValidationException:
         assert True
+
+
+def test_should_not_pass_due_to_invalid_schema():
+    dot = DotAccessor(payload={"list": ["a", "b", "c"]})
+    validator = EventPayloadValidator(
+        validation={
+            "email": {
+                "type": "string"
+            }
+        },
+        event_type="page-view",
+        name="test",
+        enabled=True
+    )
+
+    try:
+        validate(dot, validator)
+        assert False
+    except EventValidationException:
+        assert True

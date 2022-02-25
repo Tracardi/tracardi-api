@@ -1,6 +1,12 @@
 from tracardi.service.notation.dot_accessor import DotAccessor
 
 
+def test_should_validate_dot_notation():
+    assert not DotAccessor.validate("invalid@dot.notation")
+    assert DotAccessor.validate("payload@dot.notation")
+    assert not DotAccessor.validate("invalid@dot.[0].notation")
+
+
 def test_dot_accessor():
     dot = DotAccessor(profile={"a": 1, "b": [1, 2]}, session={"b": 2}, event={"c": 1})
     a = dot['profile@...']
