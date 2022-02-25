@@ -259,3 +259,46 @@ def test_tql_negative_value():
 
     tree = parser.parse("payload@a.b < -1.845")
     assert not ExprTransformer(dot=dot).transform(tree)
+
+
+def test_tql_missing_field():
+
+    tree = parser.parse("payload@a.missing == true")
+    result = ExprTransformer(dot=dot).transform(tree)
+    assert not result
+
+    tree = parser.parse("payload@a.missing == \"string\"")
+    result = ExprTransformer(dot=dot).transform(tree)
+    assert not result
+
+    tree = parser.parse("payload@a.missing < -1")
+    result = ExprTransformer(dot=dot).transform(tree)
+    assert not result
+
+    tree = parser.parse("payload@a.missing <= -1")
+    result = ExprTransformer(dot=dot).transform(tree)
+    assert not result
+
+    tree = parser.parse("payload@a.missing == -1")
+    result = ExprTransformer(dot=dot).transform(tree)
+    assert not result
+
+    tree = parser.parse("payload@a.missing > -1")
+    result = ExprTransformer(dot=dot).transform(tree)
+    assert not result
+
+    tree = parser.parse("payload@a.missing >= -1")
+    result = ExprTransformer(dot=dot).transform(tree)
+    assert not result
+
+    tree = parser.parse("payload@a.missing exists")
+    result = ExprTransformer(dot=dot).transform(tree)
+    assert not result
+
+    tree = parser.parse("payload@a.missing not exists")
+    result = ExprTransformer(dot=dot).transform(tree)
+    assert result
+
+    tree = parser.parse("payload@a.missing between 1 and 2")
+    result = ExprTransformer(dot=dot).transform(tree)
+    assert not result

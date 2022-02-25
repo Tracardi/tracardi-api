@@ -16,6 +16,7 @@
         }
 
         const options = {
+            debugger: true,
             listeners: {
                 onContextReady: ({helpers, context}) => {
                     const btn0 = document.querySelector('#page-view-event')
@@ -124,7 +125,7 @@
         window.response.context.profile = true;
         window.tracker.track("purchase-order", {"id": "Sun glasses - Badoo", "price": 13.45})
         window.tracker.track("profile-interest", {"Vacation": 1})
-        window.tracker.track("page-view", {"custom-data": 1});
+        window.tracker.track("page-view", {"custom-data": 1},{"debugger": true});
         window.tracker.track("personal-data", {
             "id": "id",
             "name": "Joe",
