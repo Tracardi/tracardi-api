@@ -133,7 +133,7 @@ async def get_plugins_list(query: Optional[str] = None):
     _current_plugin = None
     try:
 
-        result = await StorageForBulk().index('action').load()
+        result = await StorageForBulk().index('action').load(limit=500)
 
         _result = []
         for r in result:
