@@ -122,7 +122,7 @@
               },
               "manual": {
                "type": "keyword",
-                "ignore_above": 32,
+                "ignore_above": 64,
                 "index": false
               },
               "module": {
