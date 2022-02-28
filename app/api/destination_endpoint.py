@@ -22,6 +22,7 @@ async def save_destination(destination: Destination):
 
     try:
         record = DestinationRecord.encode(destination)
+        print(record)
         result = await storage.driver.destination.save(record)
         await storage.driver.destination.refresh()
     except Exception as e:
@@ -99,5 +100,17 @@ async def delete_destination(id: str, response: Response):
     try:
         await storage.driver.destination.refresh()
         return True
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/destinations/entity",
+            tags=["resource"],
+            include_in_schema=server.expose_gui_api)
+async def list_destination_resources():
+    try:
+        data, total = await storage.driver.resource.load_destinations()
+        result = {r.id: r for r in data if r.is_destination()}
+        return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

@@ -15,9 +15,21 @@
       "description": {
         "type": "text"
       },
-      "package": {
-        "type": "keyword",
-        "index": false
+      "destination": {
+         "properties": {
+           "package": {
+             "type": "keyword",
+             "index": false
+           },
+           "init": {
+             "type": "keyword",
+             "index": false
+           },
+           "form": {
+             "type": "keyword",
+             "index": false
+           }
+         }
       },
       "mapping": {
         "type": "keyword",
@@ -25,6 +37,13 @@
       },
       "enabled": {
         "type": "boolean"
+      },
+      "resource": {
+        "properties": {
+          "id": {
+            "type": "keyword"
+          }
+        }
       }
     }
   }
