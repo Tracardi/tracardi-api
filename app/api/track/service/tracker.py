@@ -255,7 +255,7 @@ async def invoke_track_process(tracker_payload: TrackerPayload, source, profile_
         try:
             destination_manager = DestinationManager(profile_delta, profile, session, payload=None, event=None,
                                                      flow=None)
-            await destination_manager.send_data()
+            await destination_manager.send_data(profile.id, debug=False)
         except Exception as e:
             # todo - this appends error to the same profile - it rather should be en event error
             console_log.append(Console(
