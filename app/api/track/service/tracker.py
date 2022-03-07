@@ -269,8 +269,6 @@ async def invoke_track_process(tracker_payload: TrackerPayload, source, profile_
             ))
 
     try:
-        print(tracardi.track_debug)
-        print(tracker_payload.is_on('debugger', default=False))
         if tracardi.track_debug or tracker_payload.is_on('debugger', default=False):
             if debugger.has_call_debug_trace():
                 # Save debug info
