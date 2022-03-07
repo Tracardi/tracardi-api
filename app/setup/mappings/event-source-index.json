@@ -27,6 +27,9 @@
       "enabled": {
         "type": "boolean"
       },
+      "transitional": {
+        "type": "boolean"
+      },
       "tags": {
         "type": "keyword"
       },
