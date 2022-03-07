@@ -42,20 +42,8 @@
         "type": "boolean"
       },
       "destination": {
-         "properties": {
-           "package": {
-             "type": "keyword",
-             "index": false
-           },
-           "init": {
-             "type": "keyword",
-             "index": false
-           },
-           "form": {
-             "type": "keyword",
-             "index": false
-           }
-         }
+        "type": "keyword",
+        "index": false
       }
     }
   }
