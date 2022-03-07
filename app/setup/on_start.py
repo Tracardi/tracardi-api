@@ -184,6 +184,7 @@ async def add_plugins():
         'tracardi.process_engine.action.v1.internal.inject_event.plugin',
         'tracardi.process_engine.action.v1.internal.inject_profile.plugin',
         'tracardi.process_engine.action.v1.traits.condition_set.plugin',
+        'tracardi.process_engine.action.v1.internal.query_string.plugin',
         'tracardi.process_engine.action.v1.operations.reduce_array.plugin',
 
         # Metrics
