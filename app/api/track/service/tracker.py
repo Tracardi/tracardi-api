@@ -251,7 +251,7 @@ async def invoke_track_process(tracker_payload: TrackerPayload, source, profile_
 
     profile_delta = DeepDiff(profile_copy, profile.dict(exclude={"operation": ...}), ignore_order=True)
     if profile_delta:
-        logger.info("Profile changed")
+        logger.info("Profile changed. Destination scheduled to run.")
         try:
             destination_manager = DestinationManager(profile_delta, profile, session, payload=None, event=None,
                                                      flow=None)
