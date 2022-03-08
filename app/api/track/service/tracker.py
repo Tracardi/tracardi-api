@@ -267,6 +267,7 @@ async def invoke_track_process(tracker_payload: TrackerPayload, source, profile_
                 message=str(e),
                 traceback=get_traceback(e)
             ))
+            logger.error(str(e))
 
     try:
         if tracardi.track_debug or tracker_payload.is_on('debugger', default=False):
