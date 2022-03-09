@@ -5,6 +5,7 @@ from starlette import status
 
 from .auth.authentication import Authentication, get_authentication
 from ..config import server
+from tracardi.service.storage.driver import storage
 
 router = APIRouter()
 
@@ -22,7 +23,9 @@ async def login(login_form_data: OAuth2PasswordRequestForm = Depends(),
 
     try:
         token = await auth.login(login_form_data.username, login_form_data.password)
+        await storage.driver.user_log.add_log(email=login_form_data.username, successful=True)
     except Exception as e:
+        await storage.driver.user_log.add_log(email=login_form_data.username, successful=False)
         raise HTTPException(status_code=400, detail=str(e))
 
     return token

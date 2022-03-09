@@ -23,7 +23,6 @@ class Authentication:
         if auth.user is not None and username == auth.user and password == auth.password:
             return User(
                 id='@dummy',
-                username=username,
                 password="",
                 roles=['admin'],
                 email="",
