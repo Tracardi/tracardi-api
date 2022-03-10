@@ -91,7 +91,7 @@ Configuration can be extended with *context* parameter, where you may define the
 }
 ```
 
-By default, the following context data will be sent to Tracardi:
+By default, the following session context data will be sent to Tracardi:
 
 ```json title="Example" linenums="1"
 {
@@ -114,21 +114,6 @@ By default, the following context data will be sent to Tracardi:
         },
         "device": {
           "platform": "Linux x86_64"
-        }
-      }
-    },
-    "page": {
-      "local": {
-        "url": "http://localhost:8686/tracker/",
-        "path": "/tracker/",
-        "hash": "",
-        "title": "Test page",
-        "referer": {
-          "host": null,
-          "query": null
-        },
-        "history": {
-          "length": 10
         }
       }
     },
@@ -226,6 +211,49 @@ window.tracker.track("page-view",{});
 2. This line tells tracardi to return profile data with the response. 
 
 The event "interest" will be sent immediately, because of `{"fire": true}`.
+
+# Event context
+
+Event context is the context the event was triggered. By default, javascript snippet attach the following event context. 
+
+```json
+{
+  "page": {
+    "url": "<page-url>",
+    "path": "<page-path>",
+    "hash": "<page-hash>",
+    "title": "<page-title>",
+    "referer": {
+      "host": null,
+      "query": null
+    },
+    "history": {
+      "length": 10
+    }
+  },
+  "ip": "127.0.0.1"
+}
+```
+
+It has the ip and the page the javascript was placed on. It is possible to add additional data to event context. For example,
+it may be a tag that breaks the pages into following groups: search, product-detail, purchase, post-purchase. This way you may
+find out how many events where triggered before the customer made a purchase.
+
+To add additional context add "context" key to event options.
+
+Example:
+
+```javascript title="Example" linenums="1" hl_lines="5"
+window.tracker.track(
+   "page-view",
+   {},
+   {
+    "context": {"tag": "search"},
+    "fire": true
+   });
+```
+
+Context may be placed with other configuration options. In the example above the event was configured to fire immediately. 
 
 ## Handling response from Tracardi
 
