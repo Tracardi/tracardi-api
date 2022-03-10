@@ -44,8 +44,26 @@ async def get_logs_within_period(lower: int, upper: int, start: int = 0, limit: 
             start=start,
             limit=limit
         )
-        print(result)
         return [hit["_source"] for hit in result["hits"]["hits"]]
 
     except ElasticsearchException as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/user-logs/by-email/{email}", tags=["user-logs"], include_in_schema=server.expose_gui_api,
+            response_model=list)
+async def get_logs_for_user(email: str, start: int = 0, limit: int = 100):
+    """
+    Returns user logs within given time period
+    """
+    try:
+        result = await storage.driver.user_log.load_by_user(
+            email=email,
+            start=start,
+            limit=limit
+        )
+        return [hit["_source"] for hit in result["hits"]["hits"]]
+
+    except ElasticsearchException as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
