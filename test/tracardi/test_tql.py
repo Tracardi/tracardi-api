@@ -1,7 +1,6 @@
 from tracardi.domain.event_metadata import EventMetadata, EventTime
 from tracardi.service.notation.dot_accessor import DotAccessor
 from tracardi.domain.profile import Profile
-from tracardi.domain.context import Context
 from tracardi.domain.event import Event, EventSession
 from tracardi.domain.flow import Flow, FlowSchema
 from tracardi.domain.resource import Resource
@@ -24,12 +23,11 @@ payload = {
 profile = Profile(id="1")
 session = EventSession(id="2")
 resource = Resource(id="3", type="event")
-context = Context()
 event = Event(id="event-id",
               type="type",
               metadata=EventMetadata(time=EventTime()),
               source=resource,
-              context=context,
+              context={},
               profile=profile,
               session=session,
               )
@@ -227,13 +225,10 @@ def test_tql_fail():
     #     assert True
 
 
-def test_tql_no_value():
-    try:
-        tree = parser.parse("payload@no-value.b > 1")
-        ExprTransformer(dot=dot).transform(tree)
-        assert False
-    except Exception as e:
-        assert 'Invalid dot notation' in str(e)
+def test_tql_no_value_should_make_condition_not_met():
+    tree = parser.parse("payload@no-value.b > 1")
+    result = ExprTransformer(dot=dot).transform(tree)
+    assert result is False
 
 
 def test_tql_float_value():

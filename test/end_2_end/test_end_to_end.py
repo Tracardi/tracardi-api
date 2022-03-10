@@ -5,7 +5,7 @@ from tracardi.process_engine.action.v1.increase_views_action import IncreaseView
 from tracardi.domain.flow import Flow
 from tracardi.process_engine.action.v1.end_action import EndAction
 from tracardi.process_engine.action.v1.debug_payload_action import DebugPayloadAction
-from ..api.test_event_source import create_event_source
+from ..api.test_source import create_event_source
 from tracardi.service.wf.service.builders import action
 from ..utils import Endpoint
 
@@ -80,12 +80,13 @@ def test_source_rule_and_flow():
         assert endpoint.post('/flow/production', data=flow.dict()).status_code == 200
         assert endpoint.get('/flows/refresh').status_code == 200
 
-        assert endpoint.post('/segment', data={
+        result = endpoint.post('/segment', data={
             "id": segment_id,
             "name": "Test segment",
             "condition": "profile@stats.views>0",
-            "eventType": event_type
-        }).status_code == 200
+            "eventType": [event_type]
+        })
+        assert result.status_code == 200
         assert endpoint.get('/segments/refresh').status_code == 200
 
         # Assert rule

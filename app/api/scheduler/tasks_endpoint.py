@@ -54,7 +54,7 @@ async def run_tasks():
 
         async def _task():
             try:
-                return await track_event(tracker_payload, ip=local_ip), task
+                return await track_event(tracker_payload, ip=local_ip, profile_less=False), task
             except Exception as e:
                 logger.error("Scheduled task error: ".format(str(e)))
                 task.status = 'error'

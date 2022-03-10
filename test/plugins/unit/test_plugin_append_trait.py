@@ -1,4 +1,3 @@
-from tracardi.domain.context import Context
 from tracardi.domain.entity import Entity
 from tracardi.domain.event_metadata import EventMetadata, EventTime
 from tracardi.domain.session import Session, SessionMetadata
@@ -16,7 +15,6 @@ def test_plugin_append_trait():
         type='text',
         metadata=EventMetadata(time=EventTime()),
         session=EventSession(id='1'),
-        context=Context(),
         source=Entity(id='1')
     )
     session = Session(
@@ -82,7 +80,6 @@ def test_plugin_append_trait_fail():
         type='text',
         metadata=EventMetadata(time=EventTime()),
         session=EventSession(id='1'),
-        context=Context(),
         source=Entity(id='1')
     )
     session = Session(

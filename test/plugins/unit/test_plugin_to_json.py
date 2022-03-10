@@ -3,7 +3,6 @@ from tracardi.process_engine.action.v1.converters.payload_to_json.plugin import 
 from tracardi.domain.profile import Profile
 from tracardi.domain.event import Event, EventSession
 from tracardi.domain.entity import Entity
-from tracardi.domain.context import Context
 from tracardi.domain.event_metadata import EventMetadata, EventTime
 
 
@@ -32,7 +31,6 @@ def test_payload_to_json_plugin():
         type='text',
         metadata=EventMetadata(time=EventTime()),
         session=EventSession(id='1'),
-        context=Context(),
         source=Entity(id='1')
     )
 

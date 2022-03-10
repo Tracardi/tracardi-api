@@ -140,7 +140,8 @@ async def validate_events_json_schemas(events, profile: Optional[Profile], sessi
     return console_log
 
 
-async def invoke_track_process(tracker_payload: TrackerPayload, source, profile_less: bool, profile=None, session=None):
+async def invoke_track_process(tracker_payload: TrackerPayload, source, profile_less: bool, profile=None, session=None,
+                               ip='0.0.0.0'):
     console_log = ConsoleLog()
 
     profile_copy = profile.dict(exclude={"operation": ...})
@@ -149,7 +150,7 @@ async def invoke_track_process(tracker_payload: TrackerPayload, source, profile_
         logger.warning("Something is wrong - profile less events should not have profile attached.")
 
     # Get events
-    events = tracker_payload.get_events(session, profile, profile_less)
+    events = tracker_payload.get_events(session, profile, profile_less, ip)
 
     # Validates json schemas of events, throws exception if data is not valid
     console_log = await validate_events_json_schemas(events, profile, session, console_log)
@@ -361,7 +362,6 @@ async def invoke_track_process(tracker_payload: TrackerPayload, source, profile_
 
 
 async def track_event(tracker_payload: TrackerPayload, ip: str, profile_less: bool):
-    tracker_payload.metadata.ip = ip
 
     try:
         source = await source_cache.validate_source(source_id=tracker_payload.source.id)
@@ -387,4 +387,4 @@ async def track_event(tracker_payload: TrackerPayload, ip: str, profile_less: bo
                                                                      profile_less
                                                                      )
 
-    return await invoke_track_process(tracker_payload, source, profile_less, profile, session)
+    return await invoke_track_process(tracker_payload, source, profile_less, profile, session, ip)

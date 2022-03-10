@@ -13,7 +13,6 @@ from tracardi.service.wf.domain.flow_history import FlowHistory
 from tracardi.service.wf.domain.work_flow import WorkFlow
 from tracardi.service.plugin.domain.console import Log
 from .auth.authentication import get_current_user
-from tracardi.domain.context import Context
 from tracardi.domain.flow_meta_data import FlowMetaData
 from tracardi.domain.entity import Entity
 from tracardi.domain.event import Event, EventSession
@@ -292,7 +291,7 @@ async def debug_flow(flow: GraphFlow):
             source=Resource(id="@debug-source-id", type="web-page"),
             session=event_session,
             profile=profile,
-            context=Context()
+            context={}
         )
 
         workflow = WorkFlow(

@@ -1,4 +1,3 @@
-from tracardi.domain.context import Context
 from tracardi.domain.entity import Entity
 from tracardi.domain.event import Event, EventSession
 from tracardi.domain.event_metadata import EventMetadata, EventTime
@@ -17,7 +16,6 @@ def test_plugin_new_profile_true():
         type='text',
         metadata=EventMetadata(time=EventTime()),
         session=EventSession(id='1'),
-        context=Context(),
         source=Entity(id='1')
     )
     result = run_plugin(NewProfileAction, init, payload, profile=profile, event=event)
@@ -35,7 +33,6 @@ def test_plugin_new_profile_false():
         type='text',
         metadata=EventMetadata(time=EventTime()),
         session=EventSession(id='1'),
-        context=Context(),
         source=Entity(id='1')
     )
 

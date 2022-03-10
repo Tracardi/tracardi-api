@@ -3,8 +3,6 @@ from datetime import timedelta, datetime
 from random import randint
 from uuid import uuid4
 
-from tracardi.domain.context import Context
-
 from tracardi.domain.event_metadata import EventMetadata, EventTime
 
 from tracardi.domain.event import Event
@@ -30,7 +28,6 @@ def generate_events_for_profile(profiles, sessions, sources):
                 profile=Entity(id=profile.id),
                 session=random.choice(sessions),
                 source=random.choice(sources),
-                context=Context(),
                 properties={
                     "name": profile.pii.name,
                     "last_name": profile.pii.last_name,
