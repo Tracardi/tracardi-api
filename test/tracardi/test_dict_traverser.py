@@ -57,6 +57,7 @@ def test_dot_traverser_no_value_default():
     t = DictTraverser(dot, default=None)
     result = t.reshape(reshape_template=template)
 
+    assert result['x']['a'] == {}
     assert result['x']['b'] == {'x': [1]}
     assert result['x']['c'] == [111, 222, None]
     assert result['x']['d'] == {"q": {"z": 11, "e": 22}}
