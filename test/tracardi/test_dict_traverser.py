@@ -72,11 +72,28 @@ def test_dot_traverser_optional_values():
         }
     }
 
-    # Session does not exist
     dot = DotAccessor(profile={"b": [1, 2]}, event={})
-    t = DictTraverser(dot, default=None)
+    t = DictTraverser(dot)
     result = t.reshape(reshape_template=template)
 
     assert 'a' not in result['x']
     assert result['x']['c'] == [111, [1, 2]]
     assert result['x']['d'] == {'exists': [1, 2]}
+
+
+def test_dot_traverser_no_values_throw_error():
+    template = {
+        "x": {
+            "a": "session@...",  # Session does not exist
+            "c": [111, "profile@b", "profile@a"],  # Profile@a does not exist
+            "d": {"not-exists?": "profile@a", "exists": "profile@b"}
+        }
+    }
+
+    dot = DotAccessor(profile={"b": [1, 2]}, event={})
+    t = DictTraverser(dot)
+    try:
+        t.reshape(reshape_template=template)
+        assert False
+    except KeyError:
+        assert True
