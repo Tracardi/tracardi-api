@@ -4,6 +4,7 @@ from app.config import server
 from tracardi.service.storage.driver import storage
 from pydantic import BaseModel
 from elasticsearch import ElasticsearchException
+from typing import Optional
 
 
 class LogPayload(BaseModel):
@@ -18,52 +19,26 @@ router = APIRouter(
 )
 
 
-@router.get("/user-logs", tags=["user-logs"], include_in_schema=server.expose_gui_api, response_model=list)
-async def get_user_logs(start: int = 0, limit: int = 100):
+@router.get("/user-logs/page/{page}", tags=["user-logs"], include_in_schema=server.expose_gui_api, response_model=dict)
+async def get_user_logs(page: Optional[int] = None, email: Optional[str] = None, lower: Optional[int] = None,
+                        upper: Optional[int] = None):
     """
-    Returns all user logs
+    Returns user logs according to given parameters
     """
     try:
-        result = await storage.driver.user_log.load_logs(start, limit)
-        return list(result)
+        if page is None:
+            page = 0
+            page_size = 50
+        else:
+            page_size = server.page_size * 2
+        start = page * page_size
+        limit = page_size
+
+        result = await storage.driver.user_log.load_logs(start, limit, email, lower, upper)
+        return {
+            "total": result["hits"]["total"]["value"],
+            "result": [hit["_source"] for hit in result["hits"]["hits"]]
+        }
 
     except ElasticsearchException as e:
         raise HTTPException(status_code=500, detail=str(e))
-
-
-@router.get("/user-logs/{lower}/{upper}", tags=["user-logs"], include_in_schema=server.expose_gui_api,
-            response_model=list)
-async def get_logs_within_period(lower: int, upper: int, start: int = 0, limit: int = 100):
-    """
-    Returns user logs within given time period
-    """
-    try:
-        result = await storage.driver.user_log.load_within_period(
-            upper,
-            lower,
-            start=start,
-            limit=limit
-        )
-        return [hit["_source"] for hit in result["hits"]["hits"]]
-
-    except ElasticsearchException as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-
-@router.get("/user-logs/by-email/{email}", tags=["user-logs"], include_in_schema=server.expose_gui_api,
-            response_model=list)
-async def get_logs_for_user(email: str, start: int = 0, limit: int = 100):
-    """
-    Returns user logs within given time period
-    """
-    try:
-        result = await storage.driver.user_log.load_by_user(
-            email=email,
-            start=start,
-            limit=limit
-        )
-        return [hit["_source"] for hit in result["hits"]["hits"]]
-
-    except ElasticsearchException as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
