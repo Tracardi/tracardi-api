@@ -13,10 +13,9 @@ def test_should_read_the_whole_object():
         enabled=True
     )
 
-    try:
-        validate(dot, validator)
-    except Exception:
-        assert False
+    # todo this validation should pass
+
+    validate(dot, validator)
 
 
 def test_should_read_the_part_of_object():

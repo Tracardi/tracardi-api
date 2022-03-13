@@ -25,10 +25,6 @@
                 }
               }
             },
-            "ip": {
-              "type": "keyword",
-              "null_value": "NULL"
-            },
             "status": {
               "type": "keyword",
               "null_value": "NULL"
@@ -87,6 +83,14 @@
           }
         },
         "aux": {
+          "dynamic": true,
+          "type": "object"
+        },
+        "config": {
+          "dynamic": true,
+          "type": "object"
+        },
+        "context": {
           "dynamic": true,
           "type": "object"
         },

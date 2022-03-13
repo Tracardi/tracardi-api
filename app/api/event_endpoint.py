@@ -32,6 +32,17 @@ def __format_time_buckets(row):
         }
 
 
+@router.get("/events/refresh", tags=["event"], include_in_schema=server.expose_gui_api)
+async def events_refresh_index():
+    """
+    Refreshes event index.
+    """
+    try:
+        return await storage.driver.event.refresh()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 @router.get("/events/heatmap/profile/{id}", tags=["event"], include_in_schema=server.expose_gui_api)
 async def heatmap_by_profile(id: str):
     """

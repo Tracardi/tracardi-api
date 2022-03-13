@@ -19,10 +19,6 @@ def test_index_mapping():
                             "debugged": {
                                 "type": "boolean"
                             },
-                            "ip": {
-                                "type": "keyword",
-                                "null_value": "NULL"
-                            },
                             "processed_by": {
                                 "properties": {
                                     "rules": {
@@ -102,7 +98,7 @@ def test_index_mapping():
         }
     })
 
-    assert im.get_field_names() == ['aux', 'id', 'metadata.debugged', 'metadata.ip', 'metadata.processed_by.rules',
+    assert im.get_field_names() == ['aux', 'id', 'metadata.debugged', 'metadata.processed_by.rules',
                                     'metadata.processed_by.third_party', 'metadata.profile_less', 'metadata.status',
                                     'metadata.time.insert', 'metadata.time.process_time', 'profile.id', 'properties',
                                     'session.duration', 'session.id', 'session.start', 'source.id', 'tags.count',

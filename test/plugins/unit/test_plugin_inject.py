@@ -1,6 +1,5 @@
 import json
 
-from tracardi.domain.context import Context
 from tracardi.domain.entity import Entity
 from tracardi.domain.event import Event
 from tracardi.domain.event_metadata import EventMetadata, EventTime
@@ -20,7 +19,6 @@ def test_plugin_inject():
                             metadata=EventMetadata(time=EventTime(), debug=False),
                             type="type",
                             source=Entity(id="0"),
-                            context=Context()
                         )
                     )
     assert result.output.value == {"data": 1}

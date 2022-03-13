@@ -1,6 +1,6 @@
 from uuid import uuid4
 
-from .test_event_source import create_event_source
+from .test_source import create_event_source
 from ..utils import Endpoint
 
 endpoint = Endpoint()

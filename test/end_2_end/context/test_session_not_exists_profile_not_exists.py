@@ -1,5 +1,5 @@
 from uuid import uuid4
-from ...api.test_event_source import create_event_source
+from ...api.test_source import create_event_source
 from ...utils import Endpoint, get_profile, get_session
 
 endpoint = Endpoint()

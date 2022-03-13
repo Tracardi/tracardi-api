@@ -1,5 +1,4 @@
 from tracardi.service.plugin.service.plugin_runner import run_plugin
-from tracardi.domain.context import Context
 from tracardi.domain.entity import Entity
 from tracardi.domain.event import Event, EventSession
 from tracardi.domain.event_metadata import EventMetadata, EventTime
@@ -19,7 +18,6 @@ def test_plugin_condition_set():
         type='text',
         metadata=EventMetadata(time=EventTime()),
         session=EventSession(id='1'),
-        context=Context(),
         source=Entity(id='1')
     )
     result = run_plugin(ConditionSetPlugin, init, payload, profile=profile, event=event)

@@ -13,13 +13,11 @@ from tracardi.service.storage.elastic_storage import ElasticFiledSort
 @strawberry.type
 class EventMeta:
     time: str
-    ip: typing.Optional[str]
 
 
 @strawberry.type
 class ProfileMeta:
     time: str
-    ip: typing.Optional[str]
     last_visit: typing.Optional[str]
     merged_with: typing.Optional[str]
 
@@ -120,12 +118,13 @@ class Profile(Entity):
         return [
             Event(
                 id=event.id,
-                metadata=EventMeta(time=original_event['metadata']['time']['insert'], ip=event.metadata.ip),
+                metadata=EventMeta(time=original_event['metadata']['time']['insert']),
                 type=event.type,
                 properties=event.properties,
                 source=Entity(id=event.source.id),
                 session=event.session.dict(),
-                context=event.context.dict()
+                context=event.context,
+                config=event.config
             ) for event, original_event in cast(events, domain.event.Event, return_original=True)
         ]
 
@@ -142,7 +141,7 @@ class ProfileQuery:
             raise ValueError("There is no profile {}".format(id))
         return Profile(
             id=profile.id,
-            metadata=ProfileMeta(time=profile.metadata.time.insert, ip=profile.metadata.ip,
+            metadata=ProfileMeta(time=profile.metadata.time.insert,
                                  last_visit=profile.metadata.time.lastVisit, merged_with=profile.mergedWith),
             stats=ProfileStats(visits=profile.stats.visits, views=profile.stats.views, counters=profile.stats.counters),
             traits=ProfileTraits(**profile.traits.dict()),

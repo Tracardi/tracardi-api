@@ -3,7 +3,6 @@ from tracardi.process_engine.action.v1.strings.regex_replace.plugin import Regex
 from tracardi.domain.profile import Profile
 from tracardi.domain.event import Event, EventSession
 from tracardi.domain.entity import Entity
-from tracardi.domain.context import Context
 from tracardi.domain.event_metadata import EventMetadata, EventTime
 
 
@@ -22,7 +21,6 @@ def test_should_work():
         type='text',
         metadata=EventMetadata(time=EventTime()),
         session=EventSession(id='1'),
-        context=Context(),
         source=Entity(id='1')
     )
 
