@@ -5,6 +5,7 @@ from tracardi.service.storage.driver import storage
 from pydantic import BaseModel
 from elasticsearch import ElasticsearchException
 from typing import Optional
+from tracardi.exceptions.exception import StorageException
 
 
 class LogPayload(BaseModel):
@@ -20,8 +21,7 @@ router = APIRouter(
 
 
 @router.get("/user-logs/page/{page}", tags=["user-logs"], include_in_schema=server.expose_gui_api, response_model=dict)
-async def get_user_logs(page: Optional[int] = None, email: Optional[str] = None, lower: Optional[int] = None,
-                        upper: Optional[int] = None):
+async def get_user_logs(page: Optional[int] = None, query: Optional[str] = None):
     """
     Returns user logs according to given parameters
     """
@@ -34,11 +34,12 @@ async def get_user_logs(page: Optional[int] = None, email: Optional[str] = None,
         start = page * page_size
         limit = page_size
 
-        result = await storage.driver.user_log.load_logs(start, limit, email, lower, upper)
+        result = await storage.driver.user_log.load_logs(start, limit, query)
         return {
             "total": result["hits"]["total"]["value"],
             "result": [hit["_source"] for hit in result["hits"]["hits"]]
         }
 
-    except ElasticsearchException as e:
+    except (ElasticsearchException, StorageException) as e:
+        print(e)
         raise HTTPException(status_code=500, detail=str(e))
