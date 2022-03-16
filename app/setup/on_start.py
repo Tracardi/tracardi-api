@@ -178,7 +178,13 @@ async def add_plugins():
         'tracardi.process_engine.action.v1.connectors.mautic.add_remove_segment.plugin',
         'tracardi.process_engine.action.v1.connectors.airtable.send_record.plugin',
         'tracardi.process_engine.action.v1.connectors.airtable.fetch_records.plugin',
-        'tracardi.process_engine.action.v1.connectors.hubspot.add_company.plugin'
+        'tracardi.process_engine.action.v1.connectors.hubspot.add_company.plugin',
+        'tracardi.process_engine.action.v1.connectors.hubspot.add_contact.plugin',
+        'tracardi.process_engine.action.v1.connectors.hubspot.add_email.plugin',
+        'tracardi.process_engine.action.v1.connectors.hubspot.get_company.plugin',
+        'tracardi.process_engine.action.v1.connectors.hubspot.get_contact.plugin',
+        'tracardi.process_engine.action.v1.connectors.hubspot.update_company.plugin',
+        'tracardi.process_engine.action.v1.connectors.hubspot.update_contact.plugin',
 
         # Internal
         'tracardi.process_engine.action.v1.internal.event_source_fetcher.plugin',

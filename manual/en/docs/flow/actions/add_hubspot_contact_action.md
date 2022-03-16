@@ -1,6 +1,6 @@
-# Add company to HubSpot plugin
+# Add contact to HubSpot plugin
 
-This plugin adds new company to HubSpot, based on provided data.
+This plugin adds new contact to HubSpot, based on provided data.
 
 ## Input
 This plugin takes any payload as input.
@@ -27,11 +27,12 @@ There are your client ID and client secret and here you need to define your redi
   security reasons, this URL must use https in production. When testing using localhost, http can be used. 
   Also, you must use a domain, as IP addresses are not supported.
   
-* scopes: for adding company, you need to choose crm.objects.companies.write scope, but this match only with this 
-  and Add Company to HubSpot plugin. For other plugins connecting to HubSpot, you should choose other scopes.
+* scopes: for adding contact, you need to choose crm.objects.contacts.write scope, but this match only with this 
+  and Add Contact to HubSpot plugin. For other plugins connecting to HubSpot, you should choose other scopes.   
   We recommend choose all the following scopes: 
   
         crm.objects.companies.write, crm.objects.companies.read, crm.objects.contacts.write, crm.schemas.contacts.read, content
+
 
 After filling the fields, copy link and open this. After that, choose the account that match the app you want to
 connect with HubSpot and press the button. You'll be asked for granting access to your app, then be redirected to 
@@ -75,8 +76,9 @@ In the last site URL, there is a code you can use later.
   "is_token_got": false,
   "properties":
     {
-      "name": "<a-company-name>",
-      "description": "<a-company-description>"
+      "email": "<a-contact-email>",
+      "firstname": "<a-contact-firstname>",
+      "lastname": "<a-contact-lastname>"
     }
 }
 ```

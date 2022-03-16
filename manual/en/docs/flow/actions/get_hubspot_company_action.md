@@ -1,6 +1,6 @@
-# Add company to HubSpot plugin
+# Get company from HubSpot plugin
 
-This plugin adds new company to HubSpot, based on provided data.
+This plugin gets a company from HubSpot, based on provided company Id.
 
 ## Input
 This plugin takes any payload as input.
@@ -27,8 +27,8 @@ There are your client ID and client secret and here you need to define your redi
   security reasons, this URL must use https in production. When testing using localhost, http can be used. 
   Also, you must use a domain, as IP addresses are not supported.
   
-* scopes: for adding company, you need to choose crm.objects.companies.write scope, but this match only with this 
-  and Add Company to HubSpot plugin. For other plugins connecting to HubSpot, you should choose other scopes.
+* scopes: for getting company, you need to choose crm.objects.companies.read scope, but this match only with this 
+  and Get Company from HubSpot plugin. For other plugins connecting to HubSpot, you should choose other scopes.
   We recommend choose all the following scopes: 
   
         crm.objects.companies.write, crm.objects.companies.read, crm.objects.contacts.write, crm.schemas.contacts.read, content
@@ -58,7 +58,7 @@ In the last site URL, there is a code you can use later.
 * is token got - please select true if you've got access token. If you select false and then make any operation 
   to HubSpot with Tracardi, you should select true - in this case, you don't need to remember tokens - Tracardi
   will do it for you.
-* properties - you can add properties for your contact. Remember to use field aliases from HubSpot.
+* company id - id of a company you want to get.
 
 #### JSON configuration - example
 
@@ -73,10 +73,6 @@ In the last site URL, there is a code you can use later.
     "code": "<your-code-optionally-optionally>"
   },
   "is_token_got": false,
-  "properties":
-    {
-      "name": "<a-company-name>",
-      "description": "<a-company-description>"
-    }
+  "company_id": "<your-company-id>"
 }
 ```
