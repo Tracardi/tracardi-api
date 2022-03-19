@@ -41,5 +41,4 @@ async def get_user_logs(page: Optional[int] = None, query: Optional[str] = None)
         }
 
     except (ElasticsearchException, StorageException) as e:
-        print(e)
         raise HTTPException(status_code=500, detail=str(e))
