@@ -29,7 +29,7 @@ This plugin returns given payload on port **payload** without any changes.
 #### Advanced configuration
 ```json
 {
-  "api_url": "<url-of-api-for-event-to-be-send-to>",
+  "api_url": "<url-of-api-for-event-to-be-sent-to>",
   "uix_source": "<url-of-uix-source>",
   "title": "<popup-title>",
   "message": "<popup-message>",
