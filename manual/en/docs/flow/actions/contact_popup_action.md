@@ -1,20 +1,22 @@
 # Show contact popup plugin
 
-This plugin shows the contact widget to user. This widget allows user to give you some
-contact data (phone number or email address), which will be sent back in Tracardi event. 
+This plugin shows the contact widget to user. This widget allows user to give you some contact data (phone number or
+email address), which will be sent back in Tracardi event.
 (**event@properties.contact**)
 
 ## Input
+
 This plugin takes any payload as input.
 
 ## Output
+
 This plugin returns given payload on port **payload** without any changes.
 
 ## Plugin configuration
 
-#### With form
-- UIX source - provide a URL of API where this widget is located.
-  Usually, it's just Tracardi API URL.
+#### Form fields description
+
+- UIX source - provide a URL of API where this widget is located. Usually, it's just Tracardi API URL.
 - API URL - provide a URL of API to send event back to.
 - Popup message - provide a template of message for your contact popup. This field supports dot templates.
 - Contact data type - define whether you want the user to provide their email address or phone number.
@@ -25,6 +27,7 @@ This plugin returns given payload on port **payload** without any changes.
 - Dark theme - you can enable dark theme for your popup. ON - dark mode, OFF - bright mode.
 
 #### Advanced configuration
+
 ```json
 {
   "uix_source": "<url-of-uix-source>",
