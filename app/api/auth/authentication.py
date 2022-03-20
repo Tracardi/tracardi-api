@@ -4,9 +4,10 @@ from ..auth.user_db import token2user
 from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from starlette import status
-from tracardi.service.login_service import find_user
 from tracardi.domain.user import User
 from ...config import server, auth
+from tracardi.exceptions.exception import LoginException
+from tracardi.service.storage.driver import storage
 
 _singleton = None
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
@@ -21,19 +22,30 @@ class Authentication:
     async def authorize(username, password) -> User:  # username exists
 
         if auth.user is not None and username == auth.user and password == auth.password:
+            await storage.driver.user_log.add_log(email=username, successful=False)
             return User(
                 id='@dummy',
-                username=username,
                 password="",
                 roles=['admin'],
                 email="",
                 full_name="John Doe"
             )
 
-        user = await find_user(username, password)
+        user = await storage.driver.user.get_by_credentials(
+            email=username,
+            password=password
+        )
 
-        if user.disabled:
-            raise ValueError("This account was disabled")
+        if user is None:
+            await storage.driver.user_log.add_log(email=username, successful=False)
+            raise LoginException("Incorrect username or password.")
+
+        else:
+            if user.disabled:
+                await storage.driver.user_log.add_log(email=username, successful=False)
+                raise ValueError("This account was disabled")
+            else:
+                await storage.driver.user_log.add_log(email=username, successful=True)
 
         return user
 
