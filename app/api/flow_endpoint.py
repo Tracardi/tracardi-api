@@ -25,9 +25,10 @@ from tracardi.domain.session import Session, SessionMetadata
 from tracardi.domain.resource import Resource
 from tracardi.domain.value_object.bulk_insert_result import BulkInsertResult
 from ..config import server
+from ..restricted_router import RestrictedRoute
 
 router = APIRouter(
-    dependencies=[Depends(get_current_user)]
+    route_class=RestrictedRoute
 )
 
 

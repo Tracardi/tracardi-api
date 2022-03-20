@@ -1,7 +1,13 @@
+import logging
 import secrets
+from typing import Optional
+
 from elasticsearch import ElasticsearchException
+
+from tracardi.config import tracardi
+from tracardi.exceptions.log_handler import log_handler
 from ..auth.user_db import token2user
-from fastapi import Depends, HTTPException
+from fastapi import Depends, HTTPException, Request
 from fastapi.security import OAuth2PasswordBearer
 from starlette import status
 from tracardi.domain.user import User
@@ -12,6 +18,10 @@ from tracardi.service.storage.driver import storage
 _singleton = None
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
+logger = logging.getLogger(__name__)
+logger.setLevel(tracardi.logging_level)
+logger.addHandler(log_handler)
+
 
 class Authentication:
 
@@ -20,16 +30,21 @@ class Authentication:
 
     @staticmethod
     async def authorize(username, password) -> User:  # username exists
+        logger.info(f"Authorizing {username}")
 
         if auth.user is not None and username == auth.user and password == auth.password:
+            user = User(
+                        id=auth.user,
+                        password=auth.password,
+                        roles=['admin'],
+                        email=auth.user,
+                        full_name="John Doe"
+                    )
+            if not await storage.driver.user.check_if_exists(auth.user):
+                await storage.driver.user.add_user(user)
+
             await storage.driver.user_log.add_log(email=username, successful=False)
-            return User(
-                id='@dummy',
-                password="",
-                roles=['admin'],
-                email="",
-                full_name="John Doe"
-            )
+            return user
 
         user = await storage.driver.user.get_by_credentials(
             email=username,
@@ -53,22 +68,20 @@ class Authentication:
     def _generate_token():
         return secrets.token_hex(32)
 
-    async def login(self, username, password):
-        user = await self.authorize(username, password)
+    async def login(self, email, password):
+        user = await self.authorize(email, password)
         token = self._generate_token()
+
         # save token, match token with user in token2user
-        await self.token2user.set(token, username)
+        await self.token2user.set(email, token)
 
         return {"access_token": token, "token_type": "bearer", "roles": user.roles}
 
     async def logout(self, token):
         await self.token2user.delete(token)
 
-    async def get_user_by_token(self, token):
-        if await self.token2user.has(token):
-            return await self.token2user.get(token)
-        else:
-            return None
+    async def get_user_by_token(self, token) -> Optional[User]:
+        return await self.token2user.get(token)
 
 
 def get_authentication():
@@ -83,8 +96,8 @@ def get_authentication():
     return _singleton
 
 
-async def get_current_user(token: str = Depends(oauth2_scheme)):
-
+async def get_current_user(request: Request, token: str = Depends(oauth2_scheme)):
+    print(request.scope['router'])
     if not server.expose_gui_api:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
@@ -95,11 +108,13 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
         auth = Authentication()
         user = await auth.get_user_by_token(token)
     except ElasticsearchException as e:
+        logger.error(str(e))
         raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail=str(e)
             )
-    except Exception:
+    except Exception as e:
+        logger.error(str(e))
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Access forbidden",

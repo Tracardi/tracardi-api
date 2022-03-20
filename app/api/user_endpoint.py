@@ -1,10 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException
+from tracardi.domain.user import User
 from .auth.authentication import get_current_user
 from app.config import server
 from tracardi.service.storage.driver import storage
 from pydantic import BaseModel, validator
 from typing import List, Optional
-from uuid import UUID
+
 from elasticsearch import ElasticsearchException
 import re
 
@@ -21,10 +22,6 @@ class UserPayload(BaseModel):
         if not re.fullmatch(r'([A-Za-z0-9]+[.-_])*[A-Za-z0-9]+@[A-Za-z0-9-]+(\.[A-Z|a-z]{2,})+', value):
             raise ValueError("Given email is invalid.")
         return value
-
-
-class NewUserPayload(UserPayload):
-    id: UUID
 
 
 router = APIRouter(
@@ -51,41 +48,38 @@ async def flush_users():
 
 
 @router.post("/user", tags=["user"], include_in_schema=server.expose_gui_api, response_model=dict)
-async def add_user(user: NewUserPayload):
+async def add_user(user_payload: UserPayload):
     """
     Creates new user in database
     """
     try:
-        user_exists = await storage.driver.user.check_if_exists(user.email, user.id)
+        user_exists = await storage.driver.user.check_if_exists(user_payload.email)
     except ElasticsearchException as e:
         raise HTTPException(status_code=500, detail=str(e))
+
     if not user_exists:
         try:
-            result = await storage.driver.user.add_user(
-                id=str(user.id),
-                password=user.password,
-                full_name=user.full_name,
-                email=user.email,
-                roles=user.roles,
-                disabled=user.disabled
-            )
+
+            result = await storage.driver.user.add_user(User(**user_payload.dict(), id=user_payload.email))
             await storage.driver.user.refresh()
+
         except ElasticsearchException as e:
             raise HTTPException(status_code=500, detail=str(e))
+
         return {"inserted": result.saved}
     else:
-        raise HTTPException(status_code=409, detail=f"User with email '{user.email}' already exists.")
+        raise HTTPException(status_code=409, detail=f"User with email '{user_payload.email}' already exists.")
 
 
 @router.delete("/user/{id}", tags=["user"], include_in_schema=server.expose_gui_api, response_model=dict)
-async def delete_user(id: UUID):
+async def delete_user(id: str):
     """
-    Deletes user with given ID (uuid4)
+    Deletes user with given ID
     """
     try:
-        result = await storage.driver.user.del_user(id)
+        result = await storage.driver.user.delete_user(id)
         if result is None:
-            raise HTTPException(status_code=404, detail=f"Profile with id '{id}' not found")
+            raise HTTPException(status_code=404, detail=f"User '{id}' not found")
         await storage.driver.user.refresh()
     except ElasticsearchException as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -93,14 +87,14 @@ async def delete_user(id: UUID):
 
 
 @router.get("/user/{id}", tags=["user"], include_in_schema=server.expose_gui_api, response_model=dict)
-async def get_user(id: UUID):
+async def get_user(id: str):
     """
-    Returns user with given ID (uuid4)
+    Returns user with given ID
     """
     try:
         result = await storage.driver.user.get_by_id(id)
         if result is None:
-            raise HTTPException(status_code=404, detail=f"User with ID {id} not found.")
+            raise HTTPException(status_code=404, detail=f"User {id} not found.")
     except ElasticsearchException as e:
         raise HTTPException(status_code=500, detail=str(e))
     return UserPayload(**result)
@@ -116,33 +110,35 @@ async def get_users(start: int = 0, limit: int = 100, query: Optional[str] = "")
             await storage.driver.user.load(start, limit)
     except ElasticsearchException as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+    # Todo this is nightmare. Records form database must be validated. Driver can not return elastic structure.
+    # Todo this tech debt must be removed
     return list(map(lambda record: record["_source"] if query else record, result["hits"]["hits"] if
-                query else list(result)))
+    query else list(result)))
 
 
 @router.post("/users/{id}/edit", tags=["user"], include_in_schema=server.expose_gui_api, response_model=dict)
-async def edit_user(id: UUID, user: UserPayload):
+async def update_user(id: str, user_payload: UserPayload):
     """
-    Edits existing user with given ID (uuid4)
+    Edits existing user with given ID
     """
     try:
         current_user = await storage.driver.user.get_by_id(id)
     except ElasticsearchException as e:
         raise HTTPException(status_code=500, detail=str(e))
+
     if current_user:
         try:
-            result = await storage.driver.user.edit_user(
-                id=str(id),
-                password=user.password if user.password != current_user["password"] else current_user["password"],
-                full_name=user.full_name,
-                email=user.email,
-                roles=user.roles,
-                disabled=user.disabled,
-                password_change=user.password != current_user["password"]
-            )
+            user = User(**user_payload.dict(), id=user_payload.email)
+
+            if user_payload.password != current_user["password"]:
+                user.encode_password()
+
+            result = await storage.driver.user.update_user(user)
             await storage.driver.user.refresh()
+
         except ElasticsearchException as e:
             raise HTTPException(status_code=500, detail=str(e))
         return {"inserted": result.saved}
     else:
-        raise HTTPException(status_code=404, detail=f"User with ID '{id}' does not exist")
+        raise HTTPException(status_code=404, detail=f"User '{id}' does not exist")

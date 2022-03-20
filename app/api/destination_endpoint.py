@@ -22,8 +22,7 @@ async def save_destination(destination: Destination):
 
     try:
         record = DestinationRecord.encode(destination)
-        print(record)
-        result = await storage.driver.destination.save(record)
+        await storage.driver.destination.save(record)
         await storage.driver.destination.refresh()
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
