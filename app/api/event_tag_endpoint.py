@@ -2,12 +2,12 @@ from tracardi.service.storage.driver import storage
 from typing import List
 from fastapi import APIRouter, Depends, HTTPException
 from app.config import server
-from .auth.authentication import get_current_user
 from tracardi.domain.event_tag import EventTag
 from tracardi.exceptions.exception import StorageException
+from .auth.permissions import Permissions
 
 router = APIRouter(
-    dependencies=[Depends(get_current_user)]
+    dependencies=[Depends(Permissions(roles=["admin", "developer"]))]
 )
 
 

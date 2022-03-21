@@ -6,19 +6,18 @@ from fastapi import HTTPException
 from tracardi.domain.console import Console
 
 from tracardi.service.storage.driver import storage
-from tracardi.service.storage.factory import StorageFor, StorageForBulk, storage_manager
+from tracardi.service.storage.factory import StorageFor, StorageForBulk
 from tracardi.domain.record.event_debug_record import EventDebugRecord
 from tracardi.service.wf.domain.debug_info import DebugInfo
-from .auth.authentication import get_current_user
 from tracardi.domain.entity import Entity
 from tracardi.domain.event import Event
-from tracardi.domain.profile import Profile
+from .auth.permissions import Permissions
 from .domain.schedule import ScheduleData
 from ..config import server
 from elasticsearch.exceptions import ElasticsearchException
 
 router = APIRouter(
-    dependencies=[Depends(get_current_user)]
+    dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer"]))]
 )
 
 

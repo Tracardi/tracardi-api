@@ -6,16 +6,16 @@ from fastapi import APIRouter, Response, HTTPException, Depends
 from tracardi.domain.event_source import EventSource
 from tracardi.service.storage.driver import storage
 from tracardi.service.storage.factory import StorageFor
-from .auth.authentication import get_current_user
 from tracardi.domain.entity import Entity
 from tracardi.domain.flow import FlowRecord
 from tracardi.domain.named_entity import NamedEntity
 from tracardi.domain.rule import Rule
+from .auth.permissions import Permissions
 from ..config import server
 from ..service.grouping import group_records
 
 router = APIRouter(
-    dependencies=[Depends(get_current_user)]
+    dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer"]))]
 )
 
 

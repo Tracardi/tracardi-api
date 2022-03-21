@@ -1,13 +1,14 @@
 from fastapi import APIRouter, Depends
-
-from app.api.auth.authentication import get_current_user
+from app.api.auth.permissions import Permissions
 from app.config import server
 from tracardi.service.storage.driver import storage
 
 router = APIRouter(
-    dependencies=[Depends(get_current_user)]
+    dependencies=[Depends(Permissions(roles=["admin", "developer"]))]
 )
 
+
+# todo can not find usage of this endpoint
 
 @router.get("/purchases/profile/{profile_id}", tags=["purchases"],
             include_in_schema=server.expose_gui_api, response_model=dict)

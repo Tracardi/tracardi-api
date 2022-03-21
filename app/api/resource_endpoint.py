@@ -10,13 +10,12 @@ from tracardi.service.resources import get_type_of_resources
 from tracardi.service.storage.driver import storage
 from tracardi.service.storage.factory import StorageFor, StorageForBulk
 from tracardi.service.wf.domain.named_entity import NamedEntity
-
-from .auth.authentication import get_current_user
 from app.service.grouper import search
 from tracardi.domain.resource import Resource, ResourceRecord
 from tracardi.domain.entity import Entity
 from tracardi.domain.enum.indexes_source_bool import IndexesSourceBool
 from tracardi.domain.value_object.bulk_insert_result import BulkInsertResult
+from .auth.permissions import Permissions
 from ..config import server
 
 logger = logging.getLogger(__name__)
@@ -24,7 +23,7 @@ logger.setLevel(tracardi.logging_level)
 logger.addHandler(log_handler)
 
 router = APIRouter(
-    dependencies=[Depends(get_current_user)]
+    dependencies=[Depends(Permissions(roles=["admin", "developer"]))]
 )
 
 

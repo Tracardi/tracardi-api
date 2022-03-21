@@ -1,6 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
 from tracardi.domain.user import User
-from .auth.authentication import get_current_user
 from app.config import server
 from tracardi.service.storage.driver import storage
 from pydantic import BaseModel, validator
@@ -8,6 +7,8 @@ from typing import List, Optional
 
 from elasticsearch import ElasticsearchException
 import re
+
+from .auth.permissions import Permissions
 
 
 class UserPayload(BaseModel):
@@ -25,9 +26,7 @@ class UserPayload(BaseModel):
 
 
 router = APIRouter(
-    dependencies=[
-        Depends(get_current_user)
-    ]
+    dependencies=[Depends(Permissions(roles=["admin"]))]
 )
 
 

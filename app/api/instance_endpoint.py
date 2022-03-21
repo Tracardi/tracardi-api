@@ -2,13 +2,12 @@ from typing import Optional
 
 from fastapi import APIRouter, Depends
 from fastapi import HTTPException
-
-from app.api.auth.authentication import get_current_user
+from app.api.auth.permissions import Permissions
 from app.config import server
 from tracardi.service.storage.driver import storage
 
 router = APIRouter(
-    dependencies=[Depends(get_current_user)]
+    dependencies=[Depends(Permissions(roles=["admin"]))]
 )
 
 
@@ -16,7 +15,7 @@ router = APIRouter(
 @router.get("/instances", tags=["api-instance"], include_in_schema=server.expose_gui_api)
 async def all_api_instances(page: Optional[int] = None):
     """
-    Returns list of all Tracardi API instances
+    Returns list of all Tracardi API instances. Accessible by roles: "admin"
     """
     try:
         if page is None:

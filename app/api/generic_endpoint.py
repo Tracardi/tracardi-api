@@ -5,15 +5,15 @@ from fastapi import HTTPException, Depends
 
 from tracardi.config import tracardi
 from tracardi.service.storage.driver import storage
-from .auth.authentication import get_current_user
 from tracardi.domain.enum.indexes_histogram import IndexesHistogram
 from tracardi.domain.enum.indexes_search import IndexesSearch
 from tracardi.domain.sql_query import SqlQuery
 from tracardi.domain.time_range_query import DatetimeRangePayload
+from .auth.permissions import Permissions
 from ..config import server
 
 router = APIRouter(
-    dependencies=[Depends(get_current_user)]
+    dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer"]))]
 )
 
 

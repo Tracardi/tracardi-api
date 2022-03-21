@@ -6,6 +6,7 @@ from elasticsearch import ElasticsearchException
 
 from tracardi.config import tracardi
 from tracardi.exceptions.log_handler import log_handler
+from tracardi.service.sha1_hasher import SHA1Encoder
 from ..auth.user_db import token2user
 from fastapi import Depends, HTTPException, Request
 from fastapi.security import OAuth2PasswordBearer
@@ -30,7 +31,7 @@ class Authentication:
 
     @staticmethod
     async def authorize(username, password) -> User:  # username exists
-        logger.info(f"Authorizing {username}")
+        logger.info(f"Authorizing {username}...")
 
         if auth.user is not None and username == auth.user and password == auth.password:
             user = User(
@@ -42,8 +43,12 @@ class Authentication:
                     )
             if not await storage.driver.user.check_if_exists(auth.user):
                 await storage.driver.user.add_user(user)
+                logger.warning(f"Account {username} created with provided password. Please change password.")
 
             await storage.driver.user_log.add_log(email=username, successful=False)
+
+            logger.warning(f"Account {username} has default password. Please change password.")
+
             return user
 
         user = await storage.driver.user.get_by_credentials(
@@ -55,12 +60,11 @@ class Authentication:
             await storage.driver.user_log.add_log(email=username, successful=False)
             raise LoginException("Incorrect username or password.")
 
-        else:
-            if user.disabled:
-                await storage.driver.user_log.add_log(email=username, successful=False)
-                raise ValueError("This account was disabled")
-            else:
-                await storage.driver.user_log.add_log(email=username, successful=True)
+        if user.disabled:
+            await storage.driver.user_log.add_log(email=username, successful=False)
+            raise ValueError("This account was disabled")
+
+        await storage.driver.user_log.add_log(email=username, successful=True)
 
         return user
 
@@ -96,34 +100,34 @@ def get_authentication():
     return _singleton
 
 
-async def get_current_user(request: Request, token: str = Depends(oauth2_scheme)):
-    print(request.scope['router'])
-    if not server.expose_gui_api:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Access forbidden",
-        )
-
-    try:
-        auth = Authentication()
-        user = await auth.get_user_by_token(token)
-    except ElasticsearchException as e:
-        logger.error(str(e))
-        raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail=str(e)
-            )
-    except Exception as e:
-        logger.error(str(e))
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Access forbidden",
-        )
-
-    if not user:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid authentication credentials",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-    return user
+# async def get_current_user(request: Request, token: str = Depends(oauth2_scheme)):
+#
+#     if not server.expose_gui_api:
+#         raise HTTPException(
+#             status_code=status.HTTP_403_FORBIDDEN,
+#             detail="Access forbidden",
+#         )
+#
+#     try:
+#         auth = Authentication()
+#         user = await auth.get_user_by_token(token)
+#     except ElasticsearchException as e:
+#         logger.error(str(e))
+#         raise HTTPException(
+#                 status_code=status.HTTP_403_FORBIDDEN,
+#                 detail=str(e)
+#             )
+#     except Exception as e:
+#         logger.error(str(e))
+#         raise HTTPException(
+#             status_code=status.HTTP_403_FORBIDDEN,
+#             detail="Access forbidden",
+#         )
+#
+#     if not user:
+#         raise HTTPException(
+#             status_code=status.HTTP_401_UNAUTHORIZED,
+#             detail="Invalid authentication credentials",
+#             headers={"WWW-Authenticate": "Bearer"},
+#         )
+#     return user

@@ -1,12 +1,12 @@
 from fastapi import APIRouter, HTTPException, Depends
-from tracardi.event_server.utils.memory_cache import MemoryCache, CacheItem
 
-from app.api.auth.authentication import get_current_user
+from app.api.auth.permissions import Permissions
+from tracardi.event_server.utils.memory_cache import MemoryCache, CacheItem
 from app.config import server
 from tracardi.service.storage.factory import storage_manager
 
 router = APIRouter(
-    dependencies=[Depends(get_current_user)]
+    dependencies=[Depends(Permissions(roles=["admin"]))]
 )
 
 memory_cache = MemoryCache()

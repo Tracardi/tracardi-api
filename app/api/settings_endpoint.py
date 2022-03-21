@@ -1,6 +1,7 @@
 from typing import List, Optional
+
+from app.api.auth.permissions import Permissions
 from tracardi.config import elastic, redis_config, tracardi, memory_cache
-from app.api.auth.authentication import get_current_user
 from app.config import *
 from fastapi import APIRouter, Depends
 from tracardi.domain.settings import SystemSettings
@@ -286,7 +287,7 @@ system_settings = [
 ]
 
 router = APIRouter(
-    dependencies=[Depends(get_current_user)]
+    dependencies=[Depends(Permissions(roles=["admin"]))]
 )
 
 

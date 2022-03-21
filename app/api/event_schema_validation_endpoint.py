@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
+
+from app.api.auth.permissions import Permissions
 from app.config import server
-from app.api.auth.authentication import get_current_user
 from app.service.grouping import group_records
 from tracardi.domain.event_payload_validator import EventPayloadValidator, EventPayloadValidatorRecord
 from tracardi.service.storage.driver import storage
@@ -9,7 +10,7 @@ from typing import Optional
 
 router = APIRouter(
     dependencies=[
-        Depends(get_current_user)
+        Depends(Permissions(roles=["admin", "developer"]))
     ],
     prefix="/event"
 )

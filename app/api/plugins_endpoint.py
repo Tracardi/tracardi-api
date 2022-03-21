@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from pydantic import ValidationError
 from starlette.responses import JSONResponse
 
-from app.api.auth.authentication import get_current_user
+from app.api.auth.permissions import Permissions
 from app.config import server
 from app.service.error_converter import convert_errors
 from tracardi.domain.record.flow_action_plugin_record import FlowActionPluginRecord
@@ -12,7 +12,7 @@ from tracardi.service.storage.factory import StorageForBulk
 from fastapi.encoders import jsonable_encoder
 
 router = APIRouter(
-    dependencies=[Depends(get_current_user)]
+    dependencies=[Depends(Permissions(roles=["admin", "developer"]))]
 )
 
 

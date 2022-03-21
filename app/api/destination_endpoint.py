@@ -3,12 +3,12 @@ from fastapi import APIRouter, Response, HTTPException, Depends
 from tracardi.service.resources import get_destinations
 from tracardi.service.storage.driver import storage
 from tracardi.domain.destination import Destination, DestinationRecord
-from .auth.authentication import get_current_user
+from .auth.permissions import Permissions
 from ..config import server
 from ..service.grouping import group_records
 
 router = APIRouter(
-    dependencies=[Depends(get_current_user)]
+    dependencies=[Depends(Permissions(roles=["admin", "developer"]))]
 )
 
 

@@ -4,13 +4,13 @@ from fastapi import APIRouter
 from fastapi import HTTPException, Depends
 
 from tracardi.service.storage.driver import storage
-from .auth.authentication import get_current_user
 from app.service.grouper import search
 from tracardi.domain.resource import Resource
+from .auth.permissions import Permissions
 from ..config import server
 
 router = APIRouter(
-    dependencies=[Depends(get_current_user)]
+    dependencies=[Depends(Permissions(roles=["admin"]))]
 )
 
 

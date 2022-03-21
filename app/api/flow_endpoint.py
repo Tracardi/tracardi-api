@@ -12,7 +12,6 @@ from tracardi.service.storage.factory import StorageFor
 from tracardi.service.wf.domain.flow_history import FlowHistory
 from tracardi.service.wf.domain.work_flow import WorkFlow
 from tracardi.service.plugin.domain.console import Log
-from .auth.authentication import get_current_user
 from tracardi.domain.flow_meta_data import FlowMetaData
 from tracardi.domain.entity import Entity
 from tracardi.domain.event import Event, EventSession
@@ -24,11 +23,11 @@ from tracardi.domain.rule import Rule
 from tracardi.domain.session import Session, SessionMetadata
 from tracardi.domain.resource import Resource
 from tracardi.domain.value_object.bulk_insert_result import BulkInsertResult
+from .auth.permissions import Permissions
 from ..config import server
-from ..restricted_router import RestrictedRoute
 
 router = APIRouter(
-    route_class=RestrictedRoute
+    dependencies=[Depends(Permissions(roles=["admin", "developer"]))]
 )
 
 
@@ -66,6 +65,7 @@ async def upsert_flow_draft(draft: Flow):
 
 @router.get("/flow/draft/{id}", tags=["flow"], response_model=Optional[Flow], include_in_schema=server.expose_gui_api)
 async def load_flow_draft(id: str, response: Response):
+
     """
     Loads draft version of flow with given ID (str)
     """

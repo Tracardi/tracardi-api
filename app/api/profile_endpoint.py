@@ -6,19 +6,19 @@ from fastapi.responses import Response
 
 from tracardi.service.storage.driver import storage
 from tracardi.service.storage.factory import StorageFor
-from .auth.authentication import get_current_user
 from tracardi.domain.profile import Profile
+from .auth.permissions import Permissions
 from ..config import server
 
 router = APIRouter(
-    dependencies=[Depends(get_current_user)]
+    dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer"]))]
 )
 
 
 @router.post("/profiles/import", tags=["profile"], include_in_schema=server.expose_gui_api)
-async def import_profiles(profiles: List[Profile]):
+async def import_profiles(profiles: List[Profile], depends=Permissions(roles=["admin"])):
     """
-    Saves given profiles (list of profiles) to database
+    Saves given profiles (list of profiles) to database. Accessible by roles: "admin"
     """
     try:
         return await storage.driver.profile.save_profiles(profiles)

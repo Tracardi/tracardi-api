@@ -1,14 +1,14 @@
 from datetime import datetime
 
 from fastapi import APIRouter, Depends, HTTPException
-from .auth.authentication import get_current_user
 from app.config import server
 from tracardi.service.storage.driver import storage
 from elasticsearch import ElasticsearchException
+from .auth.permissions import Permissions
 
 router = APIRouter(
     dependencies=[
-        Depends(get_current_user)
+        Depends(Permissions(roles=["admin"]))
     ]
 )
 

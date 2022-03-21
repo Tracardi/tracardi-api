@@ -6,14 +6,17 @@ endpoint = Endpoint()
 
 
 def test_should_add_read_and_delete_user():
+    user_email = 'test.email@example.com'
     try:
+
+        endpoint.delete(f"/user/{user_email}")
+
         data = {
             "password": "password",
             "full_name": "full name",
-            "email": "test.email@example.com",
+            "email": user_email,
             "roles": ["admin", "marketer", "developer"],
-            "disabled": False,
-            "id": "1d29217f-b636-4c54-a133-db1d6f66e696"
+            "disabled": False
         }
         result = endpoint.post("/user", data)
         result = result.json()
@@ -22,26 +25,26 @@ def test_should_add_read_and_delete_user():
 
         endpoint.get("/users/0/100")
 
-        endpoint.get("/user/1d29217f-b636-4c54-a133-db1d6f66e696")
+        endpoint.get(f"/user/{user_email}")
 
         data = {
             "password": "password2",
             "full_name": "Full name 2",
-            "email": "test.email2@example.com",
+            "email": user_email,
             "roles": ["developer", "marketer"],
             "disabled": True
         }
 
-        result = endpoint.post("/users/1d29217f-b636-4c54-a133-db1d6f66e696/edit", data)
+        result = endpoint.post(f"/users/{user_email}/edit", data)
         result = result.json()
 
         assert result["inserted"] == 1
 
-        result = endpoint.delete("/user/1d29217f-b636-4c54-a133-db1d6f66e696")
+        result = endpoint.delete(f"/user/{user_email}")
         result = result.json()
 
         assert result["deleted"] == 1
 
     finally:
-        endpoint.delete("/user/1d29217f-b636-4c54-a133-db1d6f66e696")
+        endpoint.delete(f"/user/{user_email}")
 

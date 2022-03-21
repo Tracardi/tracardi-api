@@ -1,13 +1,9 @@
 from json import JSONDecodeError
-from fastapi import APIRouter, Request, HTTPException, Depends
-
-from app.api.auth.authentication import get_current_user
+from fastapi import APIRouter, Request, HTTPException
 from app.config import server
 from app.setup.on_start import update_api_instance
 
-router = APIRouter(
-    # dependencies=[Depends(get_current_user)]
-)
+router = APIRouter()
 
 
 @router.post("/healthcheck", tags=["health"], include_in_schema=server.expose_gui_api)

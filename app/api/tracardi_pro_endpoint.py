@@ -3,6 +3,8 @@ import logging
 import grpc
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import ValidationError
+
+from app.api.auth.permissions import Permissions
 from tracardi.service.storage.factory import StorageFor
 
 from app.api.domain.credentials import Credentials
@@ -12,8 +14,6 @@ from tracardi.domain.sign_up_data import SignUpData, SignUpRecord
 from app.api.proto.tracard_pro_client import TracardiProClient
 from tracardi.exceptions.log_handler import log_handler
 from tracardi.service.storage.driver import storage
-
-from app.api.auth.authentication import get_current_user
 from app.config import server
 
 logging.basicConfig(level=logging.ERROR)
@@ -22,7 +22,7 @@ logger.setLevel(tracardi.logging_level)
 logger.addHandler(log_handler)
 
 router = APIRouter(
-    dependencies=[Depends(get_current_user)]
+    dependencies=[Depends(Permissions(roles=["admin"]))]
 )
 
 tracardi_pro_client = TracardiProClient(host=tracardi.tracardi_pro_host,

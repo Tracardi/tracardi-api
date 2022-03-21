@@ -5,11 +5,11 @@ from fastapi.responses import Response
 from tracardi.domain.session import Session
 from tracardi.service.storage.driver import storage
 from tracardi.service.storage.factory import storage_manager
-from .auth.authentication import get_current_user
+from .auth.permissions import Permissions
 from ..config import server
 
 router = APIRouter(
-    dependencies=[Depends(get_current_user)]
+    dependencies=[Depends(Permissions(roles=["admin", "developer"]))]
 )
 
 
@@ -56,10 +56,8 @@ async def delete_session(id: str, response: Response):
     """
     Deletes session with given ID (str)
     """
-    # try:
+
     result = await storage.driver.session.delete(id)
-    # except Exception as e:
-    #     raise HTTPException(status_code=500, detail=str(e))
 
     if result['deleted'] == 0:
         response.status_code = 404

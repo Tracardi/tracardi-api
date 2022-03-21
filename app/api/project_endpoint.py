@@ -1,15 +1,14 @@
 from fastapi import APIRouter
 from fastapi import HTTPException, Depends
 from tracardi.service.storage.factory import StorageFor, StorageForBulk
-
-from .auth.authentication import get_current_user
 from tracardi.domain.project import Project
 from tracardi.domain.entity import Entity
 from tracardi.domain.value_object.bulk_insert_result import BulkInsertResult
+from .auth.permissions import Permissions
 from ..config import server
 
 router = APIRouter(
-    dependencies=[Depends(get_current_user)]
+    dependencies=[Depends(Permissions(roles=["admin", "developer"]))]
 )
 
 

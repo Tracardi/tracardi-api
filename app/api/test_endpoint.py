@@ -1,22 +1,21 @@
 import asyncio
 
 from fastapi import APIRouter, Depends
-
-from app.api.auth.authentication import get_current_user
+from app.api.auth.permissions import Permissions
 from app.config import server
 from app.service.data_generator import generate_fake_data, generate_random_date
 from tracardi.domain.event_source import EventSource
 from tracardi.service.storage.driver import storage
 
 router = APIRouter(
-    dependencies=[Depends(get_current_user)]
+    dependencies=[Depends(Permissions(roles=["admin"]))]
 )
 
 
 @router.get("/test/resource", tags=["test"], include_in_schema=server.expose_gui_api)
 async def create_test_data():
     """
-    Creates test resource data and saves it to database
+    Creates test resource data and saves it to database. Accessible for roles: "admin"
     """
     resource = EventSource(
         id="@test-resource",
@@ -31,7 +30,7 @@ async def create_test_data():
 @router.get("/test/data", tags=["test"], include_in_schema=server.expose_gui_api)
 async def make_fake_data():
     """
-    Creates fake data and saves it to database
+    Creates fake data and saves it to database. Accessible for roles: "admin"
     """
     for index, data in generate_fake_data().items():
         for record in data:
