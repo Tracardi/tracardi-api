@@ -2,17 +2,12 @@ import logging
 import secrets
 from typing import Optional
 
-from elasticsearch import ElasticsearchException
-
 from tracardi.config import tracardi
 from tracardi.exceptions.log_handler import log_handler
-from tracardi.service.sha1_hasher import SHA1Encoder
 from ..auth.user_db import token2user
-from fastapi import Depends, HTTPException, Request
 from fastapi.security import OAuth2PasswordBearer
-from starlette import status
 from tracardi.domain.user import User
-from ...config import server, auth
+from ...config import auth
 from tracardi.exceptions.exception import LoginException
 from tracardi.service.storage.driver import storage
 
