@@ -9,9 +9,7 @@ from elasticsearch import ElasticsearchException
 from typing import Optional
 
 router = APIRouter(
-    dependencies=[
-        Depends(Permissions(roles=["admin", "developer"]))
-    ],
+    dependencies=[Depends(Permissions(roles=["admin", "developer"]))],
     prefix="/event"
 )
 

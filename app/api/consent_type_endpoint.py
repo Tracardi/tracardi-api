@@ -10,8 +10,10 @@ from elasticsearch import ElasticsearchException
 router = APIRouter()
 
 
-@router.post("/consent/type", tags=["consent"], include_in_schema=server.expose_gui_api, response_model=dict)
-async def add_consent_type(data: ConsentType, depends=Depends(Permissions(roles=["admin", "marketer", "developer"]))):
+@router.post("/consent/type", tags=["consent"],
+             dependencies=[Depends(Permissions(roles=["admin", "marketer", "developer"]))],
+             include_in_schema=server.expose_gui_api, response_model=dict)
+async def add_consent_type(data: ConsentType):
     """
     Adds new consent type to the database. Accessible for roles: "admin", "marketer", "developer"
     """
@@ -23,9 +25,10 @@ async def add_consent_type(data: ConsentType, depends=Depends(Permissions(roles=
     return result
 
 
-@router.get("/consent/type/{consent_id}", tags=["consent"], include_in_schema=server.expose_gui_api,
+@router.get("/consent/type/{consent_id}", dependencies=[Depends(Permissions(roles=["admin", "marketer", "developer"]))],
+            tags=["consent"], include_in_schema=server.expose_gui_api,
             response_model=dict)
-async def get_consent_type(consent_id: str, depends=Depends(Permissions(roles=["admin", "marketer", "developer"]))):
+async def get_consent_type(consent_id: str):
     """
     Returns consent type with given id (lowercase name with dashes instead of spaces).
     Accessible for roles: "admin", "marketer", "developer"
@@ -36,9 +39,11 @@ async def get_consent_type(consent_id: str, depends=Depends(Permissions(roles=["
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.delete("/consent/type/{consent_id}", tags=["consent"], include_in_schema=server.expose_gui_api,
+@router.delete("/consent/type/{consent_id}",
+               dependencies=[Depends(Permissions(roles=["admin", "marketer", "developer"]))], tags=["consent"],
+               include_in_schema=server.expose_gui_api,
                response_model=dict)
-async def delete_consent_type(consent_id: str, depends=Depends(Permissions(roles=["admin", "marketer", "developer"]))):
+async def delete_consent_type(consent_id: str):
     """
     Deletes consent type with given id (lowercase name with dashes instead of spaces),
     Accessible for roles: "admin", "marketer", "developer"
@@ -51,9 +56,10 @@ async def delete_consent_type(consent_id: str, depends=Depends(Permissions(roles
     return {"deleted": 1 if result is not None and "result" in result and result["result"] == "deleted" else 0}
 
 
-@router.get("/consents/type", tags=["consent"], include_in_schema=server.expose_gui_api,
+@router.get("/consents/type", dependencies=[Depends(Permissions(roles=["admin", "marketer", "developer"]))],
+            tags=["consent"], include_in_schema=server.expose_gui_api,
             response_model=dict)
-async def get_consent_types(start: int = 0, limit: int = 100, depends=Depends(Permissions(roles=["admin", "marketer", "developer"]))):
+async def get_consent_types(start: int = 0, limit: int = 100):
     """
     Lists consent types with defined start (int) and limit (int),
     Accessible for roles: "admin", "marketer", "developer"
@@ -78,9 +84,10 @@ async def get_enabled_consent_types(limit: int = 100):
     return {"total": len(result), "result": list(result)}
 
 
-@router.put("/consents/type/refresh", tags=["consent"], include_in_schema=server.expose_gui_api,
+@router.put("/consents/type/refresh", dependencies=[Depends(Permissions(roles=["admin", "marketer", "developer"]))],
+            tags=["consent"], include_in_schema=server.expose_gui_api,
             response_model=dict)
-async def refresh_consent_types(depends=Depends(Permissions(roles=["admin", "marketer", "developer"]))):
+async def refresh_consent_types():
     """
     Refreshes database consent type index. Accessible for roles: "admin", "marketer", "developer"
     """

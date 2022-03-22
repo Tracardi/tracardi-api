@@ -15,8 +15,9 @@ router = APIRouter(
 )
 
 
-@router.post("/profiles/import", tags=["profile"], include_in_schema=server.expose_gui_api)
-async def import_profiles(profiles: List[Profile], depends=Permissions(roles=["admin"])):
+@router.post("/profiles/import", dependencies=[Depends(Permissions(roles=["admin"]))], tags=["profile"],
+             include_in_schema=server.expose_gui_api)
+async def import_profiles(profiles: List[Profile]):
     """
     Saves given profiles (list of profiles) to database. Accessible by roles: "admin"
     """

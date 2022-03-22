@@ -6,7 +6,9 @@ from app.api.auth.permissions import Permissions
 from app.config import server
 from tracardi.process_engine.tql.condition import Condition
 
-router = APIRouter(dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer"]))])
+router = APIRouter(
+    dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer"]))]
+)
 
 
 @router.post("/tql/validate", tags=["tql"], include_in_schema=server.expose_gui_api)

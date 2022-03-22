@@ -7,9 +7,7 @@ from elasticsearch import ElasticsearchException
 from .auth.permissions import Permissions
 
 router = APIRouter(
-    dependencies=[
-        Depends(Permissions(roles=["admin"]))
-    ]
+    dependencies=[Depends(Permissions(roles=["admin"]))]
 )
 
 

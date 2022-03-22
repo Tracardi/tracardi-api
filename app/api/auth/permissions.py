@@ -18,7 +18,8 @@ logger.addHandler(log_handler)
 
 class Permissions:
 
-    def __init__(self, roles):
+    def __init__(self, roles, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.roles = roles
 
     async def __call__(self, request: Request, token: str = Depends(oauth2_scheme)):
@@ -73,3 +74,4 @@ class Permissions:
             )
 
         return user
+
