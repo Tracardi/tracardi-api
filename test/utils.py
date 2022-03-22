@@ -5,11 +5,12 @@ import requests
 from dotenv import load_dotenv
 from tracardi.domain.profile import Profile
 from tracardi.domain.session import Session, SessionMetadata
+from tracardi.service.singleton import Singleton
 
 load_dotenv()
 
 
-class Endpoint:
+class Endpoint(metaclass=Singleton):
 
     def __init__(self):
         self.token = self.auth()

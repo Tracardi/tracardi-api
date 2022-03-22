@@ -136,11 +136,13 @@ async def save_event_source(event_source: EventSource):
         if event_source.type in types:
             result = await storage.driver.event_source.save(event_source)
             if result.is_nothing_saved():
-                raise ValueError("Could not save event source.")
+                raise OSError("Could not save event source.")
             return result
         else:
             raise ValueError("Unknown event source type {}. Available {}.".format(event_source.type, types))
 
+    except ValueError as e:
+        raise HTTPException(status_code=422, detail=repr(e))
     except Exception as e:
         raise HTTPException(status_code=500, detail=repr(e))
 

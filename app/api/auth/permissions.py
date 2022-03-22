@@ -23,7 +23,12 @@ class Permissions:
 
     async def __call__(self, request: Request, token: str = Depends(oauth2_scheme)):
 
-        if not server.expose_gui_api:
+        if not server.expose_gui_api or token is None:
+            if not server.expose_gui_api:
+                logger.warning("Unauthorized access to disabled API.")
+            else:
+                logger.warning("Unauthorized access with empty token.")
+
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="Access forbidden",
@@ -49,9 +54,18 @@ class Permissions:
 
         # Not authenticated if no user or insufficient roles
 
-        if not user or not user.has_roles(self.roles):
+        if not user:
+            logger.warning(f"Unauthorized access. User not available for {token}")
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid authentication credentials",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
+
+        if not user.has_roles(self.roles):
             logger.warning(f"User {user.email}. Unauthorized access to {request.url}. Required roles {self.roles}, "
                            f"granted {user.roles} ")
+
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Invalid authentication credentials",

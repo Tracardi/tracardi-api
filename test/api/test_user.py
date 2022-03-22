@@ -1,5 +1,4 @@
 from ..utils import Endpoint
-from uuid import uuid4
 
 
 endpoint = Endpoint()

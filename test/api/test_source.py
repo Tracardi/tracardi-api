@@ -20,6 +20,7 @@ def test_should_return_404_on_delete_event_source_if_none():
 
 
 def create_event_source(id, type, name="Test", config=None):
+
     if config is None:
         config = {}
 
@@ -32,11 +33,14 @@ def create_event_source(id, type, name="Test", config=None):
         config=config
     )
 
-    return endpoint.post('/event-source', data=event_source)
+    response = endpoint.post('/event-source', data=event_source)
+    assert response.status_code in [200, 500, 422]
+    return response
 
 
 def test_unknown_event_source_type():
-    assert create_event_source("2", "unknown-type").status_code == 500
+    response = create_event_source("2", "unknown-type")
+    assert response.status_code == 422
 
 
 def test_event_source_types():
