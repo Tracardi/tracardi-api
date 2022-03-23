@@ -109,8 +109,23 @@ system_settings = [
         **{
             "label": "SYNC_PROFILE_TRACKS",
             "value": tracardi.sync_profile_tracks,
-            "desc": "Variable telling Tracardi to synchronize profile tracks or not, defaults to False, can be changed"
-                    "by getting set to 'yes'."
+            "desc": "Variable sets Tracardi to synchronize profile tracks or not, defaults to False. By default "
+                    "Tracardi runs profile updates in parallel. This may lead to profile changes that are not up to "
+                    "date if the changes to profile are very quick. To sync profile changes set this variable "
+                    "to 'yes'. This features requires "
+                    "REDIS."
+        }
+    ),
+    SystemSettings(
+        **{
+            "label": "POSTPONE_DESTINATION_SYNC",
+            "value": tracardi.postpone_destination_sync,
+            "desc": "Postpone destination synchronisation. Default 0, means do not wait. Destinations are called only "
+                    "when the profile is changed. If there is a stream of changes then with every change of profile "
+                    "synchronisation will be triggered. To avoid unnecessary calls to external systems you can set this "
+                    "variable to eg. 60 seconds and Tracardi will wait between 60 and 120 seconds after the last "
+                    "change of profile before it will trigger destination synchronisation. This features requires "
+                    "REDIS."
         }
     ),
     SystemSettings(
