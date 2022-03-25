@@ -71,10 +71,12 @@ async def add_user(user_payload: UserPayload):
 
 
 @router.delete("/user/{id}", tags=["user"], include_in_schema=server.expose_gui_api, response_model=dict)
-async def delete_user(id: str):
+async def delete_user(id: str, user=Depends(Permissions(["admin"]))):
     """
     Deletes user with given ID
     """
+    if id == user.id:
+        raise HTTPException(status_code=403, detail="You cannot delete your own account")
     try:
         result = await storage.driver.user.delete_user(id)
         if result is None:
@@ -117,10 +119,12 @@ async def get_users(start: int = 0, limit: int = 100, query: Optional[str] = "")
 
 
 @router.post("/user/{id}", tags=["user"], include_in_schema=server.expose_gui_api, response_model=dict)
-async def update_user(id: str, user_payload: UserPayload):
+async def update_user(id: str, user_payload: UserPayload, user=Depends(Permissions(["admin"]))):
     """
     Edits existing user with given ID
     """
+    if id == user.id and "admin" not in user_payload.roles:
+        raise HTTPException(status_code=403, detail="You cannot remove the role of admin from your own account")
     try:
         current_user = await storage.driver.user.get_by_id(id)
     except ElasticsearchException as e:
