@@ -116,7 +116,7 @@ async def get_users(start: int = 0, limit: int = 100, query: Optional[str] = "")
     query else list(result)))
 
 
-@router.post("/users/{id}/edit", tags=["user"], include_in_schema=server.expose_gui_api, response_model=dict)
+@router.post("/user/{id}", tags=["user"], include_in_schema=server.expose_gui_api, response_model=dict)
 async def update_user(id: str, user_payload: UserPayload):
     """
     Edits existing user with given ID

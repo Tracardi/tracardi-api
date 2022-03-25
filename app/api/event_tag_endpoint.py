@@ -11,7 +11,7 @@ router = APIRouter(
 )
 
 
-@router.post("/event/tag/replace", tags=["event"], include_in_schema=server.expose_gui_api, response_model=dict)
+@router.post("/event-tag/replace", tags=["event"], include_in_schema=server.expose_gui_api, response_model=dict)
 async def replace_tags(tag_form: EventTag):
     try:
         result = await storage.driver.tag.replace(
@@ -25,7 +25,7 @@ async def replace_tags(tag_form: EventTag):
     return {"replaced": result.saved}
 
 
-@router.post("/event/tag/add", tags=["event"], include_in_schema=server.expose_gui_api, response_model=dict)
+@router.post("/event-tag", tags=["event"], include_in_schema=server.expose_gui_api, response_model=dict)
 async def add_tags(tag_form: EventTag):
     """
     Adds new tags for given event type
@@ -41,7 +41,7 @@ async def add_tags(tag_form: EventTag):
     return {"new": result.saved, "updated": 1 - result.saved}
 
 
-@router.delete("/event/tag/delete", tags=["event"], include_in_schema=server.expose_gui_api, response_model=dict)
+@router.delete("/event-tag", tags=["event"], include_in_schema=server.expose_gui_api, response_model=dict)
 async def delete_tags(tag_form: EventTag):
     """
     Deletes given tags from given event type
@@ -57,7 +57,7 @@ async def delete_tags(tag_form: EventTag):
     return {"removed": removed, "total": total}
 
 
-@router.get("/event/tag/get", tags=["event"], include_in_schema=server.expose_gui_api, response_model=List[dict])
+@router.get("/event-tag", tags=["event"], include_in_schema=server.expose_gui_api, response_model=List[dict])
 async def get_tags(limit: int = 100, query: str = ""):
     """
     Loads event tags with defined limit (int)
@@ -65,7 +65,7 @@ async def get_tags(limit: int = 100, query: str = ""):
     return await storage.driver.tag.load_tags(limit=limit, query_string=query)
 
 
-@router.put("/event/tag/type/{event_type}", tags=["event"],
+@router.put("/event-tag/type/{event_type}", tags=["event"],
             include_in_schema=server.expose_gui_api, response_model=dict)
 async def update_tags(event_type: str):
     """
@@ -83,7 +83,7 @@ async def update_tags(event_type: str):
     }
 
 
-@router.delete("/event/tag/delete/{event_type}", tags=["event"],
+@router.delete("/event-tag/{event_type}", tags=["event"],
                include_in_schema=server.expose_gui_api, response_model=dict)
 async def delete_record(event_type: str):
     """
