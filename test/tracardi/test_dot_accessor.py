@@ -33,6 +33,17 @@ def test_dot_accessor_fail():
     assert c == ''
 
 
+def test_null_values():
+    dot = DotAccessor(profile={"a": None}, session={"b": None}, event={"c": None})
+    a = dot['profile@a']
+    b = dot['session@b']
+    c = dot['event@c']
+
+    assert a is None
+    assert b is None
+    assert c is None
+
+
 def test_should_cast_values():
     dot = DotAccessor(
         profile={"a": "1", "b": "false"},
