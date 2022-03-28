@@ -2,8 +2,9 @@ from fastapi import APIRouter, Depends, HTTPException
 from tracardi.domain.user import User
 from app.config import server
 from tracardi.service.storage.driver import storage
-from pydantic import BaseModel, validator
+from pydantic import BaseModel, validator, ValidationError
 from typing import List, Optional
+from app.config import auth
 
 from elasticsearch import ElasticsearchException
 import re
@@ -20,6 +21,8 @@ class UserPayload(BaseModel):
 
     @validator("email")
     def validate_email(cls, value):
+        if value == auth.user:
+            raise ValueError("You cannot edit default admin account")
         if not re.fullmatch(r'([A-Za-z0-9]+[.-_])*[A-Za-z0-9]+@[A-Za-z0-9-]+(\.[A-Z|a-z]{2,})+', value):
             raise ValueError("Given email is invalid.")
         return value
@@ -128,7 +131,7 @@ async def update_user(id: str, user_payload: UserPayload, user=Depends(Permissio
     """
     Edits existing user with given ID
     """
-    if id == user.id and "admin" not in user_payload.roles:
+    if id == user.id and "admin" not in user_payload.roles and "admin" in user.roles:
         raise HTTPException(status_code=403, detail="You cannot remove the role of admin from your own account")
     try:
         current_user = await storage.driver.user.get_by_id(id)
@@ -150,21 +153,3 @@ async def update_user(id: str, user_payload: UserPayload, user=Depends(Permissio
         return {"inserted": result.saved}
     else:
         raise HTTPException(status_code=404, detail=f"User '{id}' does not exist")
-
-
-@router.get("/user-account", tags=["user"], include_in_schema=server.expose_gui_api, response_model=dict)
-async def get_self(user=Depends(Permissions(["admin", "developer", "marketer"]))):
-    """
-    Returns data of the user who called the endpoint
-    """
-    return user.dict()
-
-
-@router.post("/user-account", tags=["user"], include_in_schema=server.expose_gui_api, response_model=dict)
-async def soft_edit(payload: UserSoftEditPayload, user=Depends(Permissions(["admin", "developer", "marketer"]))):
-    try:
-        result = await update_user(user.id, UserPayload(**payload.dict(), roles=user.roles, disabled=user.disabled,
-                                                        email=user.email))
-        return result
-    except ElasticsearchException as e:
-        raise HTTPException(status_code=500, detail=str(e))
