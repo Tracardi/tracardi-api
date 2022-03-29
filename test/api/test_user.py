@@ -34,7 +34,7 @@ def test_should_add_read_and_delete_user():
             "disabled": True
         }
 
-        result = endpoint.post(f"/users/{user_email}/edit", data)
+        result = endpoint.post(f"/user/{user_email}", data)
         result = result.json()
 
         assert result["inserted"] == 1

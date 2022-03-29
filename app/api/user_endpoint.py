@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from tracardi.domain.user import User
 from app.config import server
 from tracardi.service.storage.driver import storage
-from pydantic import BaseModel, validator, ValidationError
+from pydantic import BaseModel, validator
 from typing import List, Optional
 from app.config import auth
 
