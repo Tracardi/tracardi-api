@@ -19,9 +19,14 @@ class Endpoint(metaclass=Singleton):
     def host(path):
         return "{}:{}{}".format(os.environ['HOST'], os.environ['PORT'], path)
 
-    def auth(self):
+    def set_credentials(self, username: str = None, password: str = None):
+        self.token = self.auth(username, password)
+
+    def auth(self, username: str = None, password: str = None):
         response = requests.post(self.host('/token'),
-                                 {"username": os.environ['LOGIN'], "password": os.environ['PASS']})
+                                 {"username": os.environ['LOGIN'] if username is None else username,
+                                  "password": os.environ['PASS'] if password is None else password}
+                                 )
         data = response.json()
         return "{} {}".format(data['token_type'], data['access_token'])
 
