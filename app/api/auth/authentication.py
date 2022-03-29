@@ -38,11 +38,13 @@ class Authentication:
                     )
             if not await storage.driver.user.check_if_exists(auth.user):
                 await storage.driver.user.add_user(user)
-                logger.warning(f"Account {username} created with provided password. Please change password.")
+                logger.warning(f"Account {username} created with provided password. Please create new admin account "
+                               f"and disable default admin.")
 
             await storage.driver.user_log.add_log(email=username, successful=False)
 
-            logger.warning(f"Account {username} has default password. Please change password.")
+            logger.warning(f"Account {username} has default password. P Please create new admin account and disable "
+                           f"default admin.")
 
             return user
 

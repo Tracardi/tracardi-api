@@ -297,3 +297,17 @@ def test_tql_missing_field():
     tree = parser.parse("payload@a.missing between 1 and 2")
     result = ExprTransformer(dot=dot).transform(tree)
     assert not result
+
+
+def test_null_fields():
+    tree = parser.parse("payload@a.h == NULL")
+    result = ExprTransformer(dot=dot).transform(tree)
+    assert result
+
+    tree = parser.parse("payload@a.h != NULL")
+    result = ExprTransformer(dot=dot).transform(tree)
+    assert not result
+
+    tree = parser.parse("payload@a.b != NULL")
+    result = ExprTransformer(dot=dot).transform(tree)
+    assert result

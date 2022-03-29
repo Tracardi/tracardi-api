@@ -254,7 +254,11 @@ async def invoke_track_process(tracker_payload: TrackerPayload, source, profile_
     if profile_delta:
         logger.info("Profile changed. Destination scheduled to run.")
         try:
-            destination_manager = DestinationManager(profile_delta, profile, session, payload=None, event=None,
+            destination_manager = DestinationManager(profile_delta,
+                                                     profile,
+                                                     session,
+                                                     payload=None,
+                                                     event=None,
                                                      flow=None)
             await destination_manager.send_data(profile.id, debug=False)
         except Exception as e:

@@ -2,30 +2,14 @@ from fastapi import APIRouter, Depends, HTTPException
 from tracardi.domain.user import User
 from app.config import server
 from tracardi.service.storage.driver import storage
-from pydantic import BaseModel, validator
+from pydantic import BaseModel, validator, ValidationError
 from typing import List, Optional
-from app.config import auth
 
 from elasticsearch import ElasticsearchException
-import re
 
 from .auth.permissions import Permissions
-
-
-class UserPayload(BaseModel):
-    password: str
-    full_name: str
-    email: str
-    roles: List[str]
-    disabled: bool = False
-
-    @validator("email")
-    def validate_email(cls, value):
-        if value == auth.user:
-            raise ValueError("You cannot edit default admin account")
-        if not re.fullmatch(r'([A-Za-z0-9]+[.-_])*[A-Za-z0-9]+@[A-Za-z0-9-]+(\.[A-Z|a-z]{2,})+', value):
-            raise ValueError("Given email is invalid.")
-        return value
+from .domain.user_payload import UserPayload
+from ..service.user_manager import update_user
 
 
 class UserSoftEditPayload(BaseModel):
@@ -127,29 +111,16 @@ async def get_users(start: int = 0, limit: int = 100, query: Optional[str] = "")
 
 
 @router.post("/user/{id}", tags=["user"], include_in_schema=server.expose_gui_api, response_model=dict)
-async def update_user(id: str, user_payload: UserPayload, user=Depends(Permissions(["admin"]))):
+async def edit_user(id: str, user_payload: UserPayload, user=Depends(Permissions(["admin"]))):
     """
     Edits existing user with given ID
     """
-    if id == user.id and "admin" not in user_payload.roles and "admin" in user.roles:
+    if user.is_the_same_user(id) and not user_payload.has_admin_role() and user.is_admin():
         raise HTTPException(status_code=403, detail="You cannot remove the role of admin from your own account")
     try:
-        current_user = await storage.driver.user.get_by_id(id)
+        saved = await update_user(id, user_payload)
+        return {"inserted": saved}
+    except LookupError as e:
+        raise HTTPException(status_code=404, detail=str(e))
     except ElasticsearchException as e:
         raise HTTPException(status_code=500, detail=str(e))
-
-    if current_user:
-        try:
-            user = User(**user_payload.dict(), id=user_payload.email, token=current_user["token"])
-
-            if user_payload.password != current_user["password"]:
-                user.encode_password()
-
-            result = await storage.driver.user.update_user(user)
-            await storage.driver.user.refresh()
-
-        except ElasticsearchException as e:
-            raise HTTPException(status_code=500, detail=str(e))
-        return {"inserted": result.saved}
-    else:
-        raise HTTPException(status_code=404, detail=f"User '{id}' does not exist")
