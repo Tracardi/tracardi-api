@@ -23,14 +23,16 @@ def test_dot_accessor():
 
 
 def test_dot_accessor_fail():
-    dot = DotAccessor(profile={"a": 1, "b": [1, 2]}, session={"b": 2}, event={"c": 1})
+    dot = DotAccessor(profile={"a": None, "b": [1, 2]}, session={"b": 2}, event={"c": 1})
     a = dot['xxx@...']
     b = dot['xxx@b.1']
     c = dot['']
+    d = dot['no_path']
 
     assert a == 'xxx@...'
     assert b == 'xxx@b.1'
     assert c == ''
+    assert d == 'no_path'
 
 
 def test_null_values():

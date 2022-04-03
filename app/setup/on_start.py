@@ -84,10 +84,11 @@ async def add_plugins():
         'tracardi.process_engine.action.v1.traits.auto_merge_properties_to_profile_action',
         'tracardi.process_engine.action.v1.traits.assign_condition_result.plugin',
 
-        'tracardi.process_engine.action.v1.operations.update_profile_action',
         'tracardi.process_engine.action.v1.operations.merge_profiles_action',
         'tracardi.process_engine.action.v1.operations.segment_profile_action',
+        'tracardi.process_engine.action.v1.operations.update_profile_action',
         'tracardi.process_engine.action.v1.operations.update_event_action',
+        'tracardi.process_engine.action.v1.operations.update_session_action',
         'tracardi.process_engine.action.v1.calculator_action',
         'tracardi.process_engine.action.v1.mapping_action',
         'tracardi.process_engine.action.v1.return_random_element_action',
