@@ -37,9 +37,9 @@ Body:
 {"detail": "Access denied. Invalid source."}
 ```
 
-This is because of the __invalid source id__ that was not defined in the `option.source.id` section of the snippet. To obtain
-source id create event source in Tracardi and then replace string ‘<your-resource-id-HERE>‘ with the source id from
-Tracardi, like this:
+This is because of the __invalid source id__ that was not defined in the `option.source.id` section of the snippet. To
+obtain source id create event source in Tracardi and then replace string ‘<your-resource-id-HERE>‘ with the source id
+from Tracardi, like this:
 
 ```html linenums="1"
 <script>
@@ -85,7 +85,8 @@ Configuration can be extended with *context* parameter, where you may define the
             page: true,
             session: false,
             storage:true,
-            screen: true
+            screen: true,
+            performance: false
         }
     }
 }
@@ -141,14 +142,63 @@ the context configuration.
 different cookies and local data that will lead to the 1000 fields per record limit in elastic. This will stop writing
 new sessions to the system.
 
+### Performance metrics
+
+If you set performance to TRUE in context the result from window.performance.getEntriesByType("navigation") will be sent
+as session context.
+
+```json title="Example of session context"
+{
+  "source": {
+    "id": "@test-source"
+  },
+  "context": {
+    "performance": {
+      "name": "http://localhost:63343/analytics-js-tracardi/index.html?_ijt=ikuiff8tiah4pjpiiao2a0gblm",
+      "entryType": "navigation",
+      "startTime": 0,
+      "duration": 0,
+      "initiatorType": "navigation",
+      "nextHopProtocol": "http/1.1",
+      "workerStart": 0,
+      "redirectStart": 0,
+      "redirectEnd": 0,
+      "fetchStart": 20,
+      "domainLookupStart": 101,
+      "domainLookupEnd": 101,
+      "connectStart": 101,
+      "connectEnd": 102,
+      "secureConnectionStart": 0,
+      "requestStart": 102,
+      "responseStart": 102,
+      "responseEnd": 102,
+      "transferSize": 9394,
+      "encodedBodySize": 9089,
+      "decodedBodySize": 9089,
+      "serverTiming": [],
+      "unloadEventStart": 106,
+      "unloadEventEnd": 107,
+      "domInteractive": 158,
+      "domContentLoadedEventStart": 160,
+      "domContentLoadedEventEnd": 161,
+      "domComplete": 0,
+      "loadEventStart": 0,
+      "loadEventEnd": 0,
+      "type": "reload",
+      "redirectCount": 0
+    }
+  }
+}
+```
+
 ### Respect Do Not Track (DNT) browser setting
 
-Do Not Track (DNT) is a web browser setting that adds a signal to the browser, telling websites that the user don’t 
-want to be tracked. By 2011, DNT had been adopted by all the major browsers, but it’s not enforceable. That means
-its default value is set to track the user.
+Do Not Track (DNT) is a web browser setting that adds a signal to the browser, telling websites that the user don’t want
+to be tracked. By 2011, DNT had been adopted by all the major browsers, but it’s not enforceable. That means its default
+value is set to track the user.
 
-You can respect the browser setting and do not to track the user. If you decide to do this 
-Tracardi will not load the tracking script if the user sets DNT. To respect the DNT set `respectDoNotTrack: true` 
+You can respect the browser setting and do not to track the user. If you decide to do this Tracardi will not load the
+tracking script if the user sets DNT. To respect the DNT set `respectDoNotTrack: true`
 in settings section of tracker options.
 
 ```javascript title="Example" linenums="1" hl_lines="10-12"
@@ -168,7 +218,7 @@ in settings section of tracker options.
 }
 ```
 
-If the `respectDoNotTrack` is missing in the settings than Tracardi sets default setting and loads tracking script. 
+If the `respectDoNotTrack` is missing in the settings than Tracardi sets default setting and loads tracking script.
 
 ## Sending events
 
@@ -181,7 +231,7 @@ window.tracker.track("interest", {"Eletronics": ["Mobile phones", "Accessories"]
 window.tracker.track("page-view",{});
 ```
 
-1. This line tells tracardi to return profile data with the response. 
+1. This line tells tracardi to return profile data with the response.
 
 Events consist of an event type. Event type is any string that describes what happened. In our example we have 3
 events: "purchase-order", "interest", "page-view".
@@ -199,7 +249,6 @@ All events will be sent when page fully loads.
 
 Events can be sent immediately when parameters fire is set to true.
 
-
 ```javascript title="Example" linenums="1"
 window.response.context.profile = true;  //(2)
 window.tracker.track("purchase-order", {"product": "Sun glasses - Badoo", "price": 13.45})
@@ -208,13 +257,13 @@ window.tracker.track("page-view",{});
 ```
 
 1. This event will fire immediately.
-2. This line tells tracardi to return profile data with the response. 
+2. This line tells tracardi to return profile data with the response.
 
 The event "interest" will be sent immediately, because of `{"fire": true}`.
 
 # Event context
 
-Event context is the context the event was triggered. By default, javascript snippet attach the following event context. 
+Event context is the context the event was triggered. By default, javascript snippet attach the following event context.
 
 ```json
 {
@@ -235,9 +284,9 @@ Event context is the context the event was triggered. By default, javascript sni
 }
 ```
 
-It has the ip and the page the javascript was placed on. It is possible to add additional data to event context. For example,
-it may be a tag that breaks the pages into following groups: search, product-detail, purchase, post-purchase. This way you may
-find out how many events where triggered before the customer made a purchase.
+It has the ip and the page the javascript was placed on. It is possible to add additional data to event context. For
+example, it may be a tag that breaks the pages into following groups: search, product-detail, purchase, post-purchase.
+This way you may find out how many events where triggered before the customer made a purchase.
 
 To add additional context add "context" key to event options.
 
@@ -253,7 +302,8 @@ window.tracker.track(
    });
 ```
 
-Context may be placed with other configuration options. In the example above the event was configured to fire immediately. 
+Context may be placed with other configuration options. In the example above the event was configured to fire
+immediately.
 
 ## Handling response from Tracardi
 
@@ -369,6 +419,7 @@ There is another way of binding page elements. You may want to add a onClick eve
 to context data, such as profile.id, etc.
 
 ```html
+
 <button onClick="testClick()">Test click</button>
 ```
 
@@ -455,6 +506,5 @@ This is how you can use it:
 ```javascript title="Example" linenums="1"
 const response = await helpers.track("new-page-view", {"page": "hello"});
 ```
-
 
 ## Beacon tracks
