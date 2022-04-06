@@ -1,10 +1,10 @@
-# Query Elasticsearch plugin
+# Elasticsearch query plugin
 
-This plugin fetches data from given Elasticsearch resource.
+This plugin fetches data from Elasticsearch.
 
 ## Requirements
 
-Before using this plugin, you have to set Elasticsearch resource in Tracardi. You will have to provide the following
+It requires a configured Elasticsearch resource in Tracardi. You will have to provide the following
 information to connect to elastic:
 
 ```json
@@ -24,8 +24,8 @@ This plugin takes any payload as input.
 
 ## Output
 
-This plugin return search result on port **result** if search action was successful, or
-empty payload on port **error** if error occurs. Error details are logged, please look for details on error in error log. 
+This plugin returns search result on port **result** if search was successful, or
+empty payload on port **error** if error occurs.  
 
 ## Configuration
 
@@ -33,7 +33,7 @@ empty payload on port **error** if error occurs. Error details are logged, pleas
 
 - *Elasticsearch resource* - your Elasticsearch resource.
 - *Elasticsearch index* - name of the index you wish to search.
-- *Query* - DSL query that you want to use to search provided index.
+- *Query* - DSL query to search with configured index.
 
 #### JSON Configuration
 

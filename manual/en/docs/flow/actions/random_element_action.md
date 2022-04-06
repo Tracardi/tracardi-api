@@ -1,16 +1,16 @@
-# Return random item plugin
+# Return random item
+
+This plugin takes a list of values or references to field values, e.g. **profile@traits.public.value**. It will
+choose an item randomly from the list and return it. If the value is a path to field it will be evaluated and the 
+referenced value will be returned.
 
 ## Input
 This plugin takes any payload object as input.
 
 ## Output
-This plugin outputs a random value from provided list, accessible by key **value**.
+This plugin outputs a random value from provided list.
 
 ## Configuration
-
-This plugin takes a list of paths to fields containing values. It will
-choose a list item randomly and return it. You can provide constant values as well.
-
 
 ```json title="Example"
 {
@@ -21,3 +21,10 @@ choose a list item randomly and return it. You can provide constant values as we
   ]
 }
 ```
+
+Result example
+
+```
+"value-1"
+```
+
