@@ -143,6 +143,7 @@ async def validate_events_json_schemas(events, profile: Optional[Profile], sessi
 async def invoke_track_process(tracker_payload: TrackerPayload, source, profile_less: bool, profile=None, session=None,
                                ip='0.0.0.0'):
     console_log = ConsoleLog()
+    profile_copy = None
 
     has_profile = not profile_less and isinstance(profile, Profile)
 
@@ -262,7 +263,7 @@ async def invoke_track_process(tracker_payload: TrackerPayload, source, profile_
 
     # Send to destination
 
-    if has_profile:
+    if has_profile and profile_copy is not None:
         profile_delta = DeepDiff(profile_copy, profile.dict(exclude={"operation": ...}), ignore_order=True)
         if profile_delta:
             logger.info("Profile changed. Destination scheduled to run.")
