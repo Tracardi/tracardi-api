@@ -7,13 +7,13 @@ This plugin calculates the time difference between two dates.
 The plugin takes two dates. 
 
 
-* 1st date or path to date - this is a reference date, for example, *event@metadata.time.lastVisit*. 
+* 1st date or path to date - this is a reference date, for example, *profile@metadata.time.visit.last*. 
 * 2nd date or path to date
 
 Dates can be in the following formats
 * **now** - the time of workflow execution
 * **date** - correct values are for example *2021-03-14* or *Aug 28 1999*. For more information about correct formats, check https://dateutil.readthedocs.io/en/stable/parser.html
-* **path** - This one takes a path to date, e.g. *event@metadata.time.lastVisit*
+* **path** - This one takes a path to date, e.g. *profile@metadata.time.visit.last*
 
 ## Output
 

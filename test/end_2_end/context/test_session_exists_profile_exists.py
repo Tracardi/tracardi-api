@@ -49,8 +49,6 @@ def test_session_exists_profile_exists():
         new_profile_id = result['profile']['id']
         assert new_profile_id == profile_id
 
-        assert endpoint.delete(f'/profile/{new_profile_id}').status_code == 200
-
     finally:
         assert endpoint.delete(f'/event-source/{source_id}').status_code in [200, 404]
         assert endpoint.delete(f'/profile/{profile_id}').status_code in [200, 404]

@@ -16,17 +16,24 @@ class EventMeta:
 
 
 @strawberry.type
+class ProfileVisit:
+    last: typing.Optional[str]
+    current: typing.Optional[str]
+
+
+@strawberry.type
 class ProfileMeta:
     time: str
-    last_visit: typing.Optional[str]
+    visit: ProfileVisit
     merged_with: typing.Optional[str]
 
 
 @strawberry.type
 class ProfilePII:
     name: typing.Optional[str]
-    surname: typing.Optional[str]
-    birthDate: typing.Optional[str]
+    last_name: typing.Optional[str]
+    birth_date: typing.Optional[str]
+    marital_status:  typing.Optional[str]
     email: typing.Optional[str]
     telephone: typing.Optional[str]
     twitter: typing.Optional[str]
@@ -142,7 +149,9 @@ class ProfileQuery:
         return Profile(
             id=profile.id,
             metadata=ProfileMeta(time=profile.metadata.time.insert,
-                                 last_visit=profile.metadata.time.lastVisit, merged_with=profile.mergedWith),
+                                 visit=ProfileVisit(last=profile.metadata.time.visit.last,
+                                                    current=profile.metadata.time.visit.current),
+                                 merged_with=profile.metadata.merged_with),
             stats=ProfileStats(visits=profile.stats.visits, views=profile.stats.views, counters=profile.stats.counters),
             traits=ProfileTraits(**profile.traits.dict()),
             pii=ProfilePII(**profile.pii.dict()),

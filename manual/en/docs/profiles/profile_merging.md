@@ -38,7 +38,7 @@ one is "Bill", the second time it is "Whiliam", then the data will be combined a
 = ["Bill", "Whiliam"].
 
 The linked profiles are given the new ID and a new profile record is created. The merged profile is saved in the
-database and the remaining profiles are marked with `mergedWith` field equal to the id of the newly created merged
+database and the remaining profiles are marked with `metadata.merged_with` field equal to the id of the newly created merged
 profile.
 
 Then the javascript code on the device saves the id of the merged profile in local database.
@@ -58,7 +58,7 @@ reference to this profile will be saved in the browser.
 However, the reference to the old profile is still stored on my mobile phone.
 
 Next time when I use my mobile phone, the old profile will be downloaded, but Tracardi will recognize that it has the
-mergedWith field set. The system will replace the old profile with the new one (defined in mergedWith)
+`metadata.merged_with` field set. The system will replace the old profile with the new one (defined in `metadata.merged_with`)
 and the device will receive the new merged profile.
 
 This way, information about the linked profile will be propagated to all devices.
