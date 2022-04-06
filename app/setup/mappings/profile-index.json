@@ -29,6 +29,9 @@
                     },
                     "current": {
                       "type": "date"
+                    },
+                    "count": {
+                      "type": "integer"
                     }
                   }
                 }

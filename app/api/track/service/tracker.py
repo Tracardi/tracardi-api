@@ -144,10 +144,22 @@ async def invoke_track_process(tracker_payload: TrackerPayload, source, profile_
                                ip='0.0.0.0'):
     console_log = ConsoleLog()
 
-    profile_copy = profile.dict(exclude={"operation": ...})
+    has_profile = not profile_less and isinstance(profile, Profile)
+
+    # Calculate last visit
+    if has_profile:
+        # Calculate only on first click in visit
+        if session.operation.new:
+            logger.info("Profile visits metadata changed.")
+            profile.metadata.time.visit.set_visits_times()
+            profile.metadata.time.visit.count += 1
+            profile.operation.update = True
 
     if profile_less is True and profile is not None:
         logger.warning("Something is wrong - profile less events should not have profile attached.")
+
+    if has_profile:
+        profile_copy = profile.dict(exclude={"operation": ...})
 
     # Get events
     events = tracker_payload.get_events(session, profile, profile_less, ip)
@@ -250,29 +262,30 @@ async def invoke_track_process(tracker_payload: TrackerPayload, source, profile_
 
     # Send to destination
 
-    profile_delta = DeepDiff(profile_copy, profile.dict(exclude={"operation": ...}), ignore_order=True)
-    if profile_delta:
-        logger.info("Profile changed. Destination scheduled to run.")
-        try:
-            destination_manager = DestinationManager(profile_delta,
-                                                     profile,
-                                                     session,
-                                                     payload=None,
-                                                     event=None,
-                                                     flow=None)
-            await destination_manager.send_data(profile.id, debug=False)
-        except Exception as e:
-            # todo - this appends error to the same profile - it rather should be en event error
-            console_log.append(Console(
-                profile_id=rules_engine.profile.id if isinstance(rules_engine.profile, Entity) else None,
-                origin='destination',
-                class_name='DestinationManager',
-                module='tracker',
-                type='error',
-                message=str(e),
-                traceback=get_traceback(e)
-            ))
-            logger.error(str(e))
+    if has_profile:
+        profile_delta = DeepDiff(profile_copy, profile.dict(exclude={"operation": ...}), ignore_order=True)
+        if profile_delta:
+            logger.info("Profile changed. Destination scheduled to run.")
+            try:
+                destination_manager = DestinationManager(profile_delta,
+                                                         profile,
+                                                         session,
+                                                         payload=None,
+                                                         event=None,
+                                                         flow=None)
+                await destination_manager.send_data(profile.id, debug=False)
+            except Exception as e:
+                # todo - this appends error to the same profile - it rather should be en event error
+                console_log.append(Console(
+                    profile_id=rules_engine.profile.id if isinstance(rules_engine.profile, Entity) else None,
+                    origin='destination',
+                    class_name='DestinationManager',
+                    module='tracker',
+                    type='error',
+                    message=str(e),
+                    traceback=get_traceback(e)
+                ))
+                logger.error(str(e))
 
     try:
         if tracardi.track_debug or tracker_payload.is_on('debugger', default=False):

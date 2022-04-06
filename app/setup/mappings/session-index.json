@@ -19,6 +19,9 @@
               "properties": {
                 "insert": {
                   "type": "date"
+                },
+                "update": {
+                  "type": "date"
                 }
               }
             },
@@ -27,16 +30,6 @@
             },
             "duration": {
               "type": "float"
-            }
-          }
-        },
-        "operation": {
-          "properties": {
-            "new": {
-              "type": "keyword"
-            },
-            "update": {
-              "type": "keyword"
             }
           }
         },
