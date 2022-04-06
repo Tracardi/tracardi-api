@@ -169,7 +169,7 @@ application.include_router(user_account_endpoint.router)
 # GraphQL
 
 application.include_router(graphql_profiles,
-                           prefix="/graphql/profile",
+                           prefix="/graphql",
                            # dependencies=[Depends(get_current_user)],
                            tags=["graphql"])
 
