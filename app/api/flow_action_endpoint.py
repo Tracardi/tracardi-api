@@ -63,13 +63,46 @@ async def get_plugin_enabled(id: str, state: YesNo):
     """
     Returns FlowActionPlugin object.
     """
-
     try:
 
         action = Entity(id=id)
         record = await StorageFor(action).index("action").load(FlowActionPluginRecord)  # type: FlowActionPluginRecord
         action = record.decode()
         action.settings.enabled = Settings.as_bool(state)
+        return await StorageFor(FlowActionPluginRecord.encode(action)).index().save()
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.put("/flow/action/plugin/{id}/icon/{icon}", tags=["flow", "action"], response_model=BulkInsertResult,
+            include_in_schema=server.expose_gui_api)
+async def edit_plugin_icon(id: str, icon: str):
+    """
+    Edits icon for action with given ID
+    """
+    try:
+        action = Entity(id=id)
+        record = await StorageFor(action).index("action").load(FlowActionPluginRecord)
+        action = record.decode()
+        action.plugin.metadata.icon = icon
+        return await StorageFor(FlowActionPluginRecord.encode(action)).index().save()
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.put("/flow/action/plugin/{id}/name/{name}", tags=["flow", "action"], response_model=BulkInsertResult,
+            include_in_schema=server.expose_gui_api)
+async def edit_plugin_name(id: str, name: str):
+    """
+    Edits name for action with given ID
+    """
+    try:
+        action = Entity(id=id)
+        record = await StorageFor(action).index("action").load(FlowActionPluginRecord)
+        action = record.decode()
+        action.plugin.metadata.name = name
         return await StorageFor(FlowActionPluginRecord.encode(action)).index().save()
 
     except Exception as e:
