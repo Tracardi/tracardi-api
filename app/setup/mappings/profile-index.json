@@ -22,8 +22,18 @@
                 "insert": {
                   "type": "date"
                 },
-                "lastVisit": {
-                  "type": "date"
+                "visit": {
+                  "properties": {
+                    "last": {
+                      "type": "date"
+                    },
+                    "current": {
+                      "type": "date"
+                    },
+                    "count": {
+                      "type": "integer"
+                    }
+                  }
                 }
               }
             }

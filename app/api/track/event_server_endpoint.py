@@ -7,13 +7,9 @@ from app.api.track.service.ip_address import get_ip_address
 from tracardi.domain.session import Session, SessionMetadata
 
 from tracardi.domain.payload.event_payload import EventPayload
-
 from tracardi.domain.time import Time
-
 from tracardi.domain.api_instance import ApiInstance
-
-from app.api.track.service.synchronizer import ProfileTracksSynchronizer
-from app.api.track.service.tracker import track_event
+from tracardi.service.tracker import synchronized_event_tracking
 from tracardi.config import tracardi
 from tracardi.domain.event_metadata import EventPayloadMetadata
 from tracardi.domain.payload.tracker_payload import TrackerPayload
@@ -31,11 +27,7 @@ router = APIRouter()
 
 async def _track(tracker_payload: TrackerPayload, host: str, profile_less: bool = False):
     try:
-        if tracardi.sync_profile_tracks:
-            async with ProfileTracksSynchronizer(tracker_payload.profile, wait=1):
-                return await track_event(tracker_payload, ip=host, profile_less=profile_less)
-        else:
-            return await track_event(tracker_payload, ip=host, profile_less=profile_less)
+        return await synchronized_event_tracking(tracker_payload, host, profile_less)
     except UnauthorizedException as e:
         message = str(e)
         logger.error(message)
