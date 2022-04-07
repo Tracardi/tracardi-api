@@ -5,7 +5,7 @@ from typing import Optional, List
 from fastapi import APIRouter, Depends, HTTPException
 
 from app.api.auth.permissions import Permissions
-from app.api.track.service.tracker import track_event
+from tracardi.service.tracker import track_event
 from app.config import server
 from tracardi.config import tracardi
 from tracardi.domain.task import Task

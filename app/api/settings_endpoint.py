@@ -294,7 +294,7 @@ system_settings = [
     SystemSettings(
         **{
             "label": "EVENT_VALIDATOR_TTL",
-            "value": server.event_validator_ttl,
+            "value": memory_cache.event_validator_ttl,
             "desc": "How many seconds it takes to reload event validation schema. Validation JSON SCHEMA is cached for "
                     "performance reasons, defaults to 180 seconds."
         }
