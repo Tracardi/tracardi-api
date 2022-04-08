@@ -1,28 +1,26 @@
 # Add consent plugin
 
-This plugin appends given consents to profile.
-
-## Configuration
-
-The only thing taken by plugin in configuration is path to consents, so, for example *payload@info.givenConsents*.
+This plugin appends consents to profile. With this plugin you will need to provide the reference to new consent data,
+for example *event@properties.consents*.
 
 ## Consents payload
 
-Consents payload (field that we give path to in config) should be in form of:
+The most possible use-case is when customer grants consents by filling a form. This data is sent to Tracardi as an event
+with properties set to granted consents. Consents payload should be in form of:
 
 ```json
 {
-    "example-revokable-consent-id": {
-        "revoke": "<date-of-revoke>"
-    },
-    "example-irrevocable-consent-id": {
-        "revoke": null
-    }
+  "example-revokable-consent-id": {
+    "revoke": "<date-of-revoke>"
+  },
+  "example-irrevocable-consent-id": {
+    "revoke": null
+  }
 }
 ```
 
-Plugin takes these consents and adds them to profile if they are valid.
+Plugin reads a data referenced with config as consents and adds them to profile if they are valid.
 
 ## Output
 
-Plugin returns given payload (without any changes) on port *payload*.
+If there is no error plugin returns input payload (without any changes) on port *payload*.
