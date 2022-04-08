@@ -142,55 +142,6 @@ the context configuration.
 different cookies and local data that will lead to the 1000 fields per record limit in elastic. This will stop writing
 new sessions to the system.
 
-### Performance metrics
-
-If you set performance to TRUE in context the result from window.performance.getEntriesByType("navigation") will be sent
-as session context.
-
-```json title="Example of session context"
-{
-  "source": {
-    "id": "@test-source"
-  },
-  "context": {
-    "performance": {
-      "name": "http://localhost:63343/analytics-js-tracardi/index.html?_ijt=ikuiff8tiah4pjpiiao2a0gblm",
-      "entryType": "navigation",
-      "startTime": 0,
-      "duration": 0,
-      "initiatorType": "navigation",
-      "nextHopProtocol": "http/1.1",
-      "workerStart": 0,
-      "redirectStart": 0,
-      "redirectEnd": 0,
-      "fetchStart": 20,
-      "domainLookupStart": 101,
-      "domainLookupEnd": 101,
-      "connectStart": 101,
-      "connectEnd": 102,
-      "secureConnectionStart": 0,
-      "requestStart": 102,
-      "responseStart": 102,
-      "responseEnd": 102,
-      "transferSize": 9394,
-      "encodedBodySize": 9089,
-      "decodedBodySize": 9089,
-      "serverTiming": [],
-      "unloadEventStart": 106,
-      "unloadEventEnd": 107,
-      "domInteractive": 158,
-      "domContentLoadedEventStart": 160,
-      "domContentLoadedEventEnd": 161,
-      "domComplete": 0,
-      "loadEventStart": 0,
-      "loadEventEnd": 0,
-      "type": "reload",
-      "redirectCount": 0
-    }
-  }
-}
-```
-
 ### Respect Do Not Track (DNT) browser setting
 
 Do Not Track (DNT) is a web browser setting that adds a signal to the browser, telling websites that the user don’t want
@@ -305,7 +256,53 @@ window.tracker.track(
 Context may be placed with other configuration options. In the example above the event was configured to fire
 immediately.
 
-## Handling response from Tracardi
+### Event performance metrics
+
+If you set performance to TRUE in tracker context configuration the result from __window.performance.getEntriesByType("
+navigation")__ will be sent as event context.
+
+```json title="Example of event context"
+{
+  "context": {
+    "performance": {
+      "name": "http://localhost:63343/analytics-js-tracardi/index.html?_ijt=ikuiff8tiah4pjpiiao2a0gblm",
+      "entryType": "navigation",
+      "startTime": 0,
+      "duration": 0,
+      "initiatorType": "navigation",
+      "nextHopProtocol": "http/1.1",
+      "workerStart": 0,
+      "redirectStart": 0,
+      "redirectEnd": 0,
+      "fetchStart": 20,
+      "domainLookupStart": 101,
+      "domainLookupEnd": 101,
+      "connectStart": 101,
+      "connectEnd": 102,
+      "secureConnectionStart": 0,
+      "requestStart": 102,
+      "responseStart": 102,
+      "responseEnd": 102,
+      "transferSize": 9394,
+      "encodedBodySize": 9089,
+      "decodedBodySize": 9089,
+      "serverTiming": [],
+      "unloadEventStart": 106,
+      "unloadEventEnd": 107,
+      "domInteractive": 158,
+      "domContentLoadedEventStart": 160,
+      "domContentLoadedEventEnd": 161,
+      "domComplete": 0,
+      "loadEventStart": 0,
+      "loadEventEnd": 0,
+      "type": "reload",
+      "redirectCount": 0
+    }
+  }
+}
+```
+
+## Handling response from Tracardi on every page
 
 You can also bind events to page elements. To do that you will need to be sure that the page loads and every element of
 the page is accessible.
@@ -345,7 +342,10 @@ The whole configuration should look like this.
   </script>
 ```
 
-The *onContextReady* method will run after the events are triggered. It will not run if the events are not defined.
+### OnContextReady
+
+The *onContextReady* method will run on every page after the events are triggered. It will not run if the events are not
+defined.
 
 The parameters have the following meaning.
 
@@ -355,17 +355,40 @@ The parameters have the following meaning.
 
 You can configure how much data the server should return in the response to event track.
 
-If you woul like to receive the full profile remember to set:
+If you would like to receive the full profile remember to set:
 
 `window.response.context.profile = true;`
 
 It is wise not to receive the full profile when you do not need it.
 
+### OnTracardiReady
+
+OnTracardiReady differs from onContextReady with the way it is triggered. You can append it on selected pages together
+with track events. Do it the same way as track events.
+
+See example that sends event type __page-view__ and then binds a onClick event  
+to a button that will send an event type __event-from-clicked-button__ to tracardi if button is clicked.
+
+```javascript
+window.tracker.track("page-view",{});
+window.onTracardiReady = ({tracker, helpers, context, config}) => {
+    const btn0 = document.querySelector('#button')
+    btn0.style.backgroundColor = "green";
+    btn0.style.color="white";
+
+    helpers.addListener(btn0, 'click', async ()=> {
+        await helpers.track("event-from-clicked-button", {"page": "hello"});
+    });
+}
+```
+
+Both functions work the same and take the same parameters.
+
 ### Binding events to page elements
 
 Then you can write a code that binds for example onClick event on a button to tracardi event.
 
-This is the example code:
+This is the example code for onContextReady. The same code can be used with `window.onTracardiReady`
 
 ```javascript title="Example" linenums="1"
 onContextReady: ({helpers, context}) => {
@@ -508,3 +531,10 @@ const response = await helpers.track("new-page-view", {"page": "hello"});
 ```
 
 ## Beacon tracks
+
+Beacon tracks are the events that are sent even if the customer leaves the page. To configure a beacon event
+add `asBeacon: true` to track configuration.
+
+```javascript title="Example" linenums="1"
+window.tracker.track("page-view", {}, {"fire": true, asBeacon: true});
+```
