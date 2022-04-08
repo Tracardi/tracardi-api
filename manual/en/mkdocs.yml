@@ -95,6 +95,7 @@ nav:
       - Profiles:
           - profiles/profile_merging.md
           - profiles/profile_segmentation.md
+
       - Workflows:
           - flow/index.md
           - Actions:
@@ -127,11 +128,30 @@ nav:
                   - flow/actions/mysql_connector_action.md
                   - flow/actions/oauth2_token_action.md
                   - flow/actions/send_to_slack_channel_action.md
+                  - flow/actions/send_to_airtable_action.md
+                  - flow/actions/send_to_influx_db_action.md
+                  - flow/actions/rabbitmq_action.md
+                  - flow/actions/fetch_from_airtable_action.md
+                  - flow/actions/fetch_from_influxdb_action.md
+                  - flow/actions/elasticsearch_query_action.md
                   - Trello:
-                    - flow/actions/trello/add_trello_card_action.md
-                    - flow/actions/trello/add_trello_member_action.md
-                    - flow/actions/trello/delete_trello_card_action.md
-                    - flow/actions/trello/move_trello_card_action.md
+                      - flow/actions/trello/add_trello_card_action.md
+                      - flow/actions/trello/add_trello_member_action.md
+                      - flow/actions/trello/delete_trello_card_action.md
+                      - flow/actions/trello/move_trello_card_action.md
+                  - Mautic:
+                      - flow/actions/add_mautic_contact_action.md
+                      - flow/actions/fetch_mautic_contact_by_email_action.md
+                      - flow/actions/fetch_mautic_contact_by_id_action.md
+                      - flow/actions/edit_points_in_mautic_action.md
+                      - flow/actions/edit_segment_in_mautic_action.md
+                  - Mixpanel:
+                      - flow/actions/fetch_mixpanel_funnel_action.md
+                      - flow/actions/send_to_mixpanel_action.md
+                  - Mailchimp:
+                      - flow/actions/mailchimp_transactional_action.md
+                      - flow/actions/add_to_mailchimp_audience_action.md
+                      - flow/actions/remove_from_mailchimp_audience_action.md
 
               - Regex:
                   - flow/actions/regex/regex_validator_action.md
@@ -144,6 +164,7 @@ nav:
               - Time:
                   - flow/actions/day_night_split_action.md
                   - flow/actions/local_time_span_action.md
+                  - flow/actions/calculate_time_difference_action.md
 
               - Processing:
                   - flow/actions/url_parser_action.md
@@ -161,27 +182,35 @@ nav:
                   - flow/actions/text_classification_action.md
                   - flow/actions/lang_detection_action.md
                   - flow/actions/sentiment_analysis_action.md
+                  - flow/actions/corporate_reputation_action.md
+                  - flow/actions/deep_categorization_action.md
+                  - flow/actions/summarization_action.md
+                  - flow/actions/topics_extraction_action.md
+
+              - UX:
+                  - flow/actions/question_popup_action.md
+                  - flow/actions/rating_popup_action.md
+                  - flow/actions/contact_popup_action.md
 
               - flow/actions/new_event_action.md
               - flow/actions/event_counter_action.md
               - flow/actions/purchase_add_action.md
               - flow/actions/add_consents_action.md
-              - flow/actions/add_to_mailchimp_audience_action.md
-              - flow/actions/calculate_time_difference_action.md
               - flow/actions/calculator_action.md
-              - flow/actions/elasticsearch_query_action.md
-              - flow/actions/mailchimp_transactional_action.md
               - flow/actions/new_profile_action.md
               - flow/actions/new_visit_action.md
-              - flow/actions/rabbitmq_action.md
-              - flow/actions/remove_from_mailchimp_audience_action.md
               - flow/actions/reshape_payload_action.md
               - flow/actions/random_element_action.md
               - flow/actions/template_action.md
               - flow/actions/today_action.md
-
+              - flow/actions/assign_condition_result_action.md
+              - flow/actions/condition_set_action.md
+              - flow/actions/count_by_query_string_action.md
+              - flow/actions/reduce_array_action.md
+              - flow/actions/update_event_action.md
+              - flow/actions/update_session_action.md
       - Filtering:
-        - running/filtering.md
+          - running/filtering.md
       - Notations:
           - notations/dot_notation.md
           - notations/logic_notation.md
@@ -193,7 +222,10 @@ nav:
           - development/python_env.md
       - Mirco frontend apps developement:
           - development/micro_frontend.md
-      - plugins/index.md
+      - Plugins:
+          - plugins/index.md
+          - plugins/forms/list_of_field_types.md
+
 
   - support_us.md
   - attribution.md

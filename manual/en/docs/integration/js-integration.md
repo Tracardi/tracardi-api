@@ -361,7 +361,7 @@ If you would like to receive the full profile remember to set:
 
 It is wise not to receive the full profile when you do not need it.
 
-## OnTracardiReady
+### OnTracardiReady
 
 OnTracardiReady differs from onContextReady with the way it is triggered. You can append it on selected pages together
 with track events. Do it the same way as track events.
