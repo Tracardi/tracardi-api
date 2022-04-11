@@ -173,7 +173,10 @@ async def get_plugins_list(query: Optional[str] = None):
             _current_plugin = r
             _result.append(FlowActionPluginRecord(**r).decode())
 
-        if query is not None and len(query) > 0:
+        if query is not None:
+            if len(query) == 0:
+                query = "*not-hidden"
+
             query = query.lower()
 
             if query == "*not-hidden":
@@ -186,7 +189,11 @@ async def get_plugins_list(query: Optional[str] = None):
                 _result = [r for r in _result if r.settings.enabled is False]
             if query[0] != '*':
                 _result = [r for r in _result if
-                           query in r.plugin.metadata.name.lower() or search(query, r.plugin.metadata.group)]
+                           query in r.plugin.metadata.name.lower()
+                           or query in r.plugin.metadata.brand.lower()
+                           or search(query, r.plugin.metadata.tags)
+                           or search(query, r.plugin.metadata.group)
+                           ]
 
         groups = defaultdict(list)
         for plugin in _result:  # type: FlowActionPlugin
