@@ -23,12 +23,22 @@ async def check_if_installation_complete():
     sleep(2)
     try:
         missing_indices = [item async for item in get_missing_indices()]
-        admins = await storage.driver.user.search_by_role('admin')
+        missing = [idx[1] for idx in missing_indices if idx[0] == 'missing']
+        existing = [idx[1] for idx in missing_indices if idx[0] == 'exists']
+
+        if 'tracardi-user' in existing:
+            admins = await storage.driver.user.search_by_role('admin')
+            admins = admins.dict()
+        else:
+            admins = {
+                "total": 0,
+                "result": []
+            }
 
         return {
-            "missing": [idx[1] for idx in missing_indices if idx[0] == 'missing'],
-            "exists": [idx[1] for idx in missing_indices if idx[0] == 'exists'],
-            "admins": admins.dict()
+            "missing": missing,
+            "exists": existing,
+            "admins": admins
         }
     except ElasticsearchException as e:
         raise HTTPException(status_code=500, detail=str(e))
