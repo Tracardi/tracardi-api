@@ -3,6 +3,8 @@ from collections import defaultdict
 from typing import Optional
 from fastapi import APIRouter
 from fastapi import HTTPException, Depends
+
+from tracardi.service.setup.setup_plugins import add_plugin
 from tracardi.service.storage.driver import storage
 from tracardi.service.storage.factory import StorageFor, StorageForBulk
 from app.service.grouper import search
@@ -15,7 +17,6 @@ from tracardi.domain.settings import Settings
 from tracardi.domain.value_object.bulk_insert_result import BulkInsertResult
 from .auth.permissions import Permissions
 from ..config import server
-from ..setup.on_start import add_plugin
 
 router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin", "developer"]))]
