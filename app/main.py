@@ -17,18 +17,16 @@ from app.api import token_endpoint, rule_endpoint, resource_endpoint, event_endp
     settings_endpoint, event_source_endpoint, test_endpoint, \
     event_tag_endpoint, consent_type_endpoint, flow_action_endpoint, flows_endpoint, info_endpoint, \
     user_endpoint, event_schema_validation_endpoint, debug_endpoint, log_endpoint, tracardi_pro_endpoint, \
-    storage_endpoint, destination_endpoint, user_log_endpoint, user_account_endpoint
+    storage_endpoint, destination_endpoint, user_log_endpoint, user_account_endpoint, install_endpoint
 from app.api.graphql.profile import graphql_profiles
 from app.api.scheduler import tasks_endpoint
 from app.api.track import event_server_endpoint
 from app.config import server
-from app.setup.on_start import add_plugins, update_api_instance
+from app.setup.on_start import update_api_instance
 from tracardi.config import tracardi, elastic
 from tracardi.exceptions.log_handler import log_handler
 from tracardi.service.storage.driver import storage
 from tracardi.service.storage.elastic_client import ElasticClient
-from app.setup.indices_setup import create_indices
-from tracardi.service.storage.index import resources
 
 logging.basicConfig(level=logging.ERROR)
 logger = logging.getLogger('app.main')
@@ -165,6 +163,7 @@ application.include_router(storage_endpoint.router)
 application.include_router(destination_endpoint.router)
 application.include_router(user_log_endpoint.router)
 application.include_router(user_account_endpoint.router)
+application.include_router(install_endpoint.router)
 
 # GraphQL
 
@@ -192,19 +191,7 @@ async def app_starts():
             if no_of_tries < 0:
                 break
 
-            if server.reset_plugins is True:
-                es = ElasticClient.instance()
-                index = resources.resources['action']
-                if await es.exists_index(index.get_write_index()):
-                    try:
-                        await es.remove_index(index.get_read_index())
-                    except elasticsearch.exceptions.NotFoundError:
-                        pass
-
-            await create_indices()
             await update_api_instance()
-            if server.update_plugins_on_start_up is not False:
-                await add_plugins()
 
             success = True
             break

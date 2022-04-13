@@ -3,6 +3,8 @@ from collections import defaultdict
 from typing import Optional
 from fastapi import APIRouter
 from fastapi import HTTPException, Depends
+
+from tracardi.service.setup.setup_plugins import add_plugin
 from tracardi.service.storage.driver import storage
 from tracardi.service.storage.factory import StorageFor, StorageForBulk
 from app.service.grouper import search
@@ -15,7 +17,6 @@ from tracardi.domain.settings import Settings
 from tracardi.domain.value_object.bulk_insert_result import BulkInsertResult
 from .auth.permissions import Permissions
 from ..config import server
-from ..setup.on_start import add_plugin
 
 router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin", "developer"]))]
@@ -173,7 +174,10 @@ async def get_plugins_list(query: Optional[str] = None):
             _current_plugin = r
             _result.append(FlowActionPluginRecord(**r).decode())
 
-        if query is not None and len(query) > 0:
+        if query is not None:
+            if len(query) == 0:
+                query = "*not-hidden"
+
             query = query.lower()
 
             if query == "*not-hidden":
@@ -186,7 +190,11 @@ async def get_plugins_list(query: Optional[str] = None):
                 _result = [r for r in _result if r.settings.enabled is False]
             if query[0] != '*':
                 _result = [r for r in _result if
-                           query in r.plugin.metadata.name.lower() or search(query, r.plugin.metadata.group)]
+                           query in r.plugin.metadata.name.lower()
+                           or query in r.plugin.metadata.brand.lower()
+                           or search(query, r.plugin.metadata.tags)
+                           or search(query, r.plugin.metadata.group)
+                           ]
 
         groups = defaultdict(list)
         for plugin in _result:  # type: FlowActionPlugin

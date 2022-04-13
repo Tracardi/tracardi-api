@@ -95,36 +95,3 @@ def get_authentication():
         _singleton = get_auth()
 
     return _singleton
-
-
-# async def get_current_user(request: Request, token: str = Depends(oauth2_scheme)):
-#
-#     if not server.expose_gui_api:
-#         raise HTTPException(
-#             status_code=status.HTTP_403_FORBIDDEN,
-#             detail="Access forbidden",
-#         )
-#
-#     try:
-#         auth = Authentication()
-#         user = await auth.get_user_by_token(token)
-#     except ElasticsearchException as e:
-#         logger.error(str(e))
-#         raise HTTPException(
-#                 status_code=status.HTTP_403_FORBIDDEN,
-#                 detail=str(e)
-#             )
-#     except Exception as e:
-#         logger.error(str(e))
-#         raise HTTPException(
-#             status_code=status.HTTP_403_FORBIDDEN,
-#             detail="Access forbidden",
-#         )
-#
-#     if not user:
-#         raise HTTPException(
-#             status_code=status.HTTP_401_UNAUTHORIZED,
-#             detail="Invalid authentication credentials",
-#             headers={"WWW-Authenticate": "Bearer"},
-#         )
-#     return user

@@ -200,7 +200,7 @@ system_settings = [
     SystemSettings(
         **{
             "label": "ELASTIC_HTTP_AUTH_PASSWORD",
-            "value": elastic.http_auth_password,
+            "value": "Set" if elastic.http_auth_password is not None else "Unset",
             "desc": "Default: None. Elastic search password. Search for elastic authentication "
                     "for more information on how to configure connection to elastic."
         }
@@ -282,6 +282,13 @@ system_settings = [
             "desc": "Default: redis://localhost:6379. This setting is used only when SYNC_PROFILE_TRACKS is equal to "
                     "yes. This is the host URI of Redis instance that is required to synchronize profile tracks. "
                     "Available only in commercial version of Tracardi."
+        }
+    ),
+    SystemSettings(
+        **{
+            "label": "REDIS_PASSWORD",
+            "value": "Set" if redis_config.redis_password is not None else "Unset",
+            "desc": "Default: None. This is Redis password."
         }
     ),
     SystemSettings(

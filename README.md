@@ -43,9 +43,20 @@ Please refer to docker installation manual to see how to install docker.
 Tracardi need elasticsearch as its backend. Please pull and run elasticsearch single node docker before you start Tracardi. 
 
 You can do it with this command.
+
 ```
 docker run -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" docker.elastic.co/elasticsearch/elasticsearch:7.13.2
 ```
+
+If you use features as destinations or synchronized events then you will need a redis instance as well. 
+
+Start it with:
+
+```
+docker run -p 6379:6379 redis
+```
+
+If you do not want to synchronize you profiles with remote system you can skip Redis installation.
 
 ## Start Tracardi API
 
@@ -88,7 +99,7 @@ Visit http://127.0.0.1:8787 and login to Tracardi GUI with default username: adm
 
 ## System Documentation
 
-Visit http://127.0.0.1:8585. System documentationis also available at: [http://docs.tracardi.com](http://docs.tracardi.com)
+Visit http://127.0.0.1:8585. System documentations also available at: [http://docs.tracardi.com](http://docs.tracardi.com)
 
 ## API Documentation
 
