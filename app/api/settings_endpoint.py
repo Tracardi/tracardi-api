@@ -9,20 +9,6 @@ from tracardi.domain.settings import SystemSettings
 system_settings = [
     SystemSettings(
         **{
-            "label": "USER_NAME",
-            "value": "set" if auth.user is not None else "not set",
-            "desc": "Default: admin. Login to Tracardi API"
-        }
-    ),
-    SystemSettings(
-        **{
-            "label": "PASSWORD",
-            "value": "set" if auth.password is not None else "not set",
-            "desc": "Default: admin. Password to Tracardi API"
-        }
-    ),
-    SystemSettings(
-        **{
             "label": "UPDATE_PLUGINS_ON_STARTUP",
             "value": server.update_plugins_on_start_up,
             "desc": "Default: no. If equals yes it will update all installed plugins on Tracardi start."

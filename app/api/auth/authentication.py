@@ -7,7 +7,6 @@ from tracardi.exceptions.log_handler import log_handler
 from ..auth.user_db import token2user
 from fastapi.security import OAuth2PasswordBearer
 from tracardi.domain.user import User
-from ...config import auth
 from tracardi.exceptions.exception import LoginException
 from tracardi.service.storage.driver import storage
 
@@ -27,26 +26,6 @@ class Authentication:
     @staticmethod
     async def authorize(username, password) -> User:  # username exists
         logger.info(f"Authorizing {username}...")
-
-        if auth.user is not None and username == auth.user and password == auth.password:
-            user = User(
-                        id=auth.user,
-                        password=auth.password,
-                        roles=['admin'],
-                        email=auth.user,
-                        full_name="John Doe"
-                    )
-            if not await storage.driver.user.check_if_exists(auth.user):
-                await storage.driver.user.add_user(user)
-                logger.warning(f"Account {username} created with provided password. Please create new admin account "
-                               f"and disable default admin.")
-
-            await storage.driver.user_log.add_log(email=username, successful=False)
-
-            logger.warning(f"Account {username} has default password. P Please create new admin account and disable "
-                           f"default admin.")
-
-            return user
 
         user = await storage.driver.user.get_by_credentials(
             email=username,

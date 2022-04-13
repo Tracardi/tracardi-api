@@ -1,9 +1,6 @@
-import re
 from typing import List
-
 from pydantic import BaseModel, validator
-
-from app.config import auth
+from tracardi.service.valiadator import validate_email
 
 
 class UserPayload(BaseModel):
@@ -15,10 +12,8 @@ class UserPayload(BaseModel):
 
     @validator("email")
     def validate_email(cls, value):
-        if value == auth.user:
-            raise ValueError("You cannot edit default admin account")
-        if not re.fullmatch(r'([A-Za-z0-9]+[.-_])*[A-Za-z0-9]+@[A-Za-z0-9-]+(\.[A-Z|a-z]{2,})+', value):
-            raise ValueError("Given email is invalid.")
+        if not validate_email(value):
+            raise ValueError("Given e-mail is invalid.")
         return value
 
     def has_admin_role(self):

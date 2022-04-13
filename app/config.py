@@ -1,12 +1,6 @@
 import os
 
 
-class AuthConfig:
-    def __init__(self, env):
-        self.user = env['USER_NAME'] if 'USER_NAME' in env else None
-        self.password = env['PASSWORD'] if 'PASSWORD' in env else None
-
-
 class ServerConfig:
     def __init__(self, env):
         self.update_plugins_on_start_up = env[
@@ -21,5 +15,4 @@ class ServerConfig:
         self.x_forwarded_ip_header = env['USE_X_FORWARDED_IP'] if 'USE_X_FORWARDED_IP' in env else None
 
 
-auth = AuthConfig(os.environ)
 server = ServerConfig(os.environ)

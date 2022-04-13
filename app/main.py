@@ -185,14 +185,17 @@ async def app_starts():
     logger.info("TRACARDI set-up starts.")
     no_of_tries = 10
     success = False
+    es = ElasticClient.instance()
     while True:
         try:
 
             if no_of_tries < 0:
                 break
 
-            await update_api_instance()
-
+            health = await es.cluster.health()
+            for key, value in health.items():
+                key = key.replace("_", " ")
+                logger.info(f"Elasticsearch {key}: {value}")
             success = True
             break
 
@@ -251,8 +254,8 @@ async def app_shutdown():
 def report_i_am_alive():
     async def heartbeat():
         while True:
-            await asyncio.sleep(server.heartbeat_every)
             await update_api_instance()
+            await asyncio.sleep(server.heartbeat_every)
 
     asyncio.create_task(heartbeat())
 
