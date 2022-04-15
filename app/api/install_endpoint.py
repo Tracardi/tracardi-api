@@ -27,7 +27,6 @@ async def check_if_installation_complete():
     """
     Returns list of missing indices
     """
-    sleep(2)
     try:
         missing_indices = [item async for item in get_missing_indices()]
         missing = [idx[1] for idx in missing_indices if idx[0] == 'missing']
