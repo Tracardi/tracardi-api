@@ -15,7 +15,6 @@ from tracardi.service.setup.setup_plugins import add_plugins
 from tracardi.service.storage.driver import storage
 from tracardi.service.storage.indices_manager import get_missing_indices, remove_index
 
-
 router = APIRouter()
 logger = logging.getLogger(__name__)
 logger.setLevel(tracardi.logging_level)
@@ -50,9 +49,16 @@ async def check_if_installation_complete():
         raise HTTPException(status_code=500, detail=str(e))
 
 
+@router.get("/install/plugins", tags=["installation"], include_in_schema=server.expose_gui_api, response_model=dict)
+async def install_plugins():
+    try:
+        return await add_plugins()
+    except ElasticsearchException as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 @router.post("/install", tags=["installation"], include_in_schema=server.expose_gui_api, response_model=dict)
 async def install(credentials: Optional[Credentials]):
-
     try:
         if server.reset_plugins is True:
             await remove_index('action')
