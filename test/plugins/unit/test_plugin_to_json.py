@@ -1,12 +1,12 @@
 from tracardi.service.plugin.service.plugin_runner import run_plugin
-from tracardi.process_engine.action.v1.converters.payload_to_json.plugin import ConvertAction
+from tracardi.process_engine.action.v1.converters.data_to_json.plugin import ObjectToJsonAction
 from tracardi.domain.profile import Profile
 from tracardi.domain.event import Event, EventSession
 from tracardi.domain.entity import Entity
 from tracardi.domain.event_metadata import EventMetadata, EventTime
 
 
-def test_payload_to_json_plugin():
+def test_data_to_json_plugin():
     init = {
         "to_json": "payload@dict"
     }
@@ -34,7 +34,7 @@ def test_payload_to_json_plugin():
         source=Entity(id='1')
     )
 
-    result = run_plugin(ConvertAction, init, payload, profile=Profile(id="1"), event=event)
+    result = run_plugin(ObjectToJsonAction, init, payload, profile=Profile(id="1"), event=event)
 
     assert result.output.port == "payload"
     assert result.output.value == {"json": expected}
