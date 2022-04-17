@@ -1,6 +1,6 @@
 # Get previous event plugin
 
-This plugin injects to payload one of the previous events for the current profile, according to given offset and event
+This plugin injects into payload one of the previous events from the current profile, according to given offset and event
 type.
 
 ## Input
