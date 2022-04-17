@@ -14,7 +14,7 @@ router = APIRouter(
 
 @router.get("/logs/page/{page}", tags=["logs"], include_in_schema=server.expose_gui_api)
 @router.get("/logs", tags=["logs"], include_in_schema=server.expose_gui_api)
-async def all_api_instances(page: Optional[int] = None):
+async def get_logs(page: Optional[int] = None, query: Optional[str] = None):
     """
     Returns list of all Tracardi API logs. Accessible by roles: "admin"
     """
@@ -27,7 +27,8 @@ async def all_api_instances(page: Optional[int] = None):
         start = page * page_size
         limit = page_size
 
-        result = await storage.driver.log.load_all(start, limit)
+        result = await storage.driver.log.load_all(start, limit) if query is None else \
+            await storage.driver.log.load_by_query_string(query, start, limit)
 
         return {
             "total": result.total,
