@@ -54,12 +54,13 @@ async def time_range_with_sql(index: IndexesHistogram, query: DatetimeRangePaylo
 @router.post("/{index}/select/histogram",
              tags=["generic", "event", "profile", "resource", "rule", "session", "flow", "segment"],
              include_in_schema=server.expose_gui_api)
-async def histogram_with_sql(index: IndexesHistogram, query: DatetimeRangePayload, query_type: str = None):
+async def histogram_with_sql(index: IndexesHistogram, query: DatetimeRangePayload, query_type: str = None,
+                             group_by: str = None):
     try:
 
         if query_type is None:
             query_type = tracardi.query_language
 
-        return await storage.driver.raw.index(index.value).histogram_by_sql_in_time_range(query, query_type)
+        return await storage.driver.raw.index(index.value).histogram_by_sql_in_time_range(query, query_type, group_by)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

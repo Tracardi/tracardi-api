@@ -30,7 +30,8 @@ class TokenDb:
 
         # todo add caching
 
-        logger.info(f"Reading user by token {token}")
+        logger.info(f"Reading user by token {token[:6]}...")
+
         result = await storage.driver.user.search_by_token(token)
 
         if result.total > 1:
