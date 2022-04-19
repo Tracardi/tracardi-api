@@ -22,7 +22,7 @@ from app.api.graphql.profile import graphql_profiles
 from app.api.scheduler import tasks_endpoint
 from app.api.track import event_server_endpoint
 from app.config import server
-from app.setup.on_start import update_api_instance
+from app.setup.on_start import update_api_instance, clear_dead_api_instances
 from tracardi.config import tracardi, elastic
 from tracardi.exceptions.log_handler import log_handler
 from tracardi.service.storage.driver import storage
@@ -222,6 +222,7 @@ async def app_starts():
         exit()
 
     report_i_am_alive()
+    remove_dead_instances()
     logger.info("TRACARDI set-up finished.")
 
 
@@ -258,6 +259,15 @@ def report_i_am_alive():
             await asyncio.sleep(server.heartbeat_every)
 
     asyncio.create_task(heartbeat())
+
+
+def remove_dead_instances():
+    async def clear_dead_instances():
+        while True:
+            await clear_dead_api_instances()
+            await asyncio.sleep(server.clear_instances_every)
+
+    asyncio.create_task(clear_dead_instances())
 
 
 if __name__ == "__main__":
