@@ -52,4 +52,3 @@ async def clear_dead_api_instances():
 
     except StorageException as e:
         logger.error(f"Dead API instances could not be removed due to an ERROR `{str(e)}`")
-        raise e
