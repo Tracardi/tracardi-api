@@ -8,6 +8,7 @@ from tracardi.exceptions.log_handler import log_handler
 from tracardi.service.storage.elastic_client import ElasticClient
 from tracardi.service.storage.factory import StorageFor
 from tracardi.service.storage.index import resources
+from tracardi.service.storage.driver import storage
 
 __local_dir = os.path.dirname(__file__)
 logger = logging.getLogger(__name__)
@@ -41,3 +42,14 @@ async def update_api_instance():
         raise e
     finally:
         api_instance.reset()
+
+
+async def clear_dead_api_instances():
+    try:
+        clearing_result = await storage.driver.api_instance.remove_dead_instances()
+        logger.info(f"Performed dead API instances removal. Total of {clearing_result['deleted']} dead instances "
+                    f"removed.")
+
+    except StorageException as e:
+        logger.error(f"Dead API instances could not be removed due to an ERROR `{str(e)}`")
+        raise e
