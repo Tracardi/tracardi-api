@@ -24,6 +24,11 @@ class ServiceStub(object):
                 request_serializer=pro__services__pb2.EmptyParams.SerializeToString,
                 response_deserializer=pro__services__pb2.Services.FromString,
                 )
+        self.get_plugin = channel.unary_unary(
+                '/tracardi_pro.Service/get_plugin',
+                request_serializer=pro__services__pb2.PluginMetaData.SerializeToString,
+                response_deserializer=pro__services__pb2.Plugin.FromString,
+                )
         self.sign_up = channel.unary_unary(
                 '/tracardi_pro.Service/sign_up',
                 request_serializer=pro__services__pb2.HostCredentials.SerializeToString,
@@ -51,6 +56,12 @@ class ServiceServicer(object):
         raise NotImplementedError('Method not implemented!')
 
     def get_available_services(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def get_plugin(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -86,6 +97,11 @@ def add_ServiceServicer_to_server(servicer, server):
                     servicer.get_available_services,
                     request_deserializer=pro__services__pb2.EmptyParams.FromString,
                     response_serializer=pro__services__pb2.Services.SerializeToString,
+            ),
+            'get_plugin': grpc.unary_unary_rpc_method_handler(
+                    servicer.get_plugin,
+                    request_deserializer=pro__services__pb2.PluginMetaData.FromString,
+                    response_serializer=pro__services__pb2.Plugin.SerializeToString,
             ),
             'sign_up': grpc.unary_unary_rpc_method_handler(
                     servicer.sign_up,
@@ -143,6 +159,23 @@ class Service(object):
         return grpc.experimental.unary_unary(request, target, '/tracardi_pro.Service/get_available_services',
             pro__services__pb2.EmptyParams.SerializeToString,
             pro__services__pb2.Services.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def get_plugin(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/tracardi_pro.Service/get_plugin',
+            pro__services__pb2.PluginMetaData.SerializeToString,
+            pro__services__pb2.Plugin.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 

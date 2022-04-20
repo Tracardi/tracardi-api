@@ -37,6 +37,7 @@ async def is_token_valid():
     """
     try:
         result = await storage.driver.pro.read_pro_service_endpoint()
+        print(result)
     except ValidationError as e:
         logger.error(f"Validation error when reading pro service user data: {str(e)}")
         result = None
@@ -62,8 +63,8 @@ async def tracardi_pro_sign_in(credentials: Credentials):
         result = await storage.driver.pro.read_pro_service_endpoint()
 
         # Save locally if data from remote differs with local data.
-        if result is None or result.host != host or result.token != token:
-            sign_up_record = SignUpRecord(id='0', token=token, host=host)
+        if result is None or result.token != token:
+            sign_up_record = SignUpRecord(id='0', token=token)
             result = await storage.driver.pro.save_pro_service_endpoint(sign_up_record)
 
             if result.saved == 0:
@@ -86,9 +87,9 @@ async def tracardi_pro_sign_up(sign_up_data: SignUpData):
     Handles signing up to Tracardi PRO service
     """
     try:
+        # todo save more contact data on Pro server
         token = tracardi_pro_client.sign_up(sign_up_data.username, sign_up_data.password)
-
-        sign_up_record = SignUpRecord(id='0', token=token, host=sign_up_data.host)
+        sign_up_record = SignUpRecord(id='0', token=token)
         result = await storage.driver.pro.save_pro_service_endpoint(sign_up_record)
 
         if result.saved == 0:
@@ -110,20 +111,20 @@ async def get_available_services():
     Returns available Tracardi PRO services
     """
     try:
-        return tracardi_pro_client.get_available_services()
+        return await tracardi_pro_client.get_available_services()
 
     except grpc.RpcError as e:
         # Must be 403 because 401 logs out gui
         raise HTTPException(detail=e.details(), status_code=403 if e.code().name == 'UNAUTHENTICATED' else 500)
 
 
-@router.get("/tpro/available_hosts", tags=["tpro"], include_in_schema=server.expose_gui_api)
-async def get_available_hosts():
+@router.get("/tpro/plugin/{module}", tags=["tpro"], include_in_schema=server.expose_gui_api)
+async def get_available_services(module: str):
     """
-    Returns available Tracardi PRO hosts
+    Returns available Tracardi PRO services
     """
     try:
-        return tracardi_pro_client.get_available_hosts()
+        return await tracardi_pro_client.get_plugin(module)
 
     except grpc.RpcError as e:
         # Must be 403 because 401 logs out gui
@@ -148,10 +149,7 @@ async def save_tracardi_pro_resource(resource: Resource):
     resource.credentials.production = _remove_redundant_data(resource.credentials.production)
     resource.credentials.test = _remove_redundant_data(resource.credentials.test)
 
-    resource.credentials.test['host'] = sign_up_record.host
     resource.credentials.test['token'] = sign_up_record.token
-
-    resource.credentials.production['host'] = sign_up_record.host
     resource.credentials.production['token'] = sign_up_record.token
 
     try:
