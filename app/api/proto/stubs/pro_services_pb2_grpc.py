@@ -14,11 +14,6 @@ class ServiceStub(object):
         Args:
             channel: A grpc.Channel.
         """
-        self.get_available_hosts = channel.unary_unary(
-                '/tracardi_pro.Service/get_available_hosts',
-                request_serializer=pro__services__pb2.EmptyParams.SerializeToString,
-                response_deserializer=pro__services__pb2.Hosts.FromString,
-                )
         self.get_available_services = channel.unary_unary(
                 '/tracardi_pro.Service/get_available_services',
                 request_serializer=pro__services__pb2.EmptyParams.SerializeToString,
@@ -48,12 +43,6 @@ class ServiceStub(object):
 
 class ServiceServicer(object):
     """Missing associated documentation comment in .proto file."""
-
-    def get_available_hosts(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
 
     def get_available_services(self, request, context):
         """Missing associated documentation comment in .proto file."""
@@ -88,11 +77,6 @@ class ServiceServicer(object):
 
 def add_ServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
-            'get_available_hosts': grpc.unary_unary_rpc_method_handler(
-                    servicer.get_available_hosts,
-                    request_deserializer=pro__services__pb2.EmptyParams.FromString,
-                    response_serializer=pro__services__pb2.Hosts.SerializeToString,
-            ),
             'get_available_services': grpc.unary_unary_rpc_method_handler(
                     servicer.get_available_services,
                     request_deserializer=pro__services__pb2.EmptyParams.FromString,
@@ -127,23 +111,6 @@ def add_ServiceServicer_to_server(servicer, server):
  # This class is part of an EXPERIMENTAL API.
 class Service(object):
     """Missing associated documentation comment in .proto file."""
-
-    @staticmethod
-    def get_available_hosts(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/tracardi_pro.Service/get_available_hosts',
-            pro__services__pb2.EmptyParams.SerializeToString,
-            pro__services__pb2.Hosts.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
     def get_available_services(request,

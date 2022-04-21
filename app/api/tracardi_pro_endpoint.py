@@ -37,7 +37,7 @@ async def is_token_valid():
     """
     try:
         result = await storage.driver.pro.read_pro_service_endpoint()
-        print(result)
+
     except ValidationError as e:
         logger.error(f"Validation error when reading pro service user data: {str(e)}")
         result = None
@@ -136,10 +136,6 @@ async def save_tracardi_pro_resource(resource: Resource):
     """
     Adds new Tracardi PRO resource
     """
-    try:
-        sign_up_record = await storage.driver.pro.read_pro_service_endpoint()
-    except ValidationError as e:
-        raise HTTPException(detail=f"Validation error when reading pro service user data: {str(e)}", status_code=500)
 
     def _remove_redundant_data(credentials):
         credentials.pop('name', None)
@@ -148,9 +144,6 @@ async def save_tracardi_pro_resource(resource: Resource):
 
     resource.credentials.production = _remove_redundant_data(resource.credentials.production)
     resource.credentials.test = _remove_redundant_data(resource.credentials.test)
-
-    resource.credentials.test['token'] = sign_up_record.token
-    resource.credentials.production['token'] = sign_up_record.token
 
     try:
         record = ResourceRecord.encode(resource)
