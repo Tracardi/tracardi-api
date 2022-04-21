@@ -46,9 +46,14 @@ async def update_api_instance():
 
 async def clear_dead_api_instances():
     try:
-        clearing_result = await storage.driver.api_instance.remove_dead_instances()
-        logger.info(f"Performed dead API instances removal. Total of {clearing_result['deleted']} dead instances "
-                    f"removed.")
+        es = ElasticClient.instance()
+
+        if await es.exists_index("tracardi-api-instance"):
+            clearing_result = await storage.driver.api_instance.remove_dead_instances()
+            logger.info(f"Performed dead API instances removal. Total of {clearing_result['deleted']} dead instances "
+                        f"removed.")
+        else:
+            logger.warning(f"API instance index does not exist. Dead instances will be deleted next time")
 
     except StorageException as e:
         logger.error(f"Dead API instances could not be removed due to an ERROR `{str(e)}`")
