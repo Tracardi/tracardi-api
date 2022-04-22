@@ -29,6 +29,7 @@ async def validate_plugin_configuration(id: str, config: dict = None):
     """
     Validates given configuration (obj) of plugin with given ID (str)
     """
+
     try:
         record = await storage.driver.action.load_by_id(id)
 
@@ -43,6 +44,7 @@ async def validate_plugin_configuration(id: str, config: dict = None):
                                                         f"Internal error: {str(e)}")
 
         validate = action_record.get_validator()
+
         if config is None:
             raise HTTPException(status_code=404, detail="No validate function provided. "
                                                         "Could not validate on server side.")
