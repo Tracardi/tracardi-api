@@ -97,4 +97,5 @@ async def install(credentials: Optional[Credentials]):
 
         return result
     except ElasticsearchException as e:
+        logger.warning(f"Error on install. Reason: {str(e)}.")
         raise HTTPException(status_code=500, detail=str(e))

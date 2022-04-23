@@ -33,7 +33,6 @@ logger = logging.getLogger('app.main')
 logger.setLevel(tracardi.logging_level)
 logger.addHandler(log_handler)
 
-
 tags_metadata = [
     {
         "name": "profile",
@@ -237,9 +236,12 @@ async def add_process_time_header(request: Request, call_next):
 
     # todo this should run in background
     try:
-        if log_handler.has_logs():
-            await storage.driver.raw.collection('log', log_handler.collection).save()
-            log_handler.reset()
+        if await storage.driver.log.exists():
+            if log_handler.has_logs():
+                await storage.driver.raw.collection('log', log_handler.collection).save()
+                log_handler.reset()
+        else:
+            print("Log index still not created. Saving logs postponed.")
     except Exception as e:
         print(str(e))
 
