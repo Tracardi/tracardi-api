@@ -270,3 +270,29 @@ async def get_grouped_by_tags_time(time_from: datetime, time_to: datetime):
     result.aggregations["for_tags"][0]["no_tag"] = result.aggregations["for_missing_tags"][0]["found"]
     agg_results = {**result.aggregations["for_tags"][0]}
     return agg_results
+
+
+@router.get("/event/for-source/{source_id}/by-type/{time_span}", tags=["event"], include_in_schema=server.expose_gui_api,
+            response_model=list)
+async def get_for_source_grouped_by_type_time(source_id: str, time_span: str):
+
+    """
+    time_span: d - last day, w - last week, M - last month, y - last year
+    """
+    try:
+        return await storage.driver.event.aggregate_by_type_for_source(source_id, time_span)
+    except ElasticsearchException as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/event/for-source/{source_id}/by-tag/{time_span}", tags=["event"], include_in_schema=server.expose_gui_api,
+            response_model=list)
+async def get_for_source_grouped_by_tags_time(source_id: str, time_span: str):
+
+    """
+    time_span: d - last day, w - last week, M - last month, y - last year
+    """
+    try:
+        return await storage.driver.event.aggregate_by_tags_for_source(source_id, time_span)
+    except ElasticsearchException as e:
+        raise HTTPException(status_code=500, detail=str(e))
