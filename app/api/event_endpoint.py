@@ -4,6 +4,7 @@ from typing import List
 from fastapi import APIRouter, Depends
 from fastapi import HTTPException
 from tracardi.domain.console import Console
+from tracardi.domain.enum.time_span import TimeSpan
 
 from tracardi.service.storage.driver import storage
 from tracardi.service.storage.factory import StorageFor, StorageForBulk
@@ -274,25 +275,25 @@ async def get_grouped_by_tags_time(time_from: datetime, time_to: datetime):
 
 @router.get("/event/for-source/{source_id}/by-type/{time_span}", tags=["event"], include_in_schema=server.expose_gui_api,
             response_model=list)
-async def get_for_source_grouped_by_type_time(source_id: str, time_span: str):
+async def get_for_source_grouped_by_type_time(source_id: str, time_span: TimeSpan):
 
     """
     time_span: d - last day, w - last week, M - last month, y - last year
     """
     try:
-        return await storage.driver.event.aggregate_by_type_for_source(source_id, time_span)
+        return await storage.driver.event.aggregate_source_by_type(source_id, time_span)
     except ElasticsearchException as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.get("/event/for-source/{source_id}/by-tag/{time_span}", tags=["event"], include_in_schema=server.expose_gui_api,
             response_model=list)
-async def get_for_source_grouped_by_tags_time(source_id: str, time_span: str):
+async def get_for_source_grouped_by_tags_time(source_id: str, time_span: TimeSpan):
 
     """
     time_span: d - last day, w - last week, M - last month, y - last year
     """
     try:
-        return await storage.driver.event.aggregate_by_tags_for_source(source_id, time_span)
+        return await storage.driver.event.aggregate_source_by_tags(source_id, time_span)
     except ElasticsearchException as e:
         raise HTTPException(status_code=500, detail=str(e))

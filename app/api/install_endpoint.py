@@ -13,6 +13,7 @@ from tracardi.exceptions.log_handler import log_handler
 from tracardi.service.setup.setup_indices import create_indices
 from tracardi.service.setup.setup_plugins import add_plugins
 from tracardi.service.storage.driver import storage
+from tracardi.service.storage.index import resources
 from tracardi.service.storage.indices_manager import get_missing_indices, remove_index
 
 router = APIRouter()
@@ -31,7 +32,12 @@ async def check_if_installation_complete():
         missing = [idx[1] for idx in missing_indices if idx[0] == 'missing']
         existing = [idx[1] for idx in missing_indices if idx[0] == 'exists']
 
-        if 'tracardi-user' in existing:
+        if 'user' not in resources.resources:
+            raise ValueError("Misconfigured system. Missing user index.")
+
+        index = resources.resources['user']
+
+        if index.get_prefixed_template_name() in existing:
             admins = await storage.driver.user.search_by_role('admin')
             admins = admins.dict()
         else:
