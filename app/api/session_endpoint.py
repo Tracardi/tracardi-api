@@ -13,6 +13,11 @@ router = APIRouter(
 )
 
 
+@router.get("/session/count", tags=["session"], include_in_schema=server.expose_gui_api)
+async def count_events():
+    return await storage.driver.session.count()
+
+
 @router.get("/sessions/refresh", tags=["session"], include_in_schema=server.expose_gui_api)
 async def session_refresh():
     """

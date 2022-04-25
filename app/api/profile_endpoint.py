@@ -15,6 +15,11 @@ router = APIRouter(
 )
 
 
+@router.get("/profile/count", tags=["profile"], include_in_schema=server.expose_gui_api)
+async def count_profiles():
+    return await storage.driver.profile.count()
+
+
 @router.post("/profiles/import", dependencies=[Depends(Permissions(roles=["admin"]))], tags=["profile"],
              include_in_schema=server.expose_gui_api)
 async def import_profiles(profiles: List[Profile]):
@@ -55,7 +60,8 @@ async def get_profile_by_id(id: str, response: Response):
     return result
 
 
-@router.delete("/profile/{id}", tags=["profile"], response_model=Optional[dict], include_in_schema=server.expose_gui_api)
+@router.delete("/profile/{id}", tags=["profile"], response_model=Optional[dict],
+               include_in_schema=server.expose_gui_api)
 async def delete_profile(id: str, response: Response):
     """
     Deletes profile with given ID (str)
