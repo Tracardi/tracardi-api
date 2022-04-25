@@ -70,6 +70,8 @@ There are other operators possible like:
 * not equal (!=)
 * exists (*field_name* EXISTS)
 * not exists (*field_name* NOT EXISTS)
+* empty (*field_name* EMPTY)
+* not empty (*field_name* NOT EMPTY)
 
 ## Value types
 
@@ -90,6 +92,18 @@ Field *payload@numberOfPurchases* is considered an integer number while
 
 Functions can be used to convert value, for example to certain types.
 
-``` title="Example"
-payload@metadata.time.insert <= datetime("now")
-```
+* now() - returns current date and time
+* utcnow() - returns current UTC date and time
+* datetime(*field_name*) - returns *field_name* field content as date and time
+* now(*time_zone*) - returns current date and time with given *timezone* info
+* now.offset(*offset*) - returns current date and time with given offset (e.g. -15m)
+* now.timezone.offset(*timezone*, *offset*) - returns current date in time with given 
+  *timezone* info with applied *offset*
+* datetime.offset(*field_name*, *offset*) - returns *field_name* field content as 
+  date and time with applied *offset*
+* datetime.timezone(*field_name*, *timezone*) - returns *field_name* field content
+  as date and time with *timezone* info
+* now.timezone(*timezone*) - returns current date and time with given *timezone* info
+* lowercase(*field_name*) - returns lowercased text value of *field_name*
+* uppercase(*field_name*) - returns upper-cased text value of *field_name*
+
