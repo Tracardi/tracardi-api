@@ -15,6 +15,7 @@ from .auth.permissions import Permissions
 from .domain.schedule import ScheduleData
 from ..config import server
 from elasticsearch.exceptions import ElasticsearchException
+from tracardi.service.storage.elastic_storage import ElasticFiledSort
 
 router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer"]))]
@@ -270,3 +271,14 @@ async def get_grouped_by_tags_time(time_from: datetime, time_to: datetime):
     result.aggregations["for_tags"][0]["no_tag"] = result.aggregations["for_missing_tags"][0]["found"]
     agg_results = {**result.aggregations["for_tags"][0]}
     return agg_results
+
+
+@router.get("/events/session/{session_id}", tags=["event"], include_in_schema=server.expose_gui_api,
+            response_model=dict)
+async def get_events_for_session(session_id: str, limit: int = 20):
+    try:
+        result, more_to_load = await storage.driver.event.get_event_data_for_session(session_id, limit)
+        return {"result": result, "more_to_load": more_to_load}
+
+    except ElasticsearchException as e:
+        raise HTTPException(status_code=500, detail=str(e))
