@@ -5,9 +5,7 @@ from tracardi.config import tracardi
 from tracardi.exceptions.exception import StorageException
 from tracardi.domain.api_instance import ApiInstance
 from tracardi.exceptions.log_handler import log_handler
-from tracardi.service.storage.elastic_client import ElasticClient
 from tracardi.service.storage.factory import StorageFor
-from tracardi.service.storage.index import resources
 from tracardi.service.storage.driver import storage
 
 __local_dir = os.path.dirname(__file__)
@@ -20,16 +18,7 @@ async def update_api_instance():
     api_instance = ApiInstance()
 
     try:
-        es = ElasticClient.instance()
-
-        if "api-instance" not in resources.resources:
-            logger.error(f"API instance index misconfiguration. Index does not exist.")
-            return
-
-        index = resources.resources["api-instance"]
-        index = index.get_write_index()
-
-        if await es.exists_index(index):
+        if await storage.driver.api_instance.exists():
             result = await StorageFor(api_instance.get_record()).index().save()
             if result.saved == 1:
                 logger.info(f"HEARTBEAT. API instance id `{api_instance.get_record().id}` was UPDATED.")
@@ -46,6 +35,10 @@ async def update_api_instance():
 
 async def clear_dead_api_instances():
     try:
+        if not await storage.driver.api_instance.exists():
+            logger.warning(f"API instance index does not exist. Instance will be cleared next time")
+            return
+
         clearing_result = await storage.driver.api_instance.remove_dead_instances()
         logger.info(f"Performed dead API instances removal. Total of {clearing_result['deleted']} dead instances "
                     f"removed.")

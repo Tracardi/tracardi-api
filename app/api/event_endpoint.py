@@ -4,6 +4,7 @@ from typing import List
 from fastapi import APIRouter, Depends
 from fastapi import HTTPException
 from tracardi.domain.console import Console
+from tracardi.domain.enum.time_span import TimeSpan
 
 from tracardi.service.storage.driver import storage
 from tracardi.service.storage.factory import StorageFor, StorageForBulk
@@ -41,6 +42,31 @@ async def events_refresh_index():
         return await storage.driver.event.refresh()
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/event/count", tags=["event"], include_in_schema=server.expose_gui_api)
+async def count_events():
+    return await storage.driver.event.count()
+
+
+@router.get("/event/avg/requests", tags=["event"], include_in_schema=server.expose_gui_api)
+async def count_events():
+    result = await storage.driver.event.count(query={
+        "query": {
+            "range": {
+                "metadata.time.insert": {
+                    "gte": "now-5m",
+                    "lte": "now"
+                }
+            }
+        }
+    })
+    return result['count'] / (5 * 60) if 'count' in result else 0
+
+
+@router.get("/event/avg/process-time", tags=["event"], include_in_schema=server.expose_gui_api)
+async def count_events():
+    return await storage.driver.event.get_avg_process_time()
 
 
 @router.get("/events/heatmap/profile/{id}", tags=["event"], include_in_schema=server.expose_gui_api)
@@ -239,10 +265,10 @@ async def get_grouped_by_tags_prof(profile_id: str):
     return agg_results
 
 
-@router.get("/event/group/by_tags/from/{time_from}/to/{time_to}", tags=["event"], include_in_schema=server.expose_gui_api,
+@router.get("/event/group/by_tags/from/{time_from}/to/{time_to}", tags=["event"],
+            include_in_schema=server.expose_gui_api,
             response_model=dict)
 async def get_grouped_by_tags_time(time_from: datetime, time_to: datetime):
-
     """
     Accepted time format: 2021-09-15T15:53:00
     """
@@ -271,6 +297,31 @@ async def get_grouped_by_tags_time(time_from: datetime, time_to: datetime):
     result.aggregations["for_tags"][0]["no_tag"] = result.aggregations["for_missing_tags"][0]["found"]
     agg_results = {**result.aggregations["for_tags"][0]}
     return agg_results
+
+
+@router.get("/event/for-source/{source_id}/by-type/{time_span}", tags=["event"],
+            include_in_schema=server.expose_gui_api,
+            response_model=list)
+async def get_for_source_grouped_by_type_time(source_id: str, time_span: TimeSpan):
+    """
+    time_span: d - last day, w - last week, M - last month, y - last year
+    """
+    try:
+        return await storage.driver.event.aggregate_source_by_type(source_id, time_span)
+    except ElasticsearchException as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/event/for-source/{source_id}/by-tag/{time_span}", tags=["event"], include_in_schema=server.expose_gui_api,
+            response_model=list)
+async def get_for_source_grouped_by_tags_time(source_id: str, time_span: TimeSpan):
+    """
+    time_span: d - last day, w - last week, M - last month, y - last year
+    """
+    try:
+        return await storage.driver.event.aggregate_source_by_tags(source_id, time_span)
+    except ElasticsearchException as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.get("/events/session/{session_id}", tags=["event"], include_in_schema=server.expose_gui_api,

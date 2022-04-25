@@ -40,3 +40,9 @@ async def remove_stale_api_instances():
     """Not implemented"""
     # todo remove stale instances
     pass
+
+
+@router.get("/instances/count", tags=["api-instance"], include_in_schema=server.expose_gui_api)
+async def count_api_instances():
+    return await storage.driver.api_instance.count()
+
