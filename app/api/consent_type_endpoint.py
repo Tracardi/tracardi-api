@@ -6,6 +6,7 @@ from app.service.grouping import group_records
 from tracardi.domain.consent_type import ConsentType
 from tracardi.service.storage.driver import storage
 from elasticsearch import ElasticsearchException
+from tracardi.service.storage.factory import StorageForBulk
 
 router = APIRouter()
 
@@ -108,3 +109,15 @@ async def get_consent_types(query: str = None, start: int = 0, limit: int = 10):
         return group_records(result, query, group_by='tags', search_by='name', sort_by='name')
     except ElasticsearchException as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/consents/type/ids", tags=["consent"], include_in_schema=server.expose_gui_api, response_model=dict)
+async def get_consent_ids(query: str = None, limit: int = 1000):
+    """
+    Returns list of all consent ids
+    """
+    result = await StorageForBulk().index('consent-type').uniq_field_value("id", search=query, limit=limit)
+    return {
+        "total": result.total,
+        "result": list(result)
+    }
