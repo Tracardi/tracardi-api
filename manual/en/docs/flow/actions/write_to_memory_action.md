@@ -14,11 +14,10 @@ This plugin return payload on port **success** if the value was successfully wri
 to memory, or error detail on port **error** if one occured.
 
 ## Configuration
-#### With form
-- Key - that's a key to your data. Later you will be able to access your data with 
-  it.
-- Value - that's path to the value that you want to associate with given key.
-- Time to live - that's a number of seconds, after which the value will be deleted.
+
+- Key - A name of the variable that will hold saved data.
+- Value - Any string or reference to data inside workflow. This can be an object, or any value. 
+- Time to live - The number of seconds, after which the value will be deleted.
 
 #### Advanced configuration
 ```json
