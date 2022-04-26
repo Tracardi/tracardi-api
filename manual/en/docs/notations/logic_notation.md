@@ -97,7 +97,7 @@ Functions can be used to convert value, for example to certain types.
 * datetime(*field_name*) - returns *field_name* field content as date and time
 * now(*time_zone*) - returns current date and time with given *timezone* info
 * now.offset(*offset*) - returns current date and time with given offset (e.g. -15m)
-* now.timezone.offset(*timezone*, *offset*) - returns current date in time with given 
+* now.timezone.offset(*timezone*, *offset*) - returns current date and time with given 
   *timezone* info with applied *offset*
 * datetime.offset(*field_name*, *offset*) - returns *field_name* field content as 
   date and time with applied *offset*
@@ -106,4 +106,6 @@ Functions can be used to convert value, for example to certain types.
 * now.timezone(*timezone*) - returns current date and time with given *timezone* info
 * lowercase(*field_name*) - returns lowercased text value of *field_name*
 * uppercase(*field_name*) - returns upper-cased text value of *field_name*
+* datetime.from_timestamp(*field_name*) - returns date and time created from timestamp
+  content of field *field_name*
 

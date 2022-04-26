@@ -19,7 +19,8 @@ payload = {
         'i': "2021-01-10",
         'j': [],
         'k': {},
-        'l': ""
+        'l': "",
+        'm': 1650976227
     }
 }
 
@@ -136,7 +137,6 @@ def test_tql_false_not_equal():
     assert not ExprTransformer(dot=dot).transform(tree)
 
 
-# todo not working
 def test_tql_false_is_not():
     tree = parser.parse("payload@a.h is not null")
     assert not ExprTransformer(dot=dot).transform(tree)
@@ -358,5 +358,10 @@ def test_not_empty():
 
 def test_should_not_parse_datetime():
     tree = parser.parse("datetime(event@metadata.time.insert) > datetime(event@metadata.time.insert)")
+    assert not ExprTransformer(dot=dot).transform(tree)
+
+
+def test_datetime_from_timestamp():
+    tree = parser.parse("datetime.from_timestamp(payload@a.m) > datetime.from_timestamp(payload@a.m)")
     assert not ExprTransformer(dot=dot).transform(tree)
 
