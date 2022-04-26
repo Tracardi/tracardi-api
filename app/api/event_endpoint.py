@@ -64,7 +64,7 @@ async def count_events():
 
 
 @router.get("/event/avg/process-time", tags=["event"], include_in_schema=server.expose_gui_api)
-async def count_events():
+async def count_avg_process_time():
     return await storage.driver.event.get_avg_process_time()
 
 
