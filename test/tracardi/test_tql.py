@@ -16,7 +16,11 @@ payload = {
         'f': 1,
         'g': True,
         'h': None,
-        'i': "2021-01-10"
+        'i': "2021-01-10",
+        'j': [],
+        'k': {},
+        'l': "",
+        'm': 1650976227
     }
 }
 
@@ -133,10 +137,9 @@ def test_tql_false_not_equal():
     assert not ExprTransformer(dot=dot).transform(tree)
 
 
-# todo not working
-# def test_tql_false_is_not():
-#     tree = parser.parse("payload@a.h is not null")
-#     assert not ExprTransformer(dot=dot).transform(tree)
+def test_tql_false_is_not():
+    tree = parser.parse("payload@a.h is not null")
+    assert not ExprTransformer(dot=dot).transform(tree)
 
 
 def test_tql_false_greater_then():
@@ -179,6 +182,9 @@ def test_tql_false_date_ops():
 
 def test_tql_datetime_now():
     tree = parser.parse("now() == now()")
+
+    # difference is ms of now function.
+
     assert not ExprTransformer(dot=dot).transform(tree)
 
 
@@ -218,11 +224,11 @@ def test_tql_fail():
 
     # todo this could work
     # try:
-    #     tree = parser.parse("payload@... exists")
-    #     ExprTransformer(dot=dot).transform(tree)
-    #     assert False
+    #    tree = parser.parse("payload@... exists")
+    #    ExprTransformer(dot=dot).transform(tree)
+    #    assert False
     # except Exception:
-    #     assert True
+    #    assert True
 
 
 def test_tql_no_value_should_make_condition_not_met():
@@ -298,6 +304,18 @@ def test_tql_missing_field():
     result = ExprTransformer(dot=dot).transform(tree)
     assert not result
 
+    tree = parser.parse("payload@a.missing exists AND payload@a.missing==1")
+    result = ExprTransformer(dot=dot).transform(tree)
+    assert not result
+
+    tree = parser.parse("payload@a.missing exists OR payload@a.b==1")
+    result = ExprTransformer(dot=dot).transform(tree)
+    assert result
+
+    tree = parser.parse("(payload@a.missing exists OR payload@a.b==1) AND payload@a.missing not exists")
+    result = ExprTransformer(dot=dot).transform(tree)
+    assert result
+
 
 def test_null_fields():
     tree = parser.parse("payload@a.h == NULL")
@@ -311,3 +329,100 @@ def test_null_fields():
     tree = parser.parse("payload@a.b != NULL")
     result = ExprTransformer(dot=dot).transform(tree)
     assert result
+
+
+def test_empty():
+    tree = parser.parse("payload@missing EMPTY")
+    assert ExprTransformer(dot=dot).transform(tree)
+
+    # check True
+
+    tree = parser.parse("payload@a.g EMPTY")
+    assert not ExprTransformer(dot=dot).transform(tree)
+
+    # check 1
+
+    tree = parser.parse("payload@a.f EMPTY")
+    assert not ExprTransformer(dot=dot).transform(tree)
+
+    # check []
+
+    tree = parser.parse("payload@a.j EMPTY")
+    assert ExprTransformer(dot=dot).transform(tree)
+
+    # check {}
+
+    tree = parser.parse("payload@a.k EMPTY")
+    assert ExprTransformer(dot=dot).transform(tree)
+
+    # check ""
+
+    tree = parser.parse("payload@a.l EMPTY")
+    assert ExprTransformer(dot=dot).transform(tree)
+
+    tree = parser.parse("payload@a.c EMPTY")
+    assert not ExprTransformer(dot=dot).transform(tree)
+
+    tree = parser.parse("payload@a.d EMPTY")
+    assert not ExprTransformer(dot=dot).transform(tree)
+
+    tree = parser.parse("payload@a.e EMPTY")
+    assert not ExprTransformer(dot=dot).transform(tree)
+
+
+def test_not_empty():
+    tree = parser.parse("payload@a.j NOT EMPTY")
+    assert not ExprTransformer(dot=dot).transform(tree)
+
+    tree = parser.parse("payload@a.k NOT EMPTY")
+    assert not ExprTransformer(dot=dot).transform(tree)
+
+    tree = parser.parse("payload@a.l NOT EMPTY")
+    assert not ExprTransformer(dot=dot).transform(tree)
+
+    tree = parser.parse("payload@a.c NOT EMPTY")
+    assert ExprTransformer(dot=dot).transform(tree)
+
+    tree = parser.parse("payload@a.d NOT EMPTY")
+    assert ExprTransformer(dot=dot).transform(tree)
+
+    tree = parser.parse("payload@a.e NOT EMPTY")
+    assert ExprTransformer(dot=dot).transform(tree)
+
+    tree = parser.parse("payload@a.e NOT EMPTY AND payload@a.e == \"test\"")
+    assert ExprTransformer(dot=dot).transform(tree)
+
+
+def test_should_not_convert_datetime_if_field_is_datetime():
+    tree = parser.parse("datetime(event@metadata.time.insert) > datetime(event@metadata.time.insert)")
+    assert not ExprTransformer(dot=dot).transform(tree)
+
+    tree = parser.parse("datetime(event@metadata.time.insert) == datetime(event@metadata.time.insert)")
+    assert ExprTransformer(dot=dot).transform(tree)
+
+
+def test_datetime_from_timestamp():
+    tree = parser.parse("datetime.from_timestamp(payload@a.m) > datetime.from_timestamp(payload@a.m)")
+    assert not ExprTransformer(dot=dot).transform(tree)
+
+    tree = parser.parse("datetime.from_timestamp(payload@a.m) == datetime.from_timestamp(payload@a.m)")
+    assert ExprTransformer(dot=dot).transform(tree)
+
+
+def test_should_parse_offset():
+    tree = parser.parse("now.offset(\"+1m\") > now()")
+    assert ExprTransformer(dot=dot).transform(tree)
+
+    tree = parser.parse("now.offset(\"-1m\") < now()")
+    assert ExprTransformer(dot=dot).transform(tree)
+
+    tree = parser.parse("datetime.offset(payload@a.i, \"-1m\") < now()")
+    assert ExprTransformer(dot=dot).transform(tree)
+
+    tree = parser.parse("datetime.timezone(payload@a.i, \"europe/warsaw\") < now.timezone(\"europe/paris\")")
+    assert ExprTransformer(dot=dot).transform(tree)
+
+    tree = parser.parse("datetime.timezone(payload@a.i, \"europe/warsaw\") < now(\"europe/paris\")")
+    assert ExprTransformer(dot=dot).transform(tree)
+
+
