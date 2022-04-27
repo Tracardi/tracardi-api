@@ -114,10 +114,25 @@ async def get_consent_types(query: str = None, start: int = 0, limit: int = 10):
 @router.get("/consents/type/ids", tags=["consent"], include_in_schema=server.expose_gui_api, response_model=dict)
 async def get_consent_ids(query: str = None, limit: int = 1000):
     """
-    Returns list of all consent ids
+    Returns list of all enabled consent ids
     """
-    result = await StorageForBulk().index('consent-type').uniq_field_value("id", search=query, limit=limit)
+    result = await StorageForBulk().index('consent-type').storage.query({
+        "query": {
+            "term": {
+                "enabled": True
+            }
+        },
+        "size": "0",
+            "aggs": {
+                "uniq": {
+                    "terms": {
+                        "field": "id",
+                        "size": limit
+                    }
+                }
+            }
+    })
     return {
-        "total": result.total,
-        "result": list(result)
+        "total": result["hits"]["total"]["value"],
+        "result": [consent["key"] for consent in result["aggregations"]["uniq"]["buckets"]]
     }
