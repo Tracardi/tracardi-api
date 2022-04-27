@@ -190,6 +190,10 @@ async def upsert_flow_details(flow_metadata: FlowMetaData):
         if flow_record is None:
             flow_record = FlowRecord(**flow_metadata.dict())
         else:
+            draft_flow = flow_record.get_draft_workflow()
+            draft_flow.name = flow_metadata.name
+            flow_record.draft = encrypt(draft_flow.dict())
+
             flow_record.name = flow_metadata.name
             flow_record.description = flow_metadata.description
             flow_record.enabled = flow_metadata.enabled
