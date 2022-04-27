@@ -10,12 +10,8 @@ with properties set to granted consents. Consents payload should be in form of:
 
 ```json
 {
-  "example-revokable-consent-id": {
-    "revoke": "<date-of-revoke>"
-  },
-  "example-irrevocable-consent-id": {
-    "revoke": null
-  }
+  "example-consent-id-1": true,
+  "example-consent-id-1": false
 }
 ```
 
