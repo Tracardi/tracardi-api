@@ -27,8 +27,12 @@ class Endpoint(metaclass=Singleton):
                                  {"username": os.environ['LOGIN'] if username is None else username,
                                   "password": os.environ['PASS'] if password is None else password}
                                  )
+
         data = response.json()
-        return "{} {}".format(data['token_type'], data['access_token'])
+        if response.status_code == 200:
+            return "{} {}".format(data['token_type'], data['access_token'])
+        else:
+            raise ConnectionError(f"Tracardi connection error status {response.status_code}. Details: {data}")
 
     def request(self, endpoint, data=None, params=None, method='POST'):
         return requests.request(
