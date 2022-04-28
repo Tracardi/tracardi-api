@@ -40,6 +40,7 @@ async def clear_dead_api_instances():
             return
 
         clearing_result = await storage.driver.api_instance.remove_dead_instances()
+        await storage.driver.api_instance.refresh()
         logger.info(f"Performed dead API instances removal. Total of {clearing_result['deleted']} dead instances "
                     f"removed.")
 
