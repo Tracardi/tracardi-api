@@ -137,6 +137,14 @@ async def aggregate_event_tags():
     return await storage.driver.event.aggregate_event_tag()
 
 
+@router.get("/events/by_status", tags=["event"], include_in_schema=server.expose_gui_api)
+async def aggregate_event_statuses():
+    """
+    Returns number of events grouped by tags
+    """
+    return await storage.driver.event.aggregate_event_status()
+
+
 @router.get("/events/by_source", tags=["event"], include_in_schema=server.expose_gui_api)
 async def aggregate_event_tags():
     """
