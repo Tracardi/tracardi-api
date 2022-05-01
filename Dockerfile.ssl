@@ -21,7 +21,7 @@ COPY uix uix/
 COPY manual manual/
 ENV VARIABLE_NAME="application"
 
-# ENV GUNICORN_CMD_ARGS="--keyfile=/ssl/key.pem --certfile=/ssl/cert.pem"
+# ENV GUNICORN_CMD_ARGS="--keyfile=/ssl/key.pem --certfile=/ssl/cert.pem --timeout=90"
 
 EXPOSE 443
 CMD ["gunicorn", "-b", "0.0.0.0:443", "-k", "uvicorn.workers.UvicornWorker", "--workers", "25", "app.main:application"]
