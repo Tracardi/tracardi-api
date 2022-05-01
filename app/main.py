@@ -3,6 +3,8 @@ import asyncio
 import os, sys
 from time import time
 
+from app.api.auth.permissions import Permissions
+
 _local_dir = os.path.dirname(__file__)
 sys.path.append(f"{_local_dir}/api/proto/stubs")
 
@@ -168,7 +170,8 @@ application.include_router(install_endpoint.router)
 
 application.include_router(graphql_profiles,
                            prefix="/graphql",
-                           # dependencies=[Depends(get_current_user)],
+                           include_in_schema=server.expose_gui_api,
+                           dependencies=[Depends(Permissions(roles=["admin"]))],
                            tags=["graphql"])
 
 
