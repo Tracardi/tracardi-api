@@ -10,10 +10,39 @@ from tracardi.service.module_loader import is_coroutine
 from tracardi.service.storage.driver import storage
 from tracardi.service.storage.factory import StorageForBulk
 from fastapi.encoders import jsonable_encoder
+from tracardi.domain.plugin_endpoint_config_info import PluginEndpointConfigInfo
+from tracardi.service.module_loader import import_package, load_callable
 
 router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin", "developer"]))]
 )
+
+
+@router.post("/plugin/{module}/{method}", tags=["action"], include_in_schema=server.expose_gui_api)
+async def get_data_for_plugin(module: str, method: str, config: PluginEndpointConfigInfo):
+    """
+    Calls specific helper method from Endpoint class in plugin's module
+    """
+    try:
+        module = import_package(module)
+        endpoint = load_callable(module, 'Endpoint')
+        function_to_call = getattr(endpoint, method)
+
+        if is_coroutine(function_to_call):
+            return await function_to_call(config.config, config.production)
+        return function_to_call(config.config, config.production)
+
+    except HTTPException as e:
+        raise e
+    except AttributeError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    except ValidationError as e:
+        return JSONResponse(
+            status_code=422,
+            content=jsonable_encoder(convert_errors(e))
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.get("/action/plugins", tags=["action"], include_in_schema=server.expose_gui_api)
