@@ -9,15 +9,7 @@ This plugin requires adding an app to your Slack workspace:
 - Create new app
 - Select from scratch option
 - Type a name for the app and pick a workspace
-- Click "Incoming Webhooks"
-- Turn it on (upper right conner)
-- Add new webhook to workspace
-- Select a channel and click Allow
-- On the list at the bottom of page select your webhook and click copy
-- You have copied the webhook with token 
-- Paste the token when creating Tracardi resource
-
-- Add app to your workspace
+- Install app into your workspace
 - Allow this app to write into channels
 - Copy this app's bot token
 - Paste the token when creating Tracardi resource
@@ -28,7 +20,7 @@ For more detail, check Slack apps creating documentation.
 This plugin takes any payload as input.
 
 ## Outputs
-This plugin returns a response from Slack API on port **response** or empty payload
+This plugin returns a response from Slack API on port **response** or additional error info payload
 on port **error** if an error occurs.
 
 ## Configuration
@@ -52,4 +44,5 @@ on port **error** if an error occurs.
 
 ## Warning
 Depending on your app's scopes, you may need to add your app to the channel that
-you want to post to.
+you want to post to. You can do it by typing @<app-name>, sending it and inviting
+the app into the channel.
