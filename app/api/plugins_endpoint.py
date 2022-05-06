@@ -18,29 +18,32 @@ router = APIRouter(
 )
 
 
-@router.post("/plugin/{module}/{method}", tags=["action"], include_in_schema=server.expose_gui_api)
-async def get_data_for_plugin(module: str, method: str, config: PluginEndpointConfigInfo):
+@router.post("/plugin/{module}/{endpoint_function}", tags=["action"], include_in_schema=server.expose_gui_api)
+async def get_data_for_plugin(module: str, endpoint_function: str, config: PluginEndpointConfigInfo):
     """
     Calls specific helper method from Endpoint class in plugin's module
     """
     try:
+        if not module.startswith('tracardi.process_engine.action'):
+            raise HTTPException(status_code=404, detail="This is not plugin endpoint")
+
         module = import_package(module)
-        endpoint = load_callable(module, 'Endpoint')
-        function_to_call = getattr(endpoint, method)
+        endpoint_module = load_callable(module, 'Endpoint')
+        function_to_call = getattr(endpoint_module, endpoint_function)
 
         if is_coroutine(function_to_call):
             return await function_to_call(config.config, config.production)
         return function_to_call(config.config, config.production)
 
-    except HTTPException as e:
-        raise e
-    except AttributeError as e:
-        raise HTTPException(status_code=404, detail=str(e))
     except ValidationError as e:
         return JSONResponse(
             status_code=422,
             content=jsonable_encoder(convert_errors(e))
         )
+    except HTTPException as e:
+        raise e
+    except AttributeError as e:
+        raise HTTPException(status_code=404, detail=str(e))
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
