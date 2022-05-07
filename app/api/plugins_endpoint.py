@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import ValidationError
 from starlette.responses import JSONResponse
 
@@ -10,7 +10,6 @@ from tracardi.service.module_loader import is_coroutine
 from tracardi.service.storage.driver import storage
 from tracardi.service.storage.factory import StorageForBulk
 from fastapi.encoders import jsonable_encoder
-from tracardi.domain.plugin_endpoint_config_info import PluginEndpointConfigInfo
 from tracardi.service.module_loader import import_package, load_callable
 
 router = APIRouter(
@@ -19,10 +18,11 @@ router = APIRouter(
 
 
 @router.post("/plugin/{module}/{endpoint_function}", tags=["action"], include_in_schema=server.expose_gui_api)
-async def get_data_for_plugin(module: str, endpoint_function: str, config: PluginEndpointConfigInfo):
+async def get_data_for_plugin(module: str, endpoint_function: str, request: Request):
     """
-    Calls specific helper method from Endpoint class in plugin's module
+    Calls helper method from Endpoint class in plugin's module
     """
+
     try:
         if not module.startswith('tracardi.process_engine.action'):
             raise HTTPException(status_code=404, detail="This is not plugin endpoint")
@@ -32,8 +32,8 @@ async def get_data_for_plugin(module: str, endpoint_function: str, config: Plugi
         function_to_call = getattr(endpoint_module, endpoint_function)
 
         if is_coroutine(function_to_call):
-            return await function_to_call(config.config, config.production)
-        return function_to_call(config.config, config.production)
+            return await function_to_call(await request.json())
+        return function_to_call(await request.json())
 
     except ValidationError as e:
         return JSONResponse(
