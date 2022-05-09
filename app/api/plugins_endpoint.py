@@ -24,8 +24,8 @@ async def get_data_for_plugin(module: str, endpoint_function: str, request: Requ
     """
 
     try:
-        if not module.startswith('tracardi.process_engine.action'):
-            raise HTTPException(status_code=404, detail="This is not plugin endpoint")
+        if not module.startswith('tracardi.process_engine'):
+            raise HTTPException(status_code=404, detail="This is not helper endpoint.")
 
         module = import_package(module)
         endpoint_module = load_callable(module, 'Endpoint')
