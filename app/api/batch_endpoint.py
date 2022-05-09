@@ -84,12 +84,8 @@ async def run_batch(id: str, debug: bool = True):
         package = import_package(".".join(module[:-1]))
 
         batch = getattr(package, module[-1])(debug)
-        task_id = uuid4()
 
-        # TODO IMPLEMENT RUNNING, DON'T FORGET TO PASS task_id TO run() METHOD OF THE BATCH
-        #asyncio.create_task(batch.run(batch_object.config, task_id), name=task_id)
-
-        return task_id
+        batch.run(batch_object.config)
 
     except AttributeError as e:
         raise HTTPException(status_code=404, detail=str(e))
