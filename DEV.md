@@ -65,4 +65,4 @@ openssl req -newkey rsa:2048 -nodes -keyout key.pem -x509 -days 365 -out cert.pe
 
 
 # Celery worker
-celery -A tracardi.service.celery_worker worker --loglevel=info -E
+celery -A tracardi.celery.celery_worker worker --loglevel=info -E
