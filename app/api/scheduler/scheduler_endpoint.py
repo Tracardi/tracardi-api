@@ -20,22 +20,22 @@ router = APIRouter(
 
 # THIS is obsolete and will be removed.
 
-@router.get("/tasks/page/{page}", tags=["tasks"], include_in_schema=server.expose_gui_api)
-@router.get("/tasks", tags=["tasks"], include_in_schema=server.expose_gui_api)
-async def all_tasks(page: Optional[int] = None):
-    try:
-        if page is None:
-            page = 0
-            page_size = 100
-        else:
-            page_size = server.page_size
-        start = page * page_size
-        limit = page_size
-        result = await storage.driver.task.load_all(start, limit)
-        return {
-            "total": result.total,
-            "result": list(result)
-        }
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+#@router.get("/tasks/page/{page}", tags=["tasks"], include_in_schema=server.expose_gui_api)
+#@router.get("/tasks", tags=["tasks"], include_in_schema=server.expose_gui_api)
+#async def all_tasks(page: Optional[int] = None):
+#    try:
+#        if page is None:
+#            page = 0
+#            page_size = 100
+#        else:
+#            page_size = server.page_size
+#        start = page * page_size
+#        limit = page_size
+#        result = await storage.driver.task.load_all(start, limit)
+#        return {
+#            "total": result.total,
+#            "result": list(result)
+#        }
+#    except Exception as e:
+#        raise HTTPException(status_code=500, detail=str(e))
 
