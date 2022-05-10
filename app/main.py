@@ -21,6 +21,7 @@ from app.api import token_endpoint, rule_endpoint, resource_endpoint, event_endp
     user_endpoint, event_schema_validation_endpoint, debug_endpoint, log_endpoint, tracardi_pro_endpoint, \
     storage_endpoint, destination_endpoint, user_log_endpoint, user_account_endpoint, install_endpoint, import_endpoint,\
     task_endpoint
+    storage_endpoint, destination_endpoint, user_log_endpoint, user_account_endpoint, install_endpoint, celery_endpoint
 from app.api.graphql.profile import graphql_profiles
 from app.api.scheduler import scheduler_endpoint
 from app.api.track import event_server_endpoint
@@ -168,6 +169,7 @@ application.include_router(user_account_endpoint.router)
 application.include_router(install_endpoint.router)
 application.include_router(import_endpoint.router)
 application.include_router(task_endpoint.router)
+application.include_router(celery_endpoint.router)
 
 # GraphQL
 
