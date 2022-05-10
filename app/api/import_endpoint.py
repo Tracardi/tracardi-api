@@ -86,7 +86,8 @@ async def load_batches(limit: int = 100, query: str = None):
 
 @router.post("/import/run/{id}", tags=["import"], include_in_schema=server.expose_gui_api)
 async def run_import(id: str, debug: bool = True):
-    # try:
+    try:
+
         import_configuration = await storage.driver.import_config.load(id)
         if import_configuration is None:
             raise HTTPException(status_code=404, detail=f"No import source configuration found for id {id}")
@@ -107,12 +108,12 @@ async def run_import(id: str, debug: bool = True):
             }
         }
 
-    # except AttributeError as e:
-    #     raise HTTPException(status_code=404, detail=str(e))
-    # except StorageException as e:
-    #     raise HTTPException(status_code=500, detail=str(e))
-    # except Exception as e:
-    #     raise HTTPException(status_code=500, detail=str(e))
+    except AttributeError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    except StorageException as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.get("/import/form/{module}", tags=["import"], include_in_schema=server.expose_gui_api)
