@@ -4,7 +4,7 @@ from tracardi.service.storage.driver import storage
 from .auth.permissions import Permissions
 from ..config import server
 from tracardi.exceptions.exception import StorageException
-from tracardi.domain.batch import Batch
+from tracardi.domain.import_config import ImportConfig
 from tracardi.service.batches import get_batches
 from tracardi.service.module_loader import import_package, is_coroutine
 from pydantic import ValidationError
@@ -15,16 +15,20 @@ from starlette.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
 from app.service.error_converter import convert_errors
 
-
 router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin", "developer"]))]
 )
 
 
-@router.get("/batch/{id}", tags=["batch"], include_in_schema=server.expose_gui_api)
+@router.get("/import/types", tags=["import"], include_in_schema=server.expose_gui_api)
+async def get_batch_types():
+    return get_batches()
+
+
+@router.get("/import/{id}", tags=["import"], include_in_schema=server.expose_gui_api)
 async def get_batch_by_id(id: str):
     try:
-        result = await storage.driver.batch.load(id)
+        result = await storage.driver.import_config.load(id)
         if result is not None:
             return result
         else:
@@ -34,46 +38,56 @@ async def get_batch_by_id(id: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.post("/batch", tags=["batch"], include_in_schema=server.expose_gui_api)
-async def add_batch(batch: Batch):
+@router.post("/import", tags=["import"], include_in_schema=server.expose_gui_api)
+async def add_import_config(import_configuration: dict):
     try:
-        module = batch.module.split(".")
+        import_configuration = ImportConfig(**import_configuration)
+        module = import_configuration.module.split(".")
         package = import_package(".".join(module[:-1]))
-        batch_class = getattr(package, module[-1])
-        batch_class.config_class(**batch.config)
-        result = await storage.driver.batch.add_batch(batch)
-        await storage.driver.batch.refresh()
+        import_processor = getattr(package, module[-1])
+
+        # Validate data with the configuration model
+        import_processor.config_model(**import_configuration.config)
+
+        # Safe configuration
+        result = await storage.driver.import_config.save(import_configuration)
+        await storage.driver.import_config.refresh()
         return result
 
+    except ValidationError as e:
+        return JSONResponse(
+            status_code=422,
+            content=jsonable_encoder(convert_errors(e))
+        )
     except StorageException as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.delete("/batch/{id}", tags=["batch"], include_in_schema=server.expose_gui_api)
+@router.delete("/import/{id}", tags=["import"], include_in_schema=server.expose_gui_api)
 async def delete_batch(id: str):
     try:
-        result = await storage.driver.batch.delete(id)
-        await storage.driver.batch.refresh()
+        result = await storage.driver.import_config.delete(id)
+        await storage.driver.import_config.refresh()
         return result
 
     except StorageException as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/batches", tags=["batch"], include_in_schema=server.expose_gui_api)
+@router.get("/imports", tags=["import"], include_in_schema=server.expose_gui_api)
 async def load_batches(limit: int = 100, query: str = None):
     try:
-        result = await storage.driver.batch.load_batches(limit, query)
+        result = await storage.driver.import_config.load_all(limit, query)
         return {"grouped": {"General": result}} if result else {}
 
     except StorageException as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.post("/batch/run/{id}", tags=["batch"], include_in_schema=server.expose_gui_api)
+@router.post("/import/run/{id}", tags=["import"], include_in_schema=server.expose_gui_api)
 async def run_batch(id: str, debug: bool = True):
     try:
-        batch_object = await storage.driver.batch.load(id)
+        batch_object = await storage.driver.import_config.load(id)
         if batch_object is None:
             raise HTTPException(status_code=404, detail=f"No batch found for id {id}")
 
@@ -95,12 +109,7 @@ async def run_batch(id: str, debug: bool = True):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/batches/types", tags=["batch"], include_in_schema=server.expose_gui_api)
-async def get_batch_types():
-    return get_batches()
-
-
-@router.get("/batch/form/{module}", tags=["batch"], include_in_schema=server.expose_gui_api)
+@router.get("/import/form/{module}", tags=["import"], include_in_schema=server.expose_gui_api)
 async def get_batch_form(module: str):
     try:
         module = module.split(".")
@@ -115,14 +124,14 @@ async def get_batch_form(module: str):
         raise HTTPException(status_code=404, detail=str(e))
 
 
-@router.post("/batch/validate-config/{module}", tags=["batch"], include_in_schema=server.expose_gui_api)
+@router.post("/import/validate-config/{module}", tags=["import"], include_in_schema=server.expose_gui_api)
 async def validate_batch_config(module: str, config: dict):
     try:
         if module:
             module = module.split(".")
             package = import_package(".".join(module[:-1]))
-            batch_class = getattr(package, module[-1])
-            batch_class.config_class(**config)
+            import_class = getattr(package, module[-1])
+            import_class.config_model(**config)
         else:
             raise HTTPException(status_code=422, detail="No batch type selected")
 
