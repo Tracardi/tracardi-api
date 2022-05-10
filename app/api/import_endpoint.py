@@ -85,28 +85,34 @@ async def load_batches(limit: int = 100, query: str = None):
 
 
 @router.post("/import/run/{id}", tags=["import"], include_in_schema=server.expose_gui_api)
-async def run_batch(id: str, debug: bool = True):
-    try:
-        batch_object = await storage.driver.import_config.load(id)
-        if batch_object is None:
-            raise HTTPException(status_code=404, detail=f"No batch found for id {id}")
+async def run_import(id: str, debug: bool = True):
+    # try:
+        import_configuration = await storage.driver.import_config.load(id)
+        if import_configuration is None:
+            raise HTTPException(status_code=404, detail=f"No import source configuration found for id {id}")
 
-        if batch_object.enabled is False:
-            raise HTTPException(status_code=409, detail=f"Selected batch is disabled")
+        if import_configuration.enabled is False:
+            raise HTTPException(status_code=409, detail=f"Selected import source is disabled")
 
-        module = batch_object.module.split(".")
+        module = import_configuration.module.split(".")
         package = import_package(".".join(module[:-1]))
 
-        batch = getattr(package, module[-1])(debug)
+        importer = getattr(package, module[-1])(debug)
 
-        batch.run(batch_object.config)
+        await importer.run(import_configuration.config)
 
-    except AttributeError as e:
-        raise HTTPException(status_code=404, detail=str(e))
-    except StorageException as e:
-        raise HTTPException(status_code=500, detail=str(e))
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        return {
+            "task": {
+                "id": 1
+            }
+        }
+
+    # except AttributeError as e:
+    #     raise HTTPException(status_code=404, detail=str(e))
+    # except StorageException as e:
+    #     raise HTTPException(status_code=500, detail=str(e))
+    # except Exception as e:
+    #     raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.get("/import/form/{module}", tags=["import"], include_in_schema=server.expose_gui_api)
