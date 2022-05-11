@@ -1,6 +1,4 @@
 from fastapi import APIRouter, HTTPException, Depends
-
-from tracardi.domain.entity import Entity
 from tracardi.service.storage.driver import storage
 from worker.celery_worker import celery
 from .auth.permissions import Permissions
@@ -22,9 +20,8 @@ router = APIRouter(
 
 # Celery worker endpoints
 
-@router.get("/import/run/{import_id}", tags=["import"], include_in_schema=server.expose_gui_api)
+@router.get("/import/{import_id}/run", tags=["import"], include_in_schema=server.expose_gui_api)
 async def run_import(import_id: str, name: str = None, debug: bool = True):
-
     """
     Takes import id and returns worker task id.
     """
@@ -58,9 +55,8 @@ async def run_import(import_id: str, name: str = None, debug: bool = True):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/import/status/{task_id}", tags=["import"], include_in_schema=server.expose_gui_api)
+@router.get("/import/task/{task_id}/status", tags=["import"], include_in_schema=server.expose_gui_api)
 def get_status(task_id):
-
     """
     Takes worker task id and returns current status
     """
@@ -74,11 +70,20 @@ def get_status(task_id):
     return result
 
 
+@router.delete("/import/task/{task_id}", tags=["import"], include_in_schema=server.expose_gui_api)
+def delete_import_task(task_id):
+    """
+    Takes worker task id and cancels task
+    """
+    result = celery.control.revoke(task_id, terminate=True)
+    print(result)
+    return result
+
+
 # Tracardi endpoints
 
 @router.get("/import/types", tags=["import"], include_in_schema=server.expose_gui_api)
 async def load_import_types():
-
     """
     Returns available import types.
     """
@@ -88,7 +93,6 @@ async def load_import_types():
 
 @router.get("/import/{import_id}", tags=["import"], include_in_schema=server.expose_gui_api)
 async def get_import_by_id(import_id: str):
-
     """
     Returns import configuration.
     """
@@ -106,7 +110,6 @@ async def get_import_by_id(import_id: str):
 
 @router.post("/import", tags=["import"], include_in_schema=server.expose_gui_api)
 async def save_import_config(import_configuration: dict):
-
     """
     Adds new import configurations.
     """
@@ -136,7 +139,6 @@ async def save_import_config(import_configuration: dict):
 
 @router.delete("/import/{import_id}", tags=["import"], include_in_schema=server.expose_gui_api)
 async def delete_import_configuration(import_id: str):
-
     """
     Deletes import configuration
     """
@@ -151,7 +153,7 @@ async def delete_import_configuration(import_id: str):
 
 
 @router.get("/imports", tags=["import"], include_in_schema=server.expose_gui_api)
-async def get_all_imports(limit: int = 100, query: str = None):
+async def get_all_imports(limit: int = 50, query: str = None):
 
     """
     Returns all imports.
@@ -167,7 +169,6 @@ async def get_all_imports(limit: int = 100, query: str = None):
 
 @router.get("/import/form/{module}", tags=["import"], include_in_schema=server.expose_gui_api)
 async def get_import_configuration_form(module: str):
-
     """
     Returns import configuration form for selected import type
     """

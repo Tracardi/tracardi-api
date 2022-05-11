@@ -13,12 +13,23 @@ router = APIRouter(
 
 
 @router.get("/tasks", tags=["task"], include_in_schema=server.expose_gui_api)
-async def load_tasks(limit: int = 100):
+async def load_tasks(query: str = None, limit: int = 20):
     try:
-        result = await storage.driver.task.load_tasks(limit)
+        if not query:
+            query = {
+                "match_all": {}
+            }
+        else:
+            query = {
+                "wildcard": {
+                    "name": f"*{query}*"
+                }
+            }
+
+        result = await storage.driver.task.load_tasks(query, limit=limit)
         return {
             "grouped": {
-                "Imports": result
+                "Imports": list(result)
             }
         }
 
@@ -41,18 +52,4 @@ async def upsert_task(task: Task):
         return await storage.driver.task.upsert_task(task)
 
     except StorageException as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-
-@router.get("/task/{id}/progress", tags=["task"], include_in_schema=server.expose_gui_api)
-async def get_task_progress(id: str):
-    try:
-        result = await storage.driver.task.get_progress(id)
-        if result is None:
-            raise HTTPException(status_code=404, detail=f"Task {id} not found.")
-        return result
-
-    except HTTPException as e:
-        raise e
-    except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
