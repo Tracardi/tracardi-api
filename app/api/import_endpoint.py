@@ -1,5 +1,6 @@
 from fastapi import APIRouter, HTTPException, Depends
 
+from tracardi.domain.entity import Entity
 from tracardi.service.storage.driver import storage
 from worker.celery_worker import celery
 from .auth.permissions import Permissions
@@ -19,24 +20,79 @@ router = APIRouter(
 )
 
 
+# Celery worker endpoints
+
+@router.get("/import/run/{import_id}", tags=["import"], include_in_schema=server.expose_gui_api)
+async def run_import(import_id: str, name: str = None, debug: bool = True):
+
+    """
+    Takes import id and returns worker task id.
+    """
+
+    try:
+
+        import_configuration = await storage.driver.import_config.load(import_id)
+        if import_configuration is None:
+            raise HTTPException(status_code=404, detail=f"No import source configuration found for id {import_id}")
+
+        if import_configuration.enabled is False:
+            raise HTTPException(status_code=409, detail=f"Selected import source is disabled")
+
+        module = import_configuration.module.split(".")
+        package = import_package(".".join(module[:-1]))
+
+        importer = getattr(package, module[-1])(debug)
+
+        task_id, celery_task_id = await importer.run(name, import_configuration)
+
+        return {
+            "id": task_id,
+            "task_id": celery_task_id
+        }
+
+    except AttributeError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    except StorageException as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 @router.get("/import/status/{task_id}", tags=["import"], include_in_schema=server.expose_gui_api)
 def get_status(task_id):
+
+    """
+    Takes worker task id and returns current status
+    """
+
     task_result = AsyncResult(task_id, app=celery)
     result = {
-        "task": task_result.id,
+        "id": task_result.id,
         "status": task_result.status,
-        "result": task_result.result
+        "progress": task_result.result
     }
     return result
 
 
+# Tracardi endpoints
+
 @router.get("/import/types", tags=["import"], include_in_schema=server.expose_gui_api)
 async def load_import_types():
+
+    """
+    Returns available import types.
+    """
+
     return get_import_types()
 
 
 @router.get("/import/{import_id}", tags=["import"], include_in_schema=server.expose_gui_api)
 async def get_import_by_id(import_id: str):
+
+    """
+    Returns import configuration.
+    """
+
     try:
         result = await storage.driver.import_config.load(import_id)
         if result is not None:
@@ -49,7 +105,12 @@ async def get_import_by_id(import_id: str):
 
 
 @router.post("/import", tags=["import"], include_in_schema=server.expose_gui_api)
-async def add_import_config(import_configuration: dict):
+async def save_import_config(import_configuration: dict):
+
+    """
+    Adds new import configurations.
+    """
+
     try:
         import_configuration = ImportConfig(**import_configuration)
         module = import_configuration.module.split(".")
@@ -75,6 +136,11 @@ async def add_import_config(import_configuration: dict):
 
 @router.delete("/import/{import_id}", tags=["import"], include_in_schema=server.expose_gui_api)
 async def delete_import_configuration(import_id: str):
+
+    """
+    Deletes import configuration
+    """
+
     try:
         result = await storage.driver.import_config.delete(import_id)
         await storage.driver.import_config.refresh()
@@ -85,7 +151,12 @@ async def delete_import_configuration(import_id: str):
 
 
 @router.get("/imports", tags=["import"], include_in_schema=server.expose_gui_api)
-async def load_all_imports(limit: int = 100, query: str = None):
+async def get_all_imports(limit: int = 100, query: str = None):
+
+    """
+    Returns all imports.
+    """
+
     try:
         result = await storage.driver.import_config.load_all(limit, query)
         return {"grouped": {"General": result}} if result else {}
@@ -94,40 +165,13 @@ async def load_all_imports(limit: int = 100, query: str = None):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.post("/import/run/{import_id}", tags=["import"], include_in_schema=server.expose_gui_api)
-async def run_import(import_id: str, debug: bool = True):
-    try:
-
-        import_configuration = await storage.driver.import_config.load(import_id)
-        if import_configuration is None:
-            raise HTTPException(status_code=404, detail=f"No import source configuration found for id {import_id}")
-
-        if import_configuration.enabled is False:
-            raise HTTPException(status_code=409, detail=f"Selected import source is disabled")
-
-        module = import_configuration.module.split(".")
-        package = import_package(".".join(module[:-1]))
-
-        importer = getattr(package, module[-1])(debug)
-
-        await importer.run(import_configuration.config)
-
-        return {
-            "task": {
-                "id": 1
-            }
-        }
-
-    except AttributeError as e:
-        raise HTTPException(status_code=404, detail=str(e))
-    except StorageException as e:
-        raise HTTPException(status_code=500, detail=str(e))
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-
 @router.get("/import/form/{module}", tags=["import"], include_in_schema=server.expose_gui_api)
 async def get_import_configuration_form(module: str):
+
+    """
+    Returns import configuration form for selected import type
+    """
+
     try:
         module = module.split(".")
         package = import_package(".".join(module[:-1]))

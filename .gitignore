@@ -108,3 +108,5 @@ venv.bak/
 /manual/en/site/
 
 /app/tracker/revision.txt
+
+.run/

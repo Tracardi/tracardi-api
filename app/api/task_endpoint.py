@@ -15,7 +15,12 @@ router = APIRouter(
 @router.get("/tasks", tags=["task"], include_in_schema=server.expose_gui_api)
 async def load_tasks(limit: int = 100):
     try:
-        return await storage.driver.task.load_tasks(limit)
+        result = await storage.driver.task.load_tasks(limit)
+        return {
+            "grouped": {
+                "Imports": result
+            }
+        }
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
