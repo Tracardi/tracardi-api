@@ -1,3 +1,4 @@
+import redis
 from fastapi import APIRouter, HTTPException, Depends
 from tracardi.service.storage.driver import storage
 from worker.celery_worker import celery
@@ -60,21 +61,25 @@ def get_status(task_id):
     """
     Takes worker task id and returns current status
     """
-
-    task_result = AsyncResult(task_id, app=celery)
-    result = {
-        "id": task_result.id,
-        "status": task_result.status,
-        "progress": task_result.result
-    }
-    return result
+    try:
+        task_result = AsyncResult(task_id, app=celery)
+        result = {
+            "id": task_result.id,
+            "status": task_result.status,
+            "progress": task_result.result
+        }
+        return result
+    except redis.exceptions.ConnectionError as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.delete("/import/task/{task_id}", tags=["import"], include_in_schema=server.expose_gui_api)
 def delete_import_task(task_id):
+
     """
     Takes worker task id and cancels task
     """
+
     result = celery.control.revoke(task_id, terminate=True)
     print(result)
     return result
@@ -154,7 +159,6 @@ async def delete_import_configuration(import_id: str):
 
 @router.get("/imports", tags=["import"], include_in_schema=server.expose_gui_api)
 async def get_all_imports(limit: int = 50, query: str = None):
-
     """
     Returns all imports.
     """
