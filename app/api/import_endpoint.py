@@ -6,7 +6,7 @@ from .auth.permissions import Permissions
 from ..config import server
 from tracardi.exceptions.exception import StorageException
 from tracardi.domain.import_config import ImportConfig
-from tracardi.service.import_types import get_import_types
+from tracardi.service.setup.setup_import_types import get_import_types
 from tracardi.service.module_loader import import_package
 from pydantic import ValidationError
 from celery.result import AsyncResult
