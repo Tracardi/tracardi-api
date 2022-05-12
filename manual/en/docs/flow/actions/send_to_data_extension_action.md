@@ -7,7 +7,9 @@ according to given configuration.
 In your Marketing Cloud, click on your profile image. Then select **Setup**.
 On the left, select **Apps** > **Installed Packages**. There click **New** button.
 Give some name and description to your package, then click **Add Component**
-button. Select **API Integration** and save it. Now you should see:
+button. Select **API Integration**, then **Server-to-Server**. Then select
+**Data Extensions** > **Write** under **Data** header in scopes configuration
+and save it. Now you should see:
 
 - Client Id
 - Client Secret
