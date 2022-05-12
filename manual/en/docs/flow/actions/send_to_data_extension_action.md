@@ -16,12 +16,12 @@ and save it. Now you should see:
 - REST Base URI
 
 Paste Client ID and Client Secret while creating new resource, and to find your
-subdomain, take **https://<THIS-PART>.rest.marketingcloudapis.com/** from 
+subdomain, take **https://[THIS-PART].rest.marketingcloudapis.com/** from 
 REST Base URI.
 To use the plugin, you need to provide Data Extension ID. To find it, go to
 **Audience Builder** > **Contact Builder**. Then select **Data Extensions** on the
 top. Then right-click on your Data Extension's name, and copy the link. Now paste
-**https:// ... /data-extension/<THIS-PART>/properties/** as Data Extension ID in
+**https:// ... /data-extension/[THIS-PART]/properties/** as Data Extension ID in
 plugin configuration form.
 
 ## Input
