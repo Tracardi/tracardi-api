@@ -1,4 +1,5 @@
 import logging
+from collections import OrderedDict
 
 import grpc
 from fastapi import APIRouter, Depends, HTTPException
@@ -111,7 +112,9 @@ async def get_available_services():
     Returns available Tracardi PRO services
     """
     try:
-        return await tracardi_pro_client.get_available_services()
+        services = await tracardi_pro_client.get_available_services()
+        services['services'] = OrderedDict(sorted(services['services'].items()))
+        return services
 
     except grpc.RpcError as e:
         # Must be 403 because 401 logs out gui
