@@ -6,7 +6,7 @@ from fastapi import APIRouter, HTTPException, Depends, Response
 from tracardi.config import tracardi
 from tracardi.domain.enum.type_enum import TypeEnum
 from tracardi.exceptions.log_handler import log_handler
-from tracardi.service.resources import get_type_of_resources
+from tracardi.service.setup.setup_resources import get_type_of_resources
 from tracardi.service.storage.driver import storage
 from tracardi.service.storage.factory import StorageFor, StorageForBulk
 from tracardi.service.wf.domain.named_entity import NamedEntity

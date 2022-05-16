@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Response, HTTPException, Depends
 
-from tracardi.service.resources import get_destinations
+from tracardi.service.setup.setup_resources import get_destinations
 from tracardi.service.storage.driver import storage
 from tracardi.domain.destination import Destination, DestinationRecord
 from .auth.permissions import Permissions
