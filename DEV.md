@@ -34,6 +34,8 @@ docker run -p 8888:8888 jupyter/minimal-notebook
 # Run local mysql
 docker run -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=test -p 3306:3306 mysql
 mysql -h localhost -P 3306 --protocol=tcp -u root -p root test
+mysql -h localhost -P 3306 --protocol=tcp -u root -p 
+
 
 
 # Run local mongo
@@ -66,3 +68,4 @@ openssl req -newkey rsa:2048 -nodes -keyout key.pem -x509 -days 365 -out cert.pe
 
 # Celery worker
 celery -A worker.celery_worker worker --loglevel=info -E
+docker run -e REDIS_HOST=redis://redis-0.redis.redis.svc.cluster.local tracardi/worker
