@@ -59,14 +59,16 @@ async def ping_redis():
 
 
 @router.get("/test/elasticsearch", tags=["test"], include_in_schema=server.expose_gui_api)
-async def get_indices():
+async def get_es_cluster_health():
     """
-    Tests connection between Elasticsearch and Tracardi by listing indices. Accessible for roles: "admin"
+    Tests connection between Elasticsearch and Tracardi by returning cluster info. Accessible for roles: "admin"
     """
     es = ElasticClient.instance()
     try:
         health = await es.cluster.health()
         if not isinstance(health, dict):
             raise HTTPException(status_code=500, detail="Elasticsearch did not pass health check.")
+        return health
+
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
