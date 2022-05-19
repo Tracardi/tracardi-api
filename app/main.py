@@ -275,7 +275,7 @@ def remove_dead_instances():
     async def clear_dead_instances():
         while True:
             await clear_dead_api_instances()
-            clear_interval = randint(60*15, 60*60)
+            clear_interval = randint(60 * 15, 60 * 60)
             await asyncio.sleep(clear_interval)
 
     asyncio.create_task(clear_dead_instances())
