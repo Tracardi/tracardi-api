@@ -16,7 +16,7 @@ from tracardi.service.setup.setup_indices import create_indices
 from tracardi.service.setup.setup_plugins import add_plugins
 from tracardi.service.storage.driver import storage
 from tracardi.service.storage.index import resources
-from tracardi.service.storage.indices_manager import get_missing_indices, remove_index
+from tracardi.service.storage.indices_manager import get_indices_status, remove_index
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
@@ -33,9 +33,11 @@ async def check_if_installation_complete():
 
         # Missing indices
 
-        missing_indices = [item async for item in get_missing_indices()]
-        missing = [idx[1] for idx in missing_indices if idx[0] == 'missing']
-        existing = [idx[1] for idx in missing_indices if idx[0] == 'exists']
+        _indices = [item async for item in get_indices_status()]
+        missing_indices = [idx[1] for idx in _indices if idx[0] == 'missing_index']
+        existing_indices = [idx[1] for idx in _indices if idx[0] == 'existing_index']
+        missing_templates = [idx[1] for idx in _indices if idx[0] == 'missing_template']
+        existing_templates = [idx[1] for idx in _indices if idx[0] == 'existing_template']
 
         # Missing admin
 
@@ -44,7 +46,7 @@ async def check_if_installation_complete():
 
         index = resources.resources['user']
 
-        if index.get_prefixed_template_name() in existing:
+        if index.get_aliased_data_index() in existing_indices:
             admins = await storage.driver.user.search_by_role('admin')
             admins = admins.dict()
         else:
@@ -68,10 +70,12 @@ async def check_if_installation_complete():
                 missing_mapping_setup.append(name)
 
         return {
-            "missing": missing,
-            "exists": existing,
+            "missing": missing_indices,
+            "exists": existing_indices,
             "admins": admins,
-            "missing_setup": missing_mapping_setup
+            "missing_setup": missing_mapping_setup,
+            "missing_template": missing_templates,
+            "existing_template": existing_templates
         }
 
     except ElasticsearchException as e:
@@ -88,7 +92,7 @@ async def install_plugins():
 
 @router.post("/install", tags=["installation"], include_in_schema=server.expose_gui_api, response_model=dict)
 async def install(credentials: Optional[Credentials]):
-    try:
+    # try:
 
         if server.reset_plugins is True:
             await remove_index('action')
@@ -129,6 +133,6 @@ async def install(credentials: Optional[Credentials]):
 
         return result
 
-    except ElasticsearchException as e:
-        logger.warning(f"Error on install. Reason: {str(e)}.")
-        raise HTTPException(status_code=500, detail=str(e))
+    # except ElasticsearchException as e:
+    #     logger.warning(f"Error on install. Reason: {str(e)}.")
+    #     raise HTTPException(status_code=500, detail=str(e))

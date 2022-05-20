@@ -97,7 +97,7 @@ application = FastAPI(
     title="Tracardi Customer Data Platform Project",
     description="TRACARDI open-source customer data platform offers you excellent control over your customer data with "
                 "its broad set of features",
-    version=tracardi.version,
+    version=str(tracardi.version),
     openapi_tags=tags_metadata if server.expose_gui_api else None,
     contact={
         "name": "Risto Kowaczewski",
