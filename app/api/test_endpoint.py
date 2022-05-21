@@ -8,6 +8,7 @@ from app.service.data_generator import generate_fake_data, generate_random_date
 from tracardi.domain.event_source import EventSource
 from tracardi.service.storage.driver import storage
 from fastapi import HTTPException
+from datetime import datetime
 
 router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin"]))]
@@ -80,6 +81,10 @@ async def get_es_indices():
     try:
         es = ElasticClient.instance()
         result = await es.list_indices()
+        for key in result:
+            result[key]["settings"]["index"]["creation_date"] = \
+                datetime.utcfromtimestamp(int(result[key]["settings"]["index"]["creation_date"]) // 1000)
+            result[key]["connected"] = False # TODO ADD VERSION CHECK
         return result
 
     except Exception as e:
