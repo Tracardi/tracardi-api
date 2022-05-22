@@ -37,14 +37,12 @@ async def check_if_installation_complete():
         missing_indices = [idx[1] for idx in _indices if idx[0] == 'missing_index']
         existing_indices = [idx[1] for idx in _indices if idx[0] == 'existing_index']
         missing_templates = [idx[1] for idx in _indices if idx[0] == 'missing_template']
-        existing_templates = [idx[1] for idx in _indices if idx[0] == 'existing_template']
+        missing_aliases = [idx[1] for idx in _indices if idx[0] == 'missing_alias']
+        # existing_templates = [idx[1] for idx in _indices if idx[0] == 'existing_template']
 
         # Missing admin
 
-        if 'user' not in resources.resources:
-            raise ValueError("Misconfigured system. Missing user index.")
-
-        index = resources.resources['user']
+        index = resources.get_index('user')
 
         if index.get_aliased_data_index() in existing_indices:
             admins = await storage.driver.user.search_by_role('admin')
@@ -71,11 +69,10 @@ async def check_if_installation_complete():
 
         return {
             "missing": missing_indices,
-            "exists": existing_indices,
             "admins": admins,
             "missing_setup": missing_mapping_setup,
             "missing_template": missing_templates,
-            "existing_template": existing_templates
+            "missing_alias": missing_aliases,
         }
 
     except ElasticsearchException as e:
@@ -97,12 +94,7 @@ async def install(credentials: Optional[Credentials]):
         if server.reset_plugins is True:
             await remove_index('action')
 
-        created_indices = [idx async for idx in create_indices()]
-        result = {"created": {
-            "templates": [item[1] for item in created_indices if item[0] == 'template'],
-            "indices": [item[1] for item in created_indices if item[0] == 'index'],
-            "aliases": [item[2] for item in created_indices if item[0] == 'index'],
-        }, 'admin': False}
+        result = {"created": await create_indices(), 'admin': False}
 
         # Add admin
         admins = await storage.driver.user.search_by_role('admin')
@@ -133,6 +125,6 @@ async def install(credentials: Optional[Credentials]):
 
         return result
 
-    # except ElasticsearchException as e:
-    #     logger.warning(f"Error on install. Reason: {str(e)}.")
+    # except Exception as e:
+    #     logger.error(f"Error on install. Reason: {str(e)}.")
     #     raise HTTPException(status_code=500, detail=str(e))
