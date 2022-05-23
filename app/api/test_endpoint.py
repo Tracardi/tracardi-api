@@ -1,5 +1,3 @@
-import asyncio
-
 from fastapi import APIRouter, Depends
 from tracardi.service.storage.redis_client import RedisClient
 from tracardi.service.storage.elastic_client import ElasticClient
@@ -10,6 +8,7 @@ from app.service.data_generator import generate_fake_data, generate_random_date
 from tracardi.domain.event_source import EventSource
 from tracardi.service.storage.driver import storage
 from fastapi import HTTPException
+from datetime import datetime
 
 router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin"]))]
@@ -69,6 +68,24 @@ async def get_es_cluster_health():
         if not isinstance(health, dict):
             raise HTTPException(status_code=500, detail="Elasticsearch did not pass health check.")
         return health
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/test/elasticsearch/indices", tags=["test"], include_in_schema=server.expose_gui_api)
+async def get_es_indices():
+    """
+    Returns list of indices in elasticsearch cluster. Accessible for roles: "admin"
+    """
+    try:
+        es = ElasticClient.instance()
+        result = await es.list_indices()
+        for key in result:
+            result[key]["settings"]["index"]["creation_date"] = \
+                datetime.utcfromtimestamp(int(result[key]["settings"]["index"]["creation_date"]) // 1000)
+            result[key]["connected"] = False # TODO ADD VERSION CHECK
+        return result
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
