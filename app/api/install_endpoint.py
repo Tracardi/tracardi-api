@@ -89,7 +89,7 @@ async def install_plugins():
 
 @router.post("/install", tags=["installation"], include_in_schema=server.expose_gui_api, response_model=dict)
 async def install(credentials: Optional[Credentials]):
-    # try:
+    try:
 
         if server.reset_plugins is True:
             await remove_index('action')
@@ -125,6 +125,6 @@ async def install(credentials: Optional[Credentials]):
 
         return result
 
-    # except Exception as e:
-    #     logger.error(f"Error on install. Reason: {str(e)}.")
-    #     raise HTTPException(status_code=500, detail=str(e))
+    except Exception as e:
+        logger.error(f"Error on install. Reason: {str(e)}.")
+        raise HTTPException(status_code=500, detail=str(e))
