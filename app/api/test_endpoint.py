@@ -84,7 +84,8 @@ async def get_es_indices():
         for key in result:
             result[key]["settings"]["index"]["creation_date"] = \
                 datetime.utcfromtimestamp(int(result[key]["settings"]["index"]["creation_date"]) // 1000)
-            result[key]["connected"] = False # TODO ADD VERSION CHECK
+
+            result[key]["connected"] = bool(result[key]["aliases"])
         return result
 
     except Exception as e:

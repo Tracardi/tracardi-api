@@ -68,7 +68,7 @@ async def track_webhook(event_type: str, source_id: str, request: Request):
 
     tracker_payload = TrackerPayload(
         source=Entity(id=source_id),
-        session=Session(id="-1", metadata=SessionMetadata()),
+        session=None,
         metadata=EventPayloadMetadata(time=Time()),
         profile=None,
         context={},
