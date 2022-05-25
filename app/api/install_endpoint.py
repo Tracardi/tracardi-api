@@ -1,5 +1,4 @@
 import logging
-from time import sleep
 from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -8,9 +7,7 @@ from elasticsearch import ElasticsearchException
 
 from tracardi.config import tracardi
 from tracardi.domain.credentials import Credentials
-from tracardi.domain.mapping import Mapping
 from tracardi.domain.user import User
-from tracardi.exceptions.exception import StorageException
 from tracardi.exceptions.log_handler import log_handler
 from tracardi.service.setup.setup_indices import create_indices
 from tracardi.service.setup.setup_plugins import add_plugins
@@ -53,24 +50,9 @@ async def check_if_installation_complete():
                 "result": []
             }
 
-        try:
-            current_mappings = await storage.driver.mapping.load_all()
-            mappings = {mapping['index_name']: Mapping(**mapping) for mapping in current_mappings}
-        except StorageException:
-            mappings = {}
-
-        # Missing mapping
-
-        missing_mapping_setup = []
-
-        for name, index_setup in resources.resources.items():
-            if name not in mappings:
-                missing_mapping_setup.append(name)
-
         return {
             "missing": missing_indices,
             "admins": admins,
-            "missing_setup": missing_mapping_setup,
             "missing_template": missing_templates,
             "missing_alias": missing_aliases,
         }
