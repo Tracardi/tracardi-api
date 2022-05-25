@@ -1,4 +1,6 @@
 from fastapi import APIRouter, Depends
+
+from tracardi.service.storage.index import resources
 from tracardi.service.storage.redis_client import RedisClient
 from tracardi.service.storage.elastic_client import ElasticClient
 
@@ -79,14 +81,28 @@ async def get_es_indices():
     Returns list of indices in elasticsearch cluster. Accessible for roles: "admin"
     """
     try:
+
+        aliases = resources.list_aliases()
+
         es = ElasticClient.instance()
         result = await es.list_indices()
+        output = {}
         for key in result:
-            result[key]["settings"]["index"]["creation_date"] = \
-                datetime.utcfromtimestamp(int(result[key]["settings"]["index"]["creation_date"]) // 1000)
 
-            result[key]["connected"] = bool(result[key]["aliases"])
-        return result
+            if key[0] == '.':
+                continue
+
+            index_aliases = list(result[key]["aliases"].keys())
+
+            index = result[key]
+            index["settings"]["index"]["creation_date"] = \
+                datetime.utcfromtimestamp(int(result[key]["settings"]["index"]["creation_date"]) // 1000)
+            index["connected"] = bool(set(index_aliases).intersection(aliases))
+            index["head"] = len(index_aliases) != 1 or not index_aliases[0].endswith('.prev')
+
+            output[key] = index
+
+        return output
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
