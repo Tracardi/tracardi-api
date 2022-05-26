@@ -16,18 +16,20 @@ logger.addHandler(log_handler)
 
 async def update_api_instance():
     api_instance = ApiInstance()
+    instance = api_instance.get_record()
 
     try:
         if await storage.driver.api_instance.exists():
-            result = await StorageFor(api_instance.get_record()).index().save()
+
+            result = await StorageFor(instance).index().save()
             if result.saved == 1:
-                logger.info(f"HEARTBEAT. API instance id `{api_instance.get_record().id}` was UPDATED.")
+                logger.info(f"HEARTBEAT. API instance id `{instance.id}` was UPDATED.")
             return result
         else:
             logger.warning(f"API instance index does not exist. Instance will be updated next time")
 
     except StorageException as e:
-        logger.error(f"API instance `{api_instance.get_record().id}` was NOT UPDATED due to ERROR `{str(e)}`")
+        logger.error(f"API instance `{instance.id}` was NOT UPDATED due to ERROR `{str(e)}`")
         raise e
     finally:
         api_instance.reset()
