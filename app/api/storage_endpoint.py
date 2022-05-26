@@ -3,6 +3,7 @@ from fastapi import APIRouter, HTTPException, Depends
 from app.api.auth.permissions import Permissions
 from tracardi.event_server.utils.memory_cache import MemoryCache, CacheItem
 from app.config import server
+from tracardi.service.storage.driver import storage
 from tracardi.service.storage.factory import storage_manager
 
 router = APIRouter(
@@ -39,3 +40,18 @@ async def get_index_mapping(index: str):
         return mapping.get_field_names()
     except Exception as e:
         raise HTTPException(detail=str(e), status_code=500)
+
+
+@router.get("/storage/{source}/reindex/{destination}", tags=["storage"], include_in_schema=server.expose_gui_api)
+async def reindex_data(source: str, destination: str):
+    return await storage.driver.raw.reindex(source, destination, wait_for_completion=False)
+
+
+@router.get("/storage/task/{task_id}", tags=["storage"], include_in_schema=server.expose_gui_api)
+async def reindex_data(task_id: str):
+    return await storage.driver.raw.task_status(task_id)
+
+
+@router.delete("/storage/task/{task_id}", tags=["storage"], include_in_schema=server.expose_gui_api)
+async def reindex_data(task_id: str):
+    return await storage.driver.raw.delete_task(task_id)
