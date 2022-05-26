@@ -147,7 +147,7 @@ system_settings = [
     SystemSettings(
         **{
             "label": "INSTANCE_PREFIX",
-            "value": elastic.instance_prefix,
+            "value": tracardi.version.name,
             "desc": "Default: None. This setting defines a prefix for all tracardi indices."
         }
     ),
