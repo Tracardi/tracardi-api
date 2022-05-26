@@ -63,7 +63,7 @@ If you do not want to synchronize you profiles with remote system you can skip R
 Now pull and run Tracardi backend.
 
 ```
-docker run -p 8686:80 -e ELASTIC_HOST=http://<your-laptop-ip>:9200 -e USER_NAME=admin -e PASSWORD=admin tracardi/tracardi-api
+docker run -p 8686:80 -e ELASTIC_HOST=http://<your-laptop-ip>:9200 -e REDIS_HOST=redis://<your-laptop-ip>:6379 tracardi/tracardi-api
 ```
 
 Tracardi must connect to elastic. To do that you have to set ELASTIC_HOST variable to reference your laptop's IP. 
