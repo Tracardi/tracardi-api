@@ -1,7 +1,7 @@
 # Run local server
 
-PYTHONPATH=/home/risto/PycharmProjects/tracardi MAX_WORKERS=20 LOGGING_LEVEL=info POSTPONE_DESTINATION_SYNC=6 uvicorn app.main:application --reload --host 0.0.0.0 --port 8686 
-gunicorn -b 0.0.0.0:8001 -k uvicorn.workers.UvicornWorker app.main:application
+PYTHONPATH=/home/risto/PycharmProjects/tracardi LOGGING_LEVEL=info POSTPONE_DESTINATION_SYNC=6 uvicorn app.main:application --reload --host 0.0.0.0 --port 8686 --workers 25
+gunicorn -b 0.0.0.0:8686 -k uvicorn.workers.UvicornWorker app.main:application
 
 uvicorn app.main:application --reload --host 0.0.0.0 --port 8686 --ssl-keyfile ssl/key.pem --ssl-certfile ssl/cert.pem  --ssl-keyfile-password 12345
 gunicorn -b 0.0.0.0:443 --keyfile ssl/key.pem --certfile ssl/cert.pem -k uvicorn.workers.UvicornWorker app.main:application
@@ -62,6 +62,9 @@ docker run -p 8686:80 -e ELASTIC_HOST=http://192.168.1.103:9200 -e USER_NAME=adm
 # Generate certificate
 
 openssl req -newkey rsa:2048 -nodes -keyout key.pem -x509 -days 365 -out cert.pem
+
+# Meatbeat
+docker run docker.elastic.co/beats/metricbeat:7.13.4 setup -E setup.kibana.host=192.168.1.103:5601 -E output.elasticsearch.hosts=["192.168.1.103:9200"]
 
 # Common Name must be localhost
 
