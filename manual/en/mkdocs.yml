@@ -61,6 +61,7 @@ nav:
   - Installation:
       - installation/index.md
       - installation/best_practises.md
+      - installation/upgrades.md
       - Docker:
           - installation/docker/index.md
           - installation/docker/building_docker_image.md
