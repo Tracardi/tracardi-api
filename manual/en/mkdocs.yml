@@ -94,6 +94,7 @@ nav:
           - events/event_validation.md
           - events/synchronization.md
       - Profiles:
+          - profiles/index.md
           - profiles/profile_merging.md
           - profiles/profile_segmentation.md
 
@@ -105,11 +106,24 @@ nav:
                   - flow/actions/update_profile_action.md
                   - flow/actions/merge_profiles_action.md
                   - flow/actions/segment_profiles_action.md
+                  - flow/actions/new_profile_action.md
+                  - flow/actions/update_event_action.md
+                  - flow/actions/update_session_action.md
               - flow/actions/if_action.md
               - flow/actions/detect_client_agent_action.md
               - flow/actions/debug_payload_action.md
               - flow/actions/inject_action.md
               - flow/actions/event_scheduler_action.md
+              - flow/actions/get_prev_event_action.md
+              - flow/actions/get_prev_session_action.md
+              - flow/actions/new_event_action.md
+              - flow/actions/new_visit_action.md
+              - flow/actions/event_counter_action.md
+              - flow/actions/condition_set_action.md
+              - flow/actions/count_by_query_string_action.md
+              - flow/actions/reshape_payload_action.md
+              - flow/actions/assign_profile_id_action.md
+              - flow/actions/template_action.md
               - Stats:
                   - flow/actions/increment_action.md
                   - flow/actions/decrement_action.md
@@ -153,6 +167,11 @@ nav:
                       - flow/actions/mailchimp_transactional_action.md
                       - flow/actions/add_to_mailchimp_audience_action.md
                       - flow/actions/remove_from_mailchimp_audience_action.md
+                  - Sales force:
+                      - flow/actions/send_to_data_extension_action.md
+                  - Active campaign:
+                      - flow/actions/fetch_ac_contact_by_email_action.md
+                      - flow/actions/add_active_campaign_contact_action.md
 
               - Regex:
                   - flow/actions/regex/regex_validator_action.md
@@ -193,23 +212,24 @@ nav:
                   - flow/actions/rating_popup_action.md
                   - flow/actions/contact_popup_action.md
 
-              - flow/actions/new_event_action.md
-              - flow/actions/event_counter_action.md
-              - flow/actions/purchase_add_action.md
-              - flow/actions/add_consents_action.md
+              - Memory:
+                  - flow/actions/write_to_memory_action.md
+                  - flow/actions/read_from_memory_action.md
+
+              - Consents:
+                  - flow/actions/add_consents_action.md
+                  - flow/actions/require_consents_action.md
+
+              - Errors:
+                - flow/actions/log_message_action.md
+                - flow/actions/throw_error_action.md
+
               - flow/actions/calculator_action.md
-              - flow/actions/new_profile_action.md
-              - flow/actions/new_visit_action.md
-              - flow/actions/reshape_payload_action.md
               - flow/actions/random_element_action.md
-              - flow/actions/template_action.md
               - flow/actions/today_action.md
               - flow/actions/assign_condition_result_action.md
-              - flow/actions/condition_set_action.md
-              - flow/actions/count_by_query_string_action.md
               - flow/actions/reduce_array_action.md
-              - flow/actions/update_event_action.md
-              - flow/actions/update_session_action.md
+
       - Filtering:
           - running/filtering.md
       - Notations:

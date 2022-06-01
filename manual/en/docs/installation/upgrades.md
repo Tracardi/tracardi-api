@@ -4,7 +4,7 @@ Automated system update is available from version 0.7.0. Previous versions were 
 only an update of the code. As of version 0.7.0 the system keeps information about the indexes used. In addition, access
 to data is carried out using aliases, these are indicators for data, something reminiscent of symbolic links.
 
-# The update process
+## The update process
 
 When upgrading, Tracardi leaves the old version indexes unchanged and only marks them as the previous version (aliases
 to these indexes have the .prev suffix).
@@ -14,7 +14,7 @@ changed, the data pointer is switched from the old index to the new one. If the 
 using a script that rewrites the data between indexes and copies the data from the old fields to the new ones,
 respectively.
 
-# Prerequisites
+## Prerequisites
 
 However, it is important to only install dockers with a tagged version. The latest version may contain incorrect data,
 which may result in the loss of continuity of updates. As a result, it may be difficult to update the system.
