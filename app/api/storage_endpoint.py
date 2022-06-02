@@ -42,16 +42,11 @@ async def get_index_mapping(index: str):
         raise HTTPException(detail=str(e), status_code=500)
 
 
-@router.get("/storage/{source}/reindex/{destination}", tags=["storage"], include_in_schema=server.expose_gui_api)
-async def reindex_data(source: str, destination: str):
-    return await storage.driver.raw.reindex(source, destination, wait_for_completion=False)
-
-
 @router.get("/storage/task/{task_id}", tags=["storage"], include_in_schema=server.expose_gui_api)
-async def reindex_data(task_id: str):
+async def storage_task_status(task_id: str):
     return await storage.driver.raw.task_status(task_id)
 
 
-@router.delete("/storage/task/{task_id}", tags=["storage"], include_in_schema=server.expose_gui_api)
-async def reindex_data(task_id: str):
-    return await storage.driver.raw.delete_task(task_id)
+@router.get("/storage/reindex/{source}/{destination}", tags=["storage"], include_in_schema=server.expose_gui_api)
+async def reindex_data(source: str, destination: str, wait_for_completion: bool = True):
+    return await storage.driver.raw.reindex(source, destination, wait_for_completion)
