@@ -246,7 +246,7 @@ async def add_process_time_header(request: Request, call_next):
             if await storage.driver.log.exists():
                 if log_handler.has_logs():
                     # do not await
-                    storage.driver.raw.collection('log', log_handler.collection).save()
+                    asyncio.create_task(storage.driver.raw.collection('log', log_handler.collection).save())
                     log_handler.reset()
             else:
                 print("Log index still not created. Saving logs postponed.")
