@@ -41,7 +41,7 @@ async def check_if_installation_complete():
 
         index = resources.get_index('user')
 
-        if index.get_aliased_data_index() in existing_indices:
+        if index.get_read_index() in existing_indices:
             admins = await storage.driver.user.search_by_role('admin')
             admins = admins.dict()
         else:
@@ -57,7 +57,7 @@ async def check_if_installation_complete():
             "missing_alias": missing_aliases,
         }
 
-    except ElasticsearchException as e:
+    except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -71,7 +71,7 @@ async def install_plugins():
 
 @router.post("/install", tags=["installation"], include_in_schema=server.expose_gui_api, response_model=dict)
 async def install(credentials: Optional[Credentials]):
-    try:
+    # try:
 
         if server.reset_plugins is True:
             await remove_index('action')
@@ -107,6 +107,6 @@ async def install(credentials: Optional[Credentials]):
 
         return result
 
-    except Exception as e:
-        logger.error(f"Error on install. Reason: {str(e)}.")
-        raise HTTPException(status_code=500, detail=str(e))
+    # except Exception as e:
+    #     logger.error(f"Error on install. Reason: {str(e)}.")
+    #     raise HTTPException(status_code=500, detail=str(e))
