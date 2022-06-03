@@ -10,5 +10,5 @@ async def get_version():
     """
     Returns info about Tracardi API version
     """
-    return str(tracardi.version)
+    return tracardi.version.version
 
