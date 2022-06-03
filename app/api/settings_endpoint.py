@@ -146,6 +146,20 @@ system_settings = [
     ),
     SystemSettings(
         **{
+            "label": "ELASTIC_INDEX_SHARDS",
+            "value": elastic.shards,
+            "desc": "Default: 5. Number of shards per index."
+        }
+    ),
+    SystemSettings(
+        **{
+            "label": "ELASTIC_INDEX_REPLICAS",
+            "value": elastic.replicas,
+            "desc": "Default: 5. NUmber of replicas of index."
+        }
+    ),
+    SystemSettings(
+        **{
             "label": "INSTANCE_PREFIX",
             "value": tracardi.version.name,
             "desc": "Default: None. This setting defines a prefix for all tracardi indices."
