@@ -155,7 +155,7 @@ system_settings = [
         **{
             "label": "ELASTIC_INDEX_REPLICAS",
             "value": elastic.replicas,
-            "desc": "Default: 5. NUmber of replicas of index."
+            "desc": "Default: 5. Number of replicas of index."
         }
     ),
     SystemSettings(
