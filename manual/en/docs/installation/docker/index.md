@@ -38,6 +38,19 @@ IP.
     connecting to the docker itself as localhost means local in docker. Obviously elastic is not there, so Tracardi will
     never connect. Pass external ip for elastic. This may be your laptop IP if you are running Tracardi locally.
 
+### Connecting Tracardi to ElasticSearch via SSL
+
+If you have an elasticsearch instance and you would like to connect to it via HTTPS this is the command you may find useful. 
+
+```bash
+docker run -p 8686:80 -e ELASTIC_HOST=https://user:password@<your-laptop-ip>:9200 -e ELASTIC_VERIFY_CERTS=no -e REDIS_HOST=redis://<your-laptop-ip>:6379 tracardi/tracardi-api
+```
+
+!!! Warning "ELASTIC_VERIFY_CERTS set to No"
+
+    Notice that the above command does not verify SSL certificates. If you would like certificates to be validated set 
+    ELASTIC_VERIFY_CERTS to yes.
+
 ## Start Tracardi GUI
 
 Pull and run Tracardi Graphical User Interface.
@@ -56,17 +69,7 @@ docker run -p 8585:8585 tracardi/tracardi-docs
 
 ## Tracardi Graphical User Interface
 
-Visit http://127.0.0.1:8787 and login to Tracardi GUI.
-
-Default username is: `admin`
-Default password is: `admin`
-
-To change the default login and password change the following environment variables:
-
-* `USER_NAME` - Default: admin. Login to Tracardi API
-* `PASSWORD` - Default: admin. Password to Tracardi API
-
-See Tracardi configuration for details.
+Visit http://127.0.0.1:8787 and install Tracardi.
 
 ## System Documentation
 
