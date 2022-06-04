@@ -11,19 +11,15 @@ router = APIRouter(
 
 
 @router.delete("/indices/version/{codename}", tags=["index"], include_in_schema=server.expose_gui_api)
-async def delete_old_indices(codename: str, prev: bool = False):
+async def delete_old_indices(codename: str):
 
-    if codename == NAME and prev is False:
+    if codename == NAME:
         raise HTTPException(status_code=409, detail="Cannot delete currently connected indices.")
 
     try:
         es = ElasticClient.instance()
         indices = await es.list_aliases()
-        to_delete = [
-            alias for alias in indices if
-            f".{codename}.tracardi-" in alias
-            and alias.endswith(".prev" if prev is True else "")
-        ]
+        to_delete = [alias for alias in indices if f".{codename}.tracardi-" in alias]
 
         result = {}
         for alias in to_delete:
