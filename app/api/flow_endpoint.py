@@ -181,6 +181,7 @@ async def get_flow_details(id: str):
 
 @router.post("/flow/metadata", tags=["flow"], response_model=BulkInsertResult, include_in_schema=server.expose_gui_api)
 async def upsert_flow_details(flow_metadata: FlowMetaData):
+
     """
     Adds new flow metadata for flow with given id (str)
     """
@@ -188,8 +189,25 @@ async def upsert_flow_details(flow_metadata: FlowMetaData):
         entity = Entity(id=flow_metadata.id)
         flow_record = await StorageFor(entity).index("flow").load(FlowRecord)  # type: FlowRecord
         if flow_record is None:
+
+            # create new
+
             flow_record = FlowRecord(**flow_metadata.dict())
+            flow_record.draft = encrypt(Flow(
+                id = flow_metadata.id,
+                name= flow_metadata.name,
+                description= flow_metadata.description
+            ).dict())
+            flow_record.production = encrypt(Flow(
+                id=flow_metadata.id,
+                name=flow_metadata.name,
+                description=flow_metadata.description
+            ).dict())
+
         else:
+
+            # update
+
             draft_flow = flow_record.get_draft_workflow()
             draft_flow.name = flow_metadata.name
             flow_record.draft = encrypt(draft_flow.dict())

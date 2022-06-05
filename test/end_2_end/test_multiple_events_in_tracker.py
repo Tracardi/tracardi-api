@@ -13,7 +13,13 @@ from ..utils import Endpoint
 endpoint = Endpoint()
 
 
-def test_source_rule_and_flow():
+def test_should_count_multiple_page_views_from_one_api_call():
+
+    """
+    Makes one api call with 30 page-views. Creates Workflow with view increase.
+    Check if stats.views == 30.
+    """
+
     source_id = str(uuid4())
     profile_id = str(uuid4())
     flow_id = str(uuid4())
@@ -128,7 +134,6 @@ def test_source_rule_and_flow():
         assert response.status_code == 200
         result = response.json()
         profile_id = result['profile']['id']
-        assert endpoint.delete(f'/profile/{profile_id}').status_code in [200, 404]
 
         assert result['profile']['stats']['views'] == 30
 
@@ -143,4 +148,5 @@ def test_source_rule_and_flow():
         assert endpoint.delete(f'/rule/{rule_id}').status_code in [200, 404]
         assert endpoint.delete(f'/event-source/{source_id}').status_code in [200, 404]
         assert endpoint.delete(f'/session/{session_id}').status_code in [200, 404]
+        assert endpoint.delete(f'/profile/{profile_id}').status_code in [200, 404]
 

@@ -6,7 +6,7 @@ endpoint = Endpoint()
 
 
 def test_session_not_exists_profile_not_exists():
-    source_id =  str(uuid4())
+    source_id = str(uuid4())
     session_id = str(uuid4())
     profile_id = str(uuid4())
 
@@ -31,6 +31,12 @@ def test_session_not_exists_profile_not_exists():
             }
         })
         result = response.json()
+
+        if 'debugging' not in result:
+            raise ValueError(
+                'Could not perform test due to bad server configuration. No debugging allowed. '
+                'Start Tracardi wiht TRACK_DEBUG=yes.')
+
         assert result['debugging']['session']['saved'] == 1
         assert result['debugging']['events']['saved'] == 1
         assert result['debugging']['profile']['saved'] == 1

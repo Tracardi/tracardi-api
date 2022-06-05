@@ -36,6 +36,7 @@ def create_flow(id, name, desc):
             "General", "Test"
         ],
         "draft": "",
+        "production": "",
         "lock": False
     }
 
@@ -152,6 +153,15 @@ def test_should_update_flow_metadata():
         else:
             raise Exception("Could not read flow")
 
+        response = endpoint.get(f'/flow/draft/{id}')
+        assert response.status_code == 200
+        if response.status_code == 200:
+            result = response.json()
+            assert result['id'] == id
+            assert result['name'] == 'Test flow'
+        else:
+            raise Exception("Could not read flow")
+
         response = endpoint.post('/flow/metadata', data={
             "id": id,
             "name": "New name",
@@ -161,8 +171,10 @@ def test_should_update_flow_metadata():
                 "New"
             ]
         })
-        assert response.status_code == 200
+
         result = response.json()
+        print(result)
+        assert response.status_code == 200
         assert result == {'saved': 1, 'errors': [], 'ids': [id]}
 
         # flush data to elastic

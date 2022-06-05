@@ -5,6 +5,7 @@ from tracardi.domain.pii import PII
 from tracardi.domain.profile import Profile
 from tracardi.domain.profile_traits import ProfileTraits
 from tracardi.service.storage.driver import storage
+from tracardi.service.storage.factory import storage_manager
 
 
 def test_profile_merging():
@@ -46,6 +47,10 @@ def test_profile_merging():
         }))
 
         await storage.driver.profile.save_profile(profile, refresh_after_save=True)
+
+        await storage.driver.profile.refresh()
+
+        print(await storage_manager('profile').query({'size': 2000, 'query': {'term': {'pii.email': 'test@test.com'}}}))
 
         # -------------------------
         # TEST no override on data
@@ -127,6 +132,6 @@ def test_profile_merging():
         assert profile.traits.public['married'] is True
         assert profile.traits.public['list_of_values'] == [3, 4]
 
-    loop = asyncio.get_event_loop()
+    loop = asyncio.new_event_loop()
     loop.run_until_complete(async_main())
     loop.close()

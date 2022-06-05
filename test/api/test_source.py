@@ -30,6 +30,7 @@ def create_event_source(id, type, name="Test", config=None):
         name=name,
         timestamp="2022-01-07T16:18:09.278Z",
         enabled=True,
+        returns_profile=True,
         config=config
     )
 
