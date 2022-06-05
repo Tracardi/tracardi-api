@@ -36,14 +36,14 @@ def test_should_handle_multiple_sessions():
         endpoint.set_token(token1)
         endpoint.post("/logout")
         result = endpoint.get("/settings")
-        assert result.status_code == 403
+        assert result.status_code == 401
 
         endpoint.set_token(token2)
         result = endpoint.get("/settings")
         assert result.status_code == 200
         endpoint.post("/logout")
         result = endpoint.get("/settings")
-        assert result.status_code == 403
+        assert result.status_code == 401
 
     finally:
         endpoint.auth(user_email, user_pass)

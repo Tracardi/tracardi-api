@@ -56,10 +56,11 @@ class TokenDb:
 
         else:
             email = self._redis.client.get(f"AUTH-TOKEN-{token}")
-            result = await storage.driver.user.get_by_id(email)
+            if email:
+                result = await storage.driver.user.get_by_id(email)
 
-            if result:
-                return User(**result)
+                if result:
+                    return User(**result)
 
         return None
 
