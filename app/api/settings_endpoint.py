@@ -306,6 +306,14 @@ system_settings = [
                     "performance reasons, defaults to 180 seconds."
         }
     ),
+    SystemSettings(
+        **{
+            "label": "TOKENS_IN_REDIS",
+            "value": tracardi.tokens_in_redis,
+            "desc": "If set to 'yes', then user auth tokens are being cached on Redis. It allows multiple sessions for "
+                    "one user and increases performance of the API. Defaults to 'yes'."
+        }
+    )
 ]
 
 router = APIRouter(
