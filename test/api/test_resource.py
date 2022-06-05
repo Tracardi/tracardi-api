@@ -108,22 +108,6 @@ def test_source_toggle_on_off_ok():
         result = endpoint.get(f'/resource/{resource_id}').json()
         assert result['enabled'] is False
 
-        # Consent on
-
-        result = endpoint.get(f'/resource/{resource_id}/consent/on').json()
-        assert result == {'saved': 1, 'errors': [], 'ids': [resource_id]}
-
-        result = endpoint.get(f'/resource/{resource_id}').json()
-        assert result['consent'] is True
-
-        # Consent off
-
-        result = endpoint.get(f'/resource/{resource_id}/consent/off').json()
-        assert result == {'saved': 1, 'errors': [], 'ids': [resource_id]}
-
-        result = endpoint.get(f'/resource/{resource_id}').json()
-        assert (result['consent'] is False)
-
     finally:
         assert endpoint.delete(f'/resource/{resource_id}').status_code in [200, 404]
 
