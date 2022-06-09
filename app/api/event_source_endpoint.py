@@ -25,12 +25,12 @@ router = APIRouter(
 async def event_source_types():
     standard_inbound_sources = {
         "javascript": {
-            "name": "Javascript",
-            "tags": ["javascript", "inbound"]
+            "name": "mqtt",
+            "tags": ["mqtt", "inbound"]
         },
-        "api-call": {
-            "name": "Api call",
-            "tags": ["api-call", "inbound"]
+        "rest": {
+            "name": "Rest Api Call",
+            "tags": ["rest", "inbound"]
         },
     }
 
@@ -137,6 +137,7 @@ async def save_event_source(event_source: EventSource):
             result = await storage.driver.event_source.save(event_source)
             if result.is_nothing_saved():
                 raise OSError("Could not save event source.")
+            await storage.driver.event_source.refresh()
             return result
         else:
             raise ValueError("Unknown event source type {}. Available {}.".format(event_source.type, types))
