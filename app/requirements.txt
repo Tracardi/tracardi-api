@@ -7,7 +7,7 @@ aiofiles==0.8.0
 aioredis==2.0.0
 hiredis==2.0.0
 redis==4.0.2
-elasticsearch[async]
+elasticsearch[async]==7.10.1
 prodict==0.8.18
 lark==1.0.0
 
