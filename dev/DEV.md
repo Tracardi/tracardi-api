@@ -12,6 +12,7 @@ docker run -p 5601:5601 -m 4g -e ELASTICSEARCH_HOSTS=http://192.168.1.103:9200 d
 # Run local ElasticSearch
 docker run -p 9200:9200 -p 9300:9300 -m 8g -e "discovery.type=single-node" -v "/opt/esdata:/usr/share/elasticsearch/data" docker.elastic.co/elasticsearch/elasticsearch:8.2.2
 docker run -p 9200:9200 -p 9300:9300 -m 8g -e "discovery.type=single-node" -e ELASTIC_PASSWORD=elastic docker.elastic.co/elasticsearch/elasticsearch:8.2.2
+docker run -p 9200:9200 -p 9300:9300 -m 8g -e "discovery.type=single-node" docker.elastic.co/elasticsearch/elasticsearch:7.13.2
 
 # Run local Tracardi GUI
 docker run -p 8787:80 -e API_URL=//127.0.0.1:8686 -e TRACK_DEBUG="yes" tracardi/tracardi-gui
