@@ -25,6 +25,8 @@ def test_should_handle_multiple_sessions():
         token1 = endpoint.auth(user_email, user_pass)
         token2 = endpoint.auth(user_email, user_pass)
 
+        assert token1 != token2
+
         endpoint.set_token(token1)
         result = endpoint.get("/settings")
         assert result.status_code == 200
