@@ -63,6 +63,9 @@ class Authentication:
     async def get_user_by_token(self, token) -> Optional[User]:
         return await self.token2user.get(token)
 
+    async def refresh_token(self, token) -> None:
+        await self.token2user.refresh_token(token)
+
 
 def get_authentication():
     global _singleton
