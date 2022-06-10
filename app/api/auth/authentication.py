@@ -53,7 +53,7 @@ class Authentication:
         token = self._generate_token()
 
         # save token, match token with user in token2user
-        await self.token2user.set(email, token)
+        await self.token2user.set(token, user)
 
         return {"access_token": token, "token_type": "bearer", "roles": user.roles}
 

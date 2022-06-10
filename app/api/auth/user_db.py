@@ -1,13 +1,14 @@
+import json
 import logging
 from typing import Optional
 
+from app.api.auth.token_memory import TokenMemory
 from tracardi.config import tracardi
 from tracardi.domain.user import User
 from tracardi.exceptions.log_handler import log_handler
 from tracardi.service.storage import index
 from tracardi.service.storage.driver import storage
 from tracardi.service.storage.elastic_client import ElasticClient
-from tracardi.service.storage.redis_client import RedisClient
 
 logger = logging.getLogger(__name__)
 logger.setLevel(tracardi.logging_level)
@@ -22,7 +23,7 @@ class TokenDb:
             self._index_write = index.resources['user'].get_write_index()
 
         else:
-            self._redis = RedisClient()
+            self._token_memory = TokenMemory()
 
     async def delete(self, token: str):
         if tracardi.tokens_in_redis is False:
@@ -36,13 +37,11 @@ class TokenDb:
             await self._elastic.update_by_query(self._index_write, query)
 
         else:
-            self._redis.client.delete(f"AUTH-TOKEN-{token}")
+            del self._token_memory[token]
 
     async def get(self, token) -> Optional[User]:
 
         # todo add caching
-
-        logger.info(f"Reading user by token {token[:6]}...")
 
         if tracardi.tokens_in_redis is False:
             result = await storage.driver.user.search_by_token(token)
@@ -55,29 +54,27 @@ class TokenDb:
                 return User(**data)
 
         else:
-            email = self._redis.client.get(f"AUTH-TOKEN-{token}")
-            if email:
-                result = await storage.driver.user.get_by_id(email)
-
-                if result:
-                    return User(**result)
+            user = self._token_memory[token]
+            if user:
+                user = json.loads(user)
+                return User(**user)
 
         return None
 
-    async def set(self, email, token):
+    async def set(self, token, user: User):
         if tracardi.tokens_in_redis is False:
             record = {
                 "doc": {"token": token},
                 'doc_as_upsert': True
             }
-            await self._elastic.update(self._index_write, email, record)
+            await self._elastic.update(self._index_write, user.email, record)
             await self._elastic.refresh(self._index_write)
 
         else:
-            self._redis.client.set(f"AUTH-TOKEN-{token}", email, ex=15*60)
+            self._token_memory[token] = user.json()
 
     async def refresh_token(self, token) -> None:
-        self._redis.client.expire(f"AUTH-TOKEN-{token}", 15*60)
+        self._token_memory.refresh(token)
 
 
 token2user = TokenDb()
