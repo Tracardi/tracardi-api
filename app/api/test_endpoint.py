@@ -82,7 +82,7 @@ async def get_es_indices():
     """
     try:
 
-        aliases = resources.list_aliases()
+        resource_aliases = resources.list_aliases()
 
         es = ElasticClient.instance()
         result = await es.list_indices()
@@ -92,13 +92,13 @@ async def get_es_indices():
             if key[0] == '.':
                 continue
 
-            index_aliases = list(result[key]["aliases"].keys())
+            current_index_aliases = list(result[key]["aliases"].keys())
 
             index = result[key]
             index["settings"]["index"]["creation_date"] = \
                 datetime.utcfromtimestamp(int(result[key]["settings"]["index"]["creation_date"]) // 1000)
-            index["connected"] = bool(set(index_aliases).intersection(aliases))
-            index["head"] = len(index_aliases) != 1 or not index_aliases[0].endswith('.prev')
+            index["connected"] = bool(set(current_index_aliases).intersection(resource_aliases))
+            index["head"] = len(current_index_aliases) != 1 or not current_index_aliases[0].endswith('.prev')
 
             output[key] = index
 
