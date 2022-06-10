@@ -1,0 +1,53 @@
+from fastapi import APIRouter, Depends, HTTPException
+
+from app.api.auth.permissions import Permissions
+from app.config import server
+from tracardi.domain.migration_payload import MigrationPayload
+from tracardi.process_engine.migration.migration_manager import MigrationManager, MigrationNotFoundException
+from tracardi.config import elastic
+from typing import Optional
+
+
+router = APIRouter(
+    dependencies=[Depends(Permissions(roles=["admin", "developer"]))]
+)
+
+
+@router.post("/migration", tags=["migration"], include_in_schema=server.expose_gui_api)
+async def run_migration(migration: MigrationPayload):
+    try:
+        manager = MigrationManager(
+            from_version=migration.from_version,
+            to_version=migration.to_version,
+            from_prefix=migration.from_prefix,
+            to_prefix=migration.to_prefix
+        )
+        await manager.start_migration(
+            ids=migration.ids,
+            elastic_host=elastic.host if isinstance(elastic.host, str) else elastic.host[0]
+        )
+
+    except MigrationNotFoundException as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/migration/{from_version}/to/{to_version}", tags=["migration"], include_in_schema=server.expose_gui_api)
+async def get_migration_schemas(from_version: str, to_version: str, from_prefix: Optional[str] = None,
+                                to_prefix: Optional[str] = None):
+    try:
+        manager = MigrationManager(
+            from_version=from_version,
+            to_version=to_version,
+            from_prefix=from_prefix,
+            to_prefix=to_prefix
+        )
+        return manager.get_schemas()
+
+    except MigrationNotFoundException as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
