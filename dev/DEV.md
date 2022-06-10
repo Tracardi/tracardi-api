@@ -10,8 +10,8 @@ gunicorn -b 0.0.0.0:443 --keyfile ssl/key.pem --certfile ssl/cert.pem -k uvicorn
 docker run -p 5601:5601 -m 4g -e ELASTICSEARCH_HOSTS=http://192.168.1.103:9200 docker.elastic.co/kibana/kibana:7.13.2
 
 # Run local ElasticSearch
-docker run -p 9200:9200 -p 9300:9300 -m 8g -e "discovery.type=single-node" -v "/opt/esdata:/usr/share/elasticsearch/data" docker.elastic.co/elasticsearch/elasticsearch:7.13.2
-docker run -p 9200:9200 -p 9300:9300 -m 8g -e "discovery.type=single-node" docker.elastic.co/elasticsearch/elasticsearch:7.13.2
+docker run -p 9200:9200 -p 9300:9300 -m 8g -e "discovery.type=single-node" -v "/opt/esdata:/usr/share/elasticsearch/data" docker.elastic.co/elasticsearch/elasticsearch:8.2.2
+docker run -p 9200:9200 -p 9300:9300 -m 8g -e "discovery.type=single-node" -e ELASTIC_PASSWORD=elastic docker.elastic.co/elasticsearch/elasticsearch:8.2.2
 
 # Run local Tracardi GUI
 docker run -p 8787:80 -e API_URL=//127.0.0.1:8686 -e TRACK_DEBUG="yes" tracardi/tracardi-gui
@@ -23,7 +23,8 @@ docker run -p 9200:9200 -p 9600:9600 -e "discovery.type=single-node" opensearchp
 docker run -p 9200:9200 -p 9600:9600 -e "discovery.type=single-node" amazon/opendistro-for-elasticsearch:latest
 
 # Run local API
-docker run -p 8686:80 -e ELASTIC_HOST=http://192.168.1.103:9200 -e RESET_PLUGINS=yes -e MAX_WORKERS=3 -e LOGGING_LEVEL=info tracardi/tracardi-api
+docker run -p 8686:80 -e ELASTIC_HOST=https://elastic:elastic@192.168.1.101:9200 -e ELASTIC_VERIFY_CERTS=no -e  -ELASTIC_SCHEME=https -e RESET_PLUGINS=yes -e MAX_WORKERS=3 -e LOGGING_LEVEL=info tracardi/tracardi-api:0.7.0
+
 
 # Run local redis
 docker run -p 6379:6379 redis

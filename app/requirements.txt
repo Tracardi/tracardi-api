@@ -2,7 +2,7 @@ pip>=21.2.4
 strawberry-graphql[fastapi]
 fastapi>=0.78.0
 uvicorn[standard]>=0.17.5
-pydantic>=1.8.2
+pydantic>=1.9.1
 aiofiles==0.8.0
 aioredis==2.0.0
 hiredis==2.0.0
