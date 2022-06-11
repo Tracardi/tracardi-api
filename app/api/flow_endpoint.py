@@ -37,7 +37,7 @@ async def flow_refresh():
 
 
 @router.post("/flow/draft", tags=["flow"], response_model=BulkInsertResult, include_in_schema=server.expose_gui_api)
-async def upsert_flow_draft(draft: Flow):
+async def upsert_flow_draft(draft: Flow, rearrange_nodes: Optional[bool] = False):
     """
     Creates draft of workflow. If there is production version of the workflow it stays intact.
     """
@@ -47,6 +47,9 @@ async def upsert_flow_draft(draft: Flow):
 
         if draft.flowGraph is not None:
             draft.flowGraph.shorten_edge_ids()
+
+        if rearrange_nodes is True:
+            draft.arrange_nodes()
 
         # Check if origin flow exists
 
@@ -396,14 +399,3 @@ async def delete_flow(id: str, response: Response):
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
-
-@router.post("/rearrange/flow/{id}", tags=["flow"], include_in_schema=server.expose_gui_api)
-async def rearrange_flow(id: str):
-    entity = Entity(id=id)
-    flow_record = await StorageFor(entity).index("flow").load(FlowRecord)
-    flow = flow_record.get_production_workflow()
-    flow.arrange_nodes()
-    flow_record.production = encrypt(flow.dict())
-    return await StorageFor(flow_record).index().save()
-
