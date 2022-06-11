@@ -396,3 +396,14 @@ async def delete_flow(id: str, response: Response):
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/rearrange/flow/{id}", tags=["flow"], include_in_schema=server.expose_gui_api)
+async def rearrange_flow(id: str):
+    entity = Entity(id=id)
+    flow_record = await StorageFor(entity).index("flow").load(FlowRecord)
+    flow = flow_record.get_production_workflow()
+    flow.arrange_nodes()
+    flow_record.production = encrypt(flow.dict())
+    return await StorageFor(flow_record).index().save()
+
