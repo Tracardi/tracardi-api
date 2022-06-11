@@ -1,4 +1,4 @@
-from tracardi.domain.event_payload_validator import EventPayloadValidator
+from tracardi.domain.event_payload_validator import EventTypeManager, ValidationSchema
 from tracardi.service.event_validator import validate
 from tracardi.service.notation.dot_accessor import DotAccessor
 from tracardi.exceptions.exception import EventValidationException
@@ -6,11 +6,10 @@ from tracardi.exceptions.exception import EventValidationException
 
 def test_should_read_the_whole_object():
     dot = DotAccessor(payload={"test": 1})
-    validator = EventPayloadValidator(
-        validation={"payload@...": {"type": "object"}},
+    validator = EventTypeManager(
+        validation=ValidationSchema(json_schema={"payload@...": {"type": "object"}}, enabled=True),
         event_type="page-view",
-        name="test",
-        enabled=True
+        name="test"
     )
 
     # todo this validation should pass
@@ -20,11 +19,10 @@ def test_should_read_the_whole_object():
 
 def test_should_read_the_part_of_object():
     dot = DotAccessor(payload={"test": {"a": 1}})
-    validator = EventPayloadValidator(
-        validation={"payload@test": {"type": "object"}},
+    validator = EventTypeManager(
+        validation=ValidationSchema(json_schema={"payload@test": {"type": "object"}}, enabled=True),
         event_type="page-view",
         name="test",
-        enabled=True
     )
 
     try:
@@ -35,11 +33,10 @@ def test_should_read_the_part_of_object():
 
 def test_should_differentiate_types():
     dot = DotAccessor(payload={"list": ["a", "b", "c"]})
-    validator = EventPayloadValidator(
-        validation={"payload@list": {"type": "array"}},
+    validator = EventTypeManager(
+        validation=ValidationSchema(json_schema={"payload@list": {"type": "array"}}, enabled=True),
         event_type="page-view",
-        name="test",
-        enabled=True
+        name="test"
     )
 
     try:
@@ -57,15 +54,15 @@ def test_should_differentiate_types():
 
 def test_should_not_pass_due_to_invalid_schema():
     dot = DotAccessor(payload={"list": ["a", "b", "c"]})
-    validator = EventPayloadValidator(
-        validation={
+    validator = EventTypeManager(
+        validation=ValidationSchema(json_schema={
             "email": {
                 "type": "string"
             }
-        },
+        }, enabled=True),
         event_type="page-view",
         name="test",
-        enabled=True
+
     )
 
     try:

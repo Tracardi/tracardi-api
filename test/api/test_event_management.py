@@ -13,18 +13,20 @@ def test_should_post_get_and_delete_validation_schema():
             "enabled": True,
             "tags": ["tag1", "tag2", "tag3"],
             "validation": {
-                "event@...": {
-                    "type": "object"
+                "json_schema": {
+                    "event@...": {
+                        "type": "object"
+                    }
                 }
             }
         }
 
-        result = endpoint.post("/event/validation-schema", data)
+        result = endpoint.post("/event-type/management", data)
         result = result.json()
 
         assert "added" in result
 
-        result = endpoint.get("/event/validation-schema/test-type")
+        result = endpoint.get("/event-type/management/test-type")
 
         assert result.status_code == 200
 
@@ -32,16 +34,15 @@ def test_should_post_get_and_delete_validation_schema():
         assert result["event_type"] == "test-type"
 
     finally:
-        result = endpoint.delete("/event/validation-schema/test-type")
+        result = endpoint.delete("/event-type/management/test-type")
         result = result.json()
 
         assert result["deleted"] == 1
 
 
 def test_get_validation_schemas():
-    endpoint.get("/event/validation-schemas")
+    endpoint.get("/event-type/management")
 
 
 def test_get_validation_schemas_by_tag():
-    endpoint.get("/event/validation_schemas/by_tag")
-
+    endpoint.get("/event-type/management/by_tag")
