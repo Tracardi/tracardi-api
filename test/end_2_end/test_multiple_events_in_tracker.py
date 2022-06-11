@@ -42,7 +42,7 @@ def test_should_count_multiple_page_views_from_one_api_call():
         assert endpoint.get('/flows/refresh').status_code == 200
 
         # Create resource
-        assert create_event_source(source_id, type='javascript', name="End2End test").status_code == 200
+        assert create_event_source(source_id, type='rest', name="End2End test").status_code == 200
         assert endpoint.get('/event-sources/refresh').status_code == 200
 
         response = endpoint.post('/rule', data={

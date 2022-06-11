@@ -18,7 +18,7 @@ def test_session_exists_profile_exists():
 
         assert get_session(session_id).status_code == 200
         assert get_profile(profile_id).status_code == 200
-        assert create_event_source(source_id, 'javascript').status_code == 200
+        assert create_event_source(source_id, 'rest').status_code == 200
 
         response = endpoint.post("/track", data={
             "source": {

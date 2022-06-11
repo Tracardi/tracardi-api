@@ -11,7 +11,7 @@ def test_track_payload():
     session_id = str(uuid4())
 
     try:
-        response = create_event_source(source_id, "javascript")
+        response = create_event_source(source_id, "rest")
         assert response.status_code == 200
 
         payload = {

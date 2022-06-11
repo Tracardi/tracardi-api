@@ -21,7 +21,7 @@ async def refresh_schema():
     Refreshes event validation schema index
     """
     try:
-        return await storage.driver.validation_schema.refresh()
+        return await storage.driver.event_management.refresh()
     except ElasticsearchException as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -33,8 +33,8 @@ async def add_schema(schema: EventPayloadValidator):
     Creates new event validation schema in database
     """
     try:
-        result = await storage.driver.validation_schema.add_schema(schema)
-        await storage.driver.validation_schema.refresh()
+        result = await storage.driver.event_management.add_schema(schema)
+        await storage.driver.event_management.refresh()
     except ElasticsearchException as e:
         raise HTTPException(status_code=500, detail=str(e))
     return {"added": result.saved}
@@ -47,7 +47,7 @@ async def get_schema(event_type: str):
     Returns event validation schema for given event type
     """
     try:
-        record = await storage.driver.validation_schema.get_schema(event_type)
+        record = await storage.driver.event_management.get_schema(event_type)
         if record is None:
             raise HTTPException(status_code=404, detail=f"Validation schema for {event_type} not found.")
         return EventPayloadValidator.decode(EventPayloadValidatorRecord(**record))
@@ -62,8 +62,8 @@ async def del_schema(event_type: str):
     Deletes event validation schema for given event type
     """
     try:
-        result = await storage.driver.validation_schema.del_schema(event_type)
-        await storage.driver.validation_schema.refresh()
+        result = await storage.driver.event_management.del_schema(event_type)
+        await storage.driver.event_management.refresh()
     except ElasticsearchException as e:
         raise HTTPException(status_code=500, detail=str(e))
     return {"deleted": 1 if result is not None and result["result"] == "deleted" else 0}
@@ -76,7 +76,7 @@ async def list_schemas(start: Optional[int] = 0, limit: Optional[int] = 10):
     Lists event validation schemas according to given start (int) and limit (int) parameters
     """
     try:
-        result = await storage.driver.validation_schema.load_schemas(start, limit)
+        result = await storage.driver.event_management.load_schemas(start, limit)
     except ElasticsearchException as e:
         raise HTTPException(status_code=500, detail=str(e))
     return list(result)
@@ -89,7 +89,7 @@ async def list_schemas_by_tag(query: str = None, start: Optional[int] = 0, limit
     Lists event validation schemas by tag, according to given start (int), limit (int) and query (str)
     """
     try:
-        result = await storage.driver.validation_schema.load_schemas(start, limit)
+        result = await storage.driver.event_management.load_schemas(start, limit)
         return group_records(result, query, group_by='tags', search_by='name', sort_by='name')
     except ElasticsearchException as e:
         raise HTTPException(status_code=500, detail=str(e))

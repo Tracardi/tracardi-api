@@ -28,7 +28,7 @@ def test_source_rule_and_flow():
         assert endpoint.delete(f'/flow/{flow_id}').status_code in [200, 404]
 
         # Create resource
-        assert create_event_source(source_id, type='javascript', name="End2End test").status_code == 200
+        assert create_event_source(source_id, type='rest', name="End2End test").status_code == 200
         assert endpoint.get('/event-sources/refresh').status_code == 200
 
         response = endpoint.post('/rule', data={

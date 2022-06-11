@@ -28,7 +28,7 @@ def test_source_rule_and_flow():
 
     try:
         # Create resource
-        assert create_event_source(source_id, type='javascript', name="End2End Test").status_code == 200
+        assert create_event_source(source_id, type='rest', name="End2End Test").status_code == 200
         assert endpoint.get('/event-sources/refresh').status_code == 200
 
         response = endpoint.post('/rule', data={
