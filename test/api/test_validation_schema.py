@@ -4,7 +4,7 @@ from fastapi import HTTPException
 endpoint = Endpoint()
 
 
-def test_should_post__get_and_delete_validation_schema():
+def test_should_post_get_and_delete_validation_schema():
     try:
         data = {
             "event_type": "test-type",
