@@ -23,20 +23,23 @@ router = APIRouter(
 )
 
 
-@router.get("/flow/action/plugin/{id}",
-            tags=["flow", "action"],
-            response_model=FlowActionPlugin,
-            include_in_schema=server.expose_gui_api)
+@router.get("/flow/action/plugin/{id}", tags=["flow", "action"],
+            response_model=FlowActionPlugin, include_in_schema=server.expose_gui_api)
 async def get_plugin(id: str):
     """
     Returns FlowActionPlugin object.
     """
+    error_status = 500
     try:
         action = Entity(id=id)
         record = await StorageFor(action).index("action").load(FlowActionPluginRecord)  # type: FlowActionPluginRecord
+        print(record)
+        if record is None:
+            error_status = 404
+            raise ValueError(f"Missing plugin id {id}")
         return record.decode()
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=error_status, detail=str(e))
 
 
 @router.get("/flow/action/plugin/{id}/hide/{state}", tags=["flow", "action"],
@@ -106,20 +109,6 @@ async def edit_plugin_name(id: str, name: str):
         action.plugin.metadata.name = name
         return await StorageFor(FlowActionPluginRecord.encode(action)).index().save()
 
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-
-@router.get("/flow/action/plugin/{id}", tags=["flow", "action"],
-            response_model=FlowActionPlugin, include_in_schema=server.expose_gui_api)
-async def get_plugin(id: str):
-    """
-    Returns FlowActionPlugin object.
-    """
-    try:
-        action = Entity(id=id)
-        record = await StorageFor(action).index("action").load(FlowActionPluginRecord)  # type: FlowActionPluginRecord
-        return record.decode()
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
