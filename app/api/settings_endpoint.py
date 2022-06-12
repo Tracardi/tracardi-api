@@ -56,14 +56,6 @@ system_settings = [
     ),
     SystemSettings(
         **{
-            "label": "RESET_PLUGINS",
-            "value": server.reset_plugins,
-            "desc": "Reset plugins data in ElasticSearch database, defaults to False. "
-                    "Plug-ins are recreated with every Tracardi restart."
-        }
-    ),
-    SystemSettings(
-        **{
             "label": "TRACK_DEBUG",
             "value": tracardi.track_debug,
             "desc": "Track debug or not, defaults to False."
