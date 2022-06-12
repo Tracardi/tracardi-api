@@ -57,7 +57,9 @@ class TokenDb:
             user = self._token_memory[token]
             if user:
                 user = json.loads(user)
-                return User(**user)
+                user = User(**user)
+                user.token = token
+                return user
 
         return None
 

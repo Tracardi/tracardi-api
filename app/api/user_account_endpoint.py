@@ -1,13 +1,15 @@
 from fastapi import APIRouter, Depends, HTTPException
+
+from app.api.auth.user_db import token2user
 from app.config import server
 from pydantic import ValidationError
 from app.api.user_endpoint import UserPayload, UserSoftEditPayload
 
 from elasticsearch import ElasticsearchException
 
+from app.service.user_manager import update_user
 from tracardi.config import tracardi
-from .auth.permissions import Permissions
-from ..service.user_manager import update_user
+from app.api.auth.permissions import Permissions
 
 router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin", "marketer", "developer"]))]
@@ -25,14 +27,23 @@ async def get_user_account(user=Depends(Permissions(["admin", "developer", "mark
 @router.post("/user-account", tags=["user"], include_in_schema=server.expose_gui_api, response_model=dict)
 async def edit_user_account(payload: UserSoftEditPayload,
                             user=Depends(Permissions(["admin", "developer", "marketer"]))):
+
+    """
+    Edits currently logged user.
+    """
+
     try:
 
-        saved = await update_user(user.id,
-                                  UserPayload(**payload.dict(),
-                                              roles=user.roles,
-                                              disabled=user.disabled,
-                                              email=user.email)
-                                  )
+        saved, new_user = await update_user(
+            user.id,
+            UserPayload(**payload.dict(),
+                        roles=user.roles,
+                        disabled=user.disabled,
+                        email=user.email)
+        )
+
+        if tracardi.tokens_in_redis:
+            await token2user.set(user.token, new_user)
 
         return {"inserted": saved}
     except LookupError as e:
