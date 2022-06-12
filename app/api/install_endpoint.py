@@ -41,7 +41,7 @@ async def check_if_installation_complete():
         # Missing admin
 
         index = resources.get_index('user')
-        if index.get_read_index() in existing_aliases:
+        if index.get_index_alias() in existing_aliases:
             admins = await storage.driver.user.search_by_role('admin')
             admins = admins.dict()
         else:

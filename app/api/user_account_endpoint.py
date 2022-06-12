@@ -5,6 +5,7 @@ from app.api.user_endpoint import UserPayload, UserSoftEditPayload
 
 from elasticsearch import ElasticsearchException
 
+from tracardi.config import tracardi
 from .auth.permissions import Permissions
 from ..service.user_manager import update_user
 
@@ -25,12 +26,14 @@ async def get_user_account(user=Depends(Permissions(["admin", "developer", "mark
 async def edit_user_account(payload: UserSoftEditPayload,
                             user=Depends(Permissions(["admin", "developer", "marketer"]))):
     try:
+
         saved = await update_user(user.id,
                                   UserPayload(**payload.dict(),
                                               roles=user.roles,
                                               disabled=user.disabled,
                                               email=user.email)
                                   )
+
         return {"inserted": saved}
     except LookupError as e:
         raise HTTPException(status_code=404, detail=str(e))
