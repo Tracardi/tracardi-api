@@ -248,3 +248,29 @@ def test_flow_code_api():
 
     finally:
         assert endpoint.delete(f'/flow/{id}').status_code in [200, 404]
+
+
+def test_should_save_draft_metadata():
+    try:
+        flow_id = str(uuid4())
+        response = create_flow(flow_id, "Test flow", "Opis")
+        assert response.status_code == 200
+
+        payload = {
+            "id": flow_id,
+            "name": "string",
+            "description": "string",
+            "enabled": True,
+            "projects": [
+                "General"
+            ]
+        }
+        assert endpoint.post(f'/flow/draft/metadata', data=payload).status_code == 200
+        assert endpoint.get(f'/flows/refresh').status_code == 200
+
+        response = endpoint.get(f'/flow/draft/{flow_id}')
+        assert response.status_code == 200
+        result = response.json()
+        assert result['name'] == payload['name']
+    finally:
+        assert endpoint.delete(f'/flow/{flow_id}').status_code in [200, 404]

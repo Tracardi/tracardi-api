@@ -248,7 +248,7 @@ async def upsert_flow_details(flow_metadata: FlowMetaData):
             draft_workflow.enabled = flow_metadata.enabled
             draft_workflow.projects = flow_metadata.projects
 
-            flow_record.production = encrypt(draft_workflow.dict())
+            flow_record.draft = encrypt(draft_workflow.dict())
 
         return await StorageFor(flow_record).index().save()
 
