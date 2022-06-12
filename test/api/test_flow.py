@@ -173,7 +173,6 @@ def test_should_update_flow_metadata():
         })
 
         result = response.json()
-        print(result)
         assert response.status_code == 200
         assert result == {'saved': 1, 'errors': [], 'ids': [id]}
 
