@@ -140,7 +140,7 @@ async def save_import_config(import_configuration: dict):
             status_code=422,
             content=jsonable_encoder(convert_errors(e))
         )
-    except StorageException as e:
+    except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 
