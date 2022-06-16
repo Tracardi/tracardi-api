@@ -5,6 +5,7 @@ from tracardi.event_server.utils.memory_cache import MemoryCache, CacheItem
 from app.config import server
 from tracardi.service.storage.driver import storage
 from tracardi.service.storage.factory import storage_manager
+from tracardi.service.storage.elastic_client import ElasticClient
 
 router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin"]))]
@@ -50,3 +51,13 @@ async def storage_task_status(task_id: str):
 @router.get("/storage/reindex/{source}/{destination}", tags=["storage"], include_in_schema=server.expose_gui_api)
 async def reindex_data(source: str, destination: str, wait_for_completion: bool = True):
     return await storage.driver.raw.reindex(source, destination, wait_for_completion)
+
+
+@router.delete("/storage/index/{index_name}", tags=["storage"], include_in_schema=server.expose_gui_api)
+async def delete_index(index_name: str):
+    try:
+        es = ElasticClient.instance()
+        return await es.remove_index(index_name)
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
