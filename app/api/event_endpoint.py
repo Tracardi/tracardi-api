@@ -16,10 +16,9 @@ from .auth.permissions import Permissions
 from .domain.schedule import ScheduleData
 from ..config import server
 from elasticsearch.exceptions import ElasticsearchException
-from tracardi.service.storage.elastic_storage import ElasticFiledSort
 
 router = APIRouter(
-    dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer"]))]
+    dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer", "data_admin"]))]
 )
 
 

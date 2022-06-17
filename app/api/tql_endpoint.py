@@ -7,7 +7,7 @@ from app.config import server
 from tracardi.process_engine.tql.condition import Condition
 
 router = APIRouter(
-    dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer"]))]
+    dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer", "data_admin"]))]
 )
 
 

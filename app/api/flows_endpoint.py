@@ -1,4 +1,3 @@
-from collections import defaultdict
 from fastapi import APIRouter
 from fastapi import HTTPException, Depends
 from tracardi.service.storage.driver import storage

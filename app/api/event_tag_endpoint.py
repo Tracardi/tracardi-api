@@ -7,7 +7,7 @@ from tracardi.exceptions.exception import StorageException
 from .auth.permissions import Permissions
 
 router = APIRouter(
-    dependencies=[Depends(Permissions(roles=["admin", "developer"]))]
+    dependencies=[Depends(Permissions(roles=["admin", "developer", "data_admin"]))]
 )
 
 

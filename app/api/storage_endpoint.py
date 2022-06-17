@@ -7,7 +7,7 @@ from tracardi.service.storage.driver import storage
 from tracardi.service.storage.factory import storage_manager
 
 router = APIRouter(
-    dependencies=[Depends(Permissions(roles=["admin"]))]
+    dependencies=[Depends(Permissions(roles=["admin", "data_admin"]))]
 )
 
 memory_cache = MemoryCache()

@@ -13,7 +13,7 @@ from fastapi.encoders import jsonable_encoder
 from tracardi.service.module_loader import import_package, load_callable
 
 router = APIRouter(
-    dependencies=[Depends(Permissions(roles=["admin", "developer"]))]
+    dependencies=[Depends(Permissions(roles=["admin", "developer", "data_admin"]))]
 )
 
 

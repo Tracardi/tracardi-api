@@ -15,7 +15,7 @@ from ..config import server
 from ..service.grouping import group_records
 
 router = APIRouter(
-    dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer"]))]
+    dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer", "data_admin"]))]
 )
 
 
