@@ -10,12 +10,14 @@ router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin", "data_admin"]))]
 )
 
+open_router = APIRouter()
+
 
 @router.get("/instances/page/{page}", tags=["api-instance"], include_in_schema=server.expose_gui_api)
 @router.get("/instances", tags=["api-instance"], include_in_schema=server.expose_gui_api)
 async def all_api_instances(page: Optional[int] = None):
     """
-    Returns list of all Tracardi API instances. Accessible by roles: "admin"
+    Returns list of all Tracardi API instances. Accessible by roles: "admin", "data_admin"
     """
     try:
         if page is None:
@@ -42,7 +44,6 @@ async def remove_stale_api_instances():
     pass
 
 
-@router.get("/instances/count", tags=["api-instance"], include_in_schema=server.expose_gui_api)
+@open_router.get("/instances/count", tags=["api-instance"], include_in_schema=server.expose_gui_api)
 async def count_api_instances():
     return await storage.driver.api_instance.count()
-
