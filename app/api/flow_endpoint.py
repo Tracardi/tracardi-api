@@ -267,7 +267,7 @@ async def update_flow_lock(id: str, lock: str):
         if flow_record is None:
             raise ValueError("Flow `{}` does not exist.".format(id))
 
-        flow_record.lock = True if lock.lower() == 'yes' else False
+        flow_record.set_lock(True if lock.lower() == 'yes' else False)
         return await StorageFor(flow_record).index().save()
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -284,7 +284,7 @@ async def update_flow_lock(id: str, lock: str):
         if flow_record is None:
             raise ValueError("Flow `{}` does not exist.".format(id))
 
-        flow_record.enabled = True if lock.lower() == 'yes' else False
+        flow_record.set_enabled(True if lock.lower() == 'yes' else False)
         return await StorageFor(flow_record).index().save()
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
