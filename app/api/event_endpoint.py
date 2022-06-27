@@ -16,10 +16,9 @@ from .auth.permissions import Permissions
 from .domain.schedule import ScheduleData
 from ..config import server
 from elasticsearch.exceptions import ElasticsearchException
-from tracardi.service.storage.elastic_storage import ElasticFiledSort
 
 router = APIRouter(
-    dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer"]))]
+    dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer", "data_admin"]))]
 )
 
 
@@ -169,7 +168,9 @@ async def event_types():
     return await storage.driver.event.load_events_heatmap()
 
 
-@router.get("/event/{id}", tags=["event"], include_in_schema=server.expose_gui_api)
+@router.get("/event/{id}",
+            dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer"]))],
+            tags=["event"], include_in_schema=server.expose_gui_api)
 async def get_event(id: str):
     """
     Returns event with given ID
@@ -189,7 +190,9 @@ async def get_event(id: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.delete("/event/{id}", tags=["event"], include_in_schema=server.expose_gui_api)
+@router.delete("/event/{id}", tags=["event"],
+               dependencies=[Depends(Permissions(roles=["admin", "developer"]))],
+               include_in_schema=server.expose_gui_api)
 async def delete_event(id: str):
     """
     Deletes event with given ID
