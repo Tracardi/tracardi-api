@@ -2,7 +2,6 @@ from uuid import uuid4
 
 from tracardi.process_engine.action.v1.flow.start.start_action import StartAction
 
-from tracardi.process_engine.action.v1.debug_payload_action import DebugPayloadAction
 from tracardi.domain.flow import Flow
 from tracardi.process_engine.action.v1.end_action import EndAction
 from tracardi.service.wf.service.builders import action
@@ -227,17 +226,10 @@ def test_flow_code_api():
 
         # Add event
 
-        debug = action(DebugPayloadAction, {
-            "event": {
-                "type": 'page-view',
-            }
-        })
-
         start = action(StartAction)
         end = action(EndAction)
 
         flow = Flow.build("Test wf as a code", id=id)
-        flow += debug('event') >> start('payload')
         flow += start('payload') >> end('payload')
 
         response = endpoint.post('/flow/draft', data=flow.dict())

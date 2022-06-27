@@ -111,7 +111,6 @@ nav:
                   - flow/actions/update_session_action.md
               - flow/actions/if_action.md
               - flow/actions/detect_client_agent_action.md
-              - flow/actions/debug_payload_action.md
               - flow/actions/inject_action.md
               - flow/actions/event_scheduler_action.md
               - flow/actions/get_prev_event_action.md
