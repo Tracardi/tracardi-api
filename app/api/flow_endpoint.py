@@ -36,6 +36,26 @@ async def flow_refresh():
     return await storage.driver.flow.refresh()
 
 
+@router.post("/flow/draft/nodes/rearrange", tags=["flow"], response_model=dict, include_in_schema=server.expose_gui_api)
+async def upsert_flow_draft(draft: Flow):
+    """
+    Rearranges the send workflow nodes.
+    """
+    try:
+
+        # Frontend edge-id is long. Save space and md5 it.
+
+        if draft.flowGraph is not None:
+            draft.flowGraph.shorten_edge_ids()
+
+        draft.arrange_nodes()
+
+        return draft
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 @router.post("/flow/draft", tags=["flow"], response_model=BulkInsertResult, include_in_schema=server.expose_gui_api)
 async def upsert_flow_draft(draft: Flow, rearrange_nodes: Optional[bool] = False):
     """
