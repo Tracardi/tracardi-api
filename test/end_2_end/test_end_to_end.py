@@ -77,6 +77,12 @@ def test_source_rule_and_flow():
         flow += start('payload') >> increase_views('payload')
         flow += increase_views('payload') >> end('payload')
 
+        flow.arrange_nodes()
+
+        for edge in flow.flowGraph.edges:
+            assert flow.flowGraph.get_node_by_id(edge.source).position.y < \
+                   flow.flowGraph.get_node_by_id(edge.target).position.y - 100  # Y coordinate increases to the bottom
+
         assert endpoint.post('/flow/production', data=flow.dict()).status_code == 200
         assert endpoint.get('/flows/refresh').status_code == 200
 
