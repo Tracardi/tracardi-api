@@ -37,7 +37,7 @@ async def flow_refresh():
 
 
 @router.post("/flow/draft", tags=["flow"], response_model=BulkInsertResult, include_in_schema=server.expose_gui_api)
-async def upsert_flow_draft(draft: Flow):
+async def upsert_flow_draft(draft: Flow, rearrange_nodes: Optional[bool] = False):
     """
     Creates draft of workflow. If there is production version of the workflow it stays intact.
     """
@@ -47,6 +47,9 @@ async def upsert_flow_draft(draft: Flow):
 
         if draft.flowGraph is not None:
             draft.flowGraph.shorten_edge_ids()
+
+        if rearrange_nodes is True:
+            draft.arrange_nodes()
 
         # Check if origin flow exists
 
