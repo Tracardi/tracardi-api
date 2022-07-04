@@ -56,14 +56,6 @@ system_settings = [
     ),
     SystemSettings(
         **{
-            "label": "RESET_PLUGINS",
-            "value": server.reset_plugins,
-            "desc": "Reset plugins data in ElasticSearch database, defaults to False. "
-                    "Plug-ins are recreated with every Tracardi restart."
-        }
-    ),
-    SystemSettings(
-        **{
             "label": "TRACK_DEBUG",
             "value": tracardi.track_debug,
             "desc": "Track debug or not, defaults to False."
@@ -84,6 +76,14 @@ system_settings = [
             "desc": "Defines the Tracardi Pro Services Host."
         }
     ),
+    SystemSettings(
+        **{
+            "label": "TRACARDI_SCHEDULER_HOST",
+            "value": tracardi.tracardi_scheduler_host,
+            "desc": "Defines the Tracardi Pro Scheduler Host."
+        }
+    ),
+
     SystemSettings(
         **{
             "label": "CACHE_PROFILE",
@@ -306,6 +306,14 @@ system_settings = [
                     "performance reasons, defaults to 180 seconds."
         }
     ),
+    SystemSettings(
+        **{
+            "label": "TOKENS_IN_REDIS",
+            "value": tracardi.tokens_in_redis,
+            "desc": "If set to 'yes', then user auth tokens are being cached on Redis. It allows multiple sessions for "
+                    "one user and increases performance of the API. Defaults to 'yes'."
+        }
+    )
 ]
 
 router = APIRouter(

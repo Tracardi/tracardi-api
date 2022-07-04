@@ -11,7 +11,7 @@ def test_should_register_correct_event():
 
     try:
 
-        assert create_event_source(source_id, 'javascript').status_code == 200
+        assert create_event_source(source_id, 'rest').status_code == 200
 
         payload = {
             "source": {

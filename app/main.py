@@ -20,7 +20,7 @@ from app.api import token_endpoint, rule_endpoint, resource_endpoint, event_endp
     tql_endpoint, health_endpoint, session_endpoint, instance_endpoint, plugins_endpoint, \
     settings_endpoint, event_source_endpoint, test_endpoint, \
     event_tag_endpoint, consent_type_endpoint, flow_action_endpoint, flows_endpoint, info_endpoint, \
-    user_endpoint, event_schema_validation_endpoint, debug_endpoint, log_endpoint, tracardi_pro_endpoint, \
+    user_endpoint, event_management_endpoint, debug_endpoint, log_endpoint, tracardi_pro_endpoint, \
     storage_endpoint, destination_endpoint, user_log_endpoint, user_account_endpoint, install_endpoint, import_endpoint,\
     task_endpoint, storage_endpoint, destination_endpoint, user_log_endpoint, user_account_endpoint, install_endpoint, \
     migration_endpoint
@@ -38,6 +38,8 @@ logging.basicConfig(level=logging.ERROR)
 logger = logging.getLogger('app.main')
 logger.setLevel(tracardi.logging_level)
 logger.addHandler(log_handler)
+
+print(f"TRACARDI version {str(tracardi.version)}")
 
 tags_metadata = [
     {
@@ -159,7 +161,7 @@ application.include_router(consent_type_endpoint.router)
 application.include_router(info_endpoint.router)
 application.include_router(user_endpoint.router)
 application.include_router(event_source_endpoint.router)
-application.include_router(event_schema_validation_endpoint.router)
+application.include_router(event_management_endpoint.router)
 application.include_router(debug_endpoint.router)
 application.include_router(log_endpoint.router)
 application.include_router(tracardi_pro_endpoint.router)
@@ -190,7 +192,7 @@ def is_elastic_on_localhost():
 
 @application.on_event("startup")
 async def app_starts():
-    logger.info("TRACARDI set-up starts.")
+    logger.info(f"TRACARDI version {str(tracardi.version)} set-up starts.")
     no_of_tries = 10
     success = False
     es = ElasticClient.instance()
@@ -211,7 +213,7 @@ async def app_starts():
             await asyncio.sleep(5)
             no_of_tries -= 1
             logger.error(
-                f"Could not connect to elasticsearch. Number of tries left: {no_of_tries}. Waiting 5s to retry.")
+                f"Could not connect to elasticsearch at {elastic.host}. Number of tries left: {no_of_tries}. Waiting 5s to retry.")
             if is_elastic_on_localhost():
                 logger.warning("You are trying to connect to 127.0.0.1. If this instance is running inside docker "
                                "then you can not use localhost as elasticsearch is probably outside the container. Use "
@@ -232,6 +234,7 @@ async def app_starts():
     report_i_am_alive()
     remove_dead_instances()
     logger.info("TRACARDI set-up finished.")
+    logger.info(f"TRACARDI version {str(tracardi.version)} ready to operate.")
 
 
 @application.middleware("http")

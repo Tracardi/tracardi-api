@@ -1,9 +1,11 @@
+from typing import Tuple
+
 from app.api.domain.user_payload import UserPayload
 from tracardi.domain.user import User
 from tracardi.service.storage.driver import storage
 
 
-async def update_user(id, user_payload: UserPayload) -> int:
+async def update_user(id, user_payload: UserPayload) -> Tuple[int, User]:
     current_user = await storage.driver.user.get_by_id(id)
     if not current_user:
         raise LookupError(f"User does not exist {id}")
@@ -16,4 +18,4 @@ async def update_user(id, user_payload: UserPayload) -> int:
     result = await storage.driver.user.update_user(user)
     await storage.driver.user.refresh()
 
-    return result.saved
+    return result.saved, user

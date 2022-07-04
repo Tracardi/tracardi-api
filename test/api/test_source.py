@@ -58,7 +58,7 @@ def test_event_source_create_ok():
     id = str(uuid4())
 
     try:
-        response = create_event_source(id, "javascript")
+        response = create_event_source(id, "rest")
         result = response.json()
         assert response.status_code == 200
         assert result == {'errors': [], 'ids': [id], 'saved': 1}

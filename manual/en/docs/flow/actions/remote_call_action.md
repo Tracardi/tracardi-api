@@ -7,7 +7,11 @@ This plugin calls remote API.
 ```json
 {
   "method": "post",
-  "url": "http://localhost:80/API",
+  "source": {
+    "id": "<id-of-API-resource>",
+    "name": "<name-of-API-resource>"
+  },
+  "endpoint" : "/some/endpoint/{event@with.template}/here",
   "timeout": 30,
   "headers": {
     "X-Customer-Header": "Header value"
@@ -23,7 +27,8 @@ This plugin calls remote API.
 }
 ```
 
-This configuration defines API url as POST "http://loclhost:80/API" with body `{"json":1}`.
+This configuration makes POST request to API URL from selected resource
+with body `{"json":1}`.
 
 
 If user requires the body to be sent with GET method than body will be squashed to represent keys and values.
@@ -42,7 +47,7 @@ For example this JSON:
 Will be flattened to parameters:
 
 ```
-payload.mobile=android&version=10&verison=11
+payload.mobile=android&version=10&version=11
 ```
 
 # Result

@@ -137,6 +137,13 @@ Other possible causes include:
 * The server did not respond to the actual request (even if it responded to the Preflight request). One scenario might
   be an HTTP service being developed that panicked without returning any data.
 
+## Missing /track endpoint
+
+Track endpoint with trailing backslash may fail if you use HTTPS connection. If you, by mistake, use URL `/track/` instead of
+`/track` with https connection, the system will redirect `/track/` to `/track`. But it will loose https connection. This is
+a know error in fastAPI: [https://github.com/tiangolo/fastapi/issues/4990](https://github.com/tiangolo/fastapi/issues/4990).
+Please do not use backslash at the end of any API call.
+
 ## Other issues
 
 Sometimes you can see the log like this:

@@ -50,7 +50,7 @@ def test_profile_merging():
 
         await storage.driver.profile.refresh()
 
-        print(await storage_manager('profile').query({'size': 2000, 'query': {'term': {'pii.email': 'test@test.com'}}}))
+        await storage_manager('profile').query({'size': 2000, 'query': {'term': {'pii.email': 'test@test.com'}}})
 
         # -------------------------
         # TEST no override on data
@@ -75,8 +75,6 @@ def test_profile_merging():
         profile.operation.merge = ['profile@pii.email']
 
         profiles = await profile.merge(storage.driver.profile.load_profiles_to_merge, override_old_data=False)
-        pprint(profiles)
-        pprint(profile.dict())
 
         # Merged profile mut be the first one
         assert {profiles[0].id, profiles[1].id} == {'1', '2'}
@@ -116,8 +114,6 @@ def test_profile_merging():
         profile.operation.merge = ['profile@pii.email']
 
         profiles = await profile.merge(storage.driver.profile.load_profiles_to_merge, override_old_data=True)
-        pprint(profiles)
-        pprint(profile.dict())
 
         # Merged profile mut be the first one
         assert {profiles[0].id, profiles[1].id} == {'1', '2'}

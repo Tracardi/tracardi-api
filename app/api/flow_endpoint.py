@@ -1,4 +1,3 @@
-import asyncio
 from typing import List, Optional
 
 from fastapi import APIRouter, HTTPException, Depends, Response
@@ -36,8 +35,28 @@ async def flow_refresh():
     return await storage.driver.flow.refresh()
 
 
-@router.post("/flow/draft", tags=["flow"], response_model=BulkInsertResult, include_in_schema=server.expose_gui_api)
+@router.post("/flow/draft/nodes/rearrange", tags=["flow"], response_model=dict, include_in_schema=server.expose_gui_api)
 async def upsert_flow_draft(draft: Flow):
+    """
+    Rearranges the send workflow nodes.
+    """
+    try:
+
+        # Frontend edge-id is long. Save space and md5 it.
+
+        if draft.flowGraph is not None:
+            draft.flowGraph.shorten_edge_ids()
+
+        draft.arrange_nodes()
+
+        return draft
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/flow/draft", tags=["flow"], response_model=BulkInsertResult, include_in_schema=server.expose_gui_api)
+async def upsert_flow_draft(draft: Flow, rearrange_nodes: Optional[bool] = False):
     """
     Creates draft of workflow. If there is production version of the workflow it stays intact.
     """
@@ -47,6 +66,9 @@ async def upsert_flow_draft(draft: Flow):
 
         if draft.flowGraph is not None:
             draft.flowGraph.shorten_edge_ids()
+
+        if rearrange_nodes is True:
+            draft.arrange_nodes()
 
         # Check if origin flow exists
 
@@ -214,7 +236,6 @@ async def upsert_flow_details(flow_metadata: FlowMetaData):
 
             flow_record.name = flow_metadata.name
             flow_record.description = flow_metadata.description
-            flow_record.enabled = flow_metadata.enabled
             flow_record.projects = flow_metadata.projects
 
         return await StorageFor(flow_record).index().save()
@@ -235,7 +256,6 @@ async def upsert_flow_details(flow_metadata: FlowMetaData):
         if flow_record is None:
             raise ValueError("Flow `{}` does not exist.".format(flow_metadata.id))
 
-        flow_record.enabled = flow_metadata.enabled
         flow_record.name = flow_metadata.name
         flow_record.description = flow_metadata.description
         flow_record.projects = flow_metadata.projects
@@ -245,10 +265,9 @@ async def upsert_flow_details(flow_metadata: FlowMetaData):
 
             draft_workflow.name = flow_metadata.name
             draft_workflow.description = flow_metadata.description
-            draft_workflow.enabled = flow_metadata.enabled
             draft_workflow.projects = flow_metadata.projects
 
-            flow_record.production = encrypt(draft_workflow.dict())
+            flow_record.draft = encrypt(draft_workflow.dict())
 
         return await StorageFor(flow_record).index().save()
 
@@ -267,24 +286,7 @@ async def update_flow_lock(id: str, lock: str):
         if flow_record is None:
             raise ValueError("Flow `{}` does not exist.".format(id))
 
-        flow_record.lock = True if lock.lower() == 'yes' else False
-        return await StorageFor(flow_record).index().save()
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-
-@router.get("/flow/{id}/enable/{lock}", tags=["flow"],
-            response_model=BulkInsertResult,
-            include_in_schema=server.expose_gui_api)
-async def update_flow_lock(id: str, lock: str):
-    try:
-        entity = Entity(id=id)
-        flow_record = await StorageFor(entity).index("flow").load(FlowRecord)  # type: FlowRecord
-
-        if flow_record is None:
-            raise ValueError("Flow `{}` does not exist.".format(id))
-
-        flow_record.enabled = True if lock.lower() == 'yes' else False
+        flow_record.set_lock(True if lock.lower() == 'yes' else False)
         return await StorageFor(flow_record).index().save()
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

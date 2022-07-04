@@ -1,6 +1,8 @@
+import json
 import logging
 from typing import Optional
 
+from app.api.auth.token_memory import TokenMemory
 from tracardi.config import tracardi
 from tracardi.domain.user import User
 from tracardi.exceptions.log_handler import log_handler
@@ -16,41 +18,65 @@ logger.addHandler(log_handler)
 class TokenDb:
 
     def __init__(self):
-        self._elastic = ElasticClient.instance()
-        self._index_write = index.resources['user'].get_write_index()
+        if tracardi.tokens_in_redis is False:
+            self._elastic = ElasticClient.instance()
+            self._index_write = index.resources['user'].get_write_index()
 
-    async def delete(self, email):
-        record = {
-            "doc": {"token": None},
-            'doc_as_upsert': True
-        }
-        await self._elastic.update(self._index_write, email, record)
+        else:
+            self._token_memory = TokenMemory()
+
+    async def delete(self, token: str):
+        if tracardi.tokens_in_redis is False:
+            query = {
+                "query": {
+                    "term": {"token": token}
+                },
+                "script": "ctx._source.token = null;"
+            }
+
+            await self._elastic.update_by_query(self._index_write, query)
+
+        else:
+            del self._token_memory[token]
 
     async def get(self, token) -> Optional[User]:
 
         # todo add caching
 
-        logger.info(f"Reading user by token {token[:6]}...")
+        if tracardi.tokens_in_redis is False:
+            result = await storage.driver.user.search_by_token(token)
+            if result.total > 1:
+                raise ValueError(f"Invalid user count result. Expected 0 or 1 got {result.total}")
 
-        result = await storage.driver.user.search_by_token(token)
+            result = list(result)
+            if len(result):
+                data = result.pop()
+                return User(**data)
 
-        if result.total > 1:
-            raise ValueError(f"Invalid user count result. Expected 0 or 1 got {result.total}")
-
-        result = list(result)
-        if len(result):
-            data = result.pop()
-            return User(**data)
+        else:
+            user = self._token_memory[token]
+            if user:
+                user = json.loads(user)
+                user = User(**user)
+                user.token = token
+                return user
 
         return None
 
-    async def set(self, email, token):
-        record = {
-            "doc": {"token": token},
-            'doc_as_upsert': True
-        }
-        await self._elastic.update(self._index_write, email, record)
-        await self._elastic.refresh(self._index_write)
+    async def set(self, token, user: User):
+        if tracardi.tokens_in_redis is False:
+            record = {
+                "doc": {"token": token},
+                'doc_as_upsert': True
+            }
+            await self._elastic.update(self._index_write, user.email, record)
+            await self._elastic.refresh(self._index_write)
+
+        else:
+            self._token_memory[token] = user.json()
+
+    async def refresh_token(self, token) -> None:
+        self._token_memory.refresh(token)
 
 
 token2user = TokenDb()

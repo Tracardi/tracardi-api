@@ -27,7 +27,7 @@ router = APIRouter()
 
 async def _track(tracker_payload: TrackerPayload, host: str, profile_less: bool = False):
     try:
-        return await synchronized_event_tracking(tracker_payload, host, profile_less)
+        return await synchronized_event_tracking(tracker_payload, host, profile_less, allowed_bridges=['rest'])
     except UnauthorizedException as e:
         message = str(e)
         logger.error(message)
