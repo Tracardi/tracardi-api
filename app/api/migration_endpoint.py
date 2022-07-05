@@ -44,7 +44,7 @@ async def get_migration_schemas(from_version: str, to_version: str, from_prefix:
             from_prefix=from_prefix,
             to_prefix=to_prefix
         )
-        return manager.get_schemas()
+        return await manager.get_customized_schemas()
 
     except MigrationNotFoundException as e:
         raise HTTPException(status_code=404, detail=str(e))
