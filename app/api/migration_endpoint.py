@@ -4,8 +4,9 @@ from app.api.auth.permissions import Permissions
 from app.config import server
 from tracardi.domain.migration_payload import MigrationPayload
 from tracardi.process_engine.migration.migration_manager import MigrationManager, MigrationNotFoundException
-from tracardi.config import elastic
 from typing import Optional
+from tracardi.service.url_constructor import construct_url
+from tracardi.config import elastic
 
 
 router = APIRouter(
@@ -22,9 +23,15 @@ async def run_migration(migration: MigrationPayload):
             from_prefix=migration.from_prefix,
             to_prefix=migration.to_prefix
         )
-        await manager.start_migration(
+        elastic_host = construct_url(
+            host=elastic.host if isinstance(elastic.host, str) else elastic.host[0],
+            scheme=elastic.scheme,
+            username=elastic.http_auth_username,
+            password=elastic.http_auth_password
+        )
+        return await manager.start_migration(
             ids=migration.ids,
-            elastic_host=elastic.host if isinstance(elastic.host, str) else elastic.host[0]
+            elastic_host=elastic_host
         )
 
     except MigrationNotFoundException as e:
