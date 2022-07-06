@@ -6,7 +6,7 @@ from tracardi.domain.migration_payload import MigrationPayload
 from tracardi.process_engine.migration.migration_manager import MigrationManager, MigrationNotFoundException
 from typing import Optional
 from tracardi.service.url_constructor import construct_url
-from tracardi.config import elastic
+from tracardi.config import elastic, tracardi
 
 
 router = APIRouter(
@@ -41,20 +41,28 @@ async def run_migration(migration: MigrationPayload):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/migration/{from_version}/to/{to_version}", tags=["migration"], include_in_schema=server.expose_gui_api)
-async def get_migration_schemas(from_version: str, to_version: str, from_prefix: Optional[str] = None,
-                                to_prefix: Optional[str] = None):
+@router.get("/migration/{from_version}", tags=["migration"], include_in_schema=server.expose_gui_api)
+async def get_migration_schemas(from_version: str, from_prefix: Optional[str] = None):
     try:
         manager = MigrationManager(
             from_version=from_version,
-            to_version=to_version,
+            to_version=tracardi.version.version,
             from_prefix=from_prefix,
-            to_prefix=to_prefix
+            to_prefix=tracardi.version.name
         )
         return await manager.get_customized_schemas()
 
     except MigrationNotFoundException as e:
         raise HTTPException(status_code=404, detail=str(e))
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/migrations", tags=["migration"], include_in_schema=server.expose_gui_api, response_model=list)
+async def get_migrations_for_current_version():
+    try:
+        return MigrationManager.get_available_migrations_for_version(tracardi.version)
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
