@@ -3,11 +3,11 @@
 Events can be validated. Event validation can be configured in the Tracardi GUI or via the API. The endpoints
 responsible for creating the validation schemes are located at the following endpoints:
 
-| Method      | Path                                  |                          |
-| ----------- | --------------------------------------|--------------------------|
-| `GET`       | /event/validation-schema              | Add validation schema    |
-| `DELETE`    | /event/validation-schema/{event_type} | Delete validation schema |
-| `GET`       | /event/validation-schemas             | List validation schemas  |
+| Method      | Path                                  |                                             |
+| ----------- | --------------------------------------|---------------------------------------------|
+| `GET`       | /event/management                     | Add event metadata and validation schema    |
+| `DELETE`    | /event/management/{event_type}        | Delete event metadata and validation schema |
+| `GET`       | /event/management                     | List event metadata with validation schemas |
 
 As always, complete API documentation is available at:
 
@@ -39,19 +39,21 @@ json schema itself.
 ```json
 {
   "validation": {
-    "event@properties": {
-      "type": "object",
-      "properties": {
-        "price": {
-          "type": "number"
+    "json_schema": {
+      "event@properties": {
+        "type": "object",
+        "properties": {
+          "price": {
+            "type": "number"
+          },
+          "name": {
+            "type": "string"
+          }
         },
-        "name": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "name"
-      ]
+        "required": [
+          "name"
+        ]
+      }
     }
   },
   "event_type": "test"

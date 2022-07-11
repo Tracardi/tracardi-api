@@ -13,7 +13,7 @@ from tracardi.service.setup.setup_indices import create_indices, update_current_
 from tracardi.service.setup.setup_plugins import add_plugins
 from tracardi.service.storage.driver import storage
 from tracardi.service.storage.index import resources
-from tracardi.service.storage.indices_manager import get_indices_status, remove_index
+from tracardi.service.storage.indices_manager import get_indices_status
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
@@ -41,7 +41,7 @@ async def check_if_installation_complete():
         # Missing admin
 
         index = resources.get_index('user')
-        if index.get_read_index() in existing_aliases:
+        if index.get_index_alias() in existing_aliases:
             admins = await storage.driver.user.search_by_role('admin')
             admins = admins.dict()
         else:
@@ -77,9 +77,6 @@ async def install_plugins():
 @router.post("/install", tags=["installation"], include_in_schema=server.expose_gui_api, response_model=dict)
 async def install(credentials: Optional[Credentials]):
     # try:
-
-        if server.reset_plugins is True:
-            await remove_index('action')
 
         result = {"created": await create_indices(), 'admin': False}
 

@@ -11,7 +11,6 @@ class ServerConfig:
         self.tasks_every = env['RUN_TASKS_EVERY'] if 'RUN_TASKS_EVERY' in env else 1
         self.page_size = int(env['AUTOLOAD_PAGE_SIZE']) if 'AUTOLOAD_PAGE_SIZE' in env else 25
         self.expose_gui_api = (env['EXPOSE_GUI_API'].lower() == "yes") if 'EXPOSE_GUI_API' in env else True
-        self.reset_plugins = (env['RESET_PLUGINS'].lower() == "yes") if 'RESET_PLUGINS' in env else False
         self.x_forwarded_ip_header = env['USE_X_FORWARDED_IP'] if 'USE_X_FORWARDED_IP' in env else None
 
 

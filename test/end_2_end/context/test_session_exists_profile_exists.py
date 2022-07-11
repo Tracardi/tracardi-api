@@ -18,7 +18,7 @@ def test_session_exists_profile_exists():
 
         assert get_session(session_id).status_code == 200
         assert get_profile(profile_id).status_code == 200
-        assert create_event_source(source_id, 'javascript').status_code == 200
+        assert create_event_source(source_id, 'rest').status_code == 200
 
         response = endpoint.post("/track", data={
             "source": {
@@ -39,6 +39,11 @@ def test_session_exists_profile_exists():
 
         assert endpoint.get(f'/profiles/refresh').status_code == 200
         assert endpoint.get(f'/sessions/refresh').status_code == 200
+
+        if 'debugging' not in result:
+            raise ValueError(
+                'Could not perform test due to bad server configuration. No debugging allowed. '
+                'Start Tracardi wiht TRACK_DEBUG=yes.')
 
         assert result['debugging']['session']['saved'] == 0  # session is not saved because it did not change
         assert result['debugging']['events']['saved'] == 1

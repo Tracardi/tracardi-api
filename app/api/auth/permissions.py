@@ -54,6 +54,9 @@ class Permissions:
 
         # Not authenticated if no user or insufficient roles
 
+        if user and tracardi.tokens_in_redis:
+            await auth.refresh_token(token)
+
         if not user:
             logger.warning(f"Unauthorized access. User not available for {token}")
             raise HTTPException(

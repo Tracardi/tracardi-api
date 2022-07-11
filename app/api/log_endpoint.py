@@ -8,7 +8,7 @@ from app.config import server
 from tracardi.service.storage.driver import storage
 
 router = APIRouter(
-    dependencies=[Depends(Permissions(roles=["admin"]))]
+    dependencies=[Depends(Permissions(roles=["admin", "data_admin"]))]
 )
 
 

@@ -53,7 +53,7 @@ class Authentication:
         token = self._generate_token()
 
         # save token, match token with user in token2user
-        await self.token2user.set(email, token)
+        await self.token2user.set(token, user)
 
         return {"access_token": token, "token_type": "bearer", "roles": user.roles}
 
@@ -62,6 +62,9 @@ class Authentication:
 
     async def get_user_by_token(self, token) -> Optional[User]:
         return await self.token2user.get(token)
+
+    async def refresh_token(self, token) -> None:
+        await self.token2user.refresh_token(token)
 
 
 def get_authentication():
