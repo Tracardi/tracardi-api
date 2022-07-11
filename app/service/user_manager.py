@@ -10,7 +10,13 @@ async def update_user(id, user_payload: UserPayload) -> Tuple[int, User]:
     if not current_user:
         raise LookupError(f"User does not exist {id}")
 
-    user = User(**user_payload.dict(), id=user_payload.email, token=current_user["token"])
+    user = User(**user_payload.dict(),
+                id=user_payload.email,
+                token=current_user["token"],
+                expiration_timestamp=current_user["expiration_timestamp"])
+
+    if user_payload.get_expiration_date() is not None:
+        user.expiration_timestamp = user_payload.get_expiration_date()
 
     if user_payload.password != current_user["password"]:
         user.encode_password()

@@ -51,7 +51,12 @@ async def add_user(user_payload: UserPayload):
     if not user_exists:
         try:
 
-            result = await storage.driver.user.add_user(User(**user_payload.dict(), id=user_payload.email))
+            expiration_timestamp = user_payload.get_expiration_date()
+            result = await storage.driver.user.add_user(User(
+                **user_payload.dict(),
+                id=user_payload.email,
+                expiration_timestamp=expiration_timestamp
+            ))
             await storage.driver.user.refresh()
 
         except ElasticsearchException as e:
@@ -90,7 +95,7 @@ async def get_user(id: str):
             raise HTTPException(status_code=404, detail=f"User {id} not found.")
     except ElasticsearchException as e:
         raise HTTPException(status_code=500, detail=str(e))
-    return UserPayload(**result)
+    return result.dict(exclude={"token"})
 
 
 @router.get("/users/{start}/{limit}", tags=["user"], include_in_schema=server.expose_gui_api, response_model=list)
@@ -99,15 +104,11 @@ async def get_users(start: int = 0, limit: int = 100, query: Optional[str] = "")
     Lists users according to given query (str), start (int) and limit (int) parameters
     """
     try:
-        result = await storage.driver.user.search_by_name(start, limit, query) if query else \
-            await storage.driver.user.load(start, limit)
+        result = await storage.driver.user.search_by_name(start, limit, query)
     except ElasticsearchException as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-    # Todo this is nightmare. Records form database must be validated. Driver can not return elastic structure.
-    # Todo this tech debt must be removed
-    return list(map(lambda record: record["_source"] if query else record, result["hits"]["hits"] if
-    query else list(result)))
+    return result
 
 
 @router.post("/user/{id}", tags=["user"], include_in_schema=server.expose_gui_api, response_model=dict)

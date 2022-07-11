@@ -9,6 +9,7 @@ from fastapi.security import OAuth2PasswordBearer
 from tracardi.domain.user import User
 from tracardi.exceptions.exception import LoginException
 from tracardi.service.storage.driver import storage
+from datetime import datetime
 
 _singleton = None
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
@@ -39,6 +40,10 @@ class Authentication:
         if user.disabled:
             await storage.driver.user_log.add_log(email=username, successful=False)
             raise ValueError("This account was disabled")
+
+        if user.is_expired():
+            await storage.driver.user_log.add_log(email=username, successful=False)
+            raise ValueError("This account has expired.")
 
         await storage.driver.user_log.add_log(email=username, successful=True)
 
