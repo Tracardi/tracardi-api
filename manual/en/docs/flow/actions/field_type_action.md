@@ -3,13 +3,15 @@
 This plugin returns type and length (if it exists) of the given field.
 
 ## Configuration
+
 ```json
 {
-  "field": "some@dot.path.here"
+  "field": "event@reference.path.here"
 }
 ```
 
-## Example return value
+## Example of returned value
+
 ```json
 {
   "type": "string",
