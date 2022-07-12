@@ -295,10 +295,10 @@ async def update_flow_lock(id: str, lock: str):
 @router.post("/flow/debug", tags=["flow"],
              include_in_schema=server.expose_gui_api)
 async def debug_flow(flow: GraphFlow):
-    """
-        Debugs flow sent in request body
-    """
-    try:
+    # """
+    #     Debugs flow sent in request body
+    # """
+    # try:
 
         profile = Profile(id="@debug-profile-id")
         session = Session(id="@debug-session-id", metadata=SessionMetadata())
@@ -368,8 +368,8 @@ async def debug_flow(flow: GraphFlow):
             "ux": ux
         }
 
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    # except Exception as e:
+    #     raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.delete("/flow/{id}", tags=["flow"], response_model=dict, include_in_schema=server.expose_gui_api)

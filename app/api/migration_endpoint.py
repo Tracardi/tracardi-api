@@ -9,6 +9,7 @@ from tracardi.service.url_constructor import construct_url
 from tracardi.config import elastic, tracardi
 
 
+
 router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin", "developer"]))]
 )
@@ -39,6 +40,7 @@ async def run_migration(migration: MigrationPayload):
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
 
 
 @router.get("/migration/{from_version}", tags=["migration"], include_in_schema=server.expose_gui_api)
