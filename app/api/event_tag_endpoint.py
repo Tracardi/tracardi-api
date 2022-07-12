@@ -65,6 +65,22 @@ async def get_tags(limit: int = 100, query: str = ""):
     return await storage.driver.tag.load_tags(limit=limit, query_string=query)
 
 
+@router.get("/event-tags/flush", tags=["event"], include_in_schema=server.expose_gui_api)
+async def flush_tags_index():
+    """
+    Flushes tags index
+    """
+    return await storage.driver.tag.flush()
+
+
+@router.get("/event-tags/refresh", tags=["event"], include_in_schema=server.expose_gui_api)
+async def flush_tags_index():
+    """
+    Refreshes tags index
+    """
+    return await storage.driver.tag.refresh()
+
+
 @router.put("/event-tag/type/{event_type}", tags=["event"],
             include_in_schema=server.expose_gui_api, response_model=dict)
 async def update_tags(event_type: str):

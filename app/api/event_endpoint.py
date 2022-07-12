@@ -43,6 +43,17 @@ async def events_refresh_index():
         raise HTTPException(status_code=500, detail=str(e))
 
 
+@router.get("/events/flush", tags=["event"], include_in_schema=server.expose_gui_api)
+async def events_refresh_index():
+    """
+    Flushes event index.
+    """
+    try:
+        return await storage.driver.event.flush()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 @router.get("/event/count", tags=["event"], include_in_schema=server.expose_gui_api)
 async def count_events():
     return await storage.driver.event.count()

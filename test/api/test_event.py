@@ -30,3 +30,12 @@ def test_event_select_data_ok():
     result = result.json()
     assert 'total' in result
     assert 'result' in result
+
+
+def test_event_select_limit_data_ok():
+    result = endpoint.post('/event/select', data={"limit": 4})
+    result = result.json()
+    assert 'total' in result
+    assert 'result' in result
+
+    assert len(result['result']) == 4
