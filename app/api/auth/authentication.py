@@ -9,7 +9,7 @@ from fastapi.security import OAuth2PasswordBearer
 from tracardi.domain.user import User
 from tracardi.exceptions.exception import LoginException
 from tracardi.service.storage.driver import storage
-from datetime import datetime
+from hashlib import sha1
 
 _singleton = None
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
@@ -55,7 +55,7 @@ class Authentication:
 
     async def login(self, email, password):
         user = await self.authorize(email, password)
-        token = self._generate_token()
+        token = f"{sha1(user.email.encode('utf-8')).hexdigest()}-{self._generate_token()}"
 
         # save token, match token with user in token2user
         await self.token2user.set(token, user)

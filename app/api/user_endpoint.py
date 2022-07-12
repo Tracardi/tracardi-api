@@ -10,6 +10,7 @@ from elasticsearch import ElasticsearchException
 from .auth.permissions import Permissions
 from .domain.user_payload import UserPayload
 from ..service.user_manager import update_user
+from .auth.user_db import token2user
 
 
 class UserSoftEditPayload(BaseModel):
@@ -120,11 +121,11 @@ async def edit_user(id: str, user_payload: UserPayload, user=Depends(Permissions
         raise HTTPException(status_code=403, detail="You cannot remove the role of admin from your own account")
     try:
 
-        # WARNING: It does not edit cached in redis User. If the user is logged in it will be able
-        # to operate with old e.g. roles till the next log-in
+        saved, updated_user = await update_user(id, user_payload)
+        token2user.update_user(updated_user)
 
-        saved, _ = await update_user(id, user_payload)
         return {"inserted": saved}
+
     except LookupError as e:
         raise HTTPException(status_code=404, detail=str(e))
     except ElasticsearchException as e:
