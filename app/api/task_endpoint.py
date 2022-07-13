@@ -6,7 +6,6 @@ from ..config import server
 from tracardi.exceptions.exception import StorageException
 from tracardi.domain.task import Task
 
-
 router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin", "developer"]))]
 )
@@ -29,7 +28,45 @@ async def load_tasks(query: str = None, limit: int = 20):
         result = await storage.driver.task.load_tasks(query, limit=limit)
         return {
             "grouped": {
-                "Imports": list(result)
+                "Tasks": list(result)
+            }
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/tasks/type/{type}", tags=["task"], include_in_schema=server.expose_gui_api)
+async def load_tasks_by_type(type: str, query: str = None, limit: int = 20):
+
+    """Returns tasks of a given type"""
+
+    try:
+
+        body = {
+            "bool": {
+                "must": [
+                    {
+                        "term": {
+                            "type": type
+                        }
+                    }
+                ]
+            }
+        }
+
+        if query:
+            body['bool']['must'].append({
+                "wildcard": {
+                    "name": f"*{query}*"
+                }
+            })
+
+        result = await storage.driver.task.load_tasks(body, limit=limit)
+
+        return {
+            "grouped": {
+                "Tasks": list(result)
             }
         }
 
