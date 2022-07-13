@@ -9,7 +9,6 @@ from tracardi.service.url_constructor import construct_url
 from tracardi.config import elastic, tracardi
 
 
-
 router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin", "developer"]))]
 )
@@ -20,9 +19,9 @@ async def run_migration(migration: MigrationPayload):
     try:
         manager = MigrationManager(
             from_version=migration.from_version,
-            to_version=migration.to_version,
+            to_version=tracardi.version.version,
             from_prefix=migration.from_prefix,
-            to_prefix=migration.to_prefix
+            to_prefix=tracardi.version.name
         )
         elastic_host = construct_url(
             host=elastic.host if isinstance(elastic.host, str) else elastic.host[0],
@@ -40,7 +39,6 @@ async def run_migration(migration: MigrationPayload):
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
 
 
 @router.get("/migration/{from_version}", tags=["migration"], include_in_schema=server.expose_gui_api)
