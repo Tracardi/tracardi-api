@@ -12,7 +12,7 @@ router = APIRouter(
 
 
 @router.get("/tasks", tags=["task"], include_in_schema=server.expose_gui_api)
-async def load_tasks(query: str = None, limit: int = 20):
+async def load_tasks(query: str = None, limit: int = 50):
     try:
         if not query:
             query = {
@@ -37,7 +37,7 @@ async def load_tasks(query: str = None, limit: int = 20):
 
 
 @router.get("/tasks/type/{type}", tags=["task"], include_in_schema=server.expose_gui_api)
-async def load_tasks_by_type(type: str, query: str = None, limit: int = 20):
+async def load_tasks_by_type(type: str, query: str = None, limit: int = 50):
 
     """Returns tasks of a given type"""
 
