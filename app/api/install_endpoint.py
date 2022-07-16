@@ -14,6 +14,7 @@ from tracardi.service.setup.setup_plugins import add_plugins
 from tracardi.service.storage.driver import storage
 from tracardi.service.storage.index import resources
 from tracardi.service.storage.indices_manager import get_indices_status
+from app.setup.on_start import update_api_instance
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
@@ -111,6 +112,9 @@ async def install(credentials: Optional[Credentials]):
             logger.info(
                 f"Updating plugins on startup due to: UPDATE_PLUGINS_ON_STARTUP={server.update_plugins_on_start_up}")
             result['plugins'] = await add_plugins()
+
+        # add current instance to be visible
+        await update_api_instance()
 
         return result
 
