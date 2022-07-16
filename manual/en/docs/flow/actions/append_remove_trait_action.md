@@ -20,8 +20,8 @@ The following config:
 
 Will:
 
-- Append value from `event@properties.order` to `profile@traits.private.orders` list. If `profile@traits.private.orders`
+- Append value from __event@properties.order__ to __profile@traits.private.orders__ list. If __profile@traits.private.orders__
   is not an array, then new array will be created, with current value as the only element.
-- Append all values from `event@properties.property_list` to `session@properties.list`.
-- Remove value of `session@properties.email` from `profile@traits.public.emails` list. If `session@properties.email` was
-  also an array, then all elements from `session@properties.email` would be removed from `profile@traits.public.emails`.
+- Append all values from __event@properties.property_list__ to __session@properties.list__.
+- Remove value of __session@properties.email__ from __profile@traits.public.emails__ list. If __session@properties.email__ was
+  also an array, then all elements from __session@properties.email__ would be removed from __profile@traits.public.emails__.
