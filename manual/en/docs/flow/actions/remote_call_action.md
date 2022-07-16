@@ -50,6 +50,17 @@ Will be flattened to parameters:
 payload.mobile=android&version=10&version=11
 ```
 
+This plugin supports dot paths in cookie headers and body - you can use them like:
+```json
+{
+  ...,
+  "headers": {
+    "X-Custom-Header": "payload@some.field"
+  }
+}
+```
+Paths will be replaced with current workflow values.
+
 # Result
 
 This plugin returns either the response (on response port) or and error on error port.
