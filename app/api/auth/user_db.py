@@ -9,6 +9,7 @@ from tracardi.exceptions.log_handler import log_handler
 from tracardi.service.storage import index
 from tracardi.service.storage.driver import storage
 from tracardi.service.storage.elastic_client import ElasticClient
+from hashlib import sha1
 
 logger = logging.getLogger(__name__)
 logger.setLevel(tracardi.logging_level)
@@ -74,6 +75,11 @@ class TokenDb:
 
         else:
             self._token_memory[token] = user.json()
+
+    def update_user(self, user: User) -> None:
+        if tracardi.tokens_in_redis is True:
+            for key in self._token_memory.get_keys_by_email_hash(sha1(user.email.encode("utf-8")).hexdigest()):
+                self._token_memory[key] = user.json()
 
     async def refresh_token(self, token) -> None:
         self._token_memory.refresh(token)

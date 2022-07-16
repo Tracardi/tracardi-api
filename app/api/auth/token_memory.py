@@ -21,3 +21,7 @@ class TokenMemory:
 
     def refresh(self, key):
         self._redis.client.expire(f"AUTH-TOKEN-{self._elastic_identifier}-{key}", self.ttl)
+
+    def get_keys_by_email_hash(self, email_hash):
+        for key in self._redis.client.keys(f"AUTH-TOKEN-{email_hash}-*"):
+            yield key

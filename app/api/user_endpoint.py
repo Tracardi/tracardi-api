@@ -10,6 +10,7 @@ from elasticsearch import ElasticsearchException
 from .auth.permissions import Permissions
 from .domain.user_payload import UserPayload
 from ..service.user_manager import update_user
+from .auth.user_db import token2user
 
 
 class UserSoftEditPayload(BaseModel):
@@ -51,7 +52,12 @@ async def add_user(user_payload: UserPayload):
     if not user_exists:
         try:
 
-            result = await storage.driver.user.add_user(User(**user_payload.dict(), id=user_payload.email))
+            expiration_timestamp = user_payload.get_expiration_date()
+            result = await storage.driver.user.add_user(User(
+                **user_payload.dict(),
+                id=user_payload.email,
+                expiration_timestamp=expiration_timestamp
+            ))
             await storage.driver.user.refresh()
 
         except ElasticsearchException as e:
@@ -90,7 +96,7 @@ async def get_user(id: str):
             raise HTTPException(status_code=404, detail=f"User {id} not found.")
     except ElasticsearchException as e:
         raise HTTPException(status_code=500, detail=str(e))
-    return UserPayload(**result)
+    return result.dict(exclude={"token"})
 
 
 @router.get("/users/{start}/{limit}", tags=["user"], include_in_schema=server.expose_gui_api, response_model=list)
@@ -99,15 +105,11 @@ async def get_users(start: int = 0, limit: int = 100, query: Optional[str] = "")
     Lists users according to given query (str), start (int) and limit (int) parameters
     """
     try:
-        result = await storage.driver.user.search_by_name(start, limit, query) if query else \
-            await storage.driver.user.load(start, limit)
+        result = await storage.driver.user.search_by_name(start, limit, query)
     except ElasticsearchException as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-    # Todo this is nightmare. Records form database must be validated. Driver can not return elastic structure.
-    # Todo this tech debt must be removed
-    return list(map(lambda record: record["_source"] if query else record, result["hits"]["hits"] if
-    query else list(result)))
+    return result
 
 
 @router.post("/user/{id}", tags=["user"], include_in_schema=server.expose_gui_api, response_model=dict)
@@ -119,11 +121,11 @@ async def edit_user(id: str, user_payload: UserPayload, user=Depends(Permissions
         raise HTTPException(status_code=403, detail="You cannot remove the role of admin from your own account")
     try:
 
-        # WARNING: It does not edit cached in redis User. If the user is logged in it will be able
-        # to operate with old e.g. roles till the next log-in
+        saved, updated_user = await update_user(id, user_payload)
+        token2user.update_user(updated_user)
 
-        saved, _ = await update_user(id, user_payload)
         return {"inserted": saved}
+
     except LookupError as e:
         raise HTTPException(status_code=404, detail=str(e))
     except ElasticsearchException as e:
