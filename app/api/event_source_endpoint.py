@@ -8,6 +8,7 @@ from tracardi.domain.named_entity import NamedEntity
 from tracardi.domain.enum.type_enum import TypeEnum
 from tracardi.domain.event_source import EventSource
 from tracardi.exceptions.log_handler import log_handler
+from tracardi.service.event_source_manager import event_source_types, save_source
 from tracardi.service.storage.driver import storage
 from app.service.grouper import search
 from .auth.permissions import Permissions
@@ -20,21 +21,6 @@ logger.addHandler(log_handler)
 router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin", "developer"]))]
 )
-
-
-async def event_source_types():
-    standard_inbound_sources = {
-        "javascript": {
-            "name": "Javascript",
-            "tags": ["javascript", "inbound"]
-        },
-        "api-call": {
-            "name": "Api call",
-            "tags": ["api-call", "inbound"]
-        },
-    }
-
-    return standard_inbound_sources
 
 
 @router.get("/event-sources/by_type",
@@ -92,7 +78,7 @@ async def get_event_source_types(type: TypeEnum) -> dict:
     """
 
     try:
-        types = await event_source_types()
+        types = event_source_types()
 
         if type.value == 'name':
             types = {id: t['name'] for id, t in types.items()}
@@ -132,15 +118,7 @@ async def save_event_source(event_source: EventSource):
     Adds new event source in database
     """
     try:
-        types = await event_source_types()
-        if event_source.type in types:
-            result = await storage.driver.event_source.save(event_source)
-            if result.is_nothing_saved():
-                raise OSError("Could not save event source.")
-            return result
-        else:
-            raise ValueError("Unknown event source type {}. Available {}.".format(event_source.type, types))
-
+        return await save_source(event_source)
     except ValueError as e:
         raise HTTPException(status_code=422, detail=repr(e))
     except Exception as e:

@@ -30,6 +30,7 @@ def create_event_source(id, type, name="Test", config=None):
         name=name,
         timestamp="2022-01-07T16:18:09.278Z",
         enabled=True,
+        returns_profile=True,
         config=config
     )
 
@@ -57,7 +58,7 @@ def test_event_source_create_ok():
     id = str(uuid4())
 
     try:
-        response = create_event_source(id, "javascript")
+        response = create_event_source(id, "rest")
         result = response.json()
         assert response.status_code == 200
         assert result == {'errors': [], 'ids': [id], 'saved': 1}

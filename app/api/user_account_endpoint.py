@@ -1,20 +1,23 @@
 from fastapi import APIRouter, Depends, HTTPException
+
+from app.api.auth.user_db import token2user
 from app.config import server
 from pydantic import ValidationError
 from app.api.user_endpoint import UserPayload, UserSoftEditPayload
 
 from elasticsearch import ElasticsearchException
 
-from .auth.permissions import Permissions
-from ..service.user_manager import update_user
+from app.service.user_manager import update_user
+from tracardi.config import tracardi
+from app.api.auth.permissions import Permissions
 
 router = APIRouter(
-    dependencies=[Depends(Permissions(roles=["admin", "marketer", "developer"]))]
+    dependencies=[Depends(Permissions(roles=["admin", "marketer", "developer", "data_admin"]))]
 )
 
 
 @router.get("/user-account", tags=["user"], include_in_schema=server.expose_gui_api, response_model=dict)
-async def get_user_account(user=Depends(Permissions(["admin", "developer", "marketer"]))):
+async def get_user_account(user=Depends(Permissions(["admin", "developer", "marketer", "data_admin"]))):
     """
     Returns data of the user who called the endpoint
     """
@@ -23,14 +26,25 @@ async def get_user_account(user=Depends(Permissions(["admin", "developer", "mark
 
 @router.post("/user-account", tags=["user"], include_in_schema=server.expose_gui_api, response_model=dict)
 async def edit_user_account(payload: UserSoftEditPayload,
-                            user=Depends(Permissions(["admin", "developer", "marketer"]))):
+                            user=Depends(Permissions(["admin", "developer", "marketer", "data_admin"]))):
+
+    """
+    Edits currently logged user.
+    """
+
     try:
-        saved = await update_user(user.id,
-                                  UserPayload(**payload.dict(),
-                                              roles=user.roles,
-                                              disabled=user.disabled,
-                                              email=user.email)
-                                  )
+
+        saved, new_user = await update_user(
+            user.id,
+            UserPayload(**payload.dict(),
+                        roles=user.roles,
+                        disabled=user.disabled,
+                        email=user.email)
+        )
+
+        if tracardi.tokens_in_redis:
+            await token2user.set(user.token, new_user)
+
         return {"inserted": saved}
     except LookupError as e:
         raise HTTPException(status_code=404, detail=str(e))

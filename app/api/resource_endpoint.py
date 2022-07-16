@@ -13,7 +13,6 @@ from tracardi.service.wf.domain.named_entity import NamedEntity
 from app.service.grouper import search
 from tracardi.domain.resource import Resource, ResourceRecord
 from tracardi.domain.entity import Entity
-from tracardi.domain.enum.indexes_source_bool import IndexesSourceBool
 from tracardi.domain.value_object.bulk_insert_result import BulkInsertResult
 from .auth.permissions import Permissions
 from ..config import server
@@ -172,11 +171,11 @@ async def list_resources(query: str = None):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/resource/{id}/{type}/on",
+@router.get("/resource/{id}/enabled/on",
             tags=["resource"],
             response_model=dict,
             include_in_schema=server.expose_gui_api)
-async def set_resource_property_on(id: str, type: IndexesSourceBool):
+async def set_resource_property_on(id: str):
     try:
         entity = Entity(id=id)
 
@@ -184,7 +183,7 @@ async def set_resource_property_on(id: str, type: IndexesSourceBool):
 
         resource = record.decode()
         resource_data = resource.dict()
-        resource_data[type.value] = True
+        resource_data['enabled'] = True
         resource = Resource.construct(_fields_set=resource.__fields_set__, **resource_data)
         record = ResourceRecord.encode(resource)
 
@@ -194,11 +193,11 @@ async def set_resource_property_on(id: str, type: IndexesSourceBool):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/resource/{id}/{type}/off",
+@router.get("/resource/{id}/enabled/off",
             tags=["resource"],
             response_model=dict,
             include_in_schema=server.expose_gui_api)
-async def set_resource_property_off(id: str, type: IndexesSourceBool):
+async def set_resource_property_off(id: str):
     try:
         entity = Entity(id=id)
 
@@ -206,7 +205,7 @@ async def set_resource_property_off(id: str, type: IndexesSourceBool):
 
         resource = record.decode()
         resource_data = resource.dict()
-        resource_data[type.value] = False
+        resource_data['enabled'] = False
         resource = Resource.construct(_fields_set=resource.__fields_set__, **resource_data)
         record = ResourceRecord.encode(resource)
 

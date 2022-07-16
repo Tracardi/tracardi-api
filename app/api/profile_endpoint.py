@@ -11,11 +11,13 @@ from .auth.permissions import Permissions
 from ..config import server
 
 router = APIRouter(
-    dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer"]))]
+    dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer", "data_admin"]))]
 )
 
 
-@router.get("/profile/count", tags=["profile"], include_in_schema=server.expose_gui_api)
+@router.get("/profile/count", tags=["profile"],
+            dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer", "data_admin"]))],
+            include_in_schema=server.expose_gui_api)
 async def count_profiles():
     return await storage.driver.profile.count()
 
@@ -43,7 +45,9 @@ async def refresh_profile():
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/profile/{id}", tags=["profile"], response_model=Profile, include_in_schema=server.expose_gui_api)
+@router.get("/profile/{id}", tags=["profile"],
+            dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer"]))],
+            response_model=Profile, include_in_schema=server.expose_gui_api)
 async def get_profile_by_id(id: str, response: Response):
     """
     Returns profile with given ID (str)
@@ -60,7 +64,9 @@ async def get_profile_by_id(id: str, response: Response):
     return result
 
 
-@router.delete("/profile/{id}", tags=["profile"], response_model=Optional[dict],
+@router.delete("/profile/{id}", tags=["profile"],
+               dependencies=[Depends(Permissions(roles=["admin", "developer"]))],
+               response_model=Optional[dict],
                include_in_schema=server.expose_gui_api)
 async def delete_profile(id: str, response: Response):
     """
@@ -78,7 +84,9 @@ async def delete_profile(id: str, response: Response):
     return result
 
 
-@router.get("/profile/logs/{id}", tags=["profile"], response_model=list, include_in_schema=server.expose_gui_api)
+@router.get("/profile/logs/{id}", tags=["profile"],
+            dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer"]))],
+            response_model=list, include_in_schema=server.expose_gui_api)
 async def get_profile_logs(id: str):
     """
     Gets logs for profile with given ID (str)

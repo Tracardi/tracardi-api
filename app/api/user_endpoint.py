@@ -2,8 +2,8 @@ from fastapi import APIRouter, Depends, HTTPException
 from tracardi.domain.user import User
 from app.config import server
 from tracardi.service.storage.driver import storage
-from pydantic import BaseModel, validator, ValidationError
-from typing import List, Optional
+from pydantic import BaseModel
+from typing import Optional
 
 from elasticsearch import ElasticsearchException
 
@@ -118,7 +118,11 @@ async def edit_user(id: str, user_payload: UserPayload, user=Depends(Permissions
     if user.is_the_same_user(id) and not user_payload.has_admin_role() and user.is_admin():
         raise HTTPException(status_code=403, detail="You cannot remove the role of admin from your own account")
     try:
-        saved = await update_user(id, user_payload)
+
+        # WARNING: It does not edit cached in redis User. If the user is logged in it will be able
+        # to operate with old e.g. roles till the next log-in
+
+        saved, _ = await update_user(id, user_payload)
         return {"inserted": saved}
     except LookupError as e:
         raise HTTPException(status_code=404, detail=str(e))

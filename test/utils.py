@@ -55,6 +55,9 @@ class Endpoint(metaclass=Singleton):
     def put(self, endpoint, data=None, params=None):
         return self.request(endpoint, json.dumps(data), params=params, method="put")
 
+    def set_token(self, token: str):
+        self.token = token
+
 
 def create_session(session_id, profile_id=None):
     if profile_id is not None:

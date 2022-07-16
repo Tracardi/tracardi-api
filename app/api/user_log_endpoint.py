@@ -14,7 +14,7 @@ class LogPayload(BaseModel):
 
 
 router = APIRouter(
-    dependencies=[Depends(Permissions(roles=["admin"]))]
+    dependencies=[Depends(Permissions(roles=["admin", "data_admin"]))]
 )
 
 

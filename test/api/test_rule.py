@@ -55,7 +55,7 @@ def test_should_create_new_rule():
     try:
         # Add source
 
-        assert create_event_source(source_id, "javascript").status_code == 200
+        assert create_event_source(source_id, "rest").status_code == 200
         assert endpoint.get('/event-sources/refresh').status_code == 200
 
         response = endpoint.get(f'/event-source/{source_id}')

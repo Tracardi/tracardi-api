@@ -8,18 +8,20 @@ def test_should_validate_dot_notation():
 
 
 def test_dot_accessor():
-    dot = DotAccessor(profile={"a": 1, "b": [1, 2]}, session={"b": 2}, event={"c": 1})
+    dot = DotAccessor(profile={"a": 1, "b": [1, 2]}, session={"b": 2}, event={"c": 1}, memory={"m": 0})
     a = dot['profile@...']
     b = dot['profile@b.1']
     c = dot['event@...']
     d = dot['profile@a']
     e = dot['string']
+    m = dot['memory@m']
 
     assert a == {"a": 1, "b": [1, 2]}
     assert b == 2
     assert c == {"c": 1}
     assert d == 1
     assert e == 'string'
+    assert m == 0
 
 
 def test_dot_accessor_fail():
@@ -36,21 +38,24 @@ def test_dot_accessor_fail():
 
 
 def test_null_values():
-    dot = DotAccessor(profile={"a": None}, session={"b": None}, event={"c": None})
+    dot = DotAccessor(profile={"a": None}, session={"b": None}, event={"c": None}, memory={"d": None})
     a = dot['profile@a']
     b = dot['session@b']
     c = dot['event@c']
+    d = dot['memory@d']
 
     assert a is None
     assert b is None
     assert c is None
+    assert d is None
 
 
 def test_should_cast_values():
     dot = DotAccessor(
         profile={"a": "1", "b": "false"},
         session={"f": "true"},
-        event={"c": "null", "d": "None", "e": {"key": "1.02"}, "g": [1, 2, 3]}
+        event={"c": "null", "d": "None", "e": {"key": "1.02"}, "g": [1, 2, 3]},
+        memory={"m": "true"}
     )
 
     casted_true_value = dot["`true`"]
@@ -87,6 +92,7 @@ def test_should_cast_values():
     f_casted = dot["`session@f`"]
     array_value = dot["`event@g`"]
     object_value = dot["`event@e`"]
+    memory_casted = dot["`memory@m`"]
 
     assert a == "1"
     assert a_casted == 1
@@ -122,3 +128,4 @@ def test_should_cast_values():
     assert uppercase_none_string == "NONE"
     assert array_value == [1, 2, 3]
     assert object_value == {"key": "1.02"}
+    assert memory_casted
