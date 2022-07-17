@@ -34,7 +34,7 @@ async def _track(tracker_payload: TrackerPayload, host: str, profile_less: bool 
         raise HTTPException(detail=message,
                             status_code=status.HTTP_401_UNAUTHORIZED)
     except FieldTypeConflictException as e:
-        message = "{} - {}".format(str(e), e.explain())
+        message = "FieldTypeConflictException: {} - {}".format(str(e), e.explain())
         logger.error(message)
         raise HTTPException(detail=message,
                             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY)
