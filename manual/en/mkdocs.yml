@@ -69,6 +69,7 @@ nav:
           - installation/source/index.md
       - Production:
           - installation/production/index.md
+          - installation/k8s/index.md
   - Configuration:
       - configuration/tracardi_configuration.md
       - configuration/best_practises.md
@@ -123,6 +124,9 @@ nav:
               - flow/actions/reshape_payload_action.md
               - flow/actions/assign_profile_id_action.md
               - flow/actions/template_action.md
+              - flow/actions/append_remove_trait_action.md
+              - flow/actions/debug_payload_action.md
+              - flow/actions/start_action.md
               - Stats:
                   - flow/actions/increment_action.md
                   - flow/actions/decrement_action.md
@@ -196,6 +200,7 @@ nav:
               - Validators:
                   - flow/actions/validate_with_json_schema_action.md
                   - flow/actions/string_validator_action.md
+                  - flow/actions/field_type_action.md
 
               - Machine Learning:
                   - flow/actions/text_classification_action.md
@@ -214,6 +219,7 @@ nav:
               - Memory:
                   - flow/actions/write_to_memory_action.md
                   - flow/actions/read_from_memory_action.md
+                  - flow/actions/payload_memory_collector.md
 
               - Consents:
                   - flow/actions/add_consents_action.md
