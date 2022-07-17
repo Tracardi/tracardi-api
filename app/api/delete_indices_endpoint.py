@@ -17,7 +17,7 @@ async def delete_old_indices(version: str, codename: Optional[str] = None):
 
     version = Version(version=version, name=codename)
 
-    if version.has_same_current_version(tracardi.version):
+    if version == tracardi.version:
         raise HTTPException(status_code=409, detail="You cannot delete indices that are currently used.")
 
     try:
