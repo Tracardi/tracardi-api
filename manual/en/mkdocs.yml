@@ -126,7 +126,6 @@ nav:
               - flow/actions/assign_profile_id_action.md
               - flow/actions/template_action.md
               - flow/actions/append_remove_trait_action.md
-              - flow/actions/debug_payload_action.md
               - flow/actions/start_action.md
               - Stats:
                   - flow/actions/increment_action.md
