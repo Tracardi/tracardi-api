@@ -1,5 +1,7 @@
+import json
 from uuid import uuid4
 
+from tracardi.domain.resource import Resource
 from ..utils import Endpoint
 
 endpoint = Endpoint()
@@ -25,13 +27,22 @@ def create_resource(id, type, name="Test", config=None):
     if config is None:
         config = {}
 
-    resource = dict(
+    resource = Resource(
         id=id,
+        timestamp="2022-01-01",
         type=type,
         name=name,
-        config=config
+        credentials=config
     )
-    return endpoint.post('/resource', data=resource)
+    resource = json.loads(resource.json())
+    response = endpoint.post('/resource', data=resource)
+
+    assert response.status_code
+
+    endpoint.get('/resources/flash')
+    endpoint.get('/resources/refresh')
+
+    return response
 
 
 def test_source_types():
