@@ -11,12 +11,12 @@ from .auth.permissions import Permissions
 from ..config import server
 
 router = APIRouter(
-    dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer", "data_admin"]))]
+    dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer", "maintainer"]))]
 )
 
 
 @router.get("/profile/count", tags=["profile"],
-            dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer", "data_admin"]))],
+            dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer", "maintainer"]))],
             include_in_schema=server.expose_gui_api)
 async def count_profiles():
     return await storage.driver.profile.count()

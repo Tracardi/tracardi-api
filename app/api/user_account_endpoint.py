@@ -12,12 +12,12 @@ from tracardi.config import tracardi
 from app.api.auth.permissions import Permissions
 
 router = APIRouter(
-    dependencies=[Depends(Permissions(roles=["admin", "marketer", "developer", "data_admin"]))]
+    dependencies=[Depends(Permissions(roles=["admin", "marketer", "developer", "maintainer"]))]
 )
 
 
 @router.get("/user-account", tags=["user"], include_in_schema=server.expose_gui_api, response_model=dict)
-async def get_user_account(user=Depends(Permissions(["admin", "developer", "marketer", "data_admin"]))):
+async def get_user_account(user=Depends(Permissions(["admin", "developer", "marketer", "maintainer"]))):
     """
     Returns data of the user who called the endpoint
     """
@@ -26,7 +26,7 @@ async def get_user_account(user=Depends(Permissions(["admin", "developer", "mark
 
 @router.post("/user-account", tags=["user"], include_in_schema=server.expose_gui_api, response_model=dict)
 async def edit_user_account(payload: UserSoftEditPayload,
-                            user=Depends(Permissions(["admin", "developer", "marketer", "data_admin"]))):
+                            user=Depends(Permissions(["admin", "developer", "marketer", "maintainer"]))):
 
     """
     Edits currently logged user.

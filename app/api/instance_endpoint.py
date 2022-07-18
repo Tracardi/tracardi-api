@@ -7,15 +7,15 @@ from app.config import server
 from tracardi.service.storage.driver import storage
 
 router = APIRouter(
-    dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer", "data_admin"]))]
+    dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer", "maintainer"]))]
 )
 
 
 @router.get("/instances/page/{page}", tags=["api-instance"],
-            dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer", "data_admin"]))],
+            dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer", "maintainer"]))],
             include_in_schema=server.expose_gui_api)
 @router.get("/instances", tags=["api-instance"],
-            dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer", "data_admin"]))],
+            dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer", "maintainer"]))],
             include_in_schema=server.expose_gui_api)
 async def all_api_instances(page: Optional[int] = None):
     """
@@ -40,7 +40,7 @@ async def all_api_instances(page: Optional[int] = None):
 
 
 @router.delete("/instances/stale", tags=["api-instance"],
-               dependencies=[Depends(Permissions(roles=["admin", "developer", "data_admin"]))],
+               dependencies=[Depends(Permissions(roles=["admin", "developer", "maintainer"]))],
                include_in_schema=server.expose_gui_api)
 async def remove_stale_api_instances():
     """Not implemented"""
@@ -49,7 +49,7 @@ async def remove_stale_api_instances():
 
 
 @router.get("/instances/count", tags=["api-instance"],
-            dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer", "data_admin"]))],
+            dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer", "maintainer"]))],
             include_in_schema=server.expose_gui_api)
 async def count_api_instances():
     return await storage.driver.api_instance.count()

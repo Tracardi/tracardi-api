@@ -94,7 +94,7 @@ async def install(credentials: Optional[Credentials]):
                 user = User(
                     id=credentials.username,
                     password=credentials.password,
-                    roles=['admin', 'data_admin'],
+                    roles=['admin', 'maintainer'],
                     email=credentials.username,
                     full_name="Default Admin"
                 )

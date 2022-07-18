@@ -275,3 +275,10 @@ async def delete_resource(id: str, response: Response):
             include_in_schema=server.expose_gui_api)
 async def refresh_resources():
     return await storage.driver.resource.refresh()
+
+
+@router.get("/resources/flash",
+            tags=["resource"],
+            include_in_schema=server.expose_gui_api)
+async def refresh_resources():
+    return await storage.driver.resource.flush()

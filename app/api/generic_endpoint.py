@@ -13,7 +13,7 @@ from .auth.permissions import Permissions
 from ..config import server
 
 router = APIRouter(
-    dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer", "data_admin"]))]
+    dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer", "maintainer"]))]
 )
 
 

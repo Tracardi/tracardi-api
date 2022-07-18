@@ -18,7 +18,7 @@ from ..config import server
 from elasticsearch.exceptions import ElasticsearchException
 
 router = APIRouter(
-    dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer", "data_admin"]))]
+    dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer", "maintainer"]))]
 )
 
 

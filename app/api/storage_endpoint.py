@@ -11,7 +11,7 @@ from tracardi.service.storage.factory import storage_manager
 from tracardi.service.storage.elastic_client import ElasticClient
 
 router = APIRouter(
-    dependencies=[Depends(Permissions(roles=["admin", "data_admin"]))]
+    dependencies=[Depends(Permissions(roles=["admin", "maintainer"]))]
 )
 
 memory_cache = MemoryCache()
