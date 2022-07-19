@@ -121,7 +121,9 @@ async def delete_plugin(id: str):
     """
     try:
         action = Entity(id=id)
-        return await StorageFor(action).index("action").delete()
+        result = await StorageFor(action).index("action").delete()
+        await storage.driver.action.refresh()
+        return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
