@@ -10,9 +10,9 @@ endpoint = Endpoint()
 
 def test_should_tag_event():
     source_id = str(uuid4())
-    event_type = "test-event-0"
-    tag = 'tag-1'
-    new_tag = 'new-tag-2'
+    event_type = "test-event-1"
+    tag = 'tag-0'
+    new_tag = 'new-tag-1'
     try:
 
         assert create_event_source(source_id, 'rest').status_code == 200

@@ -76,7 +76,7 @@ async def list_event_type_prerequisites(start: Optional[int] = 0, limit: Optiona
     Lists event type prerequisites and validation schemas according to given start (int) and limit (int) parameters
     """
     try:
-        result = await storage.driver.event_management.load_event_type_metadata(start, limit)
+        result = await storage.driver.event_management.load_events_type_metadata(start, limit)
     except ElasticsearchException as e:
         raise HTTPException(status_code=500, detail=str(e))
     return list(result)
