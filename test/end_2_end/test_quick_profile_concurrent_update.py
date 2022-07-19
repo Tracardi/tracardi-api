@@ -55,6 +55,7 @@ def test_source_rule_and_flow():
             })
 
             assert response.status_code == 200
+            assert endpoint.get('/rules/flash').status_code == 200
             assert endpoint.get('/rules/refresh').status_code == 200
 
             # Create flows
@@ -103,6 +104,9 @@ def test_source_rule_and_flow():
             # create profile_id
             result = call("none")
 
+            assert endpoint.get('/profiles/flash').status_code == 200
+            assert endpoint.get('/sessions/flash').status_code == 200
+
             assert endpoint.get('/profiles/refresh').status_code == 200
             assert endpoint.get('/sessions/refresh').status_code == 200
 
@@ -120,6 +124,9 @@ def test_source_rule_and_flow():
             loop.run_until_complete(asyncio.gather(*coros))
 
             result = call(profile_id)
+
+            assert endpoint.get('/profiles/flash').status_code == 200
+            assert endpoint.get('/sessions/flash').status_code == 200
 
             assert endpoint.get('/profiles/refresh').status_code == 200
             assert endpoint.get('/sessions/refresh').status_code == 200

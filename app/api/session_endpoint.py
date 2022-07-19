@@ -28,6 +28,14 @@ async def session_refresh():
     return await storage.driver.session.refresh()
 
 
+@router.get("/sessions/flash", tags=["session"], include_in_schema=server.expose_gui_api)
+async def session_refresh():
+    """
+    Flushes session index
+    """
+    return await storage.driver.session.flush()
+
+
 @router.post("/sessions/import", tags=["session"],
              dependencies=[Depends(Permissions(roles=["admin", "developer"]))],
              include_in_schema=server.expose_gui_api)

@@ -111,6 +111,14 @@ async def refresh_rules():
     return await storage.driver.rule.refresh()
 
 
+@router.get("/rules/flash", tags=["rules"], include_in_schema=server.expose_gui_api)
+async def refresh_rules():
+    """
+    Flushes rules index
+    """
+    return await storage.driver.rule.flush()
+
+
 @router.get("/rules/by_tag", tags=["rules"], response_model=dict, include_in_schema=server.expose_gui_api)
 async def get_rules_by_tag(query: str = None, start: int = 0, limit: int = 100) -> dict:
     """

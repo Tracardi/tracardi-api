@@ -45,6 +45,17 @@ async def refresh_profile():
         raise HTTPException(status_code=500, detail=str(e))
 
 
+@router.get("/profiles/flash", tags=["profile"], include_in_schema=server.expose_gui_api)
+async def refresh_profile():
+    """
+    Flashes profile index
+    """
+    try:
+        return await storage.driver.profile.flush()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 @router.get("/profile/{id}", tags=["profile"],
             dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer"]))],
             response_model=Profile, include_in_schema=server.expose_gui_api)
