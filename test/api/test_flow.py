@@ -187,7 +187,6 @@ def test_should_update_flow_metadata():
             assert result['id'] == id
             assert result['name'] == 'New name'
             assert result['description'] == 'New Description'
-            assert result['enabled'] is False
             assert "New" in result['projects']
         else:
             raise Exception("Could not read flow")
@@ -209,8 +208,6 @@ def test_should_enable_flow_lock():
         # read flow
         check_flow_bool(id, True, type='lock', field='lock')
         check_flow_bool(id, False, type='lock', field='lock')
-        check_flow_bool(id, True, type='enable', field='enabled')
-        check_flow_bool(id, False, type='enable', field='enabled')
 
     finally:
         assert endpoint.delete(f'/flow/{id}').status_code in [200, 404]

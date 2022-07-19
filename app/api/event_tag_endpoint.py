@@ -20,6 +20,7 @@ async def replace_tags(tag_form: EventTag):
         )
         await storage.driver.tag.refresh()
         await update_tags(tag_form.type)
+        await storage.driver.tag.refresh_tags_cache_for_type(tag_form.type)
     except StorageException as e:
         raise HTTPException(status_code=500, detail=str(e))
     return {"replaced": result.saved}
@@ -38,6 +39,7 @@ async def add_tags(tag_form: EventTag):
         raise HTTPException(status_code=500, detail=result.errors)
     await storage.driver.tag.refresh()
     await update_tags(tag_form.type)
+    await storage.driver.tag.refresh_tags_cache_for_type(tag_form.type)
     return {"new": result.saved, "updated": 1 - result.saved}
 
 
@@ -52,6 +54,7 @@ async def delete_tags(tag_form: EventTag):
             tags=tag_form.tags
         )
         await storage.driver.tag.refresh()
+        await storage.driver.tag.refresh_tags_cache_for_type(tag_form.type)
     except StorageException as e:
         raise HTTPException(status_code=500, detail=str(e))
     return {"removed": removed, "total": total}
@@ -108,6 +111,7 @@ async def delete_record(event_type: str):
     try:
         delete_result = await storage.driver.tag.delete(event_type)
         await storage.driver.tag.refresh()
+        await storage.driver.tag.refresh_tags_cache_for_type(event_type)
     except StorageException as e:
         raise HTTPException(status_code=500, detail=str(e))
     return {"deleted": 0 if delete_result is None else 1}
