@@ -121,7 +121,11 @@ async def delete_plugin(id: str):
     """
     try:
         action = Entity(id=id)
-        return await StorageFor(action).index("action").delete()
+        action = StorageFor(action).index("action")
+        result = await action.delete()
+        await action.refresh()
+
+        return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
