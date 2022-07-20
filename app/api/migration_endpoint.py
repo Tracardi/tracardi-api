@@ -5,7 +5,7 @@ from app.config import server
 from tracardi.domain.migration_payload import MigrationPayload
 from tracardi.process_engine.migration.migration_manager import MigrationManager, MigrationNotFoundException
 from typing import Optional
-from tracardi.service.url_constructor import construct_url
+from tracardi.service.url_constructor import construct_elastic_url
 from tracardi.config import elastic, tracardi
 
 
@@ -23,7 +23,7 @@ async def run_migration(migration: MigrationPayload):
             from_prefix=migration.from_prefix,
             to_prefix=tracardi.version.name
         )
-        elastic_host = construct_url(
+        elastic_host = construct_elastic_url(
             host=elastic.host if isinstance(elastic.host, str) else elastic.host[0],
             scheme=elastic.scheme,
             username=elastic.http_auth_username,
