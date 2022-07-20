@@ -317,7 +317,7 @@ system_settings = [
 ]
 
 router = APIRouter(
-    dependencies=[Depends(Permissions(roles=["admin"]))]
+    dependencies=[Depends(Permissions(roles=["admin", "developer"]))]
 )
 
 
