@@ -10,7 +10,7 @@ from tracardi.config import elastic, tracardi
 
 
 router = APIRouter(
-    dependencies=[Depends(Permissions(roles=["admin", "developer"]))]
+    dependencies=[Depends(Permissions(roles=["admin", "developer", "maintainer"]))]
 )
 
 
