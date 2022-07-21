@@ -23,7 +23,7 @@ logger.setLevel(tracardi.logging_level)
 logger.addHandler(log_handler)
 
 router = APIRouter(
-    dependencies=[Depends(Permissions(roles=["admin"]))]
+    dependencies=[Depends(Permissions(roles=["admin", "developer"]))]
 )
 
 tracardi_pro_client = TracardiProClient(host=tracardi.tracardi_pro_host,

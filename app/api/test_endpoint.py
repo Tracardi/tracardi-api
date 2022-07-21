@@ -13,7 +13,7 @@ from fastapi import HTTPException
 from datetime import datetime
 
 router = APIRouter(
-    dependencies=[Depends(Permissions(roles=["admin", "maintainer"]))]
+    dependencies=[Depends(Permissions(roles=["admin", "maintainer", "developer"]))]
 )
 
 
