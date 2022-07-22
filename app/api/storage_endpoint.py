@@ -9,12 +9,19 @@ from app.config import server
 from tracardi.service.storage.driver import storage
 from tracardi.service.storage.factory import storage_manager
 from tracardi.service.storage.elastic_client import ElasticClient
+from tracardi.service.storage.indices_manager import check_indices_mappings_consistency
 
 router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin", "maintainer"]))]
 )
 
 memory_cache = MemoryCache()
+
+
+@router.get("/storage/mapping/check", tags=["storage"], include_in_schema=server.expose_gui_api,
+            response_model=dict)
+async def check_indices_mapping_consistency():
+    return await check_indices_mappings_consistency()
 
 
 @router.get("/storage/mapping/{index}/metadata", tags=["storage"], include_in_schema=server.expose_gui_api,
@@ -48,7 +55,6 @@ async def get_index_mapping(index: str):
 
 @router.get("/storage/task/{task_id}", tags=["storage"], include_in_schema=server.expose_gui_api)
 async def storage_task_status(task_id: str):
-
     """
     Returns the status of storage task.
     """
@@ -58,7 +64,6 @@ async def storage_task_status(task_id: str):
 
 @router.get("/storage/reindex/{source}/{destination}", tags=["storage"], include_in_schema=server.expose_gui_api)
 async def reindex_data(source: str, destination: str, wait_for_completion: bool = True):
-
     """
     Copies data from one index to another.
     """
@@ -68,7 +73,6 @@ async def reindex_data(source: str, destination: str, wait_for_completion: bool 
 
 @router.delete("/storage/index/{index_name}", tags=["storage"], include_in_schema=server.expose_gui_api)
 async def delete_index(index_name: str):
-
     """
     Deletes storage index
     """
@@ -87,7 +91,6 @@ async def delete_index(index_name: str):
 @router.get("/storage/snapshot-repository/{name}", tags=["storage"], include_in_schema=server.expose_gui_api,
             response_model=dict)
 async def get_snapshot_repository(name: str):
-
     """
     List repository snapshots
     """
@@ -101,7 +104,6 @@ async def get_snapshot_repository(name: str):
 @router.get("/storage/snapshot-repository/status/{name}", tags=["storage"], include_in_schema=server.expose_gui_api,
             response_model=dict)
 async def get_snapshot_repository_status(name: Optional[str] = "_all"):
-
     """
     Lists available snapshots withing the repository name. Use _all as a name to get all repos snapshots.
     """
