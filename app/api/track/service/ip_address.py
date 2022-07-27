@@ -4,6 +4,7 @@ from app.config import server
 
 
 def get_ip_address(request: Request) -> str:
+
     """
     Returns IP address - if address is forwarded from reverse proxy it takes USE_X_FORWARDED_IP env to figure out
     where the forwarded ip is stored in headers.
