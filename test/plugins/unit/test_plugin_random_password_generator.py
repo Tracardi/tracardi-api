@@ -7,7 +7,7 @@ def test_should_return_password_length():
             "min_length": 10,
             "uppercase": 5,
             "lowercase": 5,
-            "special_characters": 2}
+            "special_characters": 3}
 
     payload = {}
 
