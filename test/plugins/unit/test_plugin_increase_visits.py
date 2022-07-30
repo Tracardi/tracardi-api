@@ -1,4 +1,3 @@
-from tracardi.domain.context import Context
 from tracardi.domain.entity import Entity
 from tracardi.domain.event import Event, EventSession
 from tracardi.domain.event_metadata import EventMetadata, EventTime
@@ -17,7 +16,6 @@ def test_plugin_increase_visits_1():
         type='text',
         metadata=EventMetadata(time=EventTime()),
         session=EventSession(id='1'),
-        context=Context(),
         source=Entity(id='1')
     )
     session1 = Session(id="1", metadata=SessionMetadata())
@@ -36,7 +34,6 @@ def test_plugin_increase_visits_2():
         type='text',
         metadata=EventMetadata(time=EventTime()),
         session=EventSession(id='1'),
-        context=Context(),
         source=Entity(id='1')
     )
     session2 = Session(id="2", metadata=SessionMetadata())

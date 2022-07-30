@@ -1,19 +1,19 @@
 from uuid import uuid4
-from ...api.test_event_source import create_event_source
+from ...api.test_source import create_event_source
 from ...utils import Endpoint, get_profile, get_session
 
 endpoint = Endpoint()
 
 
 def test_session_not_exists_profile_not_exists():
-    source_id =  str(uuid4())
+    source_id = str(uuid4())
     session_id = str(uuid4())
     profile_id = str(uuid4())
 
     try:
         assert get_session(session_id).status_code == 404  # No session
         assert get_profile(profile_id).status_code == 404  # No profile
-        assert create_event_source(source_id, 'javascript').status_code == 200
+        assert create_event_source(source_id, 'rest').status_code == 200
 
         response = endpoint.post("/track", data={
             "source": {
@@ -31,6 +31,12 @@ def test_session_not_exists_profile_not_exists():
             }
         })
         result = response.json()
+
+        if 'debugging' not in result:
+            raise ValueError(
+                'Could not perform test due to bad server configuration. No debugging allowed. '
+                'Start Tracardi wiht TRACK_DEBUG=yes.')
+
         assert result['debugging']['session']['saved'] == 1
         assert result['debugging']['events']['saved'] == 1
         assert result['debugging']['profile']['saved'] == 1

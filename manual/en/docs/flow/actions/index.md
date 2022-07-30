@@ -19,7 +19,7 @@ Each action node has a reference to the following data:
 * *debug* - flag that tells if the node is in the debug mode
 * *event* - currently processed event
 * *profile* - currently processed profile. Profile may be empty if the event that is being processed is a profile less 
-* event. Search for profileless events in the documentation.
+* event. Search for profile-less events in the documentation.
 * *session* - current user session
 * *flow*  - flow diagram
 * *execution_graph* - information on graph execution, with nodes that have referenced action class instances. 

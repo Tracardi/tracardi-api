@@ -1,12 +1,10 @@
-from time import sleep
 from uuid import uuid4
 
+from tracardi.process_engine.action.v1.flow.start.start_action import StartAction
 from tracardi.process_engine.action.v1.increase_views_action import IncreaseViewsAction
 from tracardi.domain.flow import Flow
 from tracardi.process_engine.action.v1.end_action import EndAction
-from tracardi.process_engine.action.v1.start_action import StartAction
-from tracardi.process_engine.action.v1.debug_payload_action import DebugPayloadAction
-from ..api.test_event_source import create_event_source
+from ..api.test_source import create_event_source
 from tracardi.service.wf.service.builders import action
 from ..utils import Endpoint
 
@@ -38,7 +36,7 @@ def test_source_rule_and_flow():
         assert endpoint.get('/flows/refresh').status_code == 200
 
         # Create resource
-        assert create_event_source(source_id, type='javascript', name="End2End test").status_code == 200
+        assert create_event_source(source_id, type='rest', name="End2End test").status_code == 200
         assert endpoint.get('/event-sources/refresh').status_code == 200
 
         response = endpoint.post('/rule', data={
@@ -63,30 +61,30 @@ def test_source_rule_and_flow():
 
         # Create flow
 
-        debug = action(DebugPayloadAction, {
-            "event": {
-                "type": event_type,
-            }
-        })
-
         start = action(StartAction)
         increase_views = action(IncreaseViewsAction)
         end = action(EndAction)
 
         flow = Flow.build("End2End flow", id=flow_id)
-        flow += debug('event') >> start('payload')
         flow += start('payload') >> increase_views('payload')
         flow += increase_views('payload') >> end('payload')
+
+        flow.arrange_nodes()
+
+        for edge in flow.flowGraph.edges:
+            assert flow.flowGraph.get_node_by_id(edge.source).position.y < \
+                   flow.flowGraph.get_node_by_id(edge.target).position.y - 100  # Y coordinate increases to the bottom
 
         assert endpoint.post('/flow/production', data=flow.dict()).status_code == 200
         assert endpoint.get('/flows/refresh').status_code == 200
 
-        assert endpoint.post('/segment', data={
+        result = endpoint.post('/segment', data={
             "id": segment_id,
             "name": "Test segment",
             "condition": "profile@stats.views>0",
-            "eventType": event_type
-        }).status_code == 200
+            "eventType": [event_type]
+        })
+        assert result.status_code == 200
         assert endpoint.get('/segments/refresh').status_code == 200
 
         # Assert rule

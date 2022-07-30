@@ -1,13 +1,14 @@
 from uuid import uuid4
+
+from tracardi.process_engine.action.v1.flow.start.start_action import StartAction
+
 from tracardi.process_engine.action.v1.increase_views_action import IncreaseViewsAction
 from tracardi.domain.flow import Flow
 from tracardi.process_engine.action.v1.end_action import EndAction
 from tracardi.process_engine.action.v1.increase_visits_action import IncreaseVisitsAction
-from tracardi.process_engine.action.v1.start_action import StartAction
-from tracardi.process_engine.action.v1.debug_payload_action import DebugPayloadAction
 from tracardi.process_engine.action.v1.traits.append_trait_action import AppendTraitAction
 from tracardi.process_engine.action.v1.traits.copy_trait_action import CopyTraitAction
-from ..api.test_event_source import create_event_source
+from ..api.test_source import create_event_source
 from tracardi.service.wf.service.builders import action
 from ..utils import Endpoint
 
@@ -26,7 +27,7 @@ def test_source_rule_and_flow():
 
     try:
         # Create resource
-        assert create_event_source(source_id, type='javascript', name="End2End Test").status_code == 200
+        assert create_event_source(source_id, type='rest', name="End2End Test").status_code == 200
         assert endpoint.get('/event-sources/refresh').status_code == 200
 
         response = endpoint.post('/rule', data={
@@ -69,7 +70,6 @@ def test_source_rule_and_flow():
 
         # Create flows
 
-        debug = action(DebugPayloadAction, init={"event": {"type": event_type}})
         start = action(StartAction)
         copy_trait1 = action(CopyTraitAction, init={
             "traits": {
@@ -88,7 +88,6 @@ def test_source_rule_and_flow():
         end = action(EndAction)
 
         flow = Flow.build("Profile override flow test - 1", id=flow_id_1)
-        flow += debug('event') >> start('payload')
         flow += start('payload') >> increase_views('payload')
         flow += start('payload') >> copy_trait1('payload')
         flow += copy_trait1('payload') >> end('payload')
@@ -111,7 +110,6 @@ def test_source_rule_and_flow():
             }
         })
         flow = Flow.build("Profile override flow test - 2", id=flow_id_2)
-        flow += debug('event') >> start('payload')
         flow += start('payload') >> increase_views('payload')
         flow += start('payload') >> increase_visits('payload')
         flow += start('payload') >> copy_trait2('payload')

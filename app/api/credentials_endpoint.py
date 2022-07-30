@@ -4,18 +4,21 @@ from fastapi import APIRouter
 from fastapi import HTTPException, Depends
 
 from tracardi.service.storage.driver import storage
-from .auth.authentication import get_current_user
 from app.service.grouper import search
 from tracardi.domain.resource import Resource
+from .auth.permissions import Permissions
 from ..config import server
 
 router = APIRouter(
-    dependencies=[Depends(get_current_user)]
+    dependencies=[Depends(Permissions(roles=["admin"]))]
 )
 
 
 @router.get("/credentials/by_type", tags=["credential"], include_in_schema=server.expose_gui_api)
 async def get_credentials(query: str = None, limit: int = 500):
+    """
+    Returns resources that have match with query in name
+    """
     try:
         result, total = await storage.driver.resource.load_all(limit=limit)
 

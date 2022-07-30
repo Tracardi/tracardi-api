@@ -6,16 +6,16 @@ from fastapi import APIRouter, Response, HTTPException, Depends
 from tracardi.domain.event_source import EventSource
 from tracardi.service.storage.driver import storage
 from tracardi.service.storage.factory import StorageFor
-from .auth.authentication import get_current_user
 from tracardi.domain.entity import Entity
 from tracardi.domain.flow import FlowRecord
 from tracardi.domain.named_entity import NamedEntity
 from tracardi.domain.rule import Rule
+from .auth.permissions import Permissions
 from ..config import server
 from ..service.grouping import group_records
 
 router = APIRouter(
-    dependencies=[Depends(get_current_user)]
+    dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer"]))]
 )
 
 
@@ -39,6 +39,9 @@ async def get_rule(id: str, response: Response):
 
 @router.post("/rule", tags=["rule"], include_in_schema=server.expose_gui_api)
 async def upsert_rule(rule: Rule):
+    """
+    Adds new rule to database
+    """
     try:
         # Check if source id exists
         entity = Entity(id=rule.source.id)
@@ -73,6 +76,9 @@ async def upsert_rule(rule: Rule):
 
 @router.delete("/rule/{id}", tags=["rule"], include_in_schema=server.expose_gui_api)
 async def delete_rule(id: str, response: Response):
+    """
+    Deletes rule with given ID (str) from database
+    """
     try:
         result = await StorageFor(Entity(id=id)).index("rule").delete()
     except Exception as e:
@@ -88,6 +94,9 @@ async def delete_rule(id: str, response: Response):
 
 @router.get("/rules/by_flow/{id}", tags=["rules"], response_model=List[Rule], include_in_schema=server.expose_gui_api)
 async def get_rules_attached_to_flow(id: str) -> List[Rule]:
+    """
+    Returns list of rules attached to flow with given ID (str)
+    """
     try:
         return await storage.driver.rule.load_flow_rules(id)
     except Exception as e:
@@ -96,11 +105,25 @@ async def get_rules_attached_to_flow(id: str) -> List[Rule]:
 
 @router.get("/rules/refresh", tags=["rules"], include_in_schema=server.expose_gui_api)
 async def refresh_rules():
+    """
+    Refreshes rules index
+    """
     return await storage.driver.rule.refresh()
+
+
+@router.get("/rules/flash", tags=["rules"], include_in_schema=server.expose_gui_api)
+async def refresh_rules():
+    """
+    Flushes rules index
+    """
+    return await storage.driver.rule.flush()
 
 
 @router.get("/rules/by_tag", tags=["rules"], response_model=dict, include_in_schema=server.expose_gui_api)
 async def get_rules_by_tag(query: str = None, start: int = 0, limit: int = 100) -> dict:
+    """
+    Lists rules by tags, according to query (str), start (int) and limit (int) parameters
+    """
     try:
         result = await storage.driver.rule.load_all(start, limit=limit)
         return group_records(result, query, group_by='tags', search_by='name', sort_by='name')

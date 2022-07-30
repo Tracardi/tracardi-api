@@ -1,5 +1,5 @@
 from uuid import uuid4
-from ...api.test_event_source import create_event_source
+from ...api.test_source import create_event_source
 from ...utils import Endpoint, create_session, create_profile, get_session, get_profile
 
 endpoint = Endpoint()
@@ -18,7 +18,7 @@ def test_session_exists_profile_exists():
 
         assert get_session(session_id).status_code == 200
         assert get_profile(profile_id).status_code == 200
-        assert create_event_source(source_id, 'javascript').status_code == 200
+        assert create_event_source(source_id, 'rest').status_code == 200
 
         response = endpoint.post("/track", data={
             "source": {
@@ -40,6 +40,11 @@ def test_session_exists_profile_exists():
         assert endpoint.get(f'/profiles/refresh').status_code == 200
         assert endpoint.get(f'/sessions/refresh').status_code == 200
 
+        if 'debugging' not in result:
+            raise ValueError(
+                'Could not perform test due to bad server configuration. No debugging allowed. '
+                'Start Tracardi wiht TRACK_DEBUG=yes.')
+
         assert result['debugging']['session']['saved'] == 0  # session is not saved because it did not change
         assert result['debugging']['events']['saved'] == 1
         assert result['debugging']['profile']['saved'] == 0  # profile is not saved because it exists
@@ -48,8 +53,6 @@ def test_session_exists_profile_exists():
 
         new_profile_id = result['profile']['id']
         assert new_profile_id == profile_id
-
-        assert endpoint.delete(f'/profile/{new_profile_id}').status_code == 200
 
     finally:
         assert endpoint.delete(f'/event-source/{source_id}').status_code in [200, 404]

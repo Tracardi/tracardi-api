@@ -3,16 +3,14 @@ from datetime import timedelta, datetime
 from random import randint
 from uuid import uuid4
 
-from tracardi.domain.context import Context
-
 from tracardi.domain.event_metadata import EventMetadata, EventTime
 
 from tracardi.domain.event import Event
 from tracardi.domain.entity import Entity
 from tracardi.domain.session import Session, SessionMetadata
 from tracardi.domain.pii import PII
-from tracardi.domain.time import Time
-from tracardi.domain.metadata import Metadata
+from tracardi.domain.time import ProfileTime, ProfileVisit
+from tracardi.domain.metadata import ProfileMetadata
 from tracardi.domain.profile_traits import ProfileTraits
 from tracardi.domain.profile_stats import ProfileStats
 from tracardi.domain.profile import Profile
@@ -30,7 +28,6 @@ def generate_events_for_profile(profiles, sessions, sources):
                 profile=Entity(id=profile.id),
                 session=random.choice(sessions),
                 source=random.choice(sources),
-                context=Context(),
                 properties={
                     "name": profile.pii.name,
                     "last_name": profile.pii.last_name,
@@ -42,8 +39,7 @@ def generate_profile():
     date = generate_random_date()
     return Profile(
         id=str(uuid4()),
-        mergedWith=None,
-        metadata=Metadata(time=Time(insert=date, lastVisit=date)),
+        metadata=ProfileMetadata(time=ProfileTime(insert=date, visit=ProfileVisit(last=date, current=date))),
         stats=ProfileStats(views=randint(0, 300)),
         traits=ProfileTraits(private={}, public={}),
         pii=PII(

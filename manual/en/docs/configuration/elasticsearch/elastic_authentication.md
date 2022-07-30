@@ -25,7 +25,6 @@ File docker-standalone.yaml
     ports:
       - 80:80  
     depends_on:
-      - unomi
       - elasticsearch
 ```
 

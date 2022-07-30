@@ -1,5 +1,7 @@
+import json
 from uuid import uuid4
 
+from tracardi.domain.resource import Resource
 from ..utils import Endpoint
 
 endpoint = Endpoint()
@@ -25,13 +27,22 @@ def create_resource(id, type, name="Test", config=None):
     if config is None:
         config = {}
 
-    resource = dict(
+    resource = Resource(
         id=id,
+        timestamp="2022-01-01",
         type=type,
         name=name,
-        config=config
+        credentials=config
     )
-    return endpoint.post('/resource', data=resource)
+    resource = json.loads(resource.json())
+    response = endpoint.post('/resource', data=resource)
+
+    assert response.status_code
+
+    endpoint.get('/resources/flash')
+    endpoint.get('/resources/refresh')
+
+    return response
 
 
 def test_source_types():
@@ -83,11 +94,11 @@ def test_resource_get_ok():
     assert response.status_code == 404
 
 
-def test_source_toggle_on_off_ok():
+def test_should_toggle_on_off_source():
     resource_id = str(uuid4())
 
     try:
-        response = create_resource(resource_id, "mysql")
+        response = create_resource(resource_id, "mysql", name="Test MySql Resource")
         assert response.status_code == 200
         result = response.json()
         assert result == {'saved': 1, 'errors': [], 'ids': [resource_id]}
@@ -107,22 +118,6 @@ def test_source_toggle_on_off_ok():
 
         result = endpoint.get(f'/resource/{resource_id}').json()
         assert result['enabled'] is False
-
-        # Consent on
-
-        result = endpoint.get(f'/resource/{resource_id}/consent/on').json()
-        assert result == {'saved': 1, 'errors': [], 'ids': [resource_id]}
-
-        result = endpoint.get(f'/resource/{resource_id}').json()
-        assert result['consent'] is True
-
-        # Consent off
-
-        result = endpoint.get(f'/resource/{resource_id}/consent/off').json()
-        assert result == {'saved': 1, 'errors': [], 'ids': [resource_id]}
-
-        result = endpoint.get(f'/resource/{resource_id}').json()
-        assert (result['consent'] is False)
 
     finally:
         assert endpoint.delete(f'/resource/{resource_id}').status_code in [200, 404]

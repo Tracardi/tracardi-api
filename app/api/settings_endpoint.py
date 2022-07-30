@@ -1,25 +1,12 @@
 from typing import List, Optional
+
+from app.api.auth.permissions import Permissions
 from tracardi.config import elastic, redis_config, tracardi, memory_cache
-from app.api.auth.authentication import get_current_user
 from app.config import *
 from fastapi import APIRouter, Depends
 from tracardi.domain.settings import SystemSettings
 
 system_settings = [
-    SystemSettings(
-        **{
-            "label": "USER_NAME",
-            "value": auth.user,
-            "desc": "Default: admin. Login to Tracardi API"
-        }
-    ),
-    SystemSettings(
-        **{
-            "label": "PASSWORD",
-            "value": auth.password,
-            "desc": "Default: admin. Password to Tracardi API"
-        }
-    ),
     SystemSettings(
         **{
             "label": "UPDATE_PLUGINS_ON_STARTUP",
@@ -69,19 +56,34 @@ system_settings = [
     ),
     SystemSettings(
         **{
-            "label": "RESET_PLUGINS",
-            "value": server.reset_plugins,
-            "desc": "Reset plugins data in ElasticSearch database, defaults to False. "
-                    "Plug-ins are recreated with every Tracardi restart."
-        }
-    ),
-    SystemSettings(
-        **{
             "label": "TRACK_DEBUG",
             "value": tracardi.track_debug,
             "desc": "Track debug or not, defaults to False."
         }
     ),
+    SystemSettings(
+        **{
+            "label": "QUERY_LANGUAGE",
+            "value": tracardi.query_language,
+            "desc": "Defines what type of query language to use for filtering data. Default: Kibana Query Language (kql)."
+                    " Other possible values Tracardi Query Language (tql)"
+        }
+    ),
+    SystemSettings(
+        **{
+            "label": "TRACARDI_PRO_HOST",
+            "value": tracardi.tracardi_pro_host,
+            "desc": "Defines the Tracardi Pro Services Host."
+        }
+    ),
+    SystemSettings(
+        **{
+            "label": "TRACARDI_SCHEDULER_HOST",
+            "value": tracardi.tracardi_scheduler_host,
+            "desc": "Defines the Tracardi Pro Scheduler Host."
+        }
+    ),
+
     SystemSettings(
         **{
             "label": "CACHE_PROFILE",
@@ -93,8 +95,23 @@ system_settings = [
         **{
             "label": "SYNC_PROFILE_TRACKS",
             "value": tracardi.sync_profile_tracks,
-            "desc": "Variable telling Tracardi to synchronize profile tracks or not, defaults to False, can be changed"
-                    "by getting set to 'yes'."
+            "desc": "Variable sets Tracardi to synchronize profile tracks or not, defaults to False. By default "
+                    "Tracardi runs profile updates in parallel. This may lead to profile changes that are not up to "
+                    "date if the changes to profile are very quick. To sync profile changes set this variable "
+                    "to 'yes'. This features requires "
+                    "REDIS."
+        }
+    ),
+    SystemSettings(
+        **{
+            "label": "POSTPONE_DESTINATION_SYNC",
+            "value": tracardi.postpone_destination_sync,
+            "desc": "Postpone destination synchronisation. Default 0, means do not wait. Destinations are called only "
+                    "when the profile is changed. If there is a stream of changes then with every change of profile "
+                    "synchronisation will be triggered. To avoid unnecessary calls to external systems you can set this "
+                    "variable to eg. 60 seconds and Tracardi will wait between 60 and 120 seconds after the last "
+                    "change of profile before it will trigger destination synchronisation. This features requires "
+                    "REDIS."
         }
     ),
     SystemSettings(
@@ -125,6 +142,27 @@ system_settings = [
             "value": elastic.host,
             "desc": "Default: 127.0.0.1. This setting defines a IP address of elastic search instance. See Connecting "
                     "to elastic cluster for more information how to connect to a cluster of servers."
+        }
+    ),
+    SystemSettings(
+        **{
+            "label": "ELASTIC_INDEX_SHARDS",
+            "value": elastic.shards,
+            "desc": "Default: 5. Number of shards per index."
+        }
+    ),
+    SystemSettings(
+        **{
+            "label": "ELASTIC_INDEX_REPLICAS",
+            "value": elastic.replicas,
+            "desc": "Default: 5. Number of replicas of index."
+        }
+    ),
+    SystemSettings(
+        **{
+            "label": "INSTANCE_PREFIX",
+            "value": tracardi.version.name,
+            "desc": "Default: None. This setting defines a prefix for all tracardi indices."
         }
     ),
     SystemSettings(
@@ -162,7 +200,7 @@ system_settings = [
     SystemSettings(
         **{
             "label": "ELASTIC_HTTP_AUTH_PASSWORD",
-            "value": elastic.http_auth_password,
+            "value": "Set" if elastic.http_auth_password is not None else "Unset",
             "desc": "Default: None. Elastic search password. Search for elastic authentication "
                     "for more information on how to configure connection to elastic."
         }
@@ -248,6 +286,13 @@ system_settings = [
     ),
     SystemSettings(
         **{
+            "label": "REDIS_PASSWORD",
+            "value": "Set" if redis_config.redis_password is not None else "Unset",
+            "desc": "Default: None. This is Redis password."
+        }
+    ),
+    SystemSettings(
+        **{
             "label": "TAGS_TTL",
             "value": memory_cache.tags_ttl,
             "desc": "Time of availability of event tags in memory cache, expressed in seconds, defaults to 60 seconds."
@@ -256,15 +301,23 @@ system_settings = [
     SystemSettings(
         **{
             "label": "EVENT_VALIDATOR_TTL",
-            "value": server.event_validator_ttl,
+            "value": memory_cache.event_validator_ttl,
             "desc": "How many seconds it takes to reload event validation schema. Validation JSON SCHEMA is cached for "
                     "performance reasons, defaults to 180 seconds."
         }
     ),
+    SystemSettings(
+        **{
+            "label": "TOKENS_IN_REDIS",
+            "value": tracardi.tokens_in_redis,
+            "desc": "If set to 'yes', then user auth tokens are being cached on Redis. It allows multiple sessions for "
+                    "one user and increases performance of the API. Defaults to 'yes'."
+        }
+    )
 ]
 
 router = APIRouter(
-    dependencies=[Depends(get_current_user)]
+    dependencies=[Depends(Permissions(roles=["admin", "developer"]))]
 )
 
 
@@ -272,6 +325,9 @@ router = APIRouter(
             include_in_schema=server.expose_gui_api,
             response_model=Optional[SystemSettings])
 async def get_system_settings(name: str) -> Optional[SystemSettings]:
+    """
+    Returns setting with given name (str)
+    """
     for setting in system_settings:
         if setting.label == name:
             return setting
@@ -282,4 +338,7 @@ async def get_system_settings(name: str) -> Optional[SystemSettings]:
             include_in_schema=server.expose_gui_api,
             response_model=List[SystemSettings])
 async def get_system_settings() -> List[SystemSettings]:
+    """
+    Lists all system settings
+    """
     return system_settings

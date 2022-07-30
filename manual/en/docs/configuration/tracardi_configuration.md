@@ -44,8 +44,7 @@ of all the environment variable names below.
 * `DEBUG_MAKE_SLOWER_RESPONSES` - Default: 0. This variable is for testing purposes only. It sets the number of seconds
   each endpoint should be slowed in order to see the GUI responses.
 * `AUTOLOAD_PAGE_SIZE` - Default: 25. Chunks of data that are loaded with one request.
-* `EXPOSE_GUI_API` - Default: yes. It exposes the GUI API on the started Tracardi API instance. Available only in
-  commercial version of Tracardi.
+* `EXPOSE_GUI_API` - Default: yes. It exposes the GUI API on the started Tracardi API instance.
 
 ## Plugins settings
 

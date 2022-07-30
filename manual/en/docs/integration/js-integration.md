@@ -8,6 +8,9 @@ in your web page header. This is the example of the snippet:
 ```html linenums="1"
 
 <script>
+
+        !function(e){"object"==typeof exports&&"undefine...  // (1)
+
         const options = {
             tracker: {
                 url: {
@@ -15,16 +18,14 @@ in your web page header. This is the example of the snippet:
                     api: 'http://192.168.1.103:8686'
                 },
                 source: {
-                    id: "<your-resource-id-HERE>" // (1)
+                    id: "<your-resource-id-HERE>" // (2)
                 }
             }
         }
-
-        !function(e){"object"==typeof exports&&"undefine...
 </script>
 ```
-
-1. You `event source id` should be copied here.
+1. Compiled javascript code must be the first line in the script.
+2. You `event source id` should be copied here.
 
 If you refresh your page with the above javascript code you will notice that the response from tracardi will be like
 this:
@@ -37,12 +38,14 @@ Body:
 {"detail": "Access denied. Invalid source."}
 ```
 
-This is because of the __invalid source id__ that was not defined in the `option.source.id` section of the snippet. To obtain
-source id create event source in Tracardi and then replace string ‘<your-resource-id-HERE>‘ with the source id from
-Tracardi, like this:
+This is because of the __invalid source id__ that was not defined in the `option.source.id` section of the snippet. To
+obtain source id create event source in Tracardi and then replace string ‘<your-resource-id-HERE>‘ with the source id
+from Tracardi, like this:
 
 ```html linenums="1"
 <script>
+        !function(e){"object"==typeof exports&&"undefined"!=ty... // (3)
+        
         const options = {
             tracker: {
                 url: {
@@ -55,7 +58,6 @@ Tracardi, like this:
             }
         }
 
-        !function(e){"object"==typeof exports&&"undefined"!=ty... // (3)
 </script>
 ```
 
@@ -85,13 +87,14 @@ Configuration can be extended with *context* parameter, where you may define the
             page: true,
             session: false,
             storage:true,
-            screen: true
+            screen: true,
+            performance: false
         }
     }
 }
 ```
 
-By default, the following context data will be sent to Tracardi:
+By default, the following session context data will be sent to Tracardi:
 
 ```json title="Example" linenums="1"
 {
@@ -114,21 +117,6 @@ By default, the following context data will be sent to Tracardi:
         },
         "device": {
           "platform": "Linux x86_64"
-        }
-      }
-    },
-    "page": {
-      "local": {
-        "url": "http://localhost:8686/tracker/",
-        "path": "/tracker/",
-        "hash": "",
-        "title": "Test page",
-        "referer": {
-          "host": null,
-          "query": null
-        },
-        "history": {
-          "length": 10
         }
       }
     },
@@ -156,18 +144,47 @@ the context configuration.
 different cookies and local data that will lead to the 1000 fields per record limit in elastic. This will stop writing
 new sessions to the system.
 
+### Respect Do Not Track (DNT) browser setting
+
+Do Not Track (DNT) is a web browser setting that adds a signal to the browser, telling websites that the user don’t want
+to be tracked. By 2011, DNT had been adopted by all the major browsers, but it’s not enforceable. That means its default
+value is set to track the user.
+
+You can respect the browser setting and do not to track the user. If you decide to do this Tracardi will not load the
+tracking script if the user sets DNT. To respect the DNT set `respectDoNotTrack: true`
+in settings section of tracker options.
+
+```javascript title="Example" linenums="1" hl_lines="10-12"
+    const options = {
+      tracker: {
+        url: {
+            script: 'http://localhost:8686/tracker',
+            api: 'http://localhost:8686'
+        },
+        source: {
+            id: "3ee63fc6-490a-4fd8-bfb3-bf0c8c8d3387"
+        },
+        settings: {
+          respectDoNotTrack: true
+        }
+    }
+}
+```
+
+If the `respectDoNotTrack` is missing in the settings than Tracardi sets default setting and loads tracking script.
+
 ## Sending events
 
 Events are defined in a separate script. Below you may find an example of such script.
 
 ```javascript title="Example" linenums="1"
-window.response.context.profile = true; //(1)
+window.response.context.profile = true; // (1)
 window.tracker.track("purchase-order", {"product": "Sun glasses - Badoo", "price": 13.45})
 window.tracker.track("interest", {"Eletronics": ["Mobile phones", "Accessories"]})
 window.tracker.track("page-view",{});
 ```
 
-1. This line tells tracardi to return profile data with the response. 
+1. This line tells tracardi to return profile data with the response.
 
 Events consist of an event type. Event type is any string that describes what happened. In our example we have 3
 events: "purchase-order", "interest", "page-view".
@@ -185,7 +202,6 @@ All events will be sent when page fully loads.
 
 Events can be sent immediately when parameters fire is set to true.
 
-
 ```javascript title="Example" linenums="1"
 window.response.context.profile = true;  //(2)
 window.tracker.track("purchase-order", {"product": "Sun glasses - Badoo", "price": 13.45})
@@ -194,23 +210,112 @@ window.tracker.track("page-view",{});
 ```
 
 1. This event will fire immediately.
-2. This line tells tracardi to return profile data with the response. 
+2. This line tells tracardi to return profile data with the response.
 
 The event "interest" will be sent immediately, because of `{"fire": true}`.
 
-## Handling response from Tracardi
+# Event context
+
+Event context is the context the event was triggered. By default, javascript snippet attach the following event context.
+
+```json
+{
+  "page": {
+    "url": "<page-url>",
+    "path": "<page-path>",
+    "hash": "<page-hash>",
+    "title": "<page-title>",
+    "referer": {
+      "host": null,
+      "query": null
+    },
+    "history": {
+      "length": 10
+    }
+  },
+  "ip": "127.0.0.1"
+}
+```
+
+It has the ip and the page the javascript was placed on. It is possible to add additional data to event context. For
+example, it may be a tag that breaks the pages into following groups: search, product-detail, purchase, post-purchase.
+This way you may find out how many events where triggered before the customer made a purchase.
+
+To add additional context add "context" key to event options.
+
+Example:
+
+```javascript title="Example" linenums="1" hl_lines="5"
+window.tracker.track(
+   "page-view",
+   {},
+   {
+    "context": {"tag": "search"},
+    "fire": true
+   });
+```
+
+Context may be placed with other configuration options. In the example above the event was configured to fire
+immediately.
+
+### Event performance metrics
+
+If you set performance to TRUE in tracker context configuration the result from __window.performance.getEntriesByType("
+navigation")__ will be sent as event context.
+
+```json title="Example of event context"
+{
+  "context": {
+    "performance": {
+      "name": "http://localhost:63343/analytics-js-tracardi/index.html?_ijt=ikuiff8tiah4pjpiiao2a0gblm",
+      "entryType": "navigation",
+      "startTime": 0,
+      "duration": 0,
+      "initiatorType": "navigation",
+      "nextHopProtocol": "http/1.1",
+      "workerStart": 0,
+      "redirectStart": 0,
+      "redirectEnd": 0,
+      "fetchStart": 20,
+      "domainLookupStart": 101,
+      "domainLookupEnd": 101,
+      "connectStart": 101,
+      "connectEnd": 102,
+      "secureConnectionStart": 0,
+      "requestStart": 102,
+      "responseStart": 102,
+      "responseEnd": 102,
+      "transferSize": 9394,
+      "encodedBodySize": 9089,
+      "decodedBodySize": 9089,
+      "serverTiming": [],
+      "unloadEventStart": 106,
+      "unloadEventEnd": 107,
+      "domInteractive": 158,
+      "domContentLoadedEventStart": 160,
+      "domContentLoadedEventEnd": 161,
+      "domComplete": 0,
+      "loadEventStart": 0,
+      "loadEventEnd": 0,
+      "type": "reload",
+      "redirectCount": 0
+    }
+  }
+}
+```
+
+## Handling response from Tracardi on every page
 
 You can also bind events to page elements. To do that you will need to be sure that the page loads and every element of
 the page is accessible.
 
-To do that add the following configuration to options.
+To do that bind the function to `window.onTracardiReady` property.
 
 ```javascript title="Example" linenums="1"
-listeners: {
-    onContextReady: ({helpers, context}) => {
+window.onTracardiReady.bind( ({helpers, context, config, tracker}) => {
       // Code that binds events.
     }
-}
+});
 ```
 
 The whole configuration should look like this.
@@ -218,11 +323,14 @@ The whole configuration should look like this.
 ```html title="Example" linenums="1"
 
 <script>
+        !function(e){"object"==typeof exports&&"undefined"!=typeof module?module.exports=e():"function"==typeof define&&define.amd?define([],e):("undefined"!=typeo...
+
+        window.onTracardiReady.bind( ({helpers, context, config, tracker}) => {
+              // Code that binds events.
+            }
+        });
+
         const options = {
-            listeners: {
-                onContextReady: ({helpers, context}) => {
-                    // Code that binds events.
-                },
             tracker: {
                 url: {
                     script: 'http://192.168.1.103:8686/tracker',
@@ -233,35 +341,50 @@ The whole configuration should look like this.
                 }
             }
         }
-
-        !function(e){"object"==typeof exports&&"undefined"!=typeof module?module.exports=e():"function"==typeof define&&define.amd?define([],e):("undefined"!=typeo...
+        
   </script>
 ```
 
-The *onContextReady* method will run after the events are triggered. It will not run if the events are not defined.
+The above example will run on every page after the events are triggered. It will not run if TRACARDI did not respond.
 
-The parameters have the following meaning.
+The function have the following parameters.
 
 * *helpers* - this is a reference to class that will allow you to raise another events
 * *context* has the response from Tracardi to you initial events. It will have profile data, and if configured debug
   information.
+* *config* - it is the tracker config as defined in options
+* *tracker* - it is tracker object. 
 
 You can configure how much data the server should return in the response to event track.
 
-If you woul like to receive the full profile remember to set:
+If you would like to receive the full profile remember to set:
 
 `window.response.context.profile = true;`
 
 It is wise not to receive the full profile when you do not need it.
 
+### OnTracardiReady triggered on selected page
+
+You can bind functions to `windows.OnTracardiReady` on selected pages together
+with track events. Then it will be executed only on selected pages.
+
+```javascript
+window.tracker.track("page-view",{}); // (1)
+window.onTracardiReady = ({tracker, helpers, context, config}) => {
+    // Code
+}
+```
+
+1. Set tracks first. Then bind a function.
+
 ### Binding events to page elements
 
 Then you can write a code that binds for example onClick event on a button to tracardi event.
 
-This is the example code:
+This is the example code that you can bind to `window.onTracardiReady`
 
 ```javascript title="Example" linenums="1"
-onContextReady: ({helpers, context}) => {
+({helpers, context}) => {
     const btn0 = document.querySelector('#button')
 
     helpers.onClick(btn0, async ()=> {
@@ -312,6 +435,7 @@ There is another way of binding page elements. You may want to add a onClick eve
 to context data, such as profile.id, etc.
 
 ```html
+
 <button onClick="testClick()">Test click</button>
 ```
 
@@ -349,33 +473,41 @@ The whole configuration looks like this:
 
 ```html title="Whole code" linenums="1"
 <script>
-         const options = {
-             listeners: {
-                 onContextReady: ({helpers, context}) => {
-                     const btn0 = document.querySelector('#button')
-                 
-                     helpers.onClick(btn0, async ()=> {
-                         const response = await helpers.track("page-view", {"page": "hello"});
-                 
-                         if(response) {
-                             const responseToCustomEvent = document.getElementById('response-to-custom-event');
-                             responseToCustomEvent.innerText = JSON.stringify(response.data, null, " ");
-                             responseToCustomEvent.style.display = "block"
-                         }
-                     });
-                 },
-             tracker: {
-                 url: {
-                     script: 'http://192.168.1.103:8686/tracker',
-                     api: 'http://192.168.1.103:8686'
-                 },
-                 source: {
-                     id: "ee2db027-46cf-4034-a759-79f1c930f80d"
-                 }
-             }
-         }
- 
-         !function(e){"object"==typeof exports&&"undefined"!=typeof module?module.exports=e():"function"==typeof define&&define.amd?define([],e):("undefined"!=typeo...
+
+    // Compiled code must be always in the first line
+    
+    !function(e){"object"==typeof exports&&"undefined"!=typeof module?module.exports=e():"function"==typeof define&&define.amd?define([],e):("undefined"!=typeo...
+
+    // Configure tracker
+
+    const options = {
+        tracker: {
+            url: {
+                script: 'http://192.168.1.103:8686/tracker',
+                api: 'http://192.168.1.103:8686'
+            },
+            source: {
+                id: "ee2db027-46cf-4034-a759-79f1c930f80d"
+            }
+        }
+    }
+    
+    // Bind some function when TRACARDI responds
+
+    window.onTracardiReady.bind(({helpers, context}) => {
+        const btn0 = document.querySelector('#button')
+    
+        helpers.onClick(btn0, async ()=> {
+            const response = await helpers.track("page-view", {"page": "hello"});
+    
+            if(response) {
+                const responseToCustomEvent = document.getElementById('response-to-custom-event');
+                responseToCustomEvent.innerText = JSON.stringify(response.data, null, " ");
+                responseToCustomEvent.style.display = "block"
+            }
+        });
+    });
+
 </script>
 ```
 
@@ -399,5 +531,11 @@ This is how you can use it:
 const response = await helpers.track("new-page-view", {"page": "hello"});
 ```
 
-
 ## Beacon tracks
+
+Beacon tracks are the events that are sent even if the customer leaves the page. To configure a beacon event
+add `asBeacon: true` to track configuration.
+
+```javascript title="Example" linenums="1"
+window.tracker.track("page-view", {}, {"fire": true, asBeacon: true});
+```

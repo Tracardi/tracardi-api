@@ -43,16 +43,27 @@ Please refer to docker installation manual to see how to install docker.
 Tracardi need elasticsearch as its backend. Please pull and run elasticsearch single node docker before you start Tracardi. 
 
 You can do it with this command.
+
 ```
 docker run -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" docker.elastic.co/elasticsearch/elasticsearch:7.13.2
 ```
+
+If you use features as destinations or synchronized events then you will need a redis instance as well. 
+
+Start it with:
+
+```
+docker run -p 6379:6379 redis
+```
+
+If you do not want to synchronize you profiles with remote system you can skip Redis installation.
 
 ## Start Tracardi API
 
 Now pull and run Tracardi backend.
 
 ```
-docker run -p 8686:80 -e ELASTIC_HOST=http://<your-laptop-ip>:9200 -e USER_NAME=admin -e PASSWORD=admin tracardi/tracardi-api
+docker run -p 8686:80 -e ELASTIC_HOST=http://<your-laptop-ip>:9200 -e REDIS_HOST=redis://<your-laptop-ip>:6379 tracardi/tracardi-api
 ```
 
 Tracardi must connect to elastic. To do that you have to set ELASTIC_HOST variable to reference your laptop's IP. 
@@ -65,6 +76,13 @@ Tracardi must connect to elastic. To do that you have to set ELASTIC_HOST variab
 
 For more trouble shooting solutions go to [http://docs.tracardi.com/trouble/](http://docs.tracardi.com/trouble/)
 
+### Connecting Tracardi to Elastic via SSL connection
+
+If you have an elasticsearch instance and you would like to connect to it via HTTPS this is the command you may find useful. 
+
+```
+docker run -p 8686:80 -e ELASTIC_HOST=https://user:password@<your-laptop-ip>:9200 -e ELASTIC_VERIFY_CERTS=no -e REDIS_HOST=redis://<your-laptop-ip>:6379 tracardi/tracardi-api
+```
 
 ## Start Tracardi GUI
 
@@ -88,7 +106,7 @@ Visit http://127.0.0.1:8787 and login to Tracardi GUI with default username: adm
 
 ## System Documentation
 
-Visit http://127.0.0.1:8585. System documentationis also available at: [http://docs.tracardi.com](http://docs.tracardi.com)
+Visit http://127.0.0.1:8585. System documentations also available at: [http://docs.tracardi.com](http://docs.tracardi.com)
 
 ## API Documentation
 

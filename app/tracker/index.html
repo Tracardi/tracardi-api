@@ -8,98 +8,57 @@
     <link rel="stylesheet" href="index.css">
     <script>
 
+        !function(t){"object"==typeof exports&&"undefined"!=typeof module?module.exports=t():"function"==typeof define&&define.amd?define([],t):("undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof self?self:this).tracardi=t()}(function(){return function n(o,i,a){function c(e,t){if(!i[e]){if(!o[e]){var r="function"==typeof require&&require;if(!t&&r)return r(e,!0);if(d)return d(e,!0);throw(r=new Error("Cannot find module '"+e+"'")).code="MODULE_NOT_FOUND",r}r=i[e]={exports:{}},o[e][0].call(r.exports,function(t){return c(o[e][1][t]||t)},r,r.exports,n,o,i,a)}return i[e].exports}for(var d="function"==typeof require&&require,t=0;t<a.length;t++)c(a[t]);return c}({1:[function(t,e,r){"use strict";!function(t){t=t||window;var r=[],n=!1,o=!1;function i(){if(!n){n=!0;for(var t=0;t<r.length;t++)r[t].fn.call(window,r[t].ctx);r=[]}}function a(){"complete"===document.readyState&&i()}t.documentReady=function(t,e){if("function"!=typeof t)throw new TypeError("callback for documentReady(fn) must be a function");n?setTimeout(function(){t(e)},1):(r.push({fn:t,ctx:e}),"complete"===document.readyState||!document.attachEvent&&"interactive"===document.readyState?setTimeout(i,1):o||(document.addEventListener?(document.addEventListener("DOMContentLoaded",i,!1),window.addEventListener("load",i,!1)):(document.attachEvent("onreadystatechange",a),window.attachEvent("onload",i)),o=!0))}}(window);var n=[];window.tracker||(window.tracker={}),window.response||(window.response={context:{}}),window.onTracardiReady={bind:function(t){"function"==typeof t&&n.push(t)},call:function(e){n.forEach(function(t){t(e)})}},function(){for(var r=[],n="liliput.min.js",t=["track"],e=0;e<t.length;e++){var o=t[e];window.tracker[o]=function(e){return function(){var t=Array.prototype.slice.call(arguments);return t.unshift(e),r.push(t),window.tracker}}(o)}function i(){if(console.debug("[Tracker] Rerun callbacks."),void 0!==window.tracardi.default)if(window.tracardi.default.getState().plugins.tracardi.initialized)for(window.tracker=window.tracardi.default;0<r.length;){var t=r.shift(),e=t.shift();tracker[e]&&tracker[e].apply(tracker,t)}else console.error("[Tracardi] Callbacks stopped. Tracker not initialized.");else console.error("[Tracardi] Callbacks stopped. Tracker not initialized. Is script url correct?")}documentReady(function(){var t,e,r;"1"!==navigator.doNotTrack||!0!==(null===(t=options)||void 0===t||null===(e=t.tracker)||void 0===e||null===(r=e.settings)||void 0===r?void 0:r.respectDoNotTrack)?((e=document.createElement("script")).type="text/javascript",e.async=!0,void 0!==options.tracker||void 0!==options.tracker.url||void 0!==options.tracker.url.script?(null!==options.tracker.url.script?options.tracker.url.script.startsWith("http")||options.tracker.url.script.startsWith("//")?e.src=options.tracker.url.script+"/"+n:e.src=options.tracker.url.script:e.src=n,console.debug("[Tracker] Loading: "+e.src),e.addEventListener?e.addEventListener("load",function(t){i()},!1):e.onreadystatechange=function(){"complete"!==this.readyState&&"loaded"!==this.readyState||i(window.event)},(r=document.getElementsByTagName("script")[0]).parentNode.insertBefore(e,r)):console.error("[Tracker] Undefined options.tracker.url.script. This url defines location of tracker code.")):console.log("We are respecting do not track setting. Tracardi disabled.")})}()},{}]},{},[1])(1)});
+
+        window.onTracardiReady.bind(({helpers, context}) => {
+            document.getElementById('response').innerText = JSON.stringify(context, null, " ");
+
+            const btn0 = document.querySelector('#page-view-event')
+            helpers.onClick(btn0, async ()=> {
+                try {
+                    const response = await helpers.track("page-view", {"id": "hello"});
+                    if(response) {
+                        const responseToCustomEvent = document.getElementById('response-to-custom-event');
+                        responseToCustomEvent.innerText = JSON.stringify(response.data, null, " ");
+                        responseToCustomEvent.style.display = "block"
+                    }
+                } catch(e) {
+                    alert(e.response.data.detail)
+                    console.error(e.message)
+                }
+
+            });
+
+            const btn1 = document.querySelector('#custom-click-event')
+            helpers.onClick(btn1, async ()=> {
+                 try {
+                    const response = await helpers.track("custom-click-event", {"new-property": "hello"});
+
+                    if(response) {
+                        const responseToCustomEvent = document.getElementById('response-to-custom-event');
+                        responseToCustomEvent.innerText = JSON.stringify(response.data, null, " ");
+                        responseToCustomEvent.style.display = "block"
+                    }
+                 } catch(e) {
+                    alert(e.response.data.detail)
+                    console.error(e.message)
+                }
+            });
+        });
+
         const url = new URL(window.location.href);
         let source = url.searchParams.get("source");
 
         if(source === null) {
-            source="@test-resource"
+            source="@test-source"
         }
 
         const options = {
-            listeners: {
-                onContextReady: ({helpers, context}) => {
-                    const btn0 = document.querySelector('#page-view-event')
-                    helpers.onClick(btn0, async ()=> {
-                        try {
-                            const response = await helpers.track("page-view", {"id": "hello"});
-                            if(response) {
-                                const responseToCustomEvent = document.getElementById('response-to-custom-event');
-                                responseToCustomEvent.innerText = JSON.stringify(response.data, null, " ");
-                                responseToCustomEvent.style.display = "block"
-                            }
-                        } catch(e) {
-                            alert(e.response.data.detail)
-                            console.error(e.message)
-                        }
-
-                    });
-
-                    const btn1 = document.querySelector('#custom-click-event')
-                    helpers.onClick(btn1, async ()=> {
-                         try {
-                            const response = await helpers.track("custom-click-event", {"new-property": "hello"});
-
-                            if(response) {
-                                const responseToCustomEvent = document.getElementById('response-to-custom-event');
-                                responseToCustomEvent.innerText = JSON.stringify(response.data, null, " ");
-                                responseToCustomEvent.style.display = "block"
-                            }
-                         } catch(e) {
-                            alert(e.response.data.detail)
-                            console.error(e.message)
-                        }
-                    });
-
-                    document.getElementById('response').innerText = JSON.stringify(context, null, " ");
-
-                    const btn2 = document.querySelector('#consent-all')
-                    helpers.onClick(btn2, async ()=> {
-                        try {
-                            const response = await helpers.track("cookie-consent", {
-                                "id":"consent-type",
-                                "granted": true,
-                                'revoke': null
-                            });
-                            if(response) {
-                                helpers.consentSubmitted();
-                                const consentBox = document.getElementById('consentBox');
-                                if (consentBox) {
-                                    consentBox.style.display = "none";
-                                }
-                            }
-                        } catch(e) {
-                            alert(e.response.data.detail)
-                        }
-                    })
-
-                    const btn3 = document.querySelector('#block-all')
-                    helpers.onClick(btn3, async ()=> {
-                        const response = await helpers.track("cookie-consent", {
-                            "type":"consent-type",
-                            "granted": false,
-                            'revoke': null
-                        });
-                        if(response) {
-                            helpers.consentSubmitted();
-                            const consentBox = document.getElementById('consentBox');
-                            if (consentBox) {
-                                consentBox.style.display = "none";
-                            }
-                        }
-                    })
-
-                },
-                onConsentRequired: () => {
-                    const consentBox = document.getElementById('consentBox');
-                    if (consentBox) {
-                        consentBox.style.display = "block";
-                    }
-                }
-            },
+            debugger: true,
             tracker: {
                 url: {
                     script: '/tracker/liliput.min.js',
-                    api: ''
+                    api: ''  // Connect to current host
                 },
                 source: {
                     id: source
@@ -108,72 +67,73 @@
                     browser: true,
                     page: true,
                     session: true,
-                    storage:false,
-                    screen: true
+                    storage: true,
+                    screen: true,
+                    performance: false
+                },
+                settings: {
+                    respectDoNotTrack: false
                 }
             }
         }
-
-        !function(e){"object"==typeof exports&&"undefined"!=typeof module?module.exports=e():"function"==typeof define&&define.amd?define([],e):("undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof self?self:this).tracardi=e()}(function(){return function n(o,i,a){function c(t,e){if(!i[t]){if(!o[t]){var r="function"==typeof require&&require;if(!e&&r)return r(t,!0);if(d)return d(t,!0);throw(r=new Error("Cannot find module '"+t+"'")).code="MODULE_NOT_FOUND",r}r=i[t]={exports:{}},o[t][0].call(r.exports,function(e){return c(o[t][1][e]||e)},r,r.exports,n,o,i,a)}return i[t].exports}for(var d="function"==typeof require&&require,e=0;e<a.length;e++)c(a[e]);return c}({1:[function(e,t,r){"use strict";!function(e){e=e||window;var r=[],n=!1,o=!1;function i(){if(!n){n=!0;for(var e=0;e<r.length;e++)r[e].fn.call(window,r[e].ctx);r=[]}}function a(){"complete"===document.readyState&&i()}e.documentReady=function(e,t){if("function"!=typeof e)throw new TypeError("callback for documentReady(fn) must be a function");n?setTimeout(function(){e(t)},1):(r.push({fn:e,ctx:t}),"complete"===document.readyState||!document.attachEvent&&"interactive"===document.readyState?setTimeout(i,1):o||(document.addEventListener?(document.addEventListener("DOMContentLoaded",i,!1),window.addEventListener("load",i,!1)):(document.attachEvent("onreadystatechange",a),window.attachEvent("onload",i)),o=!0))}}(window),window.tracker||(window.tracker={}),window.response||(window.response={context:{}}),function(){for(var r=[],n="liliput.min.js",e=["track"],t=0;t<e.length;t++){var o=e[t];window.tracker[o]=function(t){return function(){var e=Array.prototype.slice.call(arguments);return e.unshift(t),r.push(e),window.tracker}}(o)}function i(){if(console.debug("[Tracker] Rerun callbacks."),void 0!==window.tracardi.default)if(window.tracardi.default.getState().plugins.tracardi.initialized)for(window.tracker=window.tracardi.default;0<r.length;){var e=r.shift(),t=e.shift();tracker[t]&&tracker[t].apply(tracker,e)}else console.error("[Tracardi] Callbacks stopped. Tracker not initialized.");else console.error("[Tracardi] Callbacks stopped. Tracker not initialized. Is script url correct?")}documentReady(function(){var e,t=document.createElement("script");t.type="text/javascript",t.async=!0,void 0!==options.tracker||void 0!==options.tracker.url||void 0!==options.tracker.url.script?(null!==options.tracker.url.script?options.tracker.url.script.startsWith("http")||options.tracker.url.script.startsWith("//")?t.src=options.tracker.url.script+"/"+n:t.src=options.tracker.url.script:t.src=n,console.debug("[Tracker] Loading: "+t.src),t.addEventListener?t.addEventListener("load",function(e){i()},!1):t.onreadystatechange=function(){"complete"!==this.readyState&&"loaded"!==this.readyState||i(window.event)},(e=document.getElementsByTagName("script")[0]).parentNode.insertBefore(t,e)):console.error("[Tracker] Undefined options.tracker.url.script. This url defines location of tracker code.")})}()},{}]},{},[1])(1)});
-
     </script>
     <script>
         window.response.context.profile = true;
+
         window.tracker.track("purchase-order", {"id": "Sun glasses - Badoo", "price": 13.45})
         window.tracker.track("profile-interest", {"Vacation": 1})
-        window.tracker.track("page-view", {"custom-data": 1});
+        window.tracker.track("page-view", {"custom-data": 1},{"debugger": true});
         window.tracker.track("personal-data", {
             "id": "id",
-            "name": "Joe",
             "surname": "Doe",
             "email": "john.doe@gmail.com",
             "location": "Berlin/Germany"
         });
+
+        window.onTracardiReady.bind( ({tracker, helpers, context, config}) => {
+            const btn0 = document.querySelector('#button')
+            btn0.style.backgroundColor = "green";
+            btn0.style.color="white";
+
+            helpers.addListener(btn0, 'click', async ()=> {
+                const response = await helpers.track("event-from-clicked-button", {"page": "hello"});
+                if(response) {
+                    const responseToCustomEvent = document.getElementById('response-to-custom-event-on-page');
+                    if (responseToCustomEvent) {
+                        responseToCustomEvent.innerText = JSON.stringify(response.data, null, " ");
+                        responseToCustomEvent.style.display = "block"
+                    }
+                }
+            });
+        });
     </script>
-    <style>
-
-    </style>
-
 </head>
 <body>
-<h1><BOLD>TRACARDI</BOLD> <THIN>JavaScript Integration Test Page</THIN></h1>
-<section>
+<h1>
+    <BOLD>TRACARDI</BOLD>
+    <THIN>JavaScript Integration Test Page</THIN>
+</h1>
+
 <p>This page loads TRACARDI Javascript to show-case how it can be used to collect user data.</p>
-<p>In order to use this page, add source parameter to URL with resource id defined in TRACARDI GUI
-    or create test resource by visiting http://localhost/test/resource (it will add new test resource in TRACARDI).
 
-    Then return again to this page it will send events with test source id.
-</p>
-</section>
-<pre style="display: none">
-const options = {
-      tracker: {
-        url: {
-            script: 'http://localhost:8686/tracker',
-            api: 'http://localhost:8686'
-        },
-        source: {
-            id: "3ee63fc6-490a-4fd8-bfb3-bf0c8c8d3387"
-         }
-    }
-}
-</pre>
+<h2>Prerequisites</h2>
 
+<p>In order to use this page, add source with id equal to @test-source in TRACARDI GUI. If the source is not configured
+    or enabled TRACARDI will return error. Invalid source.</p>
+
+<h2>Configuration</h2>
 <p>
-Configuration can be extended with context parameter, where you may define the scope of context data. Storage
-(localStorage) and session data is by default excluded. You can change it by explicitly flagging storage:true in this
-configuration. Sending cookies and localStorage data can lead to data explosion in Tracardi database.
+    This test page has the following javascript pasted to the HEAD of the HTML
 </p>
-
 <pre>
-    const options = {
-      tracker: {
+const options = {
+    tracker: {
         url: {
             script: 'http://localhost:8686/tracker',
             api: 'http://localhost:8686'
         },
         source: {
-            id: "3ee63fc6-490a-4fd8-bfb3-bf0c8c8d3387"
+            id: "@test-source"
         },
         context: {
             browser: true,
@@ -187,79 +147,124 @@ configuration. Sending cookies and localStorage data can lead to data explosion 
 </pre>
 
 <h2>Events</h2>
-<section>
-    <p>This is the example code that sends events to TRACARDI. Events pinpoint what happened on your web-site</p>
-    <pre>
-    window.response.context.profile = true;
-    window.tracker.track("purchase-order", {product": "Sun glasses - Badoo", "price": 13.45})
-    window.tracker.track("profile-interest", {"Vacation": 1})
-    window.tracker.track("page-view", {"custom-data": 1});
-    window.tracker.track("personal-data", {
-        "id": "id",
-        "name": "Joe",
-        "surname": "Doe",
-        "email": "john.doe@gmail.com",
-        "location": "Berlin/Germany"
-    });
+
+<p>This is the example code that sends events to TRACARDI. Events pinpoint what happened on your web-site</p>
+<pre>
+window.response.context.profile = true;
+window.tracker.track("purchase-order", {product": "Sun glasses - Badoo", "price": 13.45})
+window.tracker.track("profile-interest", {"Vacation": 1})
+window.tracker.track("page-view", {"custom-data": 1});
+window.tracker.track("personal-data", {
+    "id": "id",
+    "name": "Joe",
+    "surname": "Doe",
+    "email": "john.doe@gmail.com",
+    "location": "Berlin/Germany"
+});
     </pre>
-</section>
+
 <h2>TRACARDI response</h2>
-<section>
-    <p>TRACARDI will respond with information on user profile, session, and information on what was saved in the system.</p>
-    <p>This information can be used to change your page on the fly with javascript.</p>
 
-    <p>If you can not see response from server as JSON data than it means there was an error. It can happen if there is no
-        test resource or provided source does not exist in TRACARDI.</p>
+<p>TRACARDI will respond with information on user profile, session, and information on what was saved in the
+    system.</p>
+<p>This information can be used to change your page on the fly with javascript.</p>
 
-    <pre id="response"></pre>
-</section>
+<p>If you can not see response from server as JSON data than it means there was an error. It can happen if there is
+    no
+    test source or provided source does not exist in TRACARDI.</p>
+
+<pre id="response"></pre>
 
 
 <h2>TRACARDI listeners</h2>
-<h3>onConsentRequired</h3>
-<section>
-    <p>TRACARDI can listen to the data that comes from the system and can react to it. For example if you did not consent to data processing it can popup a message and ask for consent.</p>
-    <p>This is an example of code that shows white box below if consent is required.</p>
+
+<h3>Global onTracardiReady</h3>
+
+<p>You can listen and react when the page is ready and TRACARDI returns customer information.
+    Than you can bind new tracking to any given element on page or change the page depending on the data tracardi
+    returned. onTracardiReady is triggered on every page where you appended the script.
+</p>
+
+<h4>Example</h4>
+
 <pre>
-const options = {
-    listeners: {
-        onConsentRequired: () => {
-            const consentBox = document.getElementById('consentBox');
-            if (consentBox) {
-                consentBox.style.display = "block";
+    window.onTracardiReady.bind( ({helpers, context}) => {
+            const btn0 = document.querySelector('#page-view-event')
+            helpers.onClick(btn0, async ()=> {
+                try {
+                    const response = await helpers.track("page-view", {"id": "hello"});
+                    if(response) {
+                        const responseToCustomEvent = document.getElementById('response-to-custom-event');
+                        responseToCustomEvent.innerText = JSON.stringify(response.data, null, " ");
+                        responseToCustomEvent.style.display = "block"
+                    }
+                } catch(e) {
+                    alert(e.response.data.detail)
+                    console.error(e.message)
+                }
+
+            });
+
+            const btn1 = document.querySelector('#custom-click-event')
+            helpers.onClick(btn1, async ()=> {
+                 try {
+                    const response = await helpers.track("custom-click-event", {"new-property": "hello"});
+
+                    if(response) {
+                        const responseToCustomEvent = document.getElementById('response-to-custom-event');
+                        responseToCustomEvent.innerText = JSON.stringify(response.data, null, " ");
+                        responseToCustomEvent.style.display = "block"
+                    }
+                 } catch(e) {
+                    alert(e.response.data.detail)
+                    console.error(e.message)
+                }
+            });
+        });
+    </pre>
+
+<p>Click on button below to sent new event to TRACARDI. </p>
+
+<div>
+    <BUTTON id="custom-click-event">Custom-Click-Event</BUTTON>
+    <BUTTON id="page-view-event">Page-View-Event</BUTTON>
+</div>
+
+<pre id="response-to-custom-event" style="display: none"></pre>
+
+<h3>Local onTracardiReady</h3>
+
+<p>OnTracardiReady can be appended it on selected pages as well. The
+    same way as track events. It must be always placed after the compiled javascript code. See example below.
+</p>
+
+<pre>
+    !function(t){"object"==typeof exports&&"undefined"!=typeof module?module.exports=t():...
+
+    window.onTracardiReady.bind( ({tracker, helpers, context, config}) => {
+        const btn0 = document.querySelector('#button')
+        btn0.style.backgroundColor = "green";
+        btn0.style.color="white";
+
+        helpers.addListener(btn0, 'click', async ()=> {
+            const response = await helpers.track("event-from-clicked-button", {"page": "hello"});
+            if(response) {
+                const responseToCustomEvent = document.getElementById('response-to-custom-event-on-page');
+                if (responseToCustomEvent) {
+                    responseToCustomEvent.innerText = JSON.stringify(response.data, null, " ");
+                    responseToCustomEvent.style.display = "block"
+                }
             }
-        }
-    }
-}
+        });
+    });
 </pre>
-    <p>It is shown because TRACARDI returned that this information source requires user consent. See response from TRACARDI above.</p>
-    <p>Once you click one of the buttons it will never appear again. </p>
 
-    <div id="consentBox" class="consent">
-        <div class="consent-content">
-            We are using cookies to collect anonymous data.
-            <button id="consent-all">Allow all</button>
-            <button id="block-all">Black all</button>
-        </div>
-    </div>
-</section>
-<h3>onContextReady</h3>
-<section>
-    <p>You can listen and react when the page is rady and TRACARDI returns user context information.
-        Than you can bind new tracking to any given element on page or change the page depending on the data tracardi returned.
-    </p>
+<p>Click on button below to sent new event to TRACARDI. </p>
 
-    <p>Click on button below to sent new event to TRACARDI. </p>
+<div>
+    <BUTTON id="button">Bind click on this button</BUTTON>
+</div>
 
-    <div>
-        <BUTTON id="custom-click-event">NEW EVENT</BUTTON>
-        <BUTTON id="page-view-event">PAGE-VIEW EVENT</BUTTON>
-    </div>
-
-    <pre id="response-to-custom-event" style="display: none"></pre>
-</section>
-
-
-
+<pre id="response-to-custom-event-on-page" style="display: none"></pre>
 </body>
 </html>

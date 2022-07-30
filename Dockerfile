@@ -5,7 +5,7 @@ RUN apt-get update
 RUN apt-get install -y git
 
 # update pip
-RUN /usr/local/bin/python -m pip install --upgrade pip
+RUN /usr/local/bin/python3 -m pip install --upgrade pip
 
 # set the working directory in the container
 RUN mkdir app/
@@ -13,7 +13,8 @@ WORKDIR /app
 
 ## Install dependencies
 COPY app/requirements.txt .
-RUN pip --default-timeout=180 install -r requirements.txt
+RUN pip install wheel
+RUN pip --default-timeout=240 install -r requirements.txt
 
 RUN pip show tracardi
 RUN pip list
@@ -27,7 +28,7 @@ COPY uix uix/
 COPY manual manual/
 
 ## Install dependencies
-RUN pip --default-timeout=180 install -r manual/requirements.txt
+RUN pip --default-timeout=240 install -r manual/requirements.txt
 WORKDIR /app/manual/en
 RUN mkdocs build
 

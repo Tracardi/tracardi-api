@@ -61,11 +61,14 @@ nav:
   - Installation:
       - installation/index.md
       - installation/best_practises.md
+      - installation/upgrades.md
       - Docker:
           - installation/docker/index.md
           - installation/docker/building_docker_image.md
       - Source:
           - installation/source/index.md
+      - Production:
+          - installation/production/index.md
       - Kubernetes:
           - installation/k8s/index.md
   - Configuration:
@@ -93,8 +96,10 @@ nav:
           - events/event_validation.md
           - events/synchronization.md
       - Profiles:
+          - profiles/index.md
           - profiles/profile_merging.md
           - profiles/profile_segmentation.md
+
       - Workflows:
           - flow/index.md
           - Actions:
@@ -103,11 +108,25 @@ nav:
                   - flow/actions/update_profile_action.md
                   - flow/actions/merge_profiles_action.md
                   - flow/actions/segment_profiles_action.md
+                  - flow/actions/new_profile_action.md
+                  - flow/actions/update_event_action.md
+                  - flow/actions/update_session_action.md
               - flow/actions/if_action.md
               - flow/actions/detect_client_agent_action.md
-              - flow/actions/debug_payload_action.md
               - flow/actions/inject_action.md
               - flow/actions/event_scheduler_action.md
+              - flow/actions/get_prev_event_action.md
+              - flow/actions/get_prev_session_action.md
+              - flow/actions/new_event_action.md
+              - flow/actions/new_visit_action.md
+              - flow/actions/event_counter_action.md
+              - flow/actions/condition_set_action.md
+              - flow/actions/count_by_query_string_action.md
+              - flow/actions/reshape_payload_action.md
+              - flow/actions/assign_profile_id_action.md
+              - flow/actions/template_action.md
+              - flow/actions/append_remove_trait_action.md
+              - flow/actions/start_action.md
               - Stats:
                   - flow/actions/increment_action.md
                   - flow/actions/decrement_action.md
@@ -127,46 +146,99 @@ nav:
                   - flow/actions/mysql_connector_action.md
                   - flow/actions/oauth2_token_action.md
                   - flow/actions/send_to_slack_channel_action.md
+                  - flow/actions/send_to_airtable_action.md
+                  - flow/actions/send_to_influx_db_action.md
+                  - flow/actions/rabbitmq_action.md
+                  - flow/actions/fetch_from_airtable_action.md
+                  - flow/actions/fetch_from_influxdb_action.md
+                  - flow/actions/elasticsearch_query_action.md
                   - Trello:
-                    - flow/actions/trello/add_trello_card_action.md
-                    - flow/actions/trello/add_trello_member_action.md
-                    - flow/actions/trello/delete_trello_card_action.md
-                    - flow/actions/trello/move_trello_card_action.md
+                      - flow/actions/trello/add_trello_card_action.md
+                      - flow/actions/trello/add_trello_member_action.md
+                      - flow/actions/trello/delete_trello_card_action.md
+                      - flow/actions/trello/move_trello_card_action.md
+                  - Mautic:
+                      - flow/actions/add_mautic_contact_action.md
+                      - flow/actions/fetch_mautic_contact_by_email_action.md
+                      - flow/actions/fetch_mautic_contact_by_id_action.md
+                      - flow/actions/edit_points_in_mautic_action.md
+                      - flow/actions/edit_segment_in_mautic_action.md
+                  - Mixpanel:
+                      - flow/actions/fetch_mixpanel_funnel_action.md
+                      - flow/actions/send_to_mixpanel_action.md
+                  - Mailchimp:
+                      - flow/actions/mailchimp_transactional_action.md
+                      - flow/actions/add_to_mailchimp_audience_action.md
+                      - flow/actions/remove_from_mailchimp_audience_action.md
+                  - Sales force:
+                      - flow/actions/send_to_data_extension_action.md
+                  - Active campaign:
+                      - flow/actions/fetch_ac_contact_by_email_action.md
+                      - flow/actions/add_active_campaign_contact_action.md
 
               - Regex:
                   - flow/actions/regex/regex_validator_action.md
                   - flow/actions/regex/regex_match.md
+                  - flow/actions/regex/regex_replace_action.md
+
               - Locations:
                   - flow/actions/geo_ip_locator.md
+
               - Time:
                   - flow/actions/day_night_split_action.md
                   - flow/actions/local_time_span_action.md
+                  - flow/actions/calculate_time_difference_action.md
+
               - Processing:
                   - flow/actions/url_parser_action.md
                   - flow/actions/string_splitter_action.md
                   - flow/actions/string_properties_action.md
                   - flow/actions/profile_segment.md
+                  - flow/actions/mapping_action.md
+
+
+              - Validators:
+                  - flow/actions/validate_with_json_schema_action.md
+                  - flow/actions/string_validator_action.md
+                  - flow/actions/field_type_action.md
+
               - Machine Learning:
                   - flow/actions/text_classification_action.md
                   - flow/actions/lang_detection_action.md
                   - flow/actions/sentiment_analysis_action.md
-              - flow/actions/new_event_action.md
-              - flow/actions/event_counter_action.md
-              - flow/actions/purchase_add_action.md
-              - flow/actions/add_consents_action.md
-              - flow/actions/add_to_mailchimp_audience_action.md
-              - flow/actions/calculate_time_difference_action.md
+                  - flow/actions/corporate_reputation_action.md
+                  - flow/actions/deep_categorization_action.md
+                  - flow/actions/summarization_action.md
+                  - flow/actions/topics_extraction_action.md
+
+              - UX:
+                  - flow/actions/question_popup_action.md
+                  - flow/actions/rating_popup_action.md
+                  - flow/actions/contact_popup_action.md
+                  - flow/actions/generic_uix_action.md
+
+              - Memory:
+                  - flow/actions/write_to_memory_action.md
+                  - flow/actions/read_from_memory_action.md
+                  - flow/actions/memory/payload_memory_collector.md
+
+              - Consents:
+                  - flow/actions/add_consents_action.md
+                  - flow/actions/require_consents_action.md
+
+              - Errors:
+                - flow/actions/log_message_action.md
+                - flow/actions/throw_error_action.md
+
               - flow/actions/calculator_action.md
-              - flow/actions/elasticsearch_query_action.md
-              - flow/actions/mailchimp_transactional_action.md
-              - flow/actions/new_profile_action.md
-              - flow/actions/new_visit_action.md
-              - flow/actions/rabbitmq_action.md
-              - flow/actions/remove_from_mailchimp_audience_action.md
-              - flow/actions/reshape_payload_action.md
-              - flow/actions/string_validator_action.md
-              - flow/actions/template_action.md
+              - flow/actions/random_element_action.md
               - flow/actions/today_action.md
+              - flow/actions/assign_condition_result_action.md
+              - flow/actions/reduce_array_action.md
+              - flow/actions/password_generator_action.md
+
+      - Filtering:
+          - running/filtering.md
       - Notations:
           - notations/dot_notation.md
           - notations/logic_notation.md
@@ -178,7 +250,10 @@ nav:
           - development/python_env.md
       - Mirco frontend apps developement:
           - development/micro_frontend.md
-      - plugins/index.md
+      - Plugins:
+          - plugins/index.md
+          - plugins/forms/list_of_field_types.md
+
 
   - support_us.md
   - attribution.md

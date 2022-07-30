@@ -1,7 +1,7 @@
 from uuid import uuid4
 
-from tracardi.process_engine.action.v1.debug_payload_action import DebugPayloadAction
-from tracardi.process_engine.action.v1.start_action import StartAction
+from tracardi.process_engine.action.v1.flow.start.start_action import StartAction
+
 from tracardi.domain.flow import Flow
 from tracardi.process_engine.action.v1.end_action import EndAction
 from tracardi.service.wf.service.builders import action
@@ -35,6 +35,7 @@ def create_flow(id, name, desc):
             "General", "Test"
         ],
         "draft": "",
+        "production": "",
         "lock": False
     }
 
@@ -151,6 +152,15 @@ def test_should_update_flow_metadata():
         else:
             raise Exception("Could not read flow")
 
+        response = endpoint.get(f'/flow/draft/{id}')
+        assert response.status_code == 200
+        if response.status_code == 200:
+            result = response.json()
+            assert result['id'] == id
+            assert result['name'] == 'Test flow'
+        else:
+            raise Exception("Could not read flow")
+
         response = endpoint.post('/flow/metadata', data={
             "id": id,
             "name": "New name",
@@ -160,8 +170,9 @@ def test_should_update_flow_metadata():
                 "New"
             ]
         })
-        assert response.status_code == 200
+
         result = response.json()
+        assert response.status_code == 200
         assert result == {'saved': 1, 'errors': [], 'ids': [id]}
 
         # flush data to elastic
@@ -176,7 +187,6 @@ def test_should_update_flow_metadata():
             assert result['id'] == id
             assert result['name'] == 'New name'
             assert result['description'] == 'New Description'
-            assert result['enabled'] is False
             assert "New" in result['projects']
         else:
             raise Exception("Could not read flow")
@@ -198,8 +208,6 @@ def test_should_enable_flow_lock():
         # read flow
         check_flow_bool(id, True, type='lock', field='lock')
         check_flow_bool(id, False, type='lock', field='lock')
-        check_flow_bool(id, True, type='enable', field='enabled')
-        check_flow_bool(id, False, type='enable', field='enabled')
 
     finally:
         assert endpoint.delete(f'/flow/{id}').status_code in [200, 404]
@@ -215,17 +223,10 @@ def test_flow_code_api():
 
         # Add event
 
-        debug = action(DebugPayloadAction, {
-            "event": {
-                "type": 'page-view',
-            }
-        })
-
         start = action(StartAction)
         end = action(EndAction)
 
         flow = Flow.build("Test wf as a code", id=id)
-        flow += debug('event') >> start('payload')
         flow += start('payload') >> end('payload')
 
         response = endpoint.post('/flow/draft', data=flow.dict())
@@ -236,3 +237,29 @@ def test_flow_code_api():
 
     finally:
         assert endpoint.delete(f'/flow/{id}').status_code in [200, 404]
+
+
+def test_should_save_draft_metadata():
+    try:
+        flow_id = str(uuid4())
+        response = create_flow(flow_id, "Test flow", "Opis")
+        assert response.status_code == 200
+
+        payload = {
+            "id": flow_id,
+            "name": "string",
+            "description": "string",
+            "enabled": True,
+            "projects": [
+                "General"
+            ]
+        }
+        assert endpoint.post(f'/flow/draft/metadata', data=payload).status_code == 200
+        assert endpoint.get(f'/flows/refresh').status_code == 200
+
+        response = endpoint.get(f'/flow/draft/{flow_id}')
+        assert response.status_code == 200
+        result = response.json()
+        assert result['name'] == payload['name']
+    finally:
+        assert endpoint.delete(f'/flow/{flow_id}').status_code in [200, 404]

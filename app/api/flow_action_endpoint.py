@@ -3,9 +3,10 @@ from collections import defaultdict
 from typing import Optional
 from fastapi import APIRouter
 from fastapi import HTTPException, Depends
+
+from tracardi.service.setup.setup_plugins import add_plugin
 from tracardi.service.storage.driver import storage
 from tracardi.service.storage.factory import StorageFor, StorageForBulk
-from .auth.authentication import get_current_user
 from app.service.grouper import search
 from tracardi.domain.enum.yes_no import YesNo
 from tracardi.domain.entity import Entity
@@ -14,28 +15,31 @@ from tracardi.domain.plugin_import import PluginImport
 from tracardi.domain.record.flow_action_plugin_record import FlowActionPluginRecord
 from tracardi.domain.settings import Settings
 from tracardi.domain.value_object.bulk_insert_result import BulkInsertResult
+from .auth.permissions import Permissions
 from ..config import server
-from ..setup.on_start import add_plugin
 
 router = APIRouter(
-    dependencies=[Depends(get_current_user)]
+    dependencies=[Depends(Permissions(roles=["admin", "developer"]))]
 )
 
 
-@router.get("/flow/action/plugin/{id}",
-            tags=["flow", "action"],
-            response_model=FlowActionPlugin,
-            include_in_schema=server.expose_gui_api)
+@router.get("/flow/action/plugin/{id}", tags=["flow", "action"],
+            response_model=FlowActionPlugin, include_in_schema=server.expose_gui_api)
 async def get_plugin(id: str):
     """
     Returns FlowActionPlugin object.
     """
+    error_status = 500
     try:
         action = Entity(id=id)
         record = await StorageFor(action).index("action").load(FlowActionPluginRecord)  # type: FlowActionPluginRecord
+        print(record)
+        if record is None:
+            error_status = 404
+            raise ValueError(f"Missing plugin id {id}")
         return record.decode()
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=error_status, detail=str(e))
 
 
 @router.get("/flow/action/plugin/{id}/hide/{state}", tags=["flow", "action"],
@@ -63,7 +67,6 @@ async def get_plugin_enabled(id: str, state: YesNo):
     """
     Returns FlowActionPlugin object.
     """
-
     try:
 
         action = Entity(id=id)
@@ -76,16 +79,36 @@ async def get_plugin_enabled(id: str, state: YesNo):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/flow/action/plugin/{id}", tags=["flow", "action"],
-            response_model=FlowActionPlugin, include_in_schema=server.expose_gui_api)
-async def get_plugin(id: str):
+@router.put("/flow/action/plugin/{id}/icon/{icon}", tags=["flow", "action"], response_model=BulkInsertResult,
+            include_in_schema=server.expose_gui_api)
+async def edit_plugin_icon(id: str, icon: str):
     """
-    Returns FlowActionPlugin object.
+    Edits icon for action with given ID
     """
     try:
         action = Entity(id=id)
-        record = await StorageFor(action).index("action").load(FlowActionPluginRecord)  # type: FlowActionPluginRecord
-        return record.decode()
+        record = await StorageFor(action).index("action").load(FlowActionPluginRecord)
+        action = record.decode()
+        action.plugin.metadata.icon = icon
+        return await StorageFor(FlowActionPluginRecord.encode(action)).index().save()
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.put("/flow/action/plugin/{id}/name/{name}", tags=["flow", "action"], response_model=BulkInsertResult,
+            include_in_schema=server.expose_gui_api)
+async def edit_plugin_name(id: str, name: str):
+    """
+    Edits name for action with given ID
+    """
+    try:
+        action = Entity(id=id)
+        record = await StorageFor(action).index("action").load(FlowActionPluginRecord)
+        action = record.decode()
+        action.plugin.metadata.name = name
+        return await StorageFor(FlowActionPluginRecord.encode(action)).index().save()
+
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -98,7 +121,11 @@ async def delete_plugin(id: str):
     """
     try:
         action = Entity(id=id)
-        return await StorageFor(action).index("action").delete()
+        action = StorageFor(action).index("action")
+        result = await action.delete()
+        await action.refresh()
+
+        return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -133,14 +160,17 @@ async def get_plugins_list(query: Optional[str] = None):
     _current_plugin = None
     try:
 
-        result = await StorageForBulk().index('action').load()
+        result = await StorageForBulk().index('action').load(limit=500)
 
         _result = []
         for r in result:
             _current_plugin = r
             _result.append(FlowActionPluginRecord(**r).decode())
 
-        if query is not None and len(query) > 0:
+        if query is not None:
+            if len(query) == 0:
+                query = "*not-hidden"
+
             query = query.lower()
 
             if query == "*not-hidden":
@@ -153,7 +183,11 @@ async def get_plugins_list(query: Optional[str] = None):
                 _result = [r for r in _result if r.settings.enabled is False]
             if query[0] != '*':
                 _result = [r for r in _result if
-                           query in r.plugin.metadata.name.lower() or search(query, r.plugin.metadata.group)]
+                           query in r.plugin.metadata.name.lower()
+                           or query in r.plugin.metadata.brand.lower()
+                           or search(query, r.plugin.metadata.tags)
+                           or search(query, r.plugin.metadata.group)
+                           ]
 
         groups = defaultdict(list)
         for plugin in _result:  # type: FlowActionPlugin

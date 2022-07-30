@@ -3,51 +3,33 @@ from collections import defaultdict
 from typing import Optional
 
 from fastapi import APIRouter, HTTPException, Depends, Response
+from tracardi.config import tracardi
 from tracardi.domain.named_entity import NamedEntity
 from tracardi.domain.enum.type_enum import TypeEnum
 from tracardi.domain.event_source import EventSource
+from tracardi.exceptions.log_handler import log_handler
+from tracardi.service.event_source_manager import event_source_types, save_source
 from tracardi.service.storage.driver import storage
-from .auth.authentication import get_current_user
 from app.service.grouper import search
+from .auth.permissions import Permissions
 from ..config import server
-from ..service.tracardi_pro_inbound_sources import get_tracardi_pro_services
 
 logger = logging.getLogger(__name__)
+logger.setLevel(tracardi.logging_level)
+logger.addHandler(log_handler)
 
 router = APIRouter(
-    dependencies=[Depends(get_current_user)]
+    dependencies=[Depends(Permissions(roles=["admin", "developer"]))]
 )
-
-
-async def event_source_types():
-    standard_inbound_sources = {
-        "javascript": {
-            "name": "Javascript",
-            "tags": ["javascript", "inbound"]
-        },
-        "api-call": {
-            "name": "Api call",
-            "tags": ["api-call", "inbound"]
-        },
-    }
-    try:
-        endpoint = await storage.driver.pro.read_pro_service_endpoint()
-        if endpoint is not None:
-            for service in await get_tracardi_pro_services(endpoint):
-                standard_inbound_sources[service["id"]] = {
-                    "name": "{} ({})".format(service["name"], service['prefix']),
-                    "tags": service["tags"] if "tags" in service else []
-                }
-    except Exception as e:
-        logger.error(repr(e))
-
-    return standard_inbound_sources
 
 
 @router.get("/event-sources/by_type",
             tags=["event-source"],
             include_in_schema=server.expose_gui_api)
 async def list_event_sources(query: str = None):
+    """
+    Lists all event sources that match given query (str) parameter
+    """
     try:
 
         result, total = await storage.driver.event_source.load_all(limit=1000)
@@ -96,7 +78,7 @@ async def get_event_source_types(type: TypeEnum) -> dict:
     """
 
     try:
-        types = await event_source_types()
+        types = event_source_types()
 
         if type.value == 'name':
             types = {id: t['name'] for id, t in types.items()}
@@ -114,6 +96,9 @@ async def get_event_source_types(type: TypeEnum) -> dict:
             response_model=Optional[EventSource],
             include_in_schema=server.expose_gui_api)
 async def load_event_source(id: str, response: Response):
+    """
+    Returns event source with given ID (str)
+    """
     try:
         result = await storage.driver.event_source.load(id)
     except Exception as e:
@@ -129,16 +114,13 @@ async def load_event_source(id: str, response: Response):
 @router.post("/event-source", tags=["event-source"],
              include_in_schema=server.expose_gui_api)
 async def save_event_source(event_source: EventSource):
+    """
+    Adds new event source in database
+    """
     try:
-        types = await event_source_types()
-        if event_source.type in types:
-            result = await storage.driver.event_source.save(event_source)
-            if result.is_nothing_saved():
-                raise ValueError("Could not save event source.")
-            return result
-        else:
-            raise ValueError("Unknown event source type {}. Available {}.".format(event_source.type, types))
-
+        return await save_source(event_source)
+    except ValueError as e:
+        raise HTTPException(status_code=422, detail=repr(e))
     except Exception as e:
         raise HTTPException(status_code=500, detail=repr(e))
 
@@ -146,6 +128,9 @@ async def save_event_source(event_source: EventSource):
 @router.delete("/event-source/{id}", tags=["event-source"],
                include_in_schema=server.expose_gui_api)
 async def delete_event_source(id: str, response: Response):
+    """
+    Deletes event source with given ID (str)
+    """
     try:
         result = await storage.driver.event_source.delete(id)
     except Exception as e:
@@ -166,6 +151,9 @@ async def delete_event_source(id: str, response: Response):
             tags=["event-source"],
             include_in_schema=server.expose_gui_api)
 async def refresh_event_sources():
+    """
+    Refreshes event source index in database
+    """
     return await storage.driver.event_source.refresh()
 
 

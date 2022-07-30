@@ -1,5 +1,5 @@
 from uuid import uuid4
-from ..api.test_event_source import create_event_source
+from ..api.test_source import create_event_source
 from ..utils import Endpoint
 
 endpoint = Endpoint()
@@ -11,7 +11,7 @@ def test_track_payload():
     session_id = str(uuid4())
 
     try:
-        response = create_event_source(source_id, "javascript")
+        response = create_event_source(source_id, "rest")
         assert response.status_code == 200
 
         payload = {
@@ -31,9 +31,15 @@ def test_track_payload():
         assert response.status_code == 200
 
         result = response.json()
+        if 'debugging' not in result:
+            raise ValueError(
+                'Could not perform test due to bad server configuration. No debugging allowed. '
+                'Start Tracardi wiht TRACK_DEBUG=yes.')
+
         assert result['debugging']['events']['saved'] == 1
         assert len(result['debugging']['events']['errors']) == 0
         assert len(result['debugging']['events']['ids']) == 1
+
         assert 'id' in result['profile']
 
         assert endpoint.get('/profiles/refresh').status_code == 200

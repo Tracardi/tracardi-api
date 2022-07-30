@@ -47,6 +47,19 @@ To (notice: API_URL=//127.0.0.1:8888, this the where the Tracardi API is running
 docker run -p 8787:80 -e API_URL=//127.0.0.1:8888 tracardi/tracardi-gui
 ```
 
+## Installation errors
+
+```
+Index index `INDEX_NAME` was NOT CREATED. The following result was returned {'error': 
+{'root_cause': [{'type': 'validation_exception', 'reason': 'Validation Failed: 1: this action would add [10] shards, 
+but this cluster currently has [1000]/[1000] maximum normal shards open;'}], 'type': 'validation_exception', 'reason': 
+'Validation Failed: 1: this action would add [10] shards, but this cluster currently has [1000]/[1000] maximum normal 
+shards open;'}, 'status': 400} [Exception]
+```
+
+This error can pop up if you have your elasticsearch full of indices. This means there are no shards open for new indices.
+Remove unused indices. This error is usually shown during Tracardi update. 
+
 ## Connecting to Elasticsearch
 
 ```
@@ -123,6 +136,13 @@ Other possible causes include:
   1488740.
 * The server did not respond to the actual request (even if it responded to the Preflight request). One scenario might
   be an HTTP service being developed that panicked without returning any data.
+
+## Missing /track endpoint
+
+Track endpoint with trailing backslash may fail if you use HTTPS connection. If you, by mistake, use URL `/track/` instead of
+`/track` with https connection, the system will redirect `/track/` to `/track`. But it will loose https connection. This is
+a know error in fastAPI: [https://github.com/tiangolo/fastapi/issues/4990](https://github.com/tiangolo/fastapi/issues/4990).
+Please do not use backslash at the end of any API call.
 
 ## Other issues
 

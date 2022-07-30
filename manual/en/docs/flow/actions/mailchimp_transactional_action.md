@@ -91,7 +91,7 @@ see **'Hello John, your order will be dispatched in next two days.'** in his mes
 
 ```html
 <h1>Hello {{profile@pii.name}}!</h1>
-<p>Thanks for visiting our website on {{profile@metadata.time.lastVisit}}!</p>
+<p>Thanks for visiting our website on {{profile@metadata.time.visit.last}}!</p>
 <p style="color:red">To thank you, we send you a photo of cute dog. Enjoy:</p>
 <img src="<url-to-photo-of-cute-dog>"/>
 ```
