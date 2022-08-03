@@ -1,11 +1,12 @@
 import logging
+import os
 from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException
 from app.config import server
 from elasticsearch import ElasticsearchException
 
-from tracardi.config import tracardi
+from tracardi.config import tracardi, elastic
 from tracardi.domain.credentials import Credentials
 from tracardi.domain.user import User
 from tracardi.exceptions.log_handler import log_handler
@@ -77,7 +78,14 @@ async def install_plugins():
 
 @router.post("/install", tags=["installation"], include_in_schema=server.expose_gui_api, response_model=dict)
 async def install(credentials: Optional[Credentials]):
-    # try:
+    try:
+
+        info = await storage.driver.raw.health()
+
+        if 'number_of_data_nodes' in info and int(info['number_of_data_nodes']) == 1:
+            os.environ['ELASTIC_INDEX_REPLICAS'] = "0"
+            elastic.replicas = "0"
+            logger.warning("Elasticsearch replicas decreased to 0 due to only one data node in the cluster.")
 
         result = {"created": await create_indices(), 'admin': False}
 
@@ -118,6 +126,6 @@ async def install(credentials: Optional[Credentials]):
 
         return result
 
-    # except Exception as e:
-    #     logger.error(f"Error on install. Reason: {str(e)}.")
-    #     raise HTTPException(status_code=500, detail=str(e))
+    except Exception as e:
+        logger.error(f"Error on install. Reason: {str(e)}.")
+        raise HTTPException(status_code=500, detail=str(e))

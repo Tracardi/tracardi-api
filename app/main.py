@@ -198,14 +198,13 @@ async def app_starts():
     logger.info(f"TRACARDI version {str(tracardi.version)} set-up starts.")
     no_of_tries = 10
     success = False
-    es = ElasticClient.instance()
     while True:
         try:
 
             if no_of_tries < 0:
                 break
 
-            health = await es.cluster.health()
+            health = await storage.driver.raw.health()
             for key, value in health.items():
                 key = key.replace("_", " ")
                 logger.info(f"Elasticsearch {key}: {value}")
