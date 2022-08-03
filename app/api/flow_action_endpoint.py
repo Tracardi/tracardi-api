@@ -4,14 +4,11 @@ from typing import Optional
 from fastapi import APIRouter
 from fastapi import HTTPException, Depends
 
-from tracardi.service.setup.setup_plugins import add_plugin
-from tracardi.service.storage.driver import storage
 from tracardi.service.storage.factory import StorageFor, StorageForBulk
 from app.service.grouper import search
 from tracardi.domain.enum.yes_no import YesNo
 from tracardi.domain.entity import Entity
 from tracardi.domain.flow_action_plugin import FlowActionPlugin
-from tracardi.domain.plugin_import import PluginImport
 from tracardi.domain.record.flow_action_plugin_record import FlowActionPluginRecord
 from tracardi.domain.settings import Settings
 from tracardi.domain.value_object.bulk_insert_result import BulkInsertResult
@@ -207,19 +204,3 @@ async def get_plugins_list(query: Optional[str] = None):
 
     except Exception as e:
         raise HTTPException(status_code=500, detail="{} {}".format(str(e), _current_plugin))
-
-
-@router.post("/flow/action/plugin/register", tags=["flow", "action"],
-             response_model=BulkInsertResult, include_in_schema=server.expose_gui_api)
-async def register_plugin_by_module(plugin: PluginImport):
-    """
-    Registers action plugin by its module. Module must have register method that returns Plugin
-    class filled with plugin metadata.
-    """
-
-    try:
-        result = await add_plugin(plugin.module, install=True, upgrade=plugin.upgrade)
-        await storage.driver.action.refresh()
-        return result
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
