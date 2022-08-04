@@ -64,9 +64,8 @@ async def get_es_cluster_health():
     """
     Tests connection between Elasticsearch and Tracardi by returning cluster info. Accessible for roles: "admin"
     """
-    es = ElasticClient.instance()
     try:
-        health = await es.cluster.health()
+        health = await storage.driver.raw.health()
         if not isinstance(health, dict):
             raise HTTPException(status_code=500, detail="Elasticsearch did not pass health check.")
         return health

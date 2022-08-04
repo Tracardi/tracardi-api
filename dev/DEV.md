@@ -72,3 +72,4 @@ docker run docker.elastic.co/beats/metricbeat:7.13.4 setup -E setup.kibana.host=
 # Celery worker
 celery -A worker.celery_worker worker --loglevel=info -E
 docker run -e REDIS_HOST=redis://redis-0.redis.redis.svc.cluster.local tracardi/worker
+docker run -e REDIS_HOST=redis://192.168.1.101 tracardi/worker
