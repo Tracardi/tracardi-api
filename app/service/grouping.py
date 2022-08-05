@@ -1,8 +1,16 @@
 from collections import defaultdict
 from app.service.grouper import search
+from tracardi.domain.storage_result import StorageResult
+from typing import Optional
 
 
-def group_records(result, query, group_by, search_by="name", sort_by="name"):
+def group_records(
+        result: StorageResult,
+        query: Optional[str] = None,
+        group_by: str = "tags",
+        search_by="name",
+        sort_by="name",
+    ):
     total = result.total
 
     # Filtering
