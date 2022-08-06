@@ -6,6 +6,8 @@ from ..service.grouping import group_records
 from tracardi.service.storage.driver import storage
 from typing import Optional
 from tracardi.domain.report import Report
+from app.api.domain.report_test_payload import ReportTestPayload
+from tracardi.service.report_manager import ReportManager, ReportManagerException
 
 
 router = APIRouter(
@@ -49,3 +51,23 @@ async def delete_report(id: str):
     Deletes report from the database
     """
     return await storage.driver.report.delete(id)
+
+
+@router.post("/report/test", tags=["report"], include_in_schema=server.expose_gui_api)
+async def get_report_test(config: ReportTestPayload):
+    try:
+        manager = ReportManager(config.report)
+        return await manager.get_report(config.params)
+
+    except ReportManagerException as e:
+        raise HTTPException(status_code=500, detail=f"There was an error running report test: {str(e)}")
+
+
+@router.post("/report/{id}/run", tags=["report"], include_in_schema=server.expose_gui_api)
+async def run_report(id: str, params: dict):
+    try:
+        manager = await ReportManager.build(id)
+        return await manager.get_report(params)
+
+    except ReportManagerException as e:
+        raise HTTPException(status_code=500, detail=f"There was an error running report test: {str(e)}")
