@@ -18,7 +18,7 @@ router = APIRouter(
 
 
 @router.post("/{index}/select",
-             tags=["generic", "event", "profile", "resource", "rule", "session", "flow", "segment"],
+             tags=["data"],
              include_in_schema=server.expose_gui_api)
 async def select_by_sql(index: IndexesSearch, query: Optional[SqlQuery] = None):
     try:
@@ -30,10 +30,10 @@ async def select_by_sql(index: IndexesSearch, query: Optional[SqlQuery] = None):
 
 
 @router.post("/{index}/select/range/page/{page}",
-             tags=["generic", "event", "profile", "resource", "rule", "session", "flow", "segment"],
+             tags=["data"],
              include_in_schema=server.expose_gui_api)
 @router.post("/{index}/select/range",
-             tags=["generic", "event", "profile", "resource", "rule", "session", "flow", "segment"],
+             tags=["data"],
              include_in_schema=server.expose_gui_api)
 async def time_range_with_sql(index: IndexesHistogram, query: DatetimeRangePayload, page: Optional[int] = None,
                               query_type: str = None):
@@ -52,7 +52,7 @@ async def time_range_with_sql(index: IndexesHistogram, query: DatetimeRangePaylo
 
 
 @router.post("/{index}/select/histogram",
-             tags=["generic", "event", "profile", "resource", "rule", "session", "flow", "segment"],
+             tags=["data"],
              include_in_schema=server.expose_gui_api)
 async def histogram_with_sql(index: IndexesHistogram, query: DatetimeRangePayload, query_type: str = None,
                              group_by: str = None):
