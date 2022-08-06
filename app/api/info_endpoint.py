@@ -17,7 +17,7 @@ async def get_version():
     return tracardi.version.version
 
 
-@router.get("/info/version/details", tags=["version"], include_in_schema=server.expose_gui_api, response_model=Version)
+@router.get("/info/version/details", tags=["info"], include_in_schema=server.expose_gui_api, response_model=Version)
 async def get_current_backend_version():
 
     """
