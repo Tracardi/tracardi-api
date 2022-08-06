@@ -9,7 +9,7 @@ def group_records(
         query: Optional[str] = None,
         group_by: str = "tags",
         search_by="name",
-        sort_by="name",
+        sort_by="name"
     ):
     total = result.total
 
