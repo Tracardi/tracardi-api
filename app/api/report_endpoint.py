@@ -51,7 +51,9 @@ async def add_report(report: Report):
     """
     Adds or edits report in the database. Roles: admin, developer, marketer
     """
-    return await storage.driver.report.upsert(report)
+    result = await storage.driver.report.upsert(report)
+    await storage.driver.report.refresh()
+    return result
 
 
 @router.delete("/report/{id}", tags=["report"], include_in_schema=server.expose_gui_api)
@@ -59,7 +61,9 @@ async def delete_report(id: str):
     """
     Deletes report from the database
     """
-    return await storage.driver.report.delete(id)
+    result = await storage.driver.report.delete(id)
+    await storage.driver.report.refresh()
+    return result
 
 
 @router.post("/report/test", tags=["report"], include_in_schema=server.expose_gui_api)
