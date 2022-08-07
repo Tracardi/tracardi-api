@@ -1,6 +1,9 @@
 # Novu trigger plugin
 
-This plugin trigger Novu API and allow to send incoming payload to specified e-mail address.
+Novu is an open-source notification infrastructure built for the engineering teams to help them build rich product
+notification experiences from single platform.
+
+This plugin triggers Novu API and allows sending incoming messages to services defined within Novu service.
 
 # JSON Configuration
 
