@@ -13,7 +13,7 @@ def test_report_entities():
                 query={"query": {"term": {"type": "{{type}}"}}},
                 tags=["tag1", "tag2"]
             )
-            assert report.entity in ("profile", "session", "event", "entity")
+            assert report.index in ("profile", "session", "event", "entity")
 
         except ValidationError as e:
             assert entity in ("improper-value-1", "improper-value-2")
