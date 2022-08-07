@@ -69,7 +69,7 @@ async def get_report_test(config: ReportTestPayload):
         return await manager.get_report(config.params)
 
     except ReportManagerException as e:
-        raise HTTPException(status_code=500, detail=f"There was an error running report test: {str(e)}")
+        raise HTTPException(status_code=400, detail=f"There was an error running report test: {str(e)}")
 
 
 @router.post("/report/{id}/run", tags=["report"], include_in_schema=server.expose_gui_api)
