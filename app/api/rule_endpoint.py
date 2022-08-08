@@ -26,7 +26,7 @@ async def get_rule(id: str, response: Response):
     """
 
     try:
-        result = await StorageFor(Entity(id=id)).index("rule").load(Rule)
+        result = await StorageFor(Entity(id=id)).index("rule").load(Rule)  # Type: Rule
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

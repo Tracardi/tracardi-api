@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import List
+from typing import List, Optional
 
 from fastapi import APIRouter, Depends
 from fastapi import HTTPException
@@ -187,7 +187,7 @@ async def get_event(id: str):
     Returns event with given ID
     """
     try:
-        event = await StorageFor(Entity(id=id)).index("event").load(Event)  # type: Event
+        event = await StorageFor(Entity(id=id)).index("event").load(Event)  # type: Optional[Event]
         if event is None:
             raise HTTPException(detail="Event {} does not exist.".format(id), status_code=404)
 
@@ -258,7 +258,7 @@ async def add_scheduled_event(schedule_data: ScheduleData):
 
 @router.get("/event/group/by_tags/profile/{profile_id}", tags=["event"],
             include_in_schema=server.expose_gui_api, response_model=dict)
-async def get_grouped_by_tags_prof(profile_id: str):
+async def get_grouped_by_tags_profile(profile_id: str):
     """
     Returns events gruped by tags for profile with given ID
     """

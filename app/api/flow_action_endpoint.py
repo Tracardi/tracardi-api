@@ -29,8 +29,8 @@ async def get_plugin(id: str):
     error_status = 500
     try:
         action = Entity(id=id)
-        record = await StorageFor(action).index("action").load(FlowActionPluginRecord)  # type: FlowActionPluginRecord
-        print(record)
+        record = await StorageFor(action).index("action").load(
+            FlowActionPluginRecord)  # type: Optional[FlowActionPluginRecord]
         if record is None:
             error_status = 404
             raise ValueError(f"Missing plugin id {id}")
@@ -49,7 +49,8 @@ async def get_plugin_state(id: str, state: YesNo):
     try:
 
         action = Entity(id=id)
-        record = await StorageFor(action).index("action").load(FlowActionPluginRecord)  # type: FlowActionPluginRecord
+        record = await StorageFor(action).index("action").load(
+            FlowActionPluginRecord)  # type: Optional[FlowActionPluginRecord]
         action = record.decode()
         action.settings.hidden = Settings.as_bool(state)
         return await StorageFor(FlowActionPluginRecord.encode(action)).index().save()
@@ -60,14 +61,17 @@ async def get_plugin_state(id: str, state: YesNo):
 
 @router.get("/flow/action/plugin/{id}/enable/{state}", tags=["flow", "action"],
             response_model=BulkInsertResult, include_in_schema=server.expose_gui_api)
-async def get_plugin_enabled(id: str, state: YesNo):
+async def set_plugin_enabled_disabled(id: str, state: YesNo):
     """
-    Returns FlowActionPlugin object.
+    Sets FlowActionPlugin enabled or disabled.
     """
     try:
 
         action = Entity(id=id)
-        record = await StorageFor(action).index("action").load(FlowActionPluginRecord)  # type: FlowActionPluginRecord
+        record = await StorageFor(action).index("action").load(
+            FlowActionPluginRecord)  # type: Optional[FlowActionPluginRecord]
+        if record is None:
+            raise ValueError(f"Missing plugin {id}")
         action = record.decode()
         action.settings.enabled = Settings.as_bool(state)
         return await StorageFor(FlowActionPluginRecord.encode(action)).index().save()
@@ -84,7 +88,10 @@ async def edit_plugin_icon(id: str, icon: str):
     """
     try:
         action = Entity(id=id)
-        record = await StorageFor(action).index("action").load(FlowActionPluginRecord)
+        record = await StorageFor(action).index("action").load(
+            FlowActionPluginRecord)  # type: Optional[FlowActionPluginRecord]
+        if record is None:
+            raise ValueError(f"Missing plugin {id}")
         action = record.decode()
         action.plugin.metadata.icon = icon
         return await StorageFor(FlowActionPluginRecord.encode(action)).index().save()
@@ -101,7 +108,10 @@ async def edit_plugin_name(id: str, name: str):
     """
     try:
         action = Entity(id=id)
-        record = await StorageFor(action).index("action").load(FlowActionPluginRecord)
+        record = await StorageFor(action).index("action").load(
+            FlowActionPluginRecord)  # type: Optional[FlowActionPluginRecord]
+        if record is None:
+            raise ValueError(f"Missing plugin {id}")
         action = record.decode()
         action.plugin.metadata.name = name
         return await StorageFor(FlowActionPluginRecord.encode(action)).index().save()

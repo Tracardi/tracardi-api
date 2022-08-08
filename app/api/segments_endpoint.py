@@ -25,7 +25,7 @@ async def get_segment(id: str):
     """
     try:
         entity = Entity(id=id)
-        return await StorageFor(entity).index('segment').load(Segment)
+        return await StorageFor(entity).index('segment').load(Segment)  # type: Segment
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

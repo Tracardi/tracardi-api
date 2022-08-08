@@ -1,11 +1,11 @@
 from collections import defaultdict
 from app.service.grouper import search
-from tracardi.domain.storage_result import StorageResult
+from tracardi.domain.storage_result import StorageRecords
 from typing import Optional
 
 
 def group_records(
-        result: StorageResult,
+        result: StorageRecords,
         query: Optional[str] = None,
         group_by: str = "tags",
         search_by="name",
