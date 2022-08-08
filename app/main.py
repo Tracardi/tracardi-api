@@ -23,7 +23,7 @@ from app.api import token_endpoint, rule_endpoint, resource_endpoint, event_endp
     user_endpoint, event_management_endpoint, debug_endpoint, log_endpoint, tracardi_pro_endpoint, \
     storage_endpoint, destination_endpoint, user_log_endpoint, user_account_endpoint, install_endpoint, import_endpoint,\
     task_endpoint, storage_endpoint, destination_endpoint, user_log_endpoint, user_account_endpoint, install_endpoint, \
-    delete_indices_endpoint, migration_endpoint
+    delete_indices_endpoint, migration_endpoint, report_endpoint
 
 from app.api.graphql.profile import graphql_profiles
 from app.api.scheduler import scheduler_endpoint
@@ -175,6 +175,7 @@ application.include_router(import_endpoint.router)
 application.include_router(task_endpoint.router)
 application.include_router(delete_indices_endpoint.router)
 application.include_router(migration_endpoint.router)
+application.include_router(report_endpoint.router)
 
 
 # GraphQL
