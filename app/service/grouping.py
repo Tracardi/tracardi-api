@@ -1,6 +1,6 @@
 from collections import defaultdict
 from app.service.grouper import search
-from tracardi.domain.storage_result import StorageRecords
+from tracardi.domain.storage_record import StorageRecords
 from typing import Optional
 
 

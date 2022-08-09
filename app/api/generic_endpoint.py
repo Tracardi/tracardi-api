@@ -24,7 +24,8 @@ async def select_by_sql(index: IndexesSearch, query: Optional[SqlQuery] = None):
     try:
         if query is None:
             query = SqlQuery()
-        return await storage.driver.raw.index(index.value).query_by_sql(query.where, start=0, limit=query.limit)
+        result = await storage.driver.raw.index(index.value).query_by_sql(query.where, start=0, limit=query.limit)
+        return result.dict()
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

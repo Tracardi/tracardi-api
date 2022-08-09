@@ -1,5 +1,5 @@
 from tracardi.domain.entity import Entity
-from tracardi.domain.storage_result import RecordMetadata
+from tracardi.domain.storage_record import RecordMetadata
 
 
 def test_should_set_entity_data():

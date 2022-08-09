@@ -243,6 +243,9 @@ async def add_scheduled_event(schedule_data: ScheduleData):
     """
     Adds scheduled event
     """
+
+    # todo check if used. Can not see the create method in task driver
+
     result = await storage.driver.task.create(
         timestamp=schedule_data.schedule.get_parsed_time(),
         type=schedule_data.event.type,

@@ -1,4 +1,4 @@
-from tracardi.domain.storage_result import StorageRecord, RecordMetadata
+from tracardi.domain.storage_record import StorageRecord, RecordMetadata
 
 
 def test_should_assign_and_read_values():
