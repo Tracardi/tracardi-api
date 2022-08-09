@@ -8,7 +8,6 @@ from app.service.error_converter import convert_errors
 from tracardi.domain.record.flow_action_plugin_record import FlowActionPluginRecord
 from tracardi.service.module_loader import is_coroutine
 from tracardi.service.storage.driver import storage
-from tracardi.service.storage.factory import StorageForBulk
 from fastapi.encoders import jsonable_encoder
 from tracardi.service.module_loader import import_package, load_callable
 
@@ -53,7 +52,7 @@ async def plugins():
     """
     Returns plugins from database
     """
-    return await StorageForBulk().index('action').load()
+    return await storage.driver.action.load_all()
 
 
 @router.post("/action/{id}/config/validate", tags=["action"], include_in_schema=server.expose_gui_api)

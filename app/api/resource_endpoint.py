@@ -8,7 +8,7 @@ from tracardi.domain.enum.type_enum import TypeEnum
 from tracardi.exceptions.log_handler import log_handler
 from tracardi.service.setup.setup_resources import get_type_of_resources
 from tracardi.service.storage.driver import storage
-from tracardi.service.storage.factory import StorageFor, StorageForBulk
+from tracardi.service.storage.factory import StorageFor
 from tracardi.service.wf.domain.named_entity import NamedEntity
 from app.service.grouper import search
 from tracardi.domain.resource import Resource, ResourceRecord
@@ -101,13 +101,13 @@ async def list_resources_by_tag(tag: str):
             include_in_schema=server.expose_gui_api)
 async def list_resources():
     try:
-        result = await StorageForBulk().index('resource').load()
+        result = await storage.driver.resource.load_all(limit=250)
         total = result.total
-        result = [NamedEntity(**r) for r in result]
+        result = [NamedEntity(**item) for item in result]
 
         return {
             "total": total,
-            "result": list(result)
+            "result": result
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -118,7 +118,7 @@ async def list_resources():
             include_in_schema=server.expose_gui_api)
 async def list_resources():
     try:
-        result = await StorageForBulk().index('resource').load()
+        result = await storage.driver.resource.load_all()
         total = result.total
         result = [ResourceRecord.construct(Resource.__fields_set__, **r).decode() for r in result]
 
@@ -136,7 +136,7 @@ async def list_resources():
 async def list_resources(query: str = None):
     try:
 
-        result = await StorageForBulk().index('resource').load()
+        result = await storage.driver.resource.load_all()
 
         total = result.total
         result = [ResourceRecord.construct(Resource.__fields_set__, **r).decode() for r in result]

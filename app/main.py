@@ -16,7 +16,7 @@ from fastapi import FastAPI, Request, Depends
 from starlette.staticfiles import StaticFiles
 from app.api import token_endpoint, rule_endpoint, resource_endpoint, event_endpoint, \
     profile_endpoint, flow_endpoint, generic_endpoint, \
-    credentials_endpoint, segments_endpoint, \
+    segments_endpoint, \
     tql_endpoint, health_endpoint, session_endpoint, instance_endpoint, plugins_endpoint, \
     settings_endpoint, event_source_endpoint, test_endpoint, \
     event_tag_endpoint, consent_type_endpoint, flow_action_endpoint, flows_endpoint, info_endpoint, \
@@ -140,7 +140,6 @@ application.mount("/uix",
 application.include_router(event_server_endpoint.router)
 application.include_router(tql_endpoint.router)
 application.include_router(segments_endpoint.router)
-application.include_router(credentials_endpoint.router)
 application.include_router(resource_endpoint.router)
 application.include_router(rule_endpoint.router)
 application.include_router(flow_endpoint.router)

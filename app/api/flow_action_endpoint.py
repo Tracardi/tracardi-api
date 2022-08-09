@@ -4,7 +4,8 @@ from typing import Optional
 from fastapi import APIRouter
 from fastapi import HTTPException, Depends
 
-from tracardi.service.storage.factory import StorageFor, StorageForBulk
+from tracardi.service.storage.driver import storage
+from tracardi.service.storage.factory import StorageFor
 from app.service.grouper import search
 from tracardi.domain.enum.yes_no import YesNo
 from tracardi.domain.entity import Entity
@@ -167,7 +168,7 @@ async def get_plugins_list(query: Optional[str] = None):
     _current_plugin = None
     try:
 
-        result = await StorageForBulk().index('action').load(limit=500)
+        result = await storage.driver.action.load_all(limit=500)
 
         _result = []
         for r in result:
