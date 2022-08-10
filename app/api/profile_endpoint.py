@@ -29,7 +29,7 @@ async def import_profiles(profiles: List[Profile]):
     Saves given profiles (list of profiles) to database. Accessible by roles: "admin"
     """
     try:
-        return await storage.driver.profile.save_profiles(profiles)
+        return await storage.driver.profile.save_all(profiles)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
