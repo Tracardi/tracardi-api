@@ -72,3 +72,18 @@ def test_should_exclude_data():
     entity = TestEntity(id="1").set_meta_data(RecordMetadata(id="1", index="index"))
     record = entity.to_storage_record(exclude={"id": ...})
     assert 'id' not in record
+
+
+def test_should_accept_none_metadata():
+    class TestEntity(Entity):
+
+        @staticmethod
+        def storage_info() -> StorageInfo:
+            return StorageInfo(
+                'event',
+                TestEntity,
+                multi=False
+            )
+
+    entity = TestEntity(id="1").set_meta_data(None)
+    assert entity.has_meta_data() is False

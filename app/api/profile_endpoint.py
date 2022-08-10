@@ -58,21 +58,21 @@ async def refresh_profile():
 
 @router.get("/profile/{id}", tags=["profile"],
             dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer"]))],
-            response_model=Profile, include_in_schema=server.expose_gui_api)
+            include_in_schema=server.expose_gui_api)
 async def get_profile_by_id(id: str, response: Response):
     """
     Returns profile with given ID (str)
     """
     try:
-        profile = Profile(id=id)
-        result = await StorageFor(profile).index().load()
+        record = await storage.driver.profile.load_by_id(id)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-    if result is None:
+    if record is None:
         response.status_code = 404
+        return None
 
-    return result
+    return Profile(**record).set_meta_data(record.get_metadata())
 
 
 @router.delete("/profile/{id}", tags=["profile"],
