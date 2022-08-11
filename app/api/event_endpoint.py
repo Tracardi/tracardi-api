@@ -353,7 +353,39 @@ async def get_for_source_grouped_by_tags_time(source_id: str, time_span: TimeSpa
             response_model=dict)
 async def get_events_for_session(session_id: str, limit: int = 20):
     try:
-        result, more_to_load = await storage.driver.event.get_event_data_for_session(session_id, limit)
+        result = await storage.driver.event.get_events_by_session(session_id, limit)
+        more_to_load = result.total > len(result)
+        result = [{
+            "id": doc["id"],
+            "insert": doc["metadata"]["time"]["insert"],
+            "status": doc["metadata"]["status"],
+            "type": doc["type"]
+        } for doc in result]
+
+        return {"result": result, "more_to_load": more_to_load}
+
+    except ElasticsearchException as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/events/session/{session_id}/profile/{profile_id}", tags=["event"],
+            include_in_schema=server.expose_gui_api,
+            response_model=dict)
+async def get_events_for_session(session_id: str, profile_id: str, limit: int = 20):
+    try:
+        result = await storage.driver.event.get_events_by_session_and_profile(
+            profile_id,
+            session_id,
+            limit)
+
+        more_to_load = result.total > len(result)
+        result = [{
+            "id": doc["id"],
+            "insert": doc["metadata"]["time"]["insert"],
+            "status": doc["metadata"]["status"],
+            "type": doc["type"]
+        } for doc in result]
+
         return {"result": result, "more_to_load": more_to_load}
 
     except ElasticsearchException as e:
