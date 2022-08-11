@@ -9,7 +9,7 @@ def test_report_entities():
                 id="@test-report",
                 name="test-report",
                 description="Here's report description.",
-                entity=entity,
+                index=entity,
                 query={"query": {"term": {"type": "{{type}}"}}},
                 tags=["tag1", "tag2"]
             )

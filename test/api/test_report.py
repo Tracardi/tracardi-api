@@ -12,7 +12,7 @@ def test_should_work():
             id="@test-report",
             name="test-report",
             description="Here's report description.",
-            entity="event",
+            index="event",
             query={"query": {"term": {"type": "{{type}}"}}},
             tags=["tag1", "tag2"]
         )

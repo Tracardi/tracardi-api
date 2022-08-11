@@ -359,8 +359,6 @@ async def debug_flow(flow: GraphFlow):
             )
             console_log.append(console)
 
-        # await console_log.bulk().save()
-
         return {
             'logs': [log.dict() for log in console_log],
             "debugInfo": debug_info.dict(),

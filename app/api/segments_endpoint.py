@@ -3,7 +3,7 @@ from fastapi import APIRouter
 from fastapi import HTTPException, Depends
 
 from tracardi.service.storage.driver import storage
-from tracardi.service.storage.factory import StorageFor, StorageForBulk
+from tracardi.service.storage.factory import StorageFor
 from app.service.grouper import search
 from tracardi.domain.entity import Entity
 from tracardi.domain.segment import Segment
@@ -25,7 +25,7 @@ async def get_segment(id: str):
     """
     try:
         entity = Entity(id=id)
-        return await StorageFor(entity).index('segment').load(Segment)
+        return await StorageFor(entity).index('segment').load(Segment)  # type: Segment
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -66,7 +66,7 @@ async def get_segments(query: str = None):
     Returns segments with match of given query (str) on name of event type
     """
     try:
-        result = await StorageForBulk().index('segment').load()
+        result = await storage.driver.segment.load_all()
         total = result.total
         result = [Segment.construct(Segment.__fields_set__, **r) for r in result]
 
