@@ -25,7 +25,7 @@ def test_profile_merging():
                               }
                           ))
 
-        await storage.driver.profile.save_profile(profile, refresh_after_save=True)
+        await storage.driver.profile.save(profile, refresh_after_save=True)
 
         profile = Profile(
             id="2",
@@ -39,14 +39,14 @@ def test_profile_merging():
                 }
             ))
 
-        await storage.driver.profile.save_profile(profile, refresh_after_save=True)
+        await storage.driver.profile.save(profile, refresh_after_save=True)
 
         profile = Profile(id="3", traits=ProfileTraits(private={
             "email": "other@test.com",
             "Name": "Johny Marble"
         }))
 
-        await storage.driver.profile.save_profile(profile, refresh_after_save=True)
+        await storage.driver.profile.save(profile, refresh_after_save=True)
 
         await storage.driver.profile.refresh()
 

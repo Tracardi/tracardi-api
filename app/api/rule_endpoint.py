@@ -2,12 +2,7 @@ import asyncio
 from typing import List
 
 from fastapi import APIRouter, Response, HTTPException, Depends
-
-from tracardi.domain.event_source import EventSource
 from tracardi.service.storage.driver import storage
-from tracardi.service.storage.factory import StorageFor
-from tracardi.domain.entity import Entity
-from tracardi.domain.flow import FlowRecord
 from tracardi.domain.named_entity import NamedEntity
 from tracardi.domain.rule import Rule
 from .auth.permissions import Permissions
@@ -26,7 +21,7 @@ async def get_rule(id: str, response: Response):
     """
 
     try:
-        result = await StorageFor(Entity(id=id)).index("rule").load(Rule)
+        result = await storage.driver.rule.load_by_id(id)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -44,8 +39,7 @@ async def upsert_rule(rule: Rule):
     """
     try:
         # Check if source id exists
-        entity = Entity(id=rule.source.id)
-        event_source = await StorageFor(entity).index('event-source').load(EventSource)
+        event_source = await storage.driver.event_source.load(rule.source.id)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -53,14 +47,13 @@ async def upsert_rule(rule: Rule):
         raise HTTPException(status_code=422, detail='Incorrect source id: `{}`'.format(rule.source.id))
     try:
 
-        entity = Entity(id=rule.flow.id)
-        flow_record = await StorageFor(entity).index("flow").load(FlowRecord)  # type: FlowRecord
+        flow_record = await storage.driver.flow.load_record(rule.flow.id)
         add_flow_task = None
         if flow_record is None:
             new_flow = NamedEntity(id=rule.flow.id, name=rule.flow.name)
-            add_flow_task = asyncio.create_task(StorageFor(entity).index("flow").save(new_flow.dict()))
+            add_flow_task = asyncio.create_task(storage.driver.flow.save(new_flow))
 
-        add_rule_task = asyncio.create_task(StorageFor(rule).index().save())
+        add_rule_task = asyncio.create_task(storage.driver.rule.save(rule))
 
         if add_flow_task:
             await add_flow_task
@@ -80,7 +73,7 @@ async def delete_rule(id: str, response: Response):
     Deletes rule with given ID (str) from database
     """
     try:
-        result = await StorageFor(Entity(id=id)).index("rule").delete()
+        result = await storage.driver.rule.delete_by_id(id)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

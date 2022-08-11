@@ -1,6 +1,7 @@
 from uuid import uuid4
 
 from tracardi.domain.resource import ResourceCredentials
+from tracardi.service.wf.domain.node import Node
 from ...api.test_resource import create_resource
 from ...utils import Endpoint
 from tracardi.process_engine.action.v1.connectors.api_call.plugin import RemoteCallAction
@@ -40,9 +41,10 @@ def test_remote_call_ok():
             "body": {"type": "plain/text", "content": "test body"}
         }
         payload = {}
-        response = run_plugin(RemoteCallAction, init, payload)
-        result, error = response.output
+        response = run_plugin(RemoteCallAction, init, payload, node=Node(id="1", className="classname", module="module"))
+        result = response.output
 
+        assert result.port == 'response'
         assert result.value['status'] == 200
         assert result.value['content'] == init['body']['content']
     finally:

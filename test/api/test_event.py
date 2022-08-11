@@ -39,3 +39,10 @@ def test_event_select_limit_data_ok():
     assert 'result' in result
 
     assert len(result['result']) == 4
+
+
+def test_should_response_404_none():
+    response = endpoint.get('/event/does-not-exist')
+    result = response.json()
+    assert response.status_code == 404
+    assert result is None
