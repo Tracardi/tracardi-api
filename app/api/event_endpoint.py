@@ -237,7 +237,7 @@ async def get_event_logs(id: str):
     log_records = await storage.driver.console_log.load_by_event(id)
     return [Console.decode_record(log) for log in log_records]
 
-
+#todo check GUI to see if used
 @router.post("/event/schedule", tags=["event"], include_in_schema=server.expose_gui_api)
 async def add_scheduled_event(schedule_data: ScheduleData):
     """
