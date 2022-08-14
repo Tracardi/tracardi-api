@@ -19,6 +19,7 @@ def test_should_work():
         result = endpoint.post("/report/test", data={"report": report.dict(), "params": {"type": "page-view"}})
         assert result.status_code == 200
         result = result.json()
+        # todo ERROR this should not return ES response
         assert result["hits"]["hits"] != []
         assert all([record["_source"]["type"] == "page-view" for record in result["hits"]["hits"]])
 
@@ -32,6 +33,7 @@ def test_should_work():
         result = endpoint.post("/report/@test-report/run", data={"type": "page-view"})
         assert result.status_code == 200
         result = result.json()
+        # todo ERROR this should not return ES response
         assert result["hits"]["hits"] != []
         assert all([record["_source"]["type"] == "page-view" for record in result["hits"]["hits"]])
 

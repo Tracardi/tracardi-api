@@ -31,11 +31,11 @@ async def get_user_logs(page: Optional[int] = None, query: Optional[str] = None)
             page_size = server.page_size * 2
         start = page * page_size
         limit = page_size
-
+        # todo ERROR this does not exist
         result = await storage.driver.user_log.load_logs(start, limit, query)
         return {
-            "total": result["hits"]["total"]["value"],
-            "result": [hit["_source"] for hit in result["hits"]["hits"]]
+            "total": result.total,
+            "result": list(result)
         }
 
     except (ElasticsearchException, StorageException) as e:
