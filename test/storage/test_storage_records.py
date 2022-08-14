@@ -1,4 +1,5 @@
-from tracardi.domain.storage_record import StorageRecords, StorageRecord, RecordMetadata, StorageAggregates
+from tracardi.domain.storage_record import StorageRecords, StorageRecord, RecordMetadata, StorageAggregate, \
+    StorageAggregates
 
 
 def test_should_assign_and_read_values():
@@ -194,7 +195,7 @@ def test_should_slice_records():
         assert row.get_metadata().index == f"my-index-00000{i + 1}"
 
 
-def test_should_handle_aggragates():
+def test_should_handle_aggregates():
     response = {
         "hits": {"total": {"value": 0, "relation": "eq"}, "max_score": None, "hits": []},
         "aggregations": {
@@ -227,7 +228,8 @@ def test_should_handle_aggragates():
     }
 
     records = StorageRecords.build_from_elastic(response)
-    assert isinstance(records.aggregations("aggr_name"), StorageAggregates)
+    assert isinstance(records.aggregations("aggr_name"), StorageAggregate)
+    assert isinstance(records.aggregations(), StorageAggregates)
     assert records.aggregations("aggr_name").buckets() == [
                     {
                         "key": "collected",
