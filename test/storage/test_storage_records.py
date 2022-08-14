@@ -1,4 +1,4 @@
-from tracardi.domain.storage_record import StorageRecords, StorageRecord, RecordMetadata
+from tracardi.domain.storage_record import StorageRecords, StorageRecord, RecordMetadata, StorageAggregates
 
 
 def test_should_assign_and_read_values():
@@ -53,19 +53,19 @@ def test_should_assign_and_read_values():
     assert isinstance(first_record, StorageRecord)
     assert first_record.get_metadata().index == "my-index-000001"
     assert first_record.get_metadata().id == "0"
-    assert first_record['id'] == "0"
-    assert first_record['@timestamp'] == "2099-11-15T14:12:12"
-    assert first_record['source']['ip'] == "127.0.0.1"
-    assert first_record['message'] == "GET /search HTTP/1.1 200 1070000"
+    assert first_record["id"] == "0"
+    assert first_record["@timestamp"] == "2099-11-15T14:12:12"
+    assert first_record["source"]["ip"] == "127.0.0.1"
+    assert first_record["message"] == "GET /search HTTP/1.1 200 1070000"
 
-    assert records.dict()['total'] == 20
+    assert records.dict()["total"] == 20
     assert len(records) == 1
-    assert len(records.dict()['result']) == 1
+    assert len(records.dict()["result"]) == 1
 
     records.transform_hits(lambda record: {"replaced": 1})
 
     list_of_records = list(records)
-    assert list_of_records[0] == {'replaced': 1, 'id': '0'}
+    assert list_of_records[0] == {"replaced": 1, "id": "0"}
     assert list_of_records[0].get_metadata().index == "my-index-000001"
 
 
@@ -74,8 +74,8 @@ def test_should_handle_empty_data():
     assert isinstance(records, dict)
     list_of_records = list(records)
     assert list_of_records == []
-    assert records.dict()['total'] == 0
-    assert records.dict()['result'] == []
+    assert records.dict()["total"] == 0
+    assert records.dict()["result"] == []
 
 
 def test_should_slice_records():
@@ -174,22 +174,78 @@ def test_should_slice_records():
         }
     })
 
-    assert records[0]['id'] == '0'
-    assert records[1]['id'] == '1'
-    assert records[2]['id'] == '2'
+    assert records[0]["id"] == "0"
+    assert records[1]["id"] == "1"
+    assert records[2]["id"] == "2"
 
     record = records[0]  # type: StorageRecord
 
     assert isinstance(record, StorageRecord)
     assert isinstance(record.get_metadata(), RecordMetadata)
-    assert record.get_metadata().index == 'my-index-000001'
+    assert record.get_metadata().index == "my-index-000001"
 
-    assert [row['id'] for row in records[1:]] == ["1", "2"]
-    assert [row['id'] for row in records[:1]] == ["0"]
-    assert [row['id'] for row in records[0:2]] == ["0", "1"]
+    assert [row["id"] for row in records[1:]] == ["1", "2"]
+    assert [row["id"] for row in records[:1]] == ["0"]
+    assert [row["id"] for row in records[0:2]] == ["0", "1"]
 
     for i, row in enumerate(records[0:2]):
         assert isinstance(row, StorageRecord)
         assert isinstance(row.get_metadata(), RecordMetadata)
-        assert row.get_metadata().index == f'my-index-00000{i+1}'
+        assert row.get_metadata().index == f"my-index-00000{i + 1}"
 
+
+def test_should_handle_aggragates():
+    response = {
+        "hits": {"total": {"value": 0, "relation": "eq"}, "max_score": None, "hits": []},
+        "aggregations": {
+            "aggr_name": {
+                "doc_count_error_upper_bound": 0,
+                "sum_other_doc_count": 0,
+                "buckets": [
+                    {
+                        "key": "collected",
+                        "doc_count": 2,
+                        "items_over_time": {
+                            "buckets": [
+                                {"key_as_string": "2021-08-19T00:00:00.000+02:00", "key": 1629324000000,
+                                 "doc_count": 0},
+                                {"key_as_string": "2021-09-02T00:00:00.000+02:00", "key": 1630533600000,
+                                 "doc_count": 0},
+                                {"key_as_string": "2021-09-16T00:00:00.000+02:00", "key": 1631743200000,
+                                 "doc_count": 0},
+                                {"key_as_string": "2021-09-30T00:00:00.000+02:00", "key": 1632952800000,
+                                 "doc_count": 0},
+                                {"key_as_string": "2021-10-14T00:00:00.000+02:00", "key": 1634162400000,
+                                 "doc_count": 0},
+                                {"key_as_string": "2021-10-28T00:00:00.000+02:00", "key": 1635372000000, "doc_count": 0}
+                            ]
+                        }
+                    }
+                ]
+            }
+        }
+    }
+
+    records = StorageRecords.build_from_elastic(response)
+    assert isinstance(records.aggregations("aggr_name"), StorageAggregates)
+    assert records.aggregations("aggr_name").buckets() == [
+                    {
+                        "key": "collected",
+                        "doc_count": 2,
+                        "items_over_time": {
+                            "buckets": [
+                                {"key_as_string": "2021-08-19T00:00:00.000+02:00", "key": 1629324000000,
+                                 "doc_count": 0},
+                                {"key_as_string": "2021-09-02T00:00:00.000+02:00", "key": 1630533600000,
+                                 "doc_count": 0},
+                                {"key_as_string": "2021-09-16T00:00:00.000+02:00", "key": 1631743200000,
+                                 "doc_count": 0},
+                                {"key_as_string": "2021-09-30T00:00:00.000+02:00", "key": 1632952800000,
+                                 "doc_count": 0},
+                                {"key_as_string": "2021-10-14T00:00:00.000+02:00", "key": 1634162400000,
+                                 "doc_count": 0},
+                                {"key_as_string": "2021-10-28T00:00:00.000+02:00", "key": 1635372000000, "doc_count": 0}
+                            ]
+                        }
+                    }
+                ]

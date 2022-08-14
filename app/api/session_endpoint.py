@@ -92,9 +92,11 @@ async def delete_session(id: str, response: Response):
 async def get_nth_last_session_for_profile(profile_id: str, n: Optional[int] = 0):
     try:
         result = await storage.driver.session.get_nth_last_session(profile_id, n + 1)
-        return {"id": result["id"], "duration": result["metadata"]["time"]["duration"],
-                "insert": result["metadata"]["time"]["insert"]} if result is not None else \
-            None
+        return {
+            "id": result["id"],
+            "duration": result["metadata"]["time"]["duration"],
+            "insert": result["metadata"]["time"]["insert"]} \
+            if result is not None else None
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
