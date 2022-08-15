@@ -196,8 +196,8 @@ async def get_event(id: str, response: Response):
         "event": record
     }
 
-    if record.has_metadata():
-        result["_metadata"] = record.get_metadata()
+    if record.has_meta_data():
+        result["_metadata"] = record.get_meta_data()
 
     return result
 

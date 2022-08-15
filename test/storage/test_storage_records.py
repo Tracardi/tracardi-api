@@ -52,8 +52,8 @@ def test_should_assign_and_read_values():
     first_record = records.first()
 
     assert isinstance(first_record, StorageRecord)
-    assert first_record.get_metadata().index == "my-index-000001"
-    assert first_record.get_metadata().id == "0"
+    assert first_record.get_meta_data().index == "my-index-000001"
+    assert first_record.get_meta_data().id == "0"
     assert first_record["id"] == "0"
     assert first_record["@timestamp"] == "2099-11-15T14:12:12"
     assert first_record["source"]["ip"] == "127.0.0.1"
@@ -67,7 +67,7 @@ def test_should_assign_and_read_values():
 
     list_of_records = list(records)
     assert list_of_records[0] == {"replaced": 1, "id": "0"}
-    assert list_of_records[0].get_metadata().index == "my-index-000001"
+    assert list_of_records[0].get_meta_data().index == "my-index-000001"
 
 
 def test_should_handle_empty_data():
@@ -182,8 +182,8 @@ def test_should_slice_records():
     record = records[0]  # type: StorageRecord
 
     assert isinstance(record, StorageRecord)
-    assert isinstance(record.get_metadata(), RecordMetadata)
-    assert record.get_metadata().index == "my-index-000001"
+    assert isinstance(record.get_meta_data(), RecordMetadata)
+    assert record.get_meta_data().index == "my-index-000001"
 
     assert [row["id"] for row in records[1:]] == ["1", "2"]
     assert [row["id"] for row in records[:1]] == ["0"]
@@ -191,8 +191,8 @@ def test_should_slice_records():
 
     for i, row in enumerate(records[0:2]):
         assert isinstance(row, StorageRecord)
-        assert isinstance(row.get_metadata(), RecordMetadata)
-        assert row.get_metadata().index == f"my-index-00000{i + 1}"
+        assert isinstance(row.get_meta_data(), RecordMetadata)
+        assert row.get_meta_data().index == f"my-index-00000{i + 1}"
 
 
 def test_should_handle_aggregates():

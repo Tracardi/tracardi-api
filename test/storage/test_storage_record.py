@@ -17,6 +17,6 @@ def test_should_assign_and_read_values():
 
 def test_should_assign_meta_data():
     record = StorageRecord(test="sss")
-    record.set_metadata(RecordMetadata(id="test", index="index"))
-    assert record.get_metadata().id == "test"
-    assert record.get_metadata().index == "index"
+    record.set_meta_data(RecordMetadata(id="test", index="index"))
+    assert record.get_meta_data().id == "test"
+    assert record.get_meta_data().index == "index"

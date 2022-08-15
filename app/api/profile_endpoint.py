@@ -72,7 +72,7 @@ async def get_profile_by_id(id: str, response: Response):
         response.status_code = 404
         return None
 
-    return Profile(**record).set_meta_data(record.get_metadata())
+    return Profile(**record).set_meta_data(record.get_meta_data())
 
 
 @router.delete("/profile/{id}", tags=["profile"],
