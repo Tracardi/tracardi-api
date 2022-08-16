@@ -1,11 +1,8 @@
 import asyncio
-from pprint import pprint
-
 from tracardi.domain.pii import PII
 from tracardi.domain.profile import Profile
 from tracardi.domain.profile_traits import ProfileTraits
 from tracardi.service.storage.driver import storage
-from tracardi.service.storage.factory import storage_manager
 
 
 def test_profile_merging():
@@ -50,7 +47,7 @@ def test_profile_merging():
 
         await storage.driver.profile.refresh()
 
-        await storage_manager('profile').query({'size': 2000, 'query': {'term': {'pii.email': 'test@test.com'}}})
+        await storage.driver.raw.query("profile", query={'size': 2000, 'query': {'term': {'pii.email': 'test@test.com'}}})
 
         # -------------------------
         # TEST no override on data

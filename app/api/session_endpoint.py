@@ -4,7 +4,6 @@ from fastapi import HTTPException, Depends
 from fastapi.responses import Response
 from tracardi.domain.session import Session
 from tracardi.service.storage.driver import storage
-from tracardi.service.storage.factory import storage_manager
 from .auth.permissions import Permissions
 from ..config import server
 
@@ -59,7 +58,7 @@ async def get_session_by_id(id: str, response: Response):
     Returns session with given ID (str)
     """
     try:
-        result = await storage_manager("session").load(id)
+        result = await storage.driver.session.load(id)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
