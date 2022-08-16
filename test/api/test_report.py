@@ -19,9 +19,9 @@ def test_should_work():
         result = endpoint.post("/report/test", data={"report": report.dict(), "params": {"type": "page-view"}})
         assert result.status_code == 200
         result = result.json()
-        # todo ERROR this should not return ES response
-        assert result["hits"]["hits"] != []
-        assert all([record["_source"]["type"] == "page-view" for record in result["hits"]["hits"]])
+
+        assert result["result"] != []
+        assert all([record["type"] == "page-view" for record in result["result"]])
 
         result = endpoint.post("/report", data=report.dict())
         assert result.status_code == 200
@@ -33,9 +33,9 @@ def test_should_work():
         result = endpoint.post("/report/@test-report/run", data={"type": "page-view"})
         assert result.status_code == 200
         result = result.json()
-        # todo ERROR this should not return ES response
-        assert result["hits"]["hits"] != []
-        assert all([record["_source"]["type"] == "page-view" for record in result["hits"]["hits"]])
+
+        assert result["result"] != []
+        assert all([record["type"] == "page-view" for record in result["result"]])
 
         result = endpoint.get("/reports")
         assert result.status_code == 200
