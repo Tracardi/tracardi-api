@@ -30,38 +30,33 @@ async def list_event_sources(query: str = None):
     """
     Lists all event sources that match given query (str) parameter
     """
-    try:
+    result, total = await storage.driver.event_source.load_all(limit=1000)
 
-        result, total = await storage.driver.event_source.load_all(limit=1000)
+    # Filtering
+    if query is not None and len(query) > 0:
+        query = query.lower()
+        if query:
+            result = [r for r in result if query in r.name.lower() or search(query, r.type)]
 
-        # Filtering
-        if query is not None and len(query) > 0:
-            query = query.lower()
-            if query:
-                result = [r for r in result if query in r.name.lower() or search(query, r.type)]
+    # Grouping
+    groups = defaultdict(list)
+    for event_source in result:  # type: EventSource
+        if isinstance(event_source.groups, list):
+            if len(event_source.groups) == 0:
+                groups["general"].append(event_source)
+            else:
+                for group in event_source.groups:
+                    groups[group].append(event_source)
+        elif isinstance(event_source.groups, str):
+            groups[event_source.groups].append(event_source)
 
-        # Grouping
-        groups = defaultdict(list)
-        for event_source in result:  # type: EventSource
-            if isinstance(event_source.groups, list):
-                if len(event_source.groups) == 0:
-                    groups["general"].append(event_source)
-                else:
-                    for group in event_source.groups:
-                        groups[group].append(event_source)
-            elif isinstance(event_source.groups, str):
-                groups[event_source.groups].append(event_source)
+    # Sort
+    groups = {k: sorted(v, key=lambda r: r.name, reverse=False) for k, v in groups.items()}
 
-        # Sort
-        groups = {k: sorted(v, key=lambda r: r.name, reverse=False) for k, v in groups.items()}
-
-        return {
-            "total": total,
-            "grouped": groups
-        }
-
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    return {
+        "total": total,
+        "grouped": groups
+    }
 
 
 @router.get("/event-sources/type/{type}",
@@ -77,19 +72,15 @@ async def get_event_source_types(type: TypeEnum) -> dict:
     * Endpoint /resources/type/configuration will return all data.
     """
 
-    try:
-        types = event_source_types()
+    types = event_source_types()
 
-        if type.value == 'name':
-            types = {id: t['name'] for id, t in types.items()}
+    if type.value == 'name':
+        types = {id: t['name'] for id, t in types.items()}
 
-        return {
-            "total": len(types),
-            "result": types
-        }
-
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    return {
+        "total": len(types),
+        "result": types
+    }
 
 
 @router.get("/event-source/{id}", tags=["event-source"],
@@ -99,10 +90,7 @@ async def load_event_source(id: str, response: Response):
     """
     Returns event source with given ID (str)
     """
-    try:
-        result = await storage.driver.event_source.load(id)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    result = await storage.driver.event_source.load(id)
 
     if result is None:
         response.status_code = 404
@@ -121,8 +109,6 @@ async def save_event_source(event_source: EventSource):
         return await save_source(event_source)
     except ValueError as e:
         raise HTTPException(status_code=422, detail=repr(e))
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=repr(e))
 
 
 @router.delete("/event-source/{id}", tags=["event-source"],
@@ -131,20 +117,15 @@ async def delete_event_source(id: str, response: Response):
     """
     Deletes event source with given ID (str)
     """
-    try:
-        result = await storage.driver.event_source.delete(id)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    result = await storage.driver.event_source.delete(id)
 
     if result is None:
         response.status_code = 404
         return None
 
-    try:
-        await storage.driver.event_source.refresh()
-        return True
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    await storage.driver.event_source.refresh()
+    return True
+
 
 
 @router.get("/event-sources/refresh",
@@ -165,13 +146,10 @@ async def list_event_sources_names_and_ids(limit: int = 500):
     Returns list of event sources. This list contains only id and name.
     """
 
-    try:
-        result, total = await storage.driver.event_source.load_all(limit=limit)
-        result = [NamedEntity(**r.dict()) for r in result]
+    result, total = await storage.driver.event_source.load_all(limit=limit)
+    result = [NamedEntity(**r.dict()) for r in result]
 
-        return {
-            "total": total,
-            "result": list(result)
-        }
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    return {
+        "total": total,
+        "result": list(result)
+    }

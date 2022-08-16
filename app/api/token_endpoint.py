@@ -37,12 +37,5 @@ async def logout(authorization: Union[str, None] = Header(default=None),
         raise HTTPException(status_code=401, detail="No authorization header provided.")
 
     else:
-        try:
-            _, token = authorization.split(" ")
-            await auth.logout(token)
-
-        except Exception as e:
-            raise HTTPException(status_code=500, detail=str(e))
-
-
-
+        _, token = authorization.split(" ")
+        await auth.logout(token)

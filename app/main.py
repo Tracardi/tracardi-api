@@ -3,6 +3,7 @@ import asyncio
 import os, sys
 from random import randint
 
+from starlette.responses import JSONResponse
 from time import time
 
 from app.api.auth.permissions import Permissions
@@ -26,7 +27,6 @@ from app.api import token_endpoint, rule_endpoint, resource_endpoint, event_endp
     delete_indices_endpoint, migration_endpoint, report_endpoint
 
 from app.api.graphql.profile import graphql_profiles
-from app.api.scheduler import scheduler_endpoint
 from app.api.track import event_server_endpoint
 from app.config import server
 from app.setup.on_start import update_api_instance, clear_dead_api_instances
@@ -151,7 +151,6 @@ application.include_router(token_endpoint.router)
 application.include_router(generic_endpoint.router)
 application.include_router(health_endpoint.router)
 application.include_router(session_endpoint.router)
-application.include_router(scheduler_endpoint.router)
 application.include_router(instance_endpoint.router)
 application.include_router(plugins_endpoint.router)
 application.include_router(test_endpoint.router)
@@ -241,26 +240,36 @@ async def app_starts():
 
 @application.middleware("http")
 async def add_process_time_header(request: Request, call_next):
-    start_time = time()
-    if server.make_slower_responses > 0:
-        await asyncio.sleep(server.make_slower_responses)
-    response = await call_next(request)
-    process_time = time() - start_time
-    response.headers["X-Process-Time"] = str(process_time)
 
-    if tracardi.save_logs:
-        try:
-            if await storage.driver.log.exists():
-                if log_handler.has_logs():
-                    # do not await
-                    asyncio.create_task(storage.driver.raw.collection('log', log_handler.collection).save())
-                    log_handler.reset()
-            else:
-                print("Log index still not created. Saving logs postponed.")
-        except Exception as e:
-            print(str(e))
+    try:
 
-    return response
+        start_time = time()
+        if server.make_slower_responses > 0:
+            await asyncio.sleep(server.make_slower_responses)
+
+        response = await call_next(request)
+        process_time = time() - start_time
+        response.headers["X-Process-Time"] = str(process_time)
+
+        return response
+
+    except Exception as e:
+        logger.error("Endpoint exception", exc_info=True)
+        return JSONResponse(status_code=500, content={"details": str(e)})
+
+    finally:
+
+        if tracardi.save_logs:
+            try:
+                if await storage.driver.log.exists():
+                    if log_handler.has_logs():
+                        # do not await
+                        asyncio.create_task(storage.driver.raw.collection('log', log_handler.collection).save())
+                        log_handler.reset()
+                else:
+                    logger.warning("Log index still not created. Saving logs postponed.")
+            except Exception:
+                logger.error("Can not save error log", exc_info=True)
 
 
 @application.on_event("shutdown")
