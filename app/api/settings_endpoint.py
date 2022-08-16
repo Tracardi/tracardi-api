@@ -313,7 +313,22 @@ system_settings = [
             "desc": "If set to 'yes', then user auth tokens are being cached on Redis. It allows multiple sessions for "
                     "one user and increases performance of the API. Defaults to 'yes'."
         }
-    )
+    ),
+    SystemSettings(
+        **{
+            "label": "SAVE_LOGS",
+            "value": tracardi.save_logs,
+            "desc": "Default: yes. When set to yes all logs will be saved n tracardi log."
+        }
+    ),
+    SystemSettings(
+        **{
+            "label": "MONITOR_LOGS_EVENT_TYPE",
+            "value": tracardi.monitor_logs_event_type,
+            "desc": "Default: None. When set to any string all logs will converted into events with event type equal "
+                    "to the string you set in MONITOR_LOGS_EVENT_TYPE."
+        }
+    ),
 ]
 
 router = APIRouter(
