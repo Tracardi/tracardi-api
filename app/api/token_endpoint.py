@@ -21,10 +21,10 @@ async def login(login_form_data: OAuth2PasswordRequestForm = Depends(),
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Access forbidden")
 
-    try:
-        token = await auth.login(login_form_data.username, login_form_data.password)
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+    # try:
+    token = await auth.login(login_form_data.username, login_form_data.password)
+    # except Exception as e:
+    #     raise HTTPException(status_code=400, detail=str(e))
 
     return token
 
