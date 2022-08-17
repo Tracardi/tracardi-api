@@ -5,25 +5,29 @@ from tracardi.service.plugin.service.plugin_runner import run_plugin
 
 
 def test_should_return_true():
-    init = {"field": "payload@name",
-            "prefix": "Test"
-            }
+    init = {
+        "field": "payload@name",
+        "prefix": "Tes"
+    }
 
     payload = {"name": "Test"}
 
     result = run_plugin(StartsWithAction, init, payload)
     assert result.output.port == "true"
+    assert result.output.value == {"name": "Test"}
 
 
 def test_should_return_false():
-    init = {"field": "payload@name",
-            "prefix": "test"
-            }
+    init = {
+        "field": "payload@name",
+        "prefix": "test"
+    }
 
-    payload = {"name": "Test"}
+    payload = {"name": "None"}
 
     result = run_plugin(StartsWithAction, init, payload)
     assert result.output.port == "false"
+    assert result.output.value == {"name": "None"}
 
 
 def test_empty_prefix_validation():

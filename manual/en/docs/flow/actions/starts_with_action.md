@@ -1,6 +1,6 @@
-# StartsWith plugin
+# StartsWith Plugin
 
-This plugin checks if payload field contains defined prefix by user
+This plugin checks if data field starts with defined prefix.
 
 # JSON Configuration
 
@@ -8,11 +8,11 @@ Example input:
 
 ```json
 {
-   "field": "payload@field",
-    "prefix": "string"
+  "field": "payload@field",
+  "prefix": "string"
 }
 ```
 
 Output:
 
-Plugin outputs the payload on ports TRUE or FALSE depends on function result.
+Plugin outputs the payload on ports TRUE if field contains prefix or FALSE if otherwise.
