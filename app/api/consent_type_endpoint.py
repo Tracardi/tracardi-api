@@ -133,6 +133,6 @@ async def get_consent_ids(query: str = None, limit: int = 1000):
             }
     })
     return {
-        "total": result["hits"]["total"]["value"],
-        "result": [consent["key"] for consent in result["aggregations"]["uniq"]["buckets"]]
+        "total": result.total,
+        "result": [consent["key"] for consent in result.aggregations("uniq").buckets()]
     }

@@ -3,11 +3,9 @@ from typing import Optional
 from fastapi import APIRouter, HTTPException, Depends
 
 from app.api.auth.permissions import Permissions
-from tracardi.domain.enum.snapshot_repo import SnapshotRepo
 from tracardi.event_server.utils.memory_cache import MemoryCache, CacheItem
 from app.config import server
 from tracardi.service.storage.driver import storage
-from tracardi.service.storage.factory import storage_manager
 from tracardi.service.storage.elastic_client import ElasticClient
 from tracardi.service.storage.indices_manager import check_indices_mappings_consistency
 
@@ -33,7 +31,7 @@ async def get_index_mapping(index: str):
     try:
         memory_key = f"{index}-mapping-cache"
         if memory_key not in memory_cache:
-            mapping = await storage_manager(index).get_mapping()
+            mapping = await storage.driver.raw.mapping(index)
             fields = mapping.get_field_names()
             memory_cache[memory_key] = CacheItem(data=fields, ttl=5)  # result is cached for 5 seconds
         return {"result": memory_cache[memory_key].data, "total": len(memory_cache[memory_key].data)}
@@ -47,7 +45,7 @@ async def get_index_mapping(index: str):
     Returns mapping of given index (str)
     """
     try:
-        mapping = await storage_manager(index).get_mapping()
+        mapping = await storage.driver.raw.mapping(index)
         return mapping.get_field_names()
     except Exception as e:
         raise HTTPException(detail=str(e), status_code=500)

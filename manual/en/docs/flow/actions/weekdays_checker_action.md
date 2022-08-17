@@ -9,6 +9,7 @@ Example output:
 ```json
 {
   "today": "monday",
-  "weekend": "false"
+  "weekend": false,
+  "day_number": 1
 }
 ```

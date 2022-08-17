@@ -196,8 +196,8 @@ async def get_event(id: str, response: Response):
         "event": record
     }
 
-    if record.has_metadata():
-        result["_metadata"] = record.get_metadata()
+    if record.has_meta_data():
+        result["_metadata"] = record.get_meta_data()
 
     return result
 
@@ -237,7 +237,7 @@ async def get_event_logs(id: str):
     log_records = await storage.driver.console_log.load_by_event(id)
     return [Console.decode_record(log) for log in log_records]
 
-
+#todo check GUI to see if used
 @router.post("/event/schedule", tags=["event"], include_in_schema=server.expose_gui_api)
 async def add_scheduled_event(schedule_data: ScheduleData):
     """
@@ -353,7 +353,39 @@ async def get_for_source_grouped_by_tags_time(source_id: str, time_span: TimeSpa
             response_model=dict)
 async def get_events_for_session(session_id: str, limit: int = 20):
     try:
-        result, more_to_load = await storage.driver.event.get_event_data_for_session(session_id, limit)
+        result = await storage.driver.event.get_events_by_session(session_id, limit)
+        more_to_load = result.total > len(result)
+        result = [{
+            "id": doc["id"],
+            "insert": doc["metadata"]["time"]["insert"],
+            "status": doc["metadata"]["status"],
+            "type": doc["type"]
+        } for doc in result]
+
+        return {"result": result, "more_to_load": more_to_load}
+
+    except ElasticsearchException as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/events/session/{session_id}/profile/{profile_id}", tags=["event"],
+            include_in_schema=server.expose_gui_api,
+            response_model=dict)
+async def get_events_for_session(session_id: str, profile_id: str, limit: int = 20):
+    try:
+        result = await storage.driver.event.get_events_by_session_and_profile(
+            profile_id,
+            session_id,
+            limit)
+
+        more_to_load = result.total > len(result)
+        result = [{
+            "id": doc["id"],
+            "insert": doc["metadata"]["time"]["insert"],
+            "status": doc["metadata"]["status"],
+            "type": doc["type"]
+        } for doc in result]
+
         return {"result": result, "more_to_load": more_to_load}
 
     except ElasticsearchException as e:

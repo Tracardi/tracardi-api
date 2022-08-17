@@ -35,8 +35,8 @@ def test_should_return_index_less_record():
 
     entity = TestEntity(id="1")
     record = entity.to_storage_record()
-    assert record.has_metadata() is False
-    assert record.get_metadata() is None
+    assert record.has_meta_data() is False
+    assert record.get_meta_data() is None
 
 
 def test_should_return_record_with_metadata():
@@ -52,10 +52,10 @@ def test_should_return_record_with_metadata():
 
     entity = TestEntity(id="1").set_meta_data(RecordMetadata(id="1", index="index"))
     record = entity.to_storage_record()
-    assert record.has_metadata() is True
-    assert record.get_metadata() is not None
-    assert record.get_metadata().index == 'index'
-    assert record.get_metadata().id == '1'
+    assert record.has_meta_data() is True
+    assert record.get_meta_data() is not None
+    assert record.get_meta_data().index == 'index'
+    assert record.get_meta_data().id == '1'
 
 
 def test_should_exclude_data():
