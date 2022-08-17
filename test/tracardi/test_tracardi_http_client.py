@@ -55,9 +55,12 @@ async def _should_give_404():
 
 
 def test_tracardi_http_client():
-    asyncio.get_event_loop().run_until_complete(_should_get())
-    asyncio.get_event_loop().run_until_complete(_should_post())
-    asyncio.get_event_loop().run_until_complete(_should_put())
-    asyncio.get_event_loop().run_until_complete(_should_delete())
-    asyncio.get_event_loop().run_until_complete(_should_give_404())
+    async def main():
+        await _should_get()
+        await _should_post()
+        await _should_put()
+        await _should_delete()
+        await _should_give_404()
+
+    asyncio.new_event_loop().run_until_complete(main())
 

@@ -1,5 +1,4 @@
 from ..utils import Endpoint
-from fastapi import HTTPException
 
 endpoint = Endpoint()
 

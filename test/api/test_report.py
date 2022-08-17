@@ -5,7 +5,22 @@ endpoint = Endpoint()
 
 
 def test_should_work():
-    endpoint.post("/collect/page-view/@test-source", data={})  # TEST SOURCE HAS TO BE PRESENT AND ENABLED
+
+    event_source = dict(
+        id="@test-source",
+        type="rest",
+        name="Test",
+        timestamp="2022-01-07T16:18:09.278Z",
+        enabled=True,
+        returns_profile=True,
+        config={}
+    )
+
+    response = endpoint.post('/event-source', data=event_source)
+    assert response.status_code in [200]
+
+    result = endpoint.post("/collect/report-test/@test-source", data={})
+    assert result.status_code == 200
     try:
 
         report = Report(
@@ -16,12 +31,12 @@ def test_should_work():
             query={"query": {"term": {"type": "{{type}}"}}},
             tags=["tag1", "tag2"]
         )
-        result = endpoint.post("/report/test", data={"report": report.dict(), "params": {"type": "page-view"}})
+        result = endpoint.post("/report/test", data={"report": report.dict(), "params": {"type": "report-test"}})
         assert result.status_code == 200
         result = result.json()
 
         assert result["result"] != []
-        assert all([record["type"] == "page-view" for record in result["result"]])
+        assert all([record["type"] == "report-test" for record in result["result"]])
 
         result = endpoint.post("/report", data=report.dict())
         assert result.status_code == 200
@@ -30,12 +45,12 @@ def test_should_work():
         assert result.status_code == 200
         assert report == Report(**result.json())
 
-        result = endpoint.post("/report/@test-report/run", data={"type": "page-view"})
+        result = endpoint.post("/report/@test-report/run", data={"type": "report-test"})
         assert result.status_code == 200
         result = result.json()
 
         assert result["result"] != []
-        assert all([record["type"] == "page-view" for record in result["result"]])
+        assert all([record["type"] == "report-test" for record in result["result"]])
 
         result = endpoint.get("/reports")
         assert result.status_code == 200
@@ -46,4 +61,6 @@ def test_should_work():
 
     finally:
         result = endpoint.delete("/report/@test-report")
+        assert result.status_code == 200
+        result = endpoint.delete("/event-source/@test-source")
         assert result.status_code == 200
