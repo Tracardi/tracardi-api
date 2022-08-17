@@ -23,20 +23,16 @@ async def get_user_logs(page: Optional[int] = None, query: Optional[str] = None)
     """
     Returns user logs according to given parameters
     """
-    try:
-        if page is None:
-            page = 0
-            page_size = 50
-        else:
-            page_size = server.page_size * 2
-        start = page * page_size
-        limit = page_size
-        # todo ERROR this does not exist
-        result = await storage.driver.user_log.load_logs(start, limit, query)
-        return {
-            "total": result.total,
-            "result": list(result)
-        }
-
-    except (ElasticsearchException, StorageException) as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    if page is None:
+        page = 0
+        page_size = 50
+    else:
+        page_size = server.page_size * 2
+    start = page * page_size
+    limit = page_size
+    # todo ERROR this does not exist
+    result = await storage.driver.user_log.load_logs(start, limit, query)
+    return {
+        "total": result.total,
+        "result": list(result)
+    }

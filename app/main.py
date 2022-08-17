@@ -1,11 +1,14 @@
 import logging
 import asyncio
 import os, sys
+from datetime import datetime
 from random import randint
 
+from starlette.responses import JSONResponse
 from time import time
 
 from app.api.auth.permissions import Permissions
+from tracardi.domain.event_source import EventSource
 
 _local_dir = os.path.dirname(__file__)
 sys.path.append(f"{_local_dir}/api/proto/stubs")
@@ -21,12 +24,11 @@ from app.api import token_endpoint, rule_endpoint, resource_endpoint, event_endp
     settings_endpoint, event_source_endpoint, test_endpoint, \
     event_tag_endpoint, consent_type_endpoint, flow_action_endpoint, flows_endpoint, info_endpoint, \
     user_endpoint, event_management_endpoint, debug_endpoint, log_endpoint, tracardi_pro_endpoint, \
-    storage_endpoint, destination_endpoint, user_log_endpoint, user_account_endpoint, install_endpoint, import_endpoint,\
+    storage_endpoint, destination_endpoint, user_log_endpoint, user_account_endpoint, install_endpoint, import_endpoint, \
     task_endpoint, storage_endpoint, destination_endpoint, user_log_endpoint, user_account_endpoint, install_endpoint, \
     delete_indices_endpoint, migration_endpoint, report_endpoint
 
 from app.api.graphql.profile import graphql_profiles
-from app.api.scheduler import scheduler_endpoint
 from app.api.track import event_server_endpoint
 from app.config import server
 from app.setup.on_start import update_api_instance, clear_dead_api_instances
@@ -34,6 +36,10 @@ from tracardi.config import tracardi, elastic
 from tracardi.exceptions.log_handler import log_handler
 from tracardi.service.storage.driver import storage
 from tracardi.service.storage.elastic_client import ElasticClient
+from tracardi.domain.entity import Entity
+from tracardi.domain.payload.event_payload import EventPayload
+from tracardi.domain.payload.tracker_payload import TrackerPayload
+from tracardi.service.tracker import synchronized_event_tracking
 
 logging.basicConfig(level=logging.ERROR)
 logger = logging.getLogger('app.main')
@@ -151,7 +157,6 @@ application.include_router(token_endpoint.router)
 application.include_router(generic_endpoint.router)
 application.include_router(health_endpoint.router)
 application.include_router(session_endpoint.router)
-application.include_router(scheduler_endpoint.router)
 application.include_router(instance_endpoint.router)
 application.include_router(plugins_endpoint.router)
 application.include_router(test_endpoint.router)
@@ -175,7 +180,6 @@ application.include_router(task_endpoint.router)
 application.include_router(delete_indices_endpoint.router)
 application.include_router(migration_endpoint.router)
 application.include_router(report_endpoint.router)
-
 
 # GraphQL
 
@@ -241,26 +245,71 @@ async def app_starts():
 
 @application.middleware("http")
 async def add_process_time_header(request: Request, call_next):
-    start_time = time()
-    if server.make_slower_responses > 0:
-        await asyncio.sleep(server.make_slower_responses)
-    response = await call_next(request)
-    process_time = time() - start_time
-    response.headers["X-Process-Time"] = str(process_time)
+    try:
 
-    if tracardi.save_logs:
+        start_time = time()
+        if server.make_slower_responses > 0:
+            await asyncio.sleep(server.make_slower_responses)
+
+        response = await call_next(request)
+        process_time = time() - start_time
+        response.headers["X-Process-Time"] = str(process_time)
+
+        return response
+
+    except Exception as e:
+        logger.error("Endpoint exception", exc_info=True)
+        return JSONResponse(status_code=500, content={"details": str(e)})
+
+    finally:
         try:
-            if await storage.driver.log.exists():
-                if log_handler.has_logs():
-                    # do not await
-                    asyncio.create_task(storage.driver.raw.collection('log', log_handler.collection).save())
-                    log_handler.reset()
-            else:
-                print("Log index still not created. Saving logs postponed.")
-        except Exception as e:
-            print(str(e))
+            if tracardi.monitor_logs_event_type is not None:
 
-    return response
+                source_id = "@monitoring"
+
+                tracker_payload = TrackerPayload(
+                    source=Entity(id=source_id),
+                    events=[
+                        EventPayload(
+                            type=tracardi.monitor_logs_event_type,
+                            properties=log
+                        ) for log in log_handler.collection if 'level' in log and log['level'].lower() == "error"
+                    ],
+                    options={
+                        "saveEvents": False,
+                        "saveProfile": False,
+                        "saveSession": False
+                    }
+                )
+
+                asyncio.create_task(
+                    synchronized_event_tracking(
+                        tracker_payload,
+                        host='0.0.0.0',
+                        profile_less=True,
+                        allowed_bridges=['monitor'],
+                        internal_source=EventSource(
+                            id=source_id,
+                            timestamp=datetime.utcnow(),
+                            type="monitor",
+                            tags=["monitor"],
+                            name="Internal source",
+                            transitional=True
+                        )
+                    )
+                )
+
+            if tracardi.save_logs:
+                if await storage.driver.log.exists():
+                    if log_handler.has_logs():
+                        # do not await
+                        asyncio.create_task(storage.driver.raw.collection('log', log_handler.collection).save())
+                        log_handler.reset()
+                else:
+                    logger.warning("Log index still not created. Saving logs postponed.")
+
+        except Exception:
+            logger.error("Can process error log", exc_info=True)
 
 
 @application.on_event("shutdown")

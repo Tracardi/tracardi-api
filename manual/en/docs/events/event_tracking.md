@@ -172,7 +172,7 @@ We have the following options.
 * `profile` - True / False value - whether tracardi should send back the full user profile or just his id. In most
   cases, the id alone is enough.
 * `saveSession` - True / False value - whether tracardi should save the session data.
-* `saveEvent` - True / False value - whether tracardi should save the event or just process it
+* `saveEvents` - True / False value - whether tracardi should save the event or just process it
 
 ### Example od debugger data
 

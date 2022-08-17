@@ -43,8 +43,6 @@ async def get_data_for_plugin(module: str, endpoint_function: str, request: Requ
         raise e
     except AttributeError as e:
         raise HTTPException(status_code=404, detail=str(e))
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.get("/action/plugins", tags=["action"], include_in_schema=server.expose_gui_api)
@@ -92,5 +90,3 @@ async def validate_plugin_configuration(id: str, config: dict = None):
             status_code=422,
             content=jsonable_encoder(convert_errors(e))
         )
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))

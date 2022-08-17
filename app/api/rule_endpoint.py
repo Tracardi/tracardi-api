@@ -20,10 +20,7 @@ async def get_rule(id: str, response: Response):
     Returns rule or None if rule does not exist.
     """
 
-    try:
-        result = await storage.driver.rule.load_by_id(id)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    result = await storage.driver.rule.load_by_id(id)
 
     if result is None:
         response.status_code = 404
@@ -37,34 +34,28 @@ async def upsert_rule(rule: Rule):
     """
     Adds new rule to database
     """
-    try:
-        # Check if source id exists
-        event_source = await storage.driver.event_source.load(rule.source.id)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    # Check if source id exists
+    event_source = await storage.driver.event_source.load(rule.source.id)
 
     if event_source is None:
         raise HTTPException(status_code=422, detail='Incorrect source id: `{}`'.format(rule.source.id))
-    try:
 
-        flow_record = await storage.driver.flow.load_record(rule.flow.id)
-        add_flow_task = None
-        if flow_record is None:
-            new_flow = NamedEntity(id=rule.flow.id, name=rule.flow.name)
-            add_flow_task = asyncio.create_task(storage.driver.flow.save(new_flow))
+    flow_record = await storage.driver.flow.load_record(rule.flow.id)
+    add_flow_task = None
+    if flow_record is None:
+        new_flow = NamedEntity(id=rule.flow.id, name=rule.flow.name)
+        add_flow_task = asyncio.create_task(storage.driver.flow.save(new_flow))
 
-        add_rule_task = asyncio.create_task(storage.driver.rule.save(rule))
+    add_rule_task = asyncio.create_task(storage.driver.rule.save(rule))
 
-        if add_flow_task:
-            await add_flow_task
+    if add_flow_task:
+        await add_flow_task
 
-        result = await add_rule_task
+    result = await add_rule_task
 
-        await storage.driver.rule.refresh()
+    await storage.driver.rule.refresh()
 
-        return result
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    return result
 
 
 @router.delete("/rule/{id}", tags=["rule"], include_in_schema=server.expose_gui_api)
@@ -72,10 +63,7 @@ async def delete_rule(id: str, response: Response):
     """
     Deletes rule with given ID (str) from database
     """
-    try:
-        result = await storage.driver.rule.delete_by_id(id)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    result = await storage.driver.rule.delete_by_id(id)
 
     if result is None:
         response.status_code = 404
@@ -90,10 +78,7 @@ async def get_rules_attached_to_flow(id: str) -> List[Rule]:
     """
     Returns list of rules attached to flow with given ID (str)
     """
-    try:
-        return await storage.driver.rule.load_flow_rules(id)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    return await storage.driver.rule.load_flow_rules(id)
 
 
 @router.get("/rules/refresh", tags=["rules"], include_in_schema=server.expose_gui_api)
@@ -117,8 +102,5 @@ async def get_rules_by_tag(query: str = None, start: int = 0, limit: int = 100) 
     """
     Lists rules by tags, according to query (str), start (int) and limit (int) parameters
     """
-    try:
-        result = await storage.driver.rule.load_all(start, limit=limit)
-        return group_records(result, query, group_by='tags', search_by='name', sort_by='name')
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    result = await storage.driver.rule.load_all(start, limit=limit)
+    return group_records(result, query, group_by='tags', search_by='name', sort_by='name')

@@ -44,24 +44,16 @@ async def add_user(user_payload: UserPayload):
     """
     Creates new user in database
     """
-    try:
-        user_exists = await storage.driver.user.check_if_exists(user_payload.email)
-    except ElasticsearchException as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    user_exists = await storage.driver.user.check_if_exists(user_payload.email)
 
     if not user_exists:
-        try:
-
-            expiration_timestamp = user_payload.get_expiration_date()
-            result = await storage.driver.user.add_user(User(
-                **user_payload.dict(),
-                id=user_payload.email,
-                expiration_timestamp=expiration_timestamp
-            ))
-            await storage.driver.user.refresh()
-
-        except ElasticsearchException as e:
-            raise HTTPException(status_code=500, detail=str(e))
+        expiration_timestamp = user_payload.get_expiration_date()
+        result = await storage.driver.user.add_user(User(
+            **user_payload.dict(),
+            id=user_payload.email,
+            expiration_timestamp=expiration_timestamp
+        ))
+        await storage.driver.user.refresh()
 
         return {"inserted": result.saved}
     else:
@@ -75,13 +67,11 @@ async def delete_user(id: str, user=Depends(Permissions(["admin"]))):
     """
     if id == user.id:
         raise HTTPException(status_code=403, detail="You cannot delete your own account")
-    try:
-        result = await storage.driver.user.delete_user(id)
-        if result is None:
-            raise HTTPException(status_code=404, detail=f"User '{id}' not found")
-        await storage.driver.user.refresh()
-    except ElasticsearchException as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    result = await storage.driver.user.delete_user(id)
+    if result is None:
+        raise HTTPException(status_code=404, detail=f"User '{id}' not found")
+    await storage.driver.user.refresh()
+
     return {"deleted": 1 if result["result"] == "deleted" else 0}
 
 
@@ -90,12 +80,10 @@ async def get_user(id: str):
     """
     Returns user with given ID
     """
-    try:
-        result = await storage.driver.user.get_by_id(id)
-        if result is None:
-            raise HTTPException(status_code=404, detail=f"User {id} not found.")
-    except ElasticsearchException as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    result = await storage.driver.user.get_by_id(id)
+    if result is None:
+        raise HTTPException(status_code=404, detail=f"User {id} not found.")
+
     return result.dict(exclude={"token"})
 
 
@@ -104,12 +92,7 @@ async def get_users(start: int = 0, limit: int = 100, query: Optional[str] = "")
     """
     Lists users according to given query (str), start (int) and limit (int) parameters
     """
-    try:
-        result = await storage.driver.user.search_by_name(start, limit, query)
-    except ElasticsearchException as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-    return result
+    return await storage.driver.user.search_by_name(start, limit, query)
 
 
 @router.post("/user/{id}", tags=["user"], include_in_schema=server.expose_gui_api, response_model=dict)
@@ -128,5 +111,3 @@ async def edit_user(id: str, user_payload: UserPayload, user=Depends(Permissions
 
     except LookupError as e:
         raise HTTPException(status_code=404, detail=str(e))
-    except ElasticsearchException as e:
-        raise HTTPException(status_code=500, detail=str(e))

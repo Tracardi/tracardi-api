@@ -21,22 +21,19 @@ async def all_api_instances(page: Optional[int] = None):
     """
     Returns list of all Tracardi API instances. Accessible by roles: "admin"
     """
-    try:
-        if page is None:
-            page = 0
-            page_size = 100
-        else:
-            page_size = server.page_size
-        start = page * page_size
-        limit = page_size
-        result = await storage.driver.api_instance.load_all(start, limit)
+    if page is None:
+        page = 0
+        page_size = 100
+    else:
+        page_size = server.page_size
+    start = page * page_size
+    limit = page_size
+    result = await storage.driver.api_instance.load_all(start, limit)
 
-        return {
-            "total": result.total,
-            "result": list(result)
-        }
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    return {
+        "total": result.total,
+        "result": list(result)
+    }
 
 
 @router.delete("/instances/stale", tags=["api-instance"],

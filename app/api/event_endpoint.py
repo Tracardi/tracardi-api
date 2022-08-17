@@ -2,7 +2,6 @@ from datetime import datetime
 from typing import List
 
 from fastapi import APIRouter, Depends, Response
-from fastapi import HTTPException
 from tracardi.domain.console import Console
 from tracardi.domain.enum.time_span import TimeSpan
 
@@ -12,7 +11,6 @@ from tracardi.service.wf.domain.debug_info import DebugInfo
 from .auth.permissions import Permissions
 from .domain.schedule import ScheduleData
 from ..config import server
-from elasticsearch.exceptions import ElasticsearchException
 
 router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer", "maintainer"]))]
@@ -34,10 +32,7 @@ async def events_refresh_index():
     """
     Refreshes event index.
     """
-    try:
-        return await storage.driver.event.refresh()
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    return await storage.driver.event.refresh()
 
 
 @router.get("/events/flush", tags=["event"], include_in_schema=server.expose_gui_api)
@@ -45,10 +40,7 @@ async def events_refresh_index():
     """
     Flushes event index.
     """
-    try:
-        return await storage.driver.event.flush()
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    return await storage.driver.event.flush()
 
 
 @router.get("/event/count", tags=["event"], include_in_schema=server.expose_gui_api)
@@ -81,15 +73,10 @@ async def heatmap_by_profile(id: str):
     """
     Returns events heatmap for profile with given ID
     """
-    try:
+    bucket_name = "items_over_time"
 
-        bucket_name = "items_over_time"
-
-        result = await storage.driver.event.heatmap_by_profile(id, bucket_name)
-        return {key: value for key, value in result.process(__format_time_buckets, bucket_name)}[bucket_name]
-
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    result = await storage.driver.event.heatmap_by_profile(id, bucket_name)
+    return {key: value for key, value in result.process(__format_time_buckets, bucket_name)}[bucket_name]
 
 
 @router.get("/events/heatmap", tags=["event"], include_in_schema=server.expose_gui_api)
@@ -97,15 +84,10 @@ async def heatmap():
     """
     Returns events heatmap
     """
-    try:
+    bucket_name = "items_over_time"
 
-        bucket_name = "items_over_time"
-
-        result = await storage.driver.event.heatmap_by_profile(None, bucket_name)
-        return {key: value for key, value in result.process(__format_time_buckets, bucket_name)}[bucket_name]
-
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    result = await storage.driver.event.heatmap_by_profile(None, bucket_name)
+    return {key: value for key, value in result.process(__format_time_buckets, bucket_name)}[bucket_name]
 
 
 @router.get("/events/metadata/type", tags=["event"], include_in_schema=server.expose_gui_api)
@@ -183,10 +165,7 @@ async def get_event(id: str, response: Response):
     """
     Returns event with given ID
     """
-    try:
-        record = await storage.driver.event.load(id)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    record = await storage.driver.event.load(id)
 
     if record is None:
         response.status_code = 404
@@ -209,10 +188,7 @@ async def delete_event(id: str):
     """
     Deletes event with given ID
     """
-    try:
-        return await storage.driver.event.delete_by_id(id)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    return await storage.driver.event.delete_by_id(id)
 
 
 @router.get("/event/debug/{id}", tags=["event"], response_model=List[DebugInfo],
@@ -237,27 +213,6 @@ async def get_event_logs(id: str):
     log_records = await storage.driver.console_log.load_by_event(id)
     return [Console.decode_record(log) for log in log_records]
 
-#todo check GUI to see if used
-@router.post("/event/schedule", tags=["event"], include_in_schema=server.expose_gui_api)
-async def add_scheduled_event(schedule_data: ScheduleData):
-    """
-    Adds scheduled event
-    """
-
-    # todo check if used. Can not see the create method in task driver
-
-    result = await storage.driver.task.create(
-        timestamp=schedule_data.schedule.get_parsed_time(),
-        type=schedule_data.event.type,
-        properties=schedule_data.event.properties,
-        context=schedule_data.context.id if schedule_data.context is not None else None,
-        session_id=schedule_data.session.id if schedule_data.session is not None else None,
-        source_id=schedule_data.source.id,
-        profile_id=schedule_data.profile.id,
-        status=None
-    )
-    return {"result": result}
-
 
 @router.get("/event/group/by_tags/profile/{profile_id}", tags=["event"],
             include_in_schema=server.expose_gui_api, response_model=dict)
@@ -277,13 +232,10 @@ async def get_grouped_by_tags_profile(profile_id: str):
             }
         }
     }
-    try:
-        result = await storage.driver.event.aggregate_profile_events(
+    result = await storage.driver.event.aggregate_profile_events(
             profile_id=profile_id,
             aggregate_query=aggregate_query
         )
-    except ElasticsearchException as e:
-        raise HTTPException(status_code=500, detail=str(e))
     del result.aggregations["for_tags"][0]["other"]
     result.aggregations["for_tags"][0]["no_tag"] = result.aggregations["for_missing_tags"][0]["found"]
     agg_results = {**result.aggregations["for_tags"][0]}
@@ -310,14 +262,11 @@ async def get_grouped_by_tags_time(time_from: datetime, time_to: datetime):
             }
         }
     }
-    try:
-        result = await storage.driver.event.aggregate_timespan_events(
+    result = await storage.driver.event.aggregate_timespan_events(
             time_from=time_from,
             time_to=time_to,
             aggregate_query=aggregate_query
         )
-    except ElasticsearchException as e:
-        raise HTTPException(status_code=500, detail=str(e))
     del result.aggregations["for_tags"][0]["other"]
     result.aggregations["for_tags"][0]["no_tag"] = result.aggregations["for_missing_tags"][0]["found"]
     agg_results = {**result.aggregations["for_tags"][0]}
@@ -331,10 +280,7 @@ async def get_for_source_grouped_by_type_time(source_id: str, time_span: TimeSpa
     """
     time_span: d - last day, w - last week, M - last month, y - last year
     """
-    try:
-        return await storage.driver.event.aggregate_source_by_type(source_id, time_span)
-    except ElasticsearchException as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    return await storage.driver.event.aggregate_source_by_type(source_id, time_span)
 
 
 @router.get("/event/for-source/{source_id}/by-tag/{time_span}", tags=["event"], include_in_schema=server.expose_gui_api,
@@ -343,50 +289,39 @@ async def get_for_source_grouped_by_tags_time(source_id: str, time_span: TimeSpa
     """
     time_span: d - last day, w - last week, M - last month, y - last year
     """
-    try:
-        return await storage.driver.event.aggregate_source_by_tags(source_id, time_span)
-    except ElasticsearchException as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    return await storage.driver.event.aggregate_source_by_tags(source_id, time_span)
 
 
 @router.get("/events/session/{session_id}", tags=["event"], include_in_schema=server.expose_gui_api,
             response_model=dict)
 async def get_events_for_session(session_id: str, limit: int = 20):
-    try:
-        result = await storage.driver.event.get_events_by_session(session_id, limit)
-        more_to_load = result.total > len(result)
-        result = [{
-            "id": doc["id"],
-            "insert": doc["metadata"]["time"]["insert"],
-            "status": doc["metadata"]["status"],
-            "type": doc["type"]
-        } for doc in result]
+    result = await storage.driver.event.get_events_by_session(session_id, limit)
+    more_to_load = result.total > len(result)
+    result = [{
+        "id": doc["id"],
+        "insert": doc["metadata"]["time"]["insert"],
+        "status": doc["metadata"]["status"],
+        "type": doc["type"]
+    } for doc in result]
 
-        return {"result": result, "more_to_load": more_to_load}
-
-    except ElasticsearchException as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    return {"result": result, "more_to_load": more_to_load}
 
 
 @router.get("/events/session/{session_id}/profile/{profile_id}", tags=["event"],
             include_in_schema=server.expose_gui_api,
             response_model=dict)
 async def get_events_for_session(session_id: str, profile_id: str, limit: int = 20):
-    try:
-        result = await storage.driver.event.get_events_by_session_and_profile(
-            profile_id,
-            session_id,
-            limit)
+    result = await storage.driver.event.get_events_by_session_and_profile(
+        profile_id,
+        session_id,
+        limit)
 
-        more_to_load = result.total > len(result)
-        result = [{
-            "id": doc["id"],
-            "insert": doc["metadata"]["time"]["insert"],
-            "status": doc["metadata"]["status"],
-            "type": doc["type"]
-        } for doc in result]
+    more_to_load = result.total > len(result)
+    result = [{
+        "id": doc["id"],
+        "insert": doc["metadata"]["time"]["insert"],
+        "status": doc["metadata"]["status"],
+        "type": doc["type"]
+    } for doc in result]
 
-        return {"result": result, "more_to_load": more_to_load}
-
-    except ElasticsearchException as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    return {"result": result, "more_to_load": more_to_load}

@@ -71,7 +71,5 @@ async def register_api_instance_health():
     """
     Returns the health check of a running instance
     """
-    try:
-        return await update_api_instance()
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+
+    return await update_api_instance()
