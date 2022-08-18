@@ -22,6 +22,7 @@ async def add_consent_type(data: ConsentType):
     await storage.driver.consent_type.refresh()
     return result
 
+
 @router.get("/consent/type/{consent_id}", dependencies=[Depends(Permissions(roles=["admin", "marketer", "developer"]))],
             tags=["consent"], include_in_schema=server.expose_gui_api,
             response_model=dict)

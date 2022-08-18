@@ -20,8 +20,9 @@ async def save_destination(destination: Destination):
     """
 
     record = DestinationRecord.encode(destination)
-    await storage.driver.destination.save(record)
+    result = await storage.driver.destination.save(record)
     await storage.driver.destination.refresh()
+    return result
 
 
 @router.get("/destination/{id}", tags=["destination"], response_model=Destination,

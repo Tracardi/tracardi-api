@@ -20,6 +20,7 @@ async def delete_old_indices(version: str, codename: Optional[str] = None):
     if version == tracardi.version:
         raise HTTPException(status_code=409, detail="You cannot delete indices that are currently used.")
 
+    # todo use storage driver this is forbidden
     es = ElasticClient.instance()
     indices = await es.list_indices()
     to_delete = [index for index in indices if index.startswith(
