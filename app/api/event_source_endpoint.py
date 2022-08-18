@@ -127,7 +127,6 @@ async def delete_event_source(id: str, response: Response):
     return True
 
 
-
 @router.get("/event-sources/refresh",
             tags=["event-source"],
             include_in_schema=server.expose_gui_api)

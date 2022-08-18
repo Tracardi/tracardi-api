@@ -9,7 +9,6 @@ from tracardi.service.storage.driver import storage
 from tracardi.domain.record.event_debug_record import EventDebugRecord
 from tracardi.service.wf.domain.debug_info import DebugInfo
 from .auth.permissions import Permissions
-from .domain.schedule import ScheduleData
 from ..config import server
 
 router = APIRouter(
@@ -64,10 +63,11 @@ async def count_events():
 
 
 @router.get("/event/avg/process-time", tags=["event"], include_in_schema=server.expose_gui_api)
-async def count_avg_process_time():
+async def count_avg_process_time() -> dict:
     return await storage.driver.event.get_avg_process_time()
 
 
+# todo not used - not in tests
 @router.get("/events/heatmap/profile/{id}", tags=["event"], include_in_schema=server.expose_gui_api)
 async def heatmap_by_profile(id: str):
     """
@@ -79,6 +79,7 @@ async def heatmap_by_profile(id: str):
     return {key: value for key, value in result.process(__format_time_buckets, bucket_name)}[bucket_name]
 
 
+# todo not used -  not in tests
 @router.get("/events/heatmap", tags=["event"], include_in_schema=server.expose_gui_api)
 async def heatmap():
     """
@@ -142,6 +143,7 @@ async def aggregate_event_tags():
     return await storage.driver.event.aggregate_events_by_source()
 
 
+# todo not used -  not in tests
 @router.get("/events/heatmap_by_profile/profile/{profile_id}", tags=["event"], include_in_schema=server.expose_gui_api)
 async def event_types(profile_id: str):
     """
@@ -150,6 +152,7 @@ async def event_types(profile_id: str):
     return await storage.driver.event.load_events_heatmap(profile_id)
 
 
+# todo not used -  not in tests
 @router.get("/events/heatmap", tags=["event"], include_in_schema=server.expose_gui_api)
 async def event_types():
     """
@@ -214,6 +217,7 @@ async def get_event_logs(id: str):
     return [Console.decode_record(log) for log in log_records]
 
 
+# todo not used -  not in tests
 @router.get("/event/group/by_tags/profile/{profile_id}", tags=["event"],
             include_in_schema=server.expose_gui_api, response_model=dict)
 async def get_grouped_by_tags_profile(profile_id: str):
@@ -242,6 +246,7 @@ async def get_grouped_by_tags_profile(profile_id: str):
     return agg_results
 
 
+# todo not used -  not in tests
 @router.get("/event/group/by_tags/from/{time_from}/to/{time_to}", tags=["event"],
             include_in_schema=server.expose_gui_api,
             response_model=dict)

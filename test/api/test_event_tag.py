@@ -3,7 +3,7 @@ from ..utils import Endpoint
 endpoint = Endpoint()
 
 
-def test_post_event_tag_add():
+def test_should_add_event_tag_add():
     try:
         data = {
             "type": "test-type",

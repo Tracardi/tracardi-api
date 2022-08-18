@@ -8,7 +8,7 @@ from tracardi.domain.enum.type_enum import TypeEnum
 from tracardi.exceptions.log_handler import log_handler
 from tracardi.service.setup.setup_resources import get_type_of_resources
 from tracardi.service.storage.driver import storage
-from tracardi.service.storage.factory import StorageFor
+from tracardi.service.storage.factory import StorageFor, storage_manager
 from tracardi.service.wf.domain.named_entity import NamedEntity
 from app.service.grouper import search
 from tracardi.domain.resource import Resource, ResourceRecord
@@ -210,7 +210,9 @@ async def get_resource_by_id(id: str, response: Response) -> Optional[Resource]:
              include_in_schema=server.expose_gui_api)
 async def upsert_resource(resource: Resource):
     record = ResourceRecord.encode(resource)
-    return await StorageFor(record).index().save()
+    result = await StorageFor(record).index().save()
+    await storage_manager("resource").refresh()
+    return result
 
 
 @router.delete("/resource/{id}", tags=["resource"],
