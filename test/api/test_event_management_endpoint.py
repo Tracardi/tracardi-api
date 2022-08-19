@@ -28,7 +28,7 @@ def _add_event_management_data(event_type, data=None):
 
 
 def test_event_management_refresh():
-    assert endpoint.get("/event-type/management/refresh").status_code == 200
+    assert endpoint.put("/event-type/management/refresh").status_code == 200
 
 
 def test_should_post_get_and_delete_validation_schema():
