@@ -1,6 +1,6 @@
 from uuid import uuid4
 
-from .test_source import create_event_source
+from .test_event_source_endpoint import _create_event_source
 from ..utils import Endpoint
 
 endpoint = Endpoint()
@@ -55,7 +55,7 @@ def test_should_create_new_rule():
     try:
         # Add source
 
-        assert create_event_source(source_id, "rest").status_code == 200
+        assert _create_event_source(source_id, "rest").status_code == 200
         assert endpoint.get('/event-sources/refresh').status_code == 200
 
         response = endpoint.get(f'/event-source/{source_id}')

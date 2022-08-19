@@ -1,6 +1,6 @@
 from uuid import uuid4
 
-from .test_source import create_event_source
+from .test_event_source_endpoint import _create_event_source
 from ..utils import Endpoint
 
 endpoint = Endpoint()
@@ -13,7 +13,7 @@ def _make_event(type, properties=None, session_id=None, source_id=None):
     if source_id is None:
         source_id = "@test-source"
 
-    assert create_event_source(source_id, 'rest', name=source_id).status_code == 200
+    assert _create_event_source(source_id, 'rest').status_code == 200
 
     payload = {
         "source": {

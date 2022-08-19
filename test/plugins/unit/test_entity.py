@@ -15,6 +15,16 @@ def test_should_set_entity_data():
     assert entity.get_meta_data().index == "index"
 
 
+def test_should_set_entity_metadata_as_instance_attribute():
+    entity = Entity(id='1')
+    entity.set_meta_data(RecordMetadata(id="1", index="index"))
+    assert entity.get_meta_data().id == "1"
+    assert entity.get_meta_data().index == "index"
+
+    entity1 = Entity(id='2')
+    assert entity1.get_meta_data() is None
+
+
 def test_should_accept_empty_meta_data():
     entity = Entity(id='1')
 

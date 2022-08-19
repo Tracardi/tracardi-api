@@ -1,6 +1,6 @@
 from uuid import uuid4
 
-from .test_event import _make_event
+from .test_event_endpoint import _make_event
 from ..utils import Endpoint
 from tracardi.domain.report import Report
 
