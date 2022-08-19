@@ -2,9 +2,8 @@ import logging
 import os
 from typing import Optional
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter
 from app.config import server
-from elasticsearch import ElasticsearchException
 
 from tracardi.config import tracardi, elastic
 from tracardi.domain.credentials import Credentials
@@ -43,21 +42,13 @@ async def check_if_installation_complete():
     index = resources.get_index('user')
     if index.get_index_alias() in existing_aliases:
         admins = await storage.driver.user.search_by_role('admin')
-        admins = admins.dict()
     else:
-        admins = {
-            "total": 0,
-            "result": []
-        }
+        admins = None
 
     is_schema_ok = not missing_indices and not missing_aliases and not missing_aliases
-    has_admin_account = admins['total'] > 0
+    has_admin_account = admins is not None and admins.total > 0
 
     return {
-        "missing": missing_indices,
-        "admins": admins,
-        "missing_template": missing_templates,
-        "missing_alias": missing_aliases,
         "schema_ok": is_schema_ok,
         "admin_ok": has_admin_account
     }
