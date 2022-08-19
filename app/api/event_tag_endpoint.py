@@ -1,6 +1,6 @@
 from tracardi.service.storage.driver import storage
 from typing import List
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Response, HTTPException
 from app.config import server
 from tracardi.domain.event_tag import EventTag
 from .auth.permissions import Permissions
@@ -46,10 +46,14 @@ async def delete_tags(tag_form: EventTag):
     """
     Deletes given tags from given event type
     """
-    total, removed, result = await storage.driver.tag.remove(
-            event_type=tag_form.type,
-            tags=tag_form.tags
-        )
+    try:
+        total, removed, result = await storage.driver.tag.remove(
+                event_type=tag_form.type,
+                tags=tag_form.tags
+            )
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
     await storage.driver.tag.refresh()
     await storage.driver.tag.refresh_tags_cache_for_type(tag_form.type)
 
@@ -73,7 +77,7 @@ async def flush_tags_index():
 
 
 @router.get("/event-tags/refresh", tags=["event"], include_in_schema=server.expose_gui_api)
-async def flush_tags_index():
+async def refresh_tags_index():
     """
     Refreshes tags index
     """
@@ -97,7 +101,7 @@ async def update_tags(event_type: str):
 
 @router.delete("/event-tag/{event_type}", tags=["event"],
                include_in_schema=server.expose_gui_api, response_model=dict)
-async def delete_record(event_type: str):
+async def delete_record(event_type: str, response: Response):
     """
     Deletes all information about tags for given event type (str)
     """
@@ -105,5 +109,6 @@ async def delete_record(event_type: str):
     delete_result = await storage.driver.tag.delete(event_type)
     await storage.driver.tag.refresh()
     await storage.driver.tag.refresh_tags_cache_for_type(event_type)
-
+    if delete_result is None:
+        response.status_code = 404
     return {"deleted": 0 if delete_result is None else 1}

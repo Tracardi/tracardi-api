@@ -1,3 +1,4 @@
+from .test_test_endpoint import _check_if_has_installed_indices
 from ..utils import Endpoint
 
 endpoint = Endpoint(auth=False)
@@ -24,11 +25,12 @@ def test_should_install_system():
     assert 'admin' in result
     assert isinstance(result['admin'], bool)
 
+    _check_if_has_installed_indices()
+
 
 def test_should_install_system_plugins():
     response = endpoint.get("/install/plugins")
     result = response.json()
-    print(result)
     assert 'registered' in result
     assert isinstance(result['registered'], list)
     assert 'tracardi.process_engine.action.v1.flow.start.start_action' in result['registered']

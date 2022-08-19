@@ -16,6 +16,7 @@ router = APIRouter(
 )
 
 
+# Not in tests
 @router.get("/test/resource", tags=["test"], include_in_schema=server.expose_gui_api)
 async def create_test_data():
     """
@@ -31,6 +32,7 @@ async def create_test_data():
     return await storage.driver.event_source.save(resource)
 
 
+# not in test
 @router.get("/test/data", tags=["test"], include_in_schema=server.expose_gui_api)
 async def make_fake_data():
     """

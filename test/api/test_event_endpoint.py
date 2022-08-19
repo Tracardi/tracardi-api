@@ -88,6 +88,9 @@ def test_should_count_events():
         assert endpoint.delete(f'/profile/{profile_id}').status_code == 200
         assert endpoint.get('/profiles/refresh').status_code == 200
 
+        assert endpoint.delete(f'/event-source/{source_id}').status_code == 200
+        assert endpoint.get('/event-sources/refresh').status_code == 200
+
         assert endpoint.delete(f'/session/{session_id}').status_code == 200
 
 
@@ -133,12 +136,10 @@ def test_should_return_event_meta():
         assert 'test' in result['result']
 
     finally:
-        response = endpoint.delete(f'/event/{event_id}')
-        assert response.status_code == 200
+        assert endpoint.delete(f'/event/{event_id}').status_code == 200
         assert endpoint.get('/events/refresh').status_code == 200
 
-        response = endpoint.delete(f'/event-source/{source_id}')
-        assert response.status_code == 200
+        assert endpoint.delete(f'/event-source/{source_id}').status_code == 200
         assert endpoint.get('/event-sources/refresh').status_code == 200
 
         assert endpoint.delete(f'/profile/{profile_id}').status_code == 200
@@ -178,14 +179,11 @@ def test_should_return_events_by_type_for_profile():
         assert aggregation[event_type] >= 2
 
     finally:
-        response = endpoint.delete(f'/event/{event_id}')
-        assert response.status_code == 200
-        response = endpoint.delete(f'/event/{event_id1}')
-        assert response.status_code == 200
+        assert endpoint.delete(f'/event/{event_id}').status_code == 200
+        assert endpoint.delete(f'/event/{event_id1}').status_code == 200
         assert endpoint.get('/events/refresh').status_code == 200
 
-        response = endpoint.delete(f'/event-source/{source_id}')
-        assert response.status_code == 200
+        assert endpoint.delete(f'/event-source/{source_id}').status_code == 200
         assert endpoint.get('/event-sources/refresh').status_code == 200
 
         assert endpoint.delete(f'/profile/{profile_id}').status_code == 200
@@ -215,14 +213,11 @@ def test_should_return_events_by_type():
         assert event_type in result
         assert result[event_type] >= 2
     finally:
-        response = endpoint.delete(f'/event/{event_id}')
-        assert response.status_code == 200
-        response = endpoint.delete(f'/event/{event_id1}')
-        assert response.status_code == 200
+        assert endpoint.delete(f'/event/{event_id}').status_code == 200
+        assert endpoint.delete(f'/event/{event_id1}').status_code == 200
         assert endpoint.get('/events/refresh').status_code == 200
 
-        response = endpoint.delete(f'/event-source/{source_id}')
-        assert response.status_code == 200
+        assert endpoint.delete(f'/event-source/{source_id}').status_code == 200
         assert endpoint.get('/event-sources/refresh').status_code == 200
 
         assert endpoint.delete(f'/profile/{profile_id}').status_code == 200
@@ -273,8 +268,7 @@ def test_should_return_events_by_tag():
 
         assert endpoint.delete(f"/event-tag/{event_tag}").status_code in [200, 404]
 
-        response = endpoint.delete(f'/event-source/{source_id}')
-        assert response.status_code == 200
+        assert endpoint.delete(f'/event-source/{source_id}').status_code == 200
         assert endpoint.get('/event-sources/refresh').status_code == 200
 
         assert endpoint.delete(f'/profile/{profile_id}').status_code == 200
@@ -306,12 +300,12 @@ def test_should_return_events_by_status():
     finally:
         response = endpoint.delete(f'/event/{event_id}')
         assert response.status_code == 200
-        response = endpoint.delete(f'/event/{event_id1}')
-        assert response.status_code == 200
+        assert endpoint.delete(f'/event/{event_id1}').status_code == 200
         assert endpoint.get('/events/refresh').status_code == 200
-        response = endpoint.delete(f'/event-source/{source_id}')
-        assert response.status_code == 200
+
+        assert endpoint.delete(f'/event-source/{source_id}').status_code == 200
         assert endpoint.get('/event-sources/refresh').status_code == 200
+
         assert endpoint.delete(f'/profile/{profile_id}').status_code == 200
         assert endpoint.get('/profiles/refresh').status_code == 200
 
@@ -339,14 +333,13 @@ def test_should_return_events_by_source():
         assert source_id in result
         assert result[source_id] >= 2
     finally:
-        response = endpoint.delete(f'/event/{event_id}')
-        assert response.status_code == 200
-        response = endpoint.delete(f'/event/{event_id1}')
-        assert response.status_code == 200
+        assert endpoint.delete(f'/event/{event_id}').status_code == 200
+        assert endpoint.delete(f'/event/{event_id1}').status_code == 200
         assert endpoint.get('/events/refresh').status_code == 200
-        response = endpoint.delete(f'/event-source/{source_id}')
-        assert response.status_code == 200
+
+        assert endpoint.delete(f'/event-source/{source_id}').status_code == 200
         assert endpoint.get('/event-sources/refresh').status_code == 200
+
         assert endpoint.delete(f'/profile/{profile_id}').status_code == 200
         assert endpoint.get('/profiles/refresh').status_code == 200
 
@@ -435,7 +428,9 @@ def test_should_return_event_select_limit_data_ok():
     assert 'total' in result
     assert 'result' in result
 
-    assert len(result['result']) == 4
+    assert isinstance(result['result'], list)
+    assert isinstance(result['total'], int)
+    assert len(result['result']) <= 4
 
 
 def test_should_response_404_none():
