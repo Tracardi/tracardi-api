@@ -69,16 +69,16 @@ async def tracardi_pro_sign_in(credentials: Credentials):
             result = await storage.driver.pro.save_pro_service_endpoint(sign_up_record)
 
             if result.saved == 0:
-                raise HTTPException(status_code=500, detail="Could not save Tracardi Pro data.")
+                raise ConnectionError("Could not save Tracardi Pro data.")
 
         return True
     except PermissionError as e:
         msg = "Access denied due to server error:  {}".format(str(e))
-        logger.warning(msg)
+        logger.warning(msg, exc_info=True)
         raise HTTPException(detail=msg,
                             status_code=403)  # Must be 403 because 401 logs out gui
     except Exception as e:
-        logger.error(str(e))
+        logger.error(str(e), exc_info=True)
         raise HTTPException(detail=str(e), status_code=403)  # Must be 403 because 401 logs out gui
 
 
@@ -94,7 +94,7 @@ async def tracardi_pro_sign_up(sign_up_data: SignUpData):
         result = await storage.driver.pro.save_pro_service_endpoint(sign_up_record)
 
         if result.saved == 0:
-            raise HTTPException(status_code=500, detail="Could not save Tracardi Pro endpoint.")
+            raise ConnectionError("Could not save Tracardi Pro endpoint.")
 
         return True
 
@@ -102,8 +102,6 @@ async def tracardi_pro_sign_up(sign_up_data: SignUpData):
         raise HTTPException(
             detail="Access denied due to RPC error \"{}\". Error status: {}".format(e.details(), e.code().name),
             status_code=403)  # Must be 403 because 401 logs out gui
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=repr(e))
 
 
 @router.get("/tpro/available_services", tags=["tpro"], include_in_schema=server.expose_gui_api)
@@ -148,10 +146,7 @@ async def save_tracardi_pro_resource(resource: Resource):
     resource.credentials.production = _remove_redundant_data(resource.credentials.production)
     resource.credentials.test = _remove_redundant_data(resource.credentials.test)
 
-    try:
-        record = ResourceRecord.encode(resource)
-        result = await StorageFor(record).index().save()
-        await storage.driver.resource.refresh()
-        return result
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    record = ResourceRecord.encode(resource)
+    result = await StorageFor(record).index().save()
+    await storage.driver.resource.refresh()
+    return result

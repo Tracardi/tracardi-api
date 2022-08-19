@@ -7,7 +7,7 @@ def test_should_assign_and_read_values():
         "took": 5,
         "timed_out": False,
         "_shards": {
-            "total": 1,
+            "total": 100,
             "successful": 1,
             "skipped": 0,
             "failed": 0

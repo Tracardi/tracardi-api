@@ -12,8 +12,11 @@ load_dotenv()
 
 class Endpoint(metaclass=Singleton):
 
-    def __init__(self):
-        self.token = self.auth()
+    def __init__(self, auth=True):
+        if auth:
+            self.token = self.auth()
+        else:
+            self.token = ""
 
     @staticmethod
     def host(path):

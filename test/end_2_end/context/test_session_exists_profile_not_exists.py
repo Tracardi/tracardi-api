@@ -1,5 +1,5 @@
 from uuid import uuid4
-from ...api.test_source import create_event_source
+from ...api.test_event_source_endpoint import _create_event_source
 from ...utils import Endpoint, create_session, get_session, get_profile
 
 endpoint = Endpoint()
@@ -11,7 +11,7 @@ def test_session_exists_profile_not_exists():
     profile_id = str(uuid4())
 
     try:
-        assert create_event_source(source_id, 'rest').status_code == 200
+        assert _create_event_source(source_id, 'rest').status_code == 200
 
         create_session(session_id)
 

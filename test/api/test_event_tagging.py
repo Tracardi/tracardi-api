@@ -2,7 +2,7 @@ from time import sleep
 from uuid import uuid4
 
 from tracardi.domain.event_tag import EventTag
-from .test_source import create_event_source
+from .test_event_source_endpoint import _create_event_source
 from ..utils import Endpoint
 
 endpoint = Endpoint()
@@ -15,7 +15,7 @@ def test_should_tag_event():
     new_tag = 'new-tag-1'
     try:
 
-        assert create_event_source(source_id, 'rest').status_code == 200
+        assert _create_event_source(source_id, 'rest').status_code == 200
 
         payload = {
             "source": {
