@@ -1,5 +1,5 @@
 from uuid import uuid4
-from ..api.test_source import create_event_source
+from ..api.test_event_source_endpoint import _create_event_source
 from ..utils import Endpoint
 
 endpoint = Endpoint()
@@ -11,7 +11,7 @@ def test_track_payload():
     session_id = str(uuid4())
 
     try:
-        response = create_event_source(source_id, "rest")
+        response = _create_event_source(source_id, "rest")
         assert response.status_code == 200
 
         payload = {

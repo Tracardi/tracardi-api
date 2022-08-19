@@ -5,7 +5,7 @@ from tracardi.process_engine.action.v1.flow.start.start_action import StartActio
 from tracardi.process_engine.action.v1.increase_views_action import IncreaseViewsAction
 from tracardi.domain.flow import Flow
 from tracardi.process_engine.action.v1.end_action import EndAction
-from ..api.test_source import create_event_source
+from ..api.test_event_source_endpoint import _create_event_source
 from tracardi.service.wf.service.builders import action
 from ..utils import Endpoint
 
@@ -41,7 +41,7 @@ def test_should_count_multiple_page_views_from_one_api_call():
         assert endpoint.get('/flows/refresh').status_code == 200
 
         # Create resource
-        assert create_event_source(source_id, type='rest', name="End2End test").status_code == 200
+        assert _create_event_source(source_id, type='rest').status_code == 200
         assert endpoint.get('/event-sources/refresh').status_code == 200
 
         response = endpoint.post('/rule', data={

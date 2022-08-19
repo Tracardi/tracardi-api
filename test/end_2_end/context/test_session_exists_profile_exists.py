@@ -1,5 +1,5 @@
 from uuid import uuid4
-from ...api.test_source import create_event_source
+from ...api.test_event_source_endpoint import _create_event_source
 from ...utils import Endpoint, create_session, create_profile, get_session, get_profile
 
 endpoint = Endpoint()
@@ -18,7 +18,7 @@ def test_session_exists_profile_exists():
 
         assert get_session(session_id).status_code == 200
         assert get_profile(profile_id).status_code == 200
-        assert create_event_source(source_id, 'rest').status_code == 200
+        assert _create_event_source(source_id, 'rest').status_code == 200
 
         response = endpoint.post("/track", data={
             "source": {
