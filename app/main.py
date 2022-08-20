@@ -16,14 +16,14 @@ from fastapi import FastAPI, Request, Depends
 from starlette.staticfiles import StaticFiles
 from app.api import token_endpoint, rule_endpoint, resource_endpoint, event_endpoint, \
     profile_endpoint, flow_endpoint, generic_endpoint, \
-    credentials_endpoint, segments_endpoint, \
+    segments_endpoint, \
     tql_endpoint, health_endpoint, session_endpoint, instance_endpoint, plugins_endpoint, \
     settings_endpoint, event_source_endpoint, test_endpoint, \
     event_tag_endpoint, consent_type_endpoint, flow_action_endpoint, flows_endpoint, info_endpoint, \
     user_endpoint, event_management_endpoint, debug_endpoint, log_endpoint, tracardi_pro_endpoint, \
     storage_endpoint, destination_endpoint, user_log_endpoint, user_account_endpoint, install_endpoint, import_endpoint,\
     task_endpoint, storage_endpoint, destination_endpoint, user_log_endpoint, user_account_endpoint, install_endpoint, \
-    delete_indices_endpoint, migration_endpoint
+    delete_indices_endpoint, migration_endpoint, report_endpoint
 
 from app.api.graphql.profile import graphql_profiles
 from app.api.scheduler import scheduler_endpoint
@@ -140,7 +140,6 @@ application.mount("/uix",
 application.include_router(event_server_endpoint.router)
 application.include_router(tql_endpoint.router)
 application.include_router(segments_endpoint.router)
-application.include_router(credentials_endpoint.router)
 application.include_router(resource_endpoint.router)
 application.include_router(rule_endpoint.router)
 application.include_router(flow_endpoint.router)
@@ -175,6 +174,7 @@ application.include_router(import_endpoint.router)
 application.include_router(task_endpoint.router)
 application.include_router(delete_indices_endpoint.router)
 application.include_router(migration_endpoint.router)
+application.include_router(report_endpoint.router)
 
 
 # GraphQL
@@ -198,14 +198,13 @@ async def app_starts():
     logger.info(f"TRACARDI version {str(tracardi.version)} set-up starts.")
     no_of_tries = 10
     success = False
-    es = ElasticClient.instance()
     while True:
         try:
 
             if no_of_tries < 0:
                 break
 
-            health = await es.cluster.health()
+            health = await storage.driver.raw.health()
             for key, value in health.items():
                 key = key.replace("_", " ")
                 logger.info(f"Elasticsearch {key}: {value}")

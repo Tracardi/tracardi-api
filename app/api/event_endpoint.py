@@ -1,17 +1,14 @@
 from datetime import datetime
 from typing import List
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Response
 from fastapi import HTTPException
 from tracardi.domain.console import Console
 from tracardi.domain.enum.time_span import TimeSpan
 
 from tracardi.service.storage.driver import storage
-from tracardi.service.storage.factory import StorageFor, StorageForBulk
 from tracardi.domain.record.event_debug_record import EventDebugRecord
 from tracardi.service.wf.domain.debug_info import DebugInfo
-from tracardi.domain.entity import Entity
-from tracardi.domain.event import Event
 from .auth.permissions import Permissions
 from .domain.schedule import ScheduleData
 from ..config import server
@@ -116,7 +113,7 @@ async def event_types(query: str = None, limit: int = 1000):
     """
     Returns event types
     """
-    result = await StorageForBulk().index('event').uniq_field_value("type", search=query, limit=limit)
+    result = await storage.driver.event.unique_field_value(query, limit)
     return {
         "total": result.total,
         "result": list(result)
@@ -182,23 +179,27 @@ async def event_types():
 @router.get("/event/{id}",
             dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer"]))],
             tags=["event"], include_in_schema=server.expose_gui_api)
-async def get_event(id: str):
+async def get_event(id: str, response: Response):
     """
     Returns event with given ID
     """
     try:
-        event = await StorageFor(Entity(id=id)).index("event").load(Event)  # type: Event
-        if event is None:
-            raise HTTPException(detail="Event {} does not exist.".format(id), status_code=404)
-
-        return {
-            "event": event
-        }
-
+        record = await storage.driver.event.load(id)
     except Exception as e:
-        if isinstance(e, HTTPException):
-            raise e
         raise HTTPException(status_code=500, detail=str(e))
+
+    if record is None:
+        response.status_code = 404
+        return None
+
+    result = {
+        "event": record
+    }
+
+    if record.has_metadata():
+        result["_metadata"] = record.get_metadata()
+
+    return result
 
 
 @router.delete("/event/{id}", tags=["event"],
@@ -209,8 +210,7 @@ async def delete_event(id: str):
     Deletes event with given ID
     """
     try:
-        event = Entity(id=id)
-        return await StorageFor(event).index("event").delete()
+        return await storage.driver.event.delete_by_id(id)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -243,6 +243,9 @@ async def add_scheduled_event(schedule_data: ScheduleData):
     """
     Adds scheduled event
     """
+
+    # todo check if used. Can not see the create method in task driver
+
     result = await storage.driver.task.create(
         timestamp=schedule_data.schedule.get_parsed_time(),
         type=schedule_data.event.type,
@@ -258,7 +261,7 @@ async def add_scheduled_event(schedule_data: ScheduleData):
 
 @router.get("/event/group/by_tags/profile/{profile_id}", tags=["event"],
             include_in_schema=server.expose_gui_api, response_model=dict)
-async def get_grouped_by_tags_prof(profile_id: str):
+async def get_grouped_by_tags_profile(profile_id: str):
     """
     Returns events gruped by tags for profile with given ID
     """

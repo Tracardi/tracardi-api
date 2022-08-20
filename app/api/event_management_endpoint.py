@@ -14,7 +14,7 @@ router = APIRouter(
 )
 
 
-@router.put("/management/refresh", tags=["event-type", "validation"], include_in_schema=server.expose_gui_api,
+@router.put("/management/refresh", tags=["event-type"], include_in_schema=server.expose_gui_api,
             response_model=dict)
 async def refresh_event_type_prerequisites():
     """
@@ -26,7 +26,7 @@ async def refresh_event_type_prerequisites():
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.post("/management", tags=["event-type", "validation"], include_in_schema=server.expose_gui_api,
+@router.post("/management", tags=["event-type"], include_in_schema=server.expose_gui_api,
              response_model=dict)
 async def add_event_type_prerequisites(event_type_metadata: EventTypeManager):
     """
@@ -40,7 +40,7 @@ async def add_event_type_prerequisites(event_type_metadata: EventTypeManager):
     return {"added": result.saved}
 
 
-@router.get("/management/{event_type}", tags=["event-type", "validation"], include_in_schema=server.expose_gui_api,
+@router.get("/management/{event_type}", tags=["event-type"], include_in_schema=server.expose_gui_api,
             response_model=dict)
 async def get_event_type_prerequisites(event_type: str):
     """
@@ -55,7 +55,7 @@ async def get_event_type_prerequisites(event_type: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.delete("/management/{event_type}", tags=["event-type", "validation"], include_in_schema=server.expose_gui_api,
+@router.delete("/management/{event_type}", tags=["event-type"], include_in_schema=server.expose_gui_api,
                response_model=dict)
 async def del_event_type_prerequisites(event_type: str):
     """
@@ -69,7 +69,7 @@ async def del_event_type_prerequisites(event_type: str):
     return {"deleted": 1 if result is not None and result["result"] == "deleted" else 0}
 
 
-@router.get("/management", tags=["event-type", "validation"], include_in_schema=server.expose_gui_api,
+@router.get("/management", tags=["event-type"], include_in_schema=server.expose_gui_api,
             response_model=list)
 async def list_event_type_prerequisites(start: Optional[int] = 0, limit: Optional[int] = 10):
     """
@@ -82,7 +82,7 @@ async def list_event_type_prerequisites(start: Optional[int] = 0, limit: Optiona
     return list(result)
 
 
-@router.get("/management/search/by_tag", tags=["event-type", "validation"], include_in_schema=server.expose_gui_api,
+@router.get("/management/search/by_tag", tags=["event-type"], include_in_schema=server.expose_gui_api,
             response_model=dict)
 async def list_event_type_prerequisites_by_tag(query: str = None, start: Optional[int] = 0, limit: Optional[int] = 10):
     """
