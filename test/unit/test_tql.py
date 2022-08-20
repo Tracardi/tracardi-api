@@ -192,6 +192,8 @@ def test_tql_false_exists():
     tree = parser.parse("payload@a.h not exists")
     assert not ExprTransformer(dot=dot).transform(tree)
 
+    # payload@a.h is None
+
     tree = parser.parse("payload@a.h.h exists")
     assert not ExprTransformer(dot=dot).transform(tree)
 
