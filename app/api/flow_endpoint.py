@@ -36,19 +36,19 @@ async def flow_refresh():
 
 
 @router.post("/flow/draft/nodes/rearrange", tags=["flow"], response_model=dict, include_in_schema=server.expose_gui_api)
-async def upsert_flow_draft(draft: Flow):
+async def rearrange_flow(flow: Flow):
     """
     Rearranges the send workflow nodes.
     """
 
     # Frontend edge-id is long. Save space and md5 it.
 
-    if draft.flowGraph is not None:
-        draft.flowGraph.shorten_edge_ids()
+    if flow.flowGraph is not None:
+        flow.flowGraph.shorten_edge_ids()
 
-    draft.arrange_nodes()
+    flow.arrange_nodes()
 
-    return draft
+    return flow
 
 
 @router.post("/flow/draft", tags=["flow"], response_model=BulkInsertResult, include_in_schema=server.expose_gui_api)
@@ -128,10 +128,13 @@ async def restore_production_flow_backup(id: str, production_draft: ProductionDr
     if flow_record is None:
         raise HTTPException(status_code=404, detail="Flow id: `{}` does not exist.".format(id))
 
-    if production_draft.value == ProductionDraft.production:
-        flow_record.restore_production_from_backup()
-    else:
-        flow_record.restore_draft_from_production()
+    try:
+        if production_draft.value == ProductionDraft.production:
+            flow_record.restore_production_from_backup()
+        else:
+            flow_record.restore_draft_from_production()
+    except ValueError as e:
+        raise HTTPException(status_code=406, detail=str(e))
 
     result = await storage.driver.flow.save_record(flow_record)
     if result.saved == 1:
@@ -149,6 +152,8 @@ async def upsert_flow(flow: Flow):
     """
     old_flow_record = await storage.driver.flow.load_record(flow.id)
     flow_record = flow.get_production_workflow_record()
+    if flow_record is None or old_flow_record is None:
+        raise HTTPException(status_code=406, detail="Can not deploy missing draft workflow")
     flow_record.backup = old_flow_record.production
     return await StorageFor(flow_record).index().save()
 
@@ -217,7 +222,7 @@ async def upsert_flow_details(flow_metadata: FlowMetaData):
     flow_record = await StorageFor(entity).index("flow").load(FlowRecord)  # type: FlowRecord
 
     if flow_record is None:
-        raise ValueError("Flow `{}` does not exist.".format(flow_metadata.id))
+        raise HTTPException(status_code=404, detail="Flow `{}` does not exist.".format(flow_metadata.id))
 
     flow_record.name = flow_metadata.name
     flow_record.description = flow_metadata.description
@@ -232,7 +237,9 @@ async def upsert_flow_details(flow_metadata: FlowMetaData):
 
         flow_record.draft = encrypt(draft_workflow.dict())
 
-    return await StorageFor(flow_record).index().save()
+    result = await StorageFor(flow_record).index().save()
+    await storage.driver.flow.refresh()
+    return result
 
 
 @router.get("/flow/{id}/lock/{lock}", tags=["flow"],
@@ -243,7 +250,7 @@ async def update_flow_lock(id: str, lock: str):
     flow_record = await StorageFor(entity).index("flow").load(FlowRecord)  # type: FlowRecord
 
     if flow_record is None:
-        raise ValueError("Flow `{}` does not exist.".format(id))
+        raise HTTPException(status_code=406, detail="Flow `{}` does not exist.".format(id))
 
     flow_record.set_lock(True if lock.lower() == 'yes' else False)
     return await StorageFor(flow_record).index().save()
