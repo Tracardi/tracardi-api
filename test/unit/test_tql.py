@@ -20,7 +20,8 @@ payload = {
         'j': [],
         'k': {},
         'l': "",
-        'm': 1650976227
+        'm': 1650976227,
+        'text': 'Hello world'
     }
 }
 
@@ -265,7 +266,6 @@ def test_tql_negative_value():
 
 
 def test_tql_missing_field():
-
     tree = parser.parse("payload@a.missing == true")
     result = ExprTransformer(dot=dot).transform(tree)
     assert not result
@@ -428,3 +428,16 @@ def test_should_parse_offset():
     assert ExprTransformer(dot=dot).transform(tree)
 
 
+def test_should_parse_contains():
+    tree = parser.parse('payload@text CONTAINS "Hello"')
+    assert ExprTransformer(dot=dot).transform(tree)
+
+
+def test_should_parse_starts_with():
+    tree = parser.parse('payload@text STARTS WITH "Hello"')
+    assert ExprTransformer(dot=dot).transform(tree)
+
+
+def test_should_parse_ends_with():
+    tree = parser.parse('payload@text ENDS WITH "world"')
+    assert ExprTransformer(dot=dot).transform(tree)
