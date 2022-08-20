@@ -554,7 +554,7 @@ def test_should_debug_workflow():
         assert 'logs' in result
         assert isinstance(result['logs'], list)
         assert 'debugInfo' in result
-        di = DebugInfo(**result['debugInfo'])
+        DebugInfo(**result['debugInfo'])
 
     finally:
         assert endpoint.delete(f'/flow/{flow_id}').status_code in [200, 404]
