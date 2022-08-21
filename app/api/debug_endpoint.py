@@ -1,9 +1,8 @@
 from datetime import datetime
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from app.config import server
 from tracardi.service.storage.driver import storage
-from elasticsearch import ElasticsearchException
 from .auth.permissions import Permissions
 
 router = APIRouter(

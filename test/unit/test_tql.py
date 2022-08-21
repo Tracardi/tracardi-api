@@ -427,6 +427,16 @@ def test_should_parse_offset():
     tree = parser.parse("datetime.timezone(payload@a.i, \"europe/warsaw\") < now(\"europe/paris\")")
     assert ExprTransformer(dot=dot).transform(tree)
 
+    # missing field
+
+    tree = parser.parse("datetime.offset(payload@a.missing, \"-1m\") < now()")
+    assert not ExprTransformer(dot=dot).transform(tree)
+
+    # None field
+
+    tree = parser.parse("datetime.offset(payload@a.h, \"-1m\") < now()")
+    assert not ExprTransformer(dot=dot).transform(tree)
+
 
 def test_should_parse_contains():
     tree = parser.parse('payload@text CONTAINS "Hello"')

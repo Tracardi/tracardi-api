@@ -42,7 +42,7 @@ from tracardi.domain.payload.tracker_payload import TrackerPayload
 from tracardi.service.tracker import synchronized_event_tracking
 
 logging.basicConfig(level=logging.ERROR)
-logger = logging.getLogger('app.main')
+logger = logging.getLogger(__name__)
 logger.setLevel(tracardi.logging_level)
 logger.addHandler(log_handler)
 
