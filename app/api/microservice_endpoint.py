@@ -1,66 +1,276 @@
+from typing import Type, Dict, Iterator, Tuple, List, Optional
+from uuid import uuid4
+
 from fastapi import APIRouter
+from pydantic import BaseModel
+
 from app.config import server
-from tracardi.service.plugin.domain.register import Form, FormGroup, FormField, FormComponent
+from tracardi.domain.entity import Entity
+from tracardi.domain.named_entity import NamedEntity
+from tracardi.domain.resources.microservice_resource import MicroserviceResource
+from tracardi.process_engine.action.v1.connectors.trello.add_card_action.model.config import Config
+from tracardi.process_engine.action.v1.connectors.trello.add_card_action.plugin import TrelloCardAdder
+from tracardi.service.plugin.domain.register import Form, FormGroup, FormField, FormComponent, Plugin, Spec, MetaData, \
+    Documentation, PortDoc, MicroserviceConfig, MicroserviceCurrentResource
+from tracardi.service.plugin.runner import ActionRunner
+
+
+class PluginConfig(BaseModel):
+    name: str
+    validator: Type[BaseModel]
+    plugin: Type[ActionRunner]
+    registry: Plugin
+
+
+class ServiceConfig(BaseModel):
+    name: str
+    microservice: Plugin
+    plugins: Dict[str, PluginConfig]
+
+    def microservice(self):
+        pass
+
+
+class ServicesRepo(BaseModel):
+    resource: MicroserviceResource
+    repo: Dict[str, ServiceConfig]
+
+    def get_all_services(self) -> Tuple[str, str]:
+        for id, service in self.repo.items():
+            yield id, service.name
+
+    def get_all_action_plugins(self, service_id: str) -> Tuple[str, str]:
+        if service_id in self.repo:
+            service = self.repo[service_id]
+            for id, plugin_config in service.plugins.items():
+                yield id, plugin_config.name
+
+    def get_plugin_microservice_plugin_registry(self, service_id: str) -> Optional[Plugin]:
+        if service_id in self.repo:
+            service = self.repo[service_id]
+            return service.microservice
+        return None
+
+    def get_plugin(self, service_id: str, plugin_id: str) -> Optional[Type[ActionRunner]]:
+        if service_id in self.repo:
+            service = self.repo[service_id]
+            if plugin_id in service.plugins:
+                plugin_config = service.plugins[plugin_id]
+                return plugin_config.plugin
+        return None
+
+    def get_plugin_form_an_init(self, service_id: str, plugin_id: str) -> Tuple[Optional[dict], Optional[Form]]:
+        if service_id in self.repo:
+            service = self.repo[service_id]
+            if plugin_id in service.plugins:
+                plugin_config = service.plugins[plugin_id]
+                return plugin_config.registry.spec.init, plugin_config.registry.spec.form
+        return None, None
+
+
+resource = MicroserviceResource(
+    url="http://localhost:8686",
+    token="token",
+    service=NamedEntity(
+        id="11",
+        name="Trello microservice"
+    )
+)
+repo = ServicesRepo(
+    resource=resource,
+    repo={
+        "a307b281-2629-4c12-b6e3-df1ec9bca35a": ServiceConfig(
+            name="Trello",
+            microservice=Plugin(
+                start=False,
+                spec=Spec(
+                    module=__name__,
+                    className='TrelloMicroservice',
+                    inputs=["payload"],
+                    outputs=["response", "error"],
+                    version='0.7.2',
+                    license="MIT",
+                    author="Risto Kowaczewski",
+                    manual="microservice_action",
+                    microservice=MicroserviceConfig(
+                        resource=MicroserviceCurrentResource(
+                            id="1",
+                            name="Trello",
+                            current=resource
+                        ),
+                        plugin=NamedEntity(
+                            id="2",
+                            name="Trello",
+                        )
+                    )
+                ),
+                metadata=MetaData(
+                    name='Add Trello card',
+                    desc='Adds card to given list on given board in Trello.',
+                    icon='trello',
+                    group=["Trello"],
+                    documentation=Documentation(
+                        inputs={
+                            "payload": PortDoc(desc="This port takes payload object.")
+                        },
+                        outputs={
+                            "response": PortDoc(desc="This port returns a response from Trello API."),
+                            "error": PortDoc(desc="This port gets triggered if an error occurs.")
+                        }
+                    ),
+                    remote=True
+
+                )
+            ),
+            plugins={
+                "a04381af-c008-4328-ab61-0e73825903ce": PluginConfig(
+                    name="Add card 1",
+                    validator=Config,
+                    plugin=TrelloCardAdder,
+                    registry=Plugin(
+                        start=False,
+                        spec=Spec(
+                            module=__name__,
+                            className='TrelloCardAdder',
+                            inputs=["payload"],
+                            outputs=["response", "error"],
+                            version='0.6.1',
+                            license="MIT",
+                            author="Dawid Kruk",
+                            manual="trello/add_trello_card_action",
+                            init={
+                                "source": {
+                                    "name": None,
+                                    "id": None
+                                },
+                                "board_url": None,
+                                "list_name": None,
+                                "card": {
+                                    "name": None,
+                                    "desc": None,
+                                    "urlSource": None,
+                                    "coordinates": None,
+                                    "due": None
+                                }
+
+                            },
+                            form=Form(
+                                groups=[
+                                    FormGroup(
+                                        name="Plugin configuration",
+                                        fields=[
+                                            FormField(
+                                                id="source",
+                                                name="Trello resource",
+                                                description="Please select your Trello resource.",
+                                                component=FormComponent(type="resource",
+                                                                        props={"label": "Resource", "tag": "trello"})
+                                            ),
+                                            FormField(
+                                                id="board_url",
+                                                name="URL of Trello board",
+                                                description="Please the URL of your board.",
+                                                component=FormComponent(type="text", props={"label": "Board URL"})
+                                            ),
+                                            FormField(
+                                                id="list_name",
+                                                name="Name of Trello list",
+                                                description="Please provide the name of your Trello list.",
+                                                component=FormComponent(type="text", props={"label": "List name"})
+                                            ),
+                                            FormField(
+                                                id="card.name",
+                                                name="Name of your card",
+                                                description="Please provide path to the name of the card that you want to add.",
+                                                component=FormComponent(type="dotPath", props={"label": "Card name",
+                                                                                               "defaultMode": "2"})
+                                            ),
+                                            FormField(
+                                                id="card.desc",
+                                                name="Card description",
+                                                description="Please provide description of your card. It's fully functional in terms of"
+                                                            " using templates.",
+                                                component=FormComponent(type="textarea",
+                                                                        props={"label": "Card description"})
+                                            ),
+                                            FormField(
+                                                id="card.urlSource",
+                                                name="Card link",
+                                                description="You can add an URL to your card as an attachment.",
+                                                component=FormComponent(type="dotPath", props={"label": "Card link",
+                                                                                               "defaultMode": "2"})
+                                            ),
+                                            FormField(
+                                                id="card.coordinates",
+                                                name="Card coordinates",
+                                                description="You can add location coordinates to your card. This should be a path"
+                                                            " to an object, containing 'longitude' and 'latitude' fields.",
+                                                component=FormComponent(type="dotPath",
+                                                                        props={"label": "Card coordinates",
+                                                                               "defaultMode": "2"})
+                                            ),
+                                            FormField(
+                                                id="card.due",
+                                                name="Card due date",
+                                                description="You can add due date to your card. Various formats should work, but "
+                                                            "UTC format seems to be the best option.",
+                                                component=FormComponent(type="dotPath",
+                                                                        props={"defaultMode": "2",
+                                                                               "label": "Card due date"})
+                                            )
+                                        ]
+                                    )
+                                ]
+                            )
+                        ),
+                        metadata=MetaData(
+                            name='Add Trello card',
+                            desc='Adds card to given list on given board in Trello.',
+                            icon='trello',
+                            group=["Trello"],
+                            documentation=Documentation(
+                                inputs={
+                                    "payload": PortDoc(desc="This port takes payload object.")
+                                },
+                                outputs={
+                                    "response": PortDoc(desc="This port returns a response from Trello API."),
+                                    "error": PortDoc(desc="This port gets triggered if an error occurs.")
+                                }
+                            ),
+                            pro=True
+                        )
+                    )
+                )
+            }
+        )
+    })
 
 router = APIRouter()
 
 
 @router.get("/services", tags=["microservice"], include_in_schema=server.expose_gui_api, response_model=dict)
-async def get_services():
+async def get_all_services():
+    services = list(repo.get_all_services())
     return {
-        "total": 2,
-        "result": [
-            {
-                "id": 1,
-                "name": "service 1"
-            },
-            {
-                "id": 2,
-                "name": "service 2"
-            }
-        ]
-
+        "total": len(services),
+        "result": {id: name for id, name in services}
     }
 
 
 @router.get("/actions", tags=["microservice"], include_in_schema=server.expose_gui_api, response_model=dict)
-async def get_actions():
+async def get_actions(service_id: str):
+    actions = list(repo.get_all_action_plugins(service_id))
     return {
-        "total": 2,
-        "result": [
-            {
-                "id": 1,
-                "name": "action 1"
-            },
-            {
-                "id": 2,
-                "name": "action 2"
-            }
-        ]
+        "total": len(actions),
+        "result": {id: name for id, name in actions}
     }
 
 
-@router.get("/plugin", tags=["microservice"], include_in_schema=server.expose_gui_api, response_model=dict)
-async def get_plugin():
-
-    form = Form(groups=[
-                FormGroup(
-                    name="Calculations",
-                    description="Calculations are made in a simple domain specific language. "
-                                "See documentation for details.",
-                    fields=[
-                        FormField(
-                            id="calc_dsl",
-                            name="Calculation equations",
-                            description="One calculation per line. "
-                                        "Example: profile@stats.counters.my_count = profile@stats.visits + 1",
-                            component=FormComponent(type="textarea", props={"label": "Calculations"})
-                        )
-                    ]
-                ),
-            ])
+@router.get("/plugin/form", tags=["microservice"], include_in_schema=server.expose_gui_api, response_model=dict)
+async def get_plugin(service_id: str, action_id: str):
+    init, form = repo.get_plugin_form_an_init(service_id, action_id)
 
     return {
-        "init": {"calc_dsl": ""},
-        "form": form.dict()
+        "init": init if init is not None else {},
+        "form": form.dict() if form is not None else None
     }

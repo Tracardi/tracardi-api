@@ -133,7 +133,7 @@ async def get_available_services(module: str):
 
 
 @router.post("/tpro/resource", tags=["tpro"], include_in_schema=server.expose_gui_api)
-async def save_tracardi_pro_resource(resource: Resource):
+async def save_tracardi_pro_resource(resource: Resource, options: dict):
     """
     Adds new Tracardi PRO resource
     """
