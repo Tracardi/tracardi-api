@@ -1,15 +1,15 @@
 # ContainsString Plugin
 
-This plugin checks if data field contains defined prefix.
+This plugin checks if data field contains defined substring.
 
-# JSON Configuration
+## JSON Configuration
 
-Example input:
+Example config:
 
 ```json
 {
   "field": "payload@field",
-  "prefix": "string"
+  "substring": "string"
 }
 ```
 
