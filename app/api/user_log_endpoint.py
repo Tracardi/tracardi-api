@@ -1,10 +1,8 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from app.config import server
 from tracardi.service.storage.driver import storage
 from pydantic import BaseModel
-from elasticsearch import ElasticsearchException
 from typing import Optional
-from tracardi.exceptions.exception import StorageException
 from .auth.permissions import Permissions
 
 

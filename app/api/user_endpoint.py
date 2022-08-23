@@ -5,8 +5,6 @@ from tracardi.service.storage.driver import storage
 from pydantic import BaseModel
 from typing import Optional
 
-from elasticsearch import ElasticsearchException
-
 from .auth.permissions import Permissions
 from .domain.user_payload import UserPayload
 from ..service.user_manager import update_user
