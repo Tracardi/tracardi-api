@@ -2,10 +2,14 @@ import logging
 from collections import OrderedDict
 
 import grpc
+from dotty_dict import dotty
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import ValidationError
 
 from app.api.auth.permissions import Permissions
+from tracardi.domain.resource_metadata import ResourceMetadata
+from tracardi.service.plugin.domain.register import Plugin
+from tracardi.service.plugin.plugin_install import install_remote_plugin
 from tracardi.service.storage.factory import StorageFor
 
 from app.api.domain.credentials import Credentials
@@ -16,6 +20,7 @@ from app.api.proto.tracard_pro_client import TracardiProClient
 from tracardi.exceptions.log_handler import log_handler
 from tracardi.service.storage.driver import storage
 from app.config import server
+from tracardi.service.tracardi_http_client import HttpClient
 
 logging.basicConfig(level=logging.ERROR)
 logger = logging.getLogger(__name__)
@@ -133,7 +138,8 @@ async def get_available_services(module: str):
 
 
 @router.post("/tpro/resource", tags=["tpro"], include_in_schema=server.expose_gui_api)
-async def save_tracardi_pro_resource(resource: Resource, options: dict):
+async def save_tracardi_pro_resource(resource: Resource, metadata: ResourceMetadata):
+
     """
     Adds new Tracardi PRO resource
     """
@@ -149,4 +155,34 @@ async def save_tracardi_pro_resource(resource: Resource, options: dict):
     record = ResourceRecord.encode(resource)
     result = await StorageFor(record).index().save()
     await storage.driver.resource.refresh()
+
+    # Create plugin
+
+    if metadata.has_microservice_plugin():
+        credentials = dotty(resource.credentials.production)
+
+        microservice_plugin_url = credentials[metadata.plugin[0]].strip('/')
+        microservice_token = credentials[metadata.plugin[1]]
+        microservice_service_id = credentials[metadata.plugin[2]]
+
+        if not microservice_service_id or not microservice_service_id or not microservice_token:
+            raise AssertionError("Microservice Host, Token or Service not configured")
+
+        microservice_plugin_url = f"{microservice_plugin_url}/plugin/registry?service_id={microservice_service_id}"
+
+        async with HttpClient(3, 200, headers={
+            # todo add token
+        }) as client:
+            async with client.get(url=microservice_plugin_url) as response:
+                plugin = await response.json()
+                plugin = Plugin(**plugin)
+
+                # Configure microservice to be connected with created resource
+                plugin.spec.microservice.resource.name = resource.name
+                plugin.spec.microservice.resource.id = resource.id
+                # Select current resource as production resource
+                plugin.spec.microservice.resource.current = resource.credentials.production
+
+                await install_remote_plugin(plugin)
+
     return result

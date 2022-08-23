@@ -1,11 +1,8 @@
-from typing import Type, Dict, Iterator, Tuple, List, Optional
-from uuid import uuid4
-
+from typing import Type, Dict, Tuple, Optional
 from fastapi import APIRouter
 from pydantic import BaseModel
 
 from app.config import server
-from tracardi.domain.entity import Entity
 from tracardi.domain.named_entity import NamedEntity
 from tracardi.domain.resources.microservice_resource import MicroserviceResource
 from tracardi.process_engine.action.v1.connectors.trello.add_card_action.model.config import Config
@@ -59,6 +56,12 @@ class ServicesRepo(BaseModel):
                 return plugin_config.plugin
         return None
 
+    def get_plugin_registry(self, service_id: str) -> Optional[Plugin]:
+        if service_id in self.repo:
+            service = self.repo[service_id]
+            return service.microservice
+        return None
+
     def get_plugin_form_an_init(self, service_id: str, plugin_id: str) -> Tuple[Optional[dict], Optional[Form]]:
         if service_id in self.repo:
             service = self.repo[service_id]
@@ -85,43 +88,47 @@ repo = ServicesRepo(
                 start=False,
                 spec=Spec(
                     module=__name__,
-                    className='TrelloMicroservice',
+                    className='MicroserviceAction',
                     inputs=["payload"],
-                    outputs=["response", "error"],
+                    outputs=["payload", "error"],
                     version='0.7.2',
                     license="MIT",
                     author="Risto Kowaczewski",
-                    manual="microservice_action",
-                    microservice=MicroserviceConfig(
-                        resource=MicroserviceCurrentResource(
-                            id="1",
-                            name="Trello",
-                            current=resource
-                        ),
-                        plugin=NamedEntity(
-                            id="2",
-                            name="Trello",
-                        )
-                    )
+                    microservice={
+                        "resource": {
+                            "name": "",
+                            "id": "",
+                            "current": {
+                                "url": "",
+                                "token": "",
+                                "service": {
+                                    "name": "",
+                                    "id": ""
+                                }
+                            },
+                        },
+
+                        "plugin": {
+                            "name": "",
+                            "id": ""
+                        }
+                    }
                 ),
                 metadata=MetaData(
-                    name='Add Trello card',
-                    desc='Adds card to given list on given board in Trello.',
+                    name='Trello Microservice',
+                    desc='Microservice that runs Trello plugins.',
                     icon='trello',
-                    group=["Trello"],
+                    group=["Connectors"],
+                    remote=True,
                     documentation=Documentation(
                         inputs={
                             "payload": PortDoc(desc="This port takes payload object.")
                         },
                         outputs={
-                            "response": PortDoc(desc="This port returns a response from Trello API."),
-                            "error": PortDoc(desc="This port gets triggered if an error occurs.")
+                            "payload": PortDoc(desc="This port returns microservice response.")
                         }
-                    ),
-                    remote=True
-
-                )
-            ),
+                    )
+                )),
             plugins={
                 "a04381af-c008-4328-ab61-0e73825903ce": PluginConfig(
                     name="Add card 1",
@@ -274,3 +281,8 @@ async def get_plugin(service_id: str, action_id: str):
         "init": init if init is not None else {},
         "form": form.dict() if form is not None else None
     }
+
+
+@router.get("/plugin/registry", tags=["microservice"], include_in_schema=server.expose_gui_api, response_model=Plugin)
+async def get_plugin_registry(service_id: str):
+    return repo.get_plugin_registry(service_id)
