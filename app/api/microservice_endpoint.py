@@ -1,8 +1,11 @@
 from typing import Type, Dict, Tuple, Optional
 from fastapi import APIRouter
-from pydantic import BaseModel
+from fastapi.encoders import jsonable_encoder
+from pydantic import BaseModel, ValidationError
+from starlette.responses import JSONResponse
 
 from app.config import server
+from app.service.error_converter import convert_errors
 from tracardi.domain.named_entity import NamedEntity
 from tracardi.domain.resources.microservice_resource import MicroserviceResource
 from tracardi.process_engine.action.v1.connectors.trello.add_card_action.model.config import Config
@@ -70,6 +73,14 @@ class ServicesRepo(BaseModel):
                 return plugin_config.registry.spec.init, plugin_config.registry.spec.form
         return None, None
 
+    def get_plugin_validator(self, service_id: str, plugin_id: str) -> Type[BaseModel]:
+        if service_id in self.repo:
+            service = self.repo[service_id]
+            if plugin_id in service.plugins:
+                plugin_config = service.plugins[plugin_id]
+                return plugin_config.validator
+        raise LookupError(f"Missing validator configuration for service {service_id} and plugin {plugin_id}")
+
 
 resource = MicroserviceResource(
     url="http://localhost:8686",
@@ -87,7 +98,7 @@ repo = ServicesRepo(
             microservice=Plugin(
                 start=False,
                 spec=Spec(
-                    module=__name__,
+                    module='tracardi.process_engine.action.v1.microservice.plugin',
                     className='MicroserviceAction',
                     inputs=["payload"],
                     outputs=["payload", "error"],
@@ -137,7 +148,7 @@ repo = ServicesRepo(
                     registry=Plugin(
                         start=False,
                         spec=Spec(
-                            module=__name__,
+                            module='plugins.trello.add_card.plugin',
                             className='TrelloCardAdder',
                             inputs=["payload"],
                             outputs=["response", "error"],
@@ -150,14 +161,14 @@ repo = ServicesRepo(
                                     "name": None,
                                     "id": None
                                 },
-                                "board_url": None,
-                                "list_name": None,
+                                "board_url": "",
+                                "list_name": "",
                                 "card": {
-                                    "name": None,
-                                    "desc": None,
-                                    "urlSource": None,
-                                    "coordinates": None,
-                                    "due": None
+                                    "name": "",
+                                    "desc": "",
+                                    "urlSource": "",
+                                    "coordinates": "",
+                                    "due": ""
                                 }
 
                             },
@@ -286,3 +297,15 @@ async def get_plugin(service_id: str, action_id: str):
 @router.get("/plugin/registry", tags=["microservice"], include_in_schema=server.expose_gui_api, response_model=Plugin)
 async def get_plugin_registry(service_id: str):
     return repo.get_plugin_registry(service_id)
+
+
+@router.post("/plugin/validate", tags=["microservice"], include_in_schema=server.expose_gui_api, response_model=dict)
+async def validate_plugin_configuration(service_id: str, action_id: str, data: dict):
+    try:
+        validator = repo.get_plugin_validator(service_id, action_id)
+        return validator(**data)
+    except ValidationError as e:
+        return JSONResponse(
+            status_code=422,
+            content=jsonable_encoder(convert_errors(e))
+        )

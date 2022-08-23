@@ -1,4 +1,7 @@
-from fastapi import APIRouter, Depends, HTTPException, Request
+from typing import Optional
+
+import aiohttp
+from fastapi import APIRouter, Depends, HTTPException, Request, Response
 from pydantic import ValidationError
 from starlette.responses import JSONResponse
 
@@ -53,8 +56,12 @@ async def plugins():
     return await storage.driver.action.load_all()
 
 
-@router.post("/action/{id}/config/validate", tags=["action"], include_in_schema=server.expose_gui_api)
-async def validate_plugin_configuration(id: str, config: dict = None):
+@router.post("/plugin/{id}/config/validate", tags=["action"], include_in_schema=server.expose_gui_api)
+async def validate_plugin_configuration(response: Response,
+                                        id: str,
+                                        action_id: Optional[str] = "",
+                                        service_id: Optional[str] = "",
+                                        config: dict = None):
     """
     Validates given configuration (obj) of plugin with given ID (str)
     """
@@ -63,7 +70,7 @@ async def validate_plugin_configuration(id: str, config: dict = None):
         record = await storage.driver.action.load_by_id(id)
 
         if record is None:
-            raise HTTPException(status_code=404, detail=f"No action plugin for id `{id}`")
+            raise HTTPException(status_code=404, detail=f"No action plugin for id `{d}`")
 
         try:
             action_record = FlowActionPluginRecord(**record)
@@ -72,14 +79,38 @@ async def validate_plugin_configuration(id: str, config: dict = None):
                                                         "validated and mapped into FlowActionPluginRecord object."
                                                         f"Internal error: {str(e)}")
 
-        validate = action_record.get_validator()
+        if action_record.plugin.metadata.remote is True:
+            # Run validation thru remote validator not local microservice plugin
 
-        if config is None:
-            raise HTTPException(status_code=404, detail="No validate function provided. "
-                                                        "Could not validate on server side.")
-        if is_coroutine(validate):
-            return await validate(config)
-        return validate(config)
+            microservice = action_record.plugin.spec.microservice
+            microservice_url = f"{microservice.resource.current.url}/plugin/validate" \
+                               f"?service_id={service_id}" \
+                               f"&action_id={action_id}"
+
+            async with aiohttp.ClientSession(headers={
+                # todo add authorization
+            }) as client:
+                async with client.post(
+                        url=microservice_url,
+                        json=config) as remote_response:
+                    return JSONResponse(
+                        status_code=remote_response.status,
+                        content=jsonable_encoder(await remote_response.json())
+                    )
+
+        else:
+
+            # Run validation locally
+
+            validate = action_record.get_validator()
+
+            if config is None:
+                raise HTTPException(status_code=404, detail="No validate function provided. "
+                                                            "Could not validate on server side.")
+
+            if is_coroutine(validate):
+                return await validate(config)
+            return validate(config)
 
     except HTTPException as e:
         raise e
