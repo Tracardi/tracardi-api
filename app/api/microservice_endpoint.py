@@ -15,6 +15,12 @@ from tracardi.service.plugin.domain.register import Form, FormGroup, FormField, 
 from tracardi.service.plugin.runner import ActionRunner
 
 
+class PluginExecContext(BaseModel):
+    context: dict
+    params: dict
+    init: dict
+
+
 class PluginConfig(BaseModel):
     name: str
     validator: Type[BaseModel]
@@ -304,6 +310,22 @@ async def validate_plugin_configuration(service_id: str, action_id: str, data: d
     try:
         validator = repo.get_plugin_validator(service_id, action_id)
         return validator(**data)
+    except ValidationError as e:
+        return JSONResponse(
+            status_code=422,
+            content=jsonable_encoder(convert_errors(e))
+        )
+
+
+@router.post("/plugin/run", tags=["microservice"], include_in_schema=server.expose_gui_api, response_model=dict)
+async def validate_plugin_configuration(service_id: str, action_id: str, data: PluginExecContext):
+    try:
+        plugin = repo.get_plugin(service_id, action_id)
+        print(data.init)
+        if plugin:
+            plugin = await plugin.build(**data.init)
+            print(await plugin.run(**data.params))
+        return {}
     except ValidationError as e:
         return JSONResponse(
             status_code=422,

@@ -1,7 +1,7 @@
 from typing import Optional
 
 import aiohttp
-from fastapi import APIRouter, Depends, HTTPException, Request, Response
+from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import ValidationError
 from starlette.responses import JSONResponse
 
@@ -56,9 +56,8 @@ async def plugins():
     return await storage.driver.action.load_all()
 
 
-@router.post("/plugin/{id}/config/validate", tags=["action"], include_in_schema=server.expose_gui_api)
-async def validate_plugin_configuration(response: Response,
-                                        id: str,
+@router.post("/plugin/{plugin_id}/config/validate", tags=["action"], include_in_schema=server.expose_gui_api)
+async def validate_plugin_configuration(plugin_id: str,
                                         action_id: Optional[str] = "",
                                         service_id: Optional[str] = "",
                                         config: dict = None):
@@ -67,10 +66,10 @@ async def validate_plugin_configuration(response: Response,
     """
 
     try:
-        record = await storage.driver.action.load_by_id(id)
+        record = await storage.driver.action.load_by_id(plugin_id)
 
         if record is None:
-            raise HTTPException(status_code=404, detail=f"No action plugin for id `{d}`")
+            raise HTTPException(status_code=404, detail=f"No action plugin for id `{plugin_id}`")
 
         try:
             action_record = FlowActionPluginRecord(**record)
@@ -78,6 +77,7 @@ async def validate_plugin_configuration(response: Response,
             raise HTTPException(status_code=404, detail="Action plugin id `{id}` could not be"
                                                         "validated and mapped into FlowActionPluginRecord object."
                                                         f"Internal error: {str(e)}")
+        # todo move to action_record class
 
         if action_record.plugin.metadata.remote is True:
             # Run validation thru remote validator not local microservice plugin
