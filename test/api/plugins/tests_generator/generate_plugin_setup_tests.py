@@ -40,7 +40,7 @@ f"""
     else:
         mocker = ""
 
-    def_code = f"""async def test_should_set_up_plugin_{camel_to_snake(class_name)}(mocker):
+    def_code = f"""async def test_should_set_up_plugin_{camel_to_snake(class_name)}({'mocker' if test_template.resource is not None else ''}):
     {mocker}
     module = import_package(\"{module_name}\")
     plugin_class = load_callable(module, \"{class_name}\")
