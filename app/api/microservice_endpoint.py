@@ -11,6 +11,7 @@ from tracardi.process_engine.action.v1.connectors.trello.add_card_action.plugin 
 from tracardi.service.plugin.domain.register import Form, FormGroup, FormField, FormComponent, Plugin, Spec, MetaData, \
     Documentation, PortDoc
 from tracardi.service.plugin.runner import ActionRunner
+from tracardi.service.plugin.service import plugin_context
 
 
 class PluginExecContext(BaseModel):
@@ -285,12 +286,19 @@ async def validate_plugin_configuration(service_id: str, action_id: str, data: d
 
 
 @router.post("/plugin/run", tags=["microservice"], include_in_schema=server.expose_gui_api, response_model=dict)
-async def validate_plugin_configuration(service_id: str, action_id: str, data: PluginExecContext):
+async def run_plugin(service_id: str, action_id: str, data: PluginExecContext):
     try:
-        plugin = repo.get_plugin(service_id, action_id)
+        plugin_type = repo.get_plugin(service_id, action_id)
         print(data.init)
-        if plugin:
-            plugin = await plugin.build(**data.init)
+        if plugin_type:
+            plugin = plugin_type()
+            # set context
+            data.context['node']['className'] = plugin_type.__name__
+            data.context['node']['module'] = __name__
+            plugin_context.set_context(plugin, data.context, include=['node'])
+            print("context", data.context['node'])
+            print("init", data.init)
+            await plugin.set_up(data.init)
             print(await plugin.run(**data.params))
         return {}
     except ValidationError as e:
