@@ -10,5 +10,6 @@ def test_regex_validator_plugin():
 
     result = run_plugin(RegexValidatorAction, init, payload)
 
-    valid, invalid = result.output
-    assert invalid.value is None
+    assert result.output.port == 'valid'
+    assert result.output.value == payload
+
