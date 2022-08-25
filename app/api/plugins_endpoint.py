@@ -83,12 +83,12 @@ async def validate_plugin_configuration(plugin_id: str,
             # Run validation thru remote validator not local microservice plugin
 
             microservice = action_record.plugin.spec.microservice
-            microservice_url = f"{microservice.resource.current.url}/plugin/validate" \
+            microservice_url = f"{microservice.server.credentials['url']}/plugin/validate" \
                                f"?service_id={service_id}" \
                                f"&action_id={action_id}"
 
             async with aiohttp.ClientSession(headers={
-                # todo add authorization
+                'X-Token': microservice.server.credentials['token']
             }) as client:
                 async with client.post(
                         url=microservice_url,

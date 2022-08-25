@@ -7,6 +7,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from pydantic import ValidationError
 
 from app.api.auth.permissions import Permissions
+from app.api.domain.tpro_microservice_resource import TProMicroserviceResource
 from tracardi.domain.resource_metadata import ResourceMetadata
 from tracardi.service.plugin.domain.register import Plugin
 from tracardi.service.plugin.plugin_install import install_remote_plugin
@@ -171,17 +172,22 @@ async def save_tracardi_pro_resource(resource: Resource, metadata: ResourceMetad
         microservice_plugin_url = f"{microservice_plugin_url}/plugin/registry?service_id={microservice_service_id}"
 
         async with HttpClient(3, 200, headers={
-            # todo add token
+            'X-Token': microservice_token
         }) as client:
             async with client.get(url=microservice_plugin_url) as response:
                 plugin = await response.json()
                 plugin = Plugin(**plugin)
 
-                # Configure microservice to be connected with created resource
-                plugin.spec.microservice.resource.name = resource.name
-                plugin.spec.microservice.resource.id = resource.id
                 # Select current resource as production resource
-                plugin.spec.microservice.resource.current = resource.credentials.production
+                tpro_resource_creds = TProMicroserviceResource(**resource.credentials.production)
+
+                plugin.spec.microservice.service.id = tpro_resource_creds.service.id
+                plugin.spec.microservice.service.name = tpro_resource_creds.service.name
+                # Set credentials, exclude service data
+                plugin.spec.microservice.server.credentials = tpro_resource_creds.credentials
+                # Configure microservice to be connected with created resource
+                plugin.spec.microservice.server.resource.name = resource.name
+                plugin.spec.microservice.server.resource.id = resource.id
 
                 await install_remote_plugin(plugin)
 

@@ -6,12 +6,10 @@ from starlette.responses import JSONResponse
 
 from app.config import server
 from app.service.error_converter import convert_errors
-from tracardi.domain.named_entity import NamedEntity
-from tracardi.domain.resources.microservice_resource import MicroserviceResource
 from tracardi.process_engine.action.v1.connectors.trello.add_card_action.model.config import Config
 from tracardi.process_engine.action.v1.connectors.trello.add_card_action.plugin import TrelloCardAdder
 from tracardi.service.plugin.domain.register import Form, FormGroup, FormField, FormComponent, Plugin, Spec, MetaData, \
-    Documentation, PortDoc, MicroserviceConfig, MicroserviceCurrentResource
+    Documentation, PortDoc
 from tracardi.service.plugin.runner import ActionRunner
 
 
@@ -30,15 +28,11 @@ class PluginConfig(BaseModel):
 
 class ServiceConfig(BaseModel):
     name: str
-    microservice: Plugin
+    microservice: Plugin  # ? registry
     plugins: Dict[str, PluginConfig]
-
-    def microservice(self):
-        pass
 
 
 class ServicesRepo(BaseModel):
-    resource: MicroserviceResource
     repo: Dict[str, ServiceConfig]
 
     def get_all_services(self) -> Tuple[str, str]:
@@ -88,16 +82,7 @@ class ServicesRepo(BaseModel):
         raise LookupError(f"Missing validator configuration for service {service_id} and plugin {plugin_id}")
 
 
-resource = MicroserviceResource(
-    url="http://localhost:8686",
-    token="token",
-    service=NamedEntity(
-        id="11",
-        name="Trello microservice"
-    )
-)
 repo = ServicesRepo(
-    resource=resource,
     repo={
         "a307b281-2629-4c12-b6e3-df1ec9bca35a": ServiceConfig(
             name="Trello",
@@ -111,25 +96,6 @@ repo = ServicesRepo(
                     version='0.7.2',
                     license="MIT",
                     author="Risto Kowaczewski",
-                    microservice={
-                        "resource": {
-                            "name": "",
-                            "id": "",
-                            "current": {
-                                "url": "",
-                                "token": "",
-                                "service": {
-                                    "name": "",
-                                    "id": ""
-                                }
-                            },
-                        },
-
-                        "plugin": {
-                            "name": "",
-                            "id": ""
-                        }
-                    }
                 ),
                 metadata=MetaData(
                     name='Trello Microservice',
@@ -247,6 +213,7 @@ repo = ServicesRepo(
                                 ]
                             )
                         ),
+                        # todo this may be not need
                         metadata=MetaData(
                             name='Add Trello card',
                             desc='Adds card to given list on given board in Trello.',
