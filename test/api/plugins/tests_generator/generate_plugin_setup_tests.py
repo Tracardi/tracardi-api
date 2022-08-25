@@ -53,5 +53,5 @@ f"""
 """
     code = f"{code}\n\n{def_code}"
 
-with open('test_plugin_set_up.py', 'w') as f:
+with open('../test_plugin_set_up.py', 'w') as f:
     f.write(code)

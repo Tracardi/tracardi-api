@@ -1949,3 +1949,15 @@ async def test_should_set_up_plugin_postpone_event_action():
                        module="tracardi.process_engine.action.v1.flow.postpone_event.plugin", 
                        className="PostponeEventAction")
     await plugin.set_up(None)
+
+
+async def test_should_set_up_plugin_contains_string_action():
+    
+    module = import_package("tracardi.process_engine.action.v1.contains_string_action")
+    plugin_class = load_callable(module, "ContainsStringAction")
+    plugin = plugin_class()
+    plugin.node = Node(id="node-id", 
+                       name="test-node", 
+                       module="tracardi.process_engine.action.v1.contains_string_action", 
+                       className="ContainsStringAction")
+    await plugin.set_up({'field': 'payload@field', 'substring': 'contains'})
