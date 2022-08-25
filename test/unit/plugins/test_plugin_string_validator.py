@@ -27,16 +27,18 @@ def test_email():
                 'data': a}
         payload = {}
         plugin = run_plugin(StringValidatorAction, init, payload)
-        valid, invalid = plugin.output
-        assert invalid.value is None
+        result = plugin.output
+        assert result.port == 'valid'
+        assert result.value == payload
 
 
 def test_url():
     init = {'validator': "url",
             'data': f"https://www.polska.com/api/e/w/2"}
     plugin = run_plugin(StringValidatorAction, init, {})
-    valid, invalid = plugin.output
-    assert invalid.value is None
+    result = plugin.output
+    assert result.port == 'valid'
+    assert result.value == {}
 
 
 @pytest.mark.date
@@ -53,8 +55,9 @@ def test_date():
         init = {'validator': "date",
                 'data': f"{b}-{c}-{d}"}
         plugin = run_plugin(StringValidatorAction, init, {})
-        valid, invalid = plugin.output
-        assert invalid.value is None
+        result = plugin.output
+        assert result.port == 'valid'
+        assert result.value == {}
 
 
 def test_int():
@@ -65,8 +68,9 @@ def test_int():
         init = {'validator': "int",
                 'data': c}
         plugin = run_plugin(StringValidatorAction, init, {})
-        valid, invalid = plugin.output
-        assert invalid.value is None
+        result = plugin.output
+        assert result.port == 'valid'
+        assert result.value == {}
 
 
 def test_float():
@@ -77,8 +81,9 @@ def test_float():
         init = {'validator': "float",
                 'data': c}
         plugin = run_plugin(StringValidatorAction, init, {})
-        valid, invalid = plugin.output
-        assert invalid.value is None
+        result = plugin.output
+        assert result.port == 'valid'
+        assert result.value == {}
 
 
 def test_timer():
@@ -93,8 +98,9 @@ def test_timer():
         init = {'validator': "time",
                 'data': f"{c}:{d}"}
         plugin = run_plugin(StringValidatorAction, init, {})
-        valid, invalid = plugin.output
-        assert invalid.value is None
+        result = plugin.output
+        assert result.port == 'valid'
+        assert result.value == {}
 
 
 def test_ean():
@@ -102,8 +108,9 @@ def test_ean():
     init = {'validator': "ean",
             'data': a}
     plugin = run_plugin(StringValidatorAction, init, {})
-    valid, invalid = plugin.output
-    assert invalid.value is None
+    result = plugin.output
+    assert result.port == 'valid'
+    assert result.value == {}
 
 
 def test_number_phone():
@@ -121,8 +128,9 @@ def test_number_phone():
                 'data': f"{d}{c}"}
         plugin = run_plugin(StringValidatorAction, init, {})
 
-        valid, invalid = plugin.output
-        assert invalid.value is None
+        result = plugin.output
+        assert result.port == 'valid'
+        assert result.value == {}
 
 
 @pytest.mark.ip
@@ -137,8 +145,9 @@ def test_ip():
         init = {'validator': "ipv4",
                 'data': f"{b}.{c}.{d}.{e}"}
         plugin = run_plugin(StringValidatorAction, init, {})
-        valid, invalid = plugin.output
-        assert invalid.value is None
+        result = plugin.output
+        assert result.port == 'valid'
+        assert result.value == {}
 
 
 def test_string_validator_plugin():
@@ -150,8 +159,9 @@ def test_string_validator_plugin():
 
     plugin = run_plugin(StringValidatorAction, init, payload)
 
-    valid, invalid = plugin.output
-    assert invalid.value is None
+    result = plugin.output
+    assert result.port == 'valid'
+    assert result.value == payload
 
 
 def test_string_validator_plugin_fails():
@@ -170,5 +180,6 @@ def test_string_validator_plugin_fails():
     )
     plugin = run_plugin(StringValidatorAction, init, payload,
                         profile, None, event)
-    valid, invalid = plugin.output
-    assert valid.value is None
+    result = plugin.output
+    assert result.port == 'invalid'
+    assert result.value == payload

@@ -15,10 +15,10 @@ def test_time_span_ok():
 
     payload = {}
 
-    result = run_plugin(LocalTimeSpanAction, init, payload)
-    in_time, out_time = result.output
-    assert in_time.value is not None
-    assert out_time.value is None
+    plugin = run_plugin(LocalTimeSpanAction, init, payload)
+    result = plugin.output
+    assert result.port == 'in'
+    assert result.value == payload
 
 
 def test_time_span_fail():
@@ -30,8 +30,7 @@ def test_time_span_fail():
 
     payload = {}
 
-    result = run_plugin(LocalTimeSpanAction, init, payload)
-    in_time, out_time = result.output
-    assert in_time.value is None
-    assert out_time.value is not None
-
+    plugin = run_plugin(LocalTimeSpanAction, init, payload)
+    result = plugin.output
+    assert result.port == 'out'
+    assert result.value == payload
