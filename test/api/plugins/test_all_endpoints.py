@@ -7,21 +7,26 @@ from tracardi.service.plugin.runner import ActionRunner
 from tracardi.service.setup.setup_plugins import installed_plugins
 
 
+def _load_plugin_registry_metadata(plugin_module) -> Plugin:
+    module = import_package(plugin_module)
+    plugin = load_callable(module, 'register')
+
+    plugin_registry = plugin()  # type: Union[Plugin, Tuple[Plugin, Settings]]
+    if isinstance(plugin_registry, tuple):
+        plugin_registry, _ = plugin_registry
+
+    return plugin_registry
+
+
 def _yield_module_class():
-    for plugin_module in installed_plugins:
+    for plugin_module, test_init in installed_plugins.items():
+        plugin_registry = _load_plugin_registry_metadata(plugin_module)
 
-        module = import_package(plugin_module)
-        plugin = load_callable(module, 'register')
-
-        plugin_registry = plugin()  # type: Union[Plugin, Tuple[Plugin, Settings]]
-        if isinstance(plugin_registry, tuple):
-            plugin_registry, _ = plugin_registry
-
-        yield plugin_module, plugin_registry.spec.className
+        yield plugin_module, plugin_registry.spec.className, test_init
 
 
 def test_should_find_all_plugins_modules():
-    for module_name, class_name in _yield_module_class():
+    for module_name, class_name, _ in _yield_module_class():
         try:
             import_package(module_name)
             assert True
@@ -30,11 +35,19 @@ def test_should_find_all_plugins_modules():
 
 
 def test_should_all_plugins_not_fail_on_init():
-    for module_name, class_name in _yield_module_class():
-        print(module_name)
+    for module_name, class_name, _ in _yield_module_class():
         module = import_package(module_name)
         plugin_class = load_callable(module, class_name)
 
         plugin = plugin_class()
         assert isinstance(plugin, ActionRunner)
-        print(type(plugin))
+
+
+async def test_should_set_up_plugin():
+    module_name = "tracardi.process_engine.action.v1.traits.copy_trait_action"
+    class_name = "CopyTraitAction"
+    module = import_package(module_name)
+    plugin_class = load_callable(module, class_name)
+    registry = _load_plugin_registry_metadata(module_name)  # type: Plugin
+    plugin = plugin_class()
+    await plugin.set_up(registry.spec.init)
