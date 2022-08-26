@@ -963,7 +963,7 @@ async def test_should_set_up_plugin_mail_chimp_audience_adder():
                        name="test-node", 
                        module="tracardi.process_engine.action.v1.connectors.mailchimp.add_to_audience.plugin", 
                        className="MailChimpAudienceAdder")
-    await plugin.set_up({'email': None, 'list_id': None, 'merge_fields': {}, 'source': {'id': None, 'name': None}, 'subscribed': False, 'update': False})
+    await plugin.set_up({'email': 'email@email.com', 'list_id': '1', 'merge_fields': {}, 'source': {'id': '1', 'name': 'test'}, 'subscribed': False, 'update': False})
 
 
 async def test_should_set_up_plugin_mail_chimp_audience_remover():

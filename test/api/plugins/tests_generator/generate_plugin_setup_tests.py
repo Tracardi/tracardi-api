@@ -1,8 +1,10 @@
+import os
 import pprint
 import re
 
 from test.api.plugins.test_all_endpoints import _yield_module_class
 
+dir_path = os.path.dirname(os.path.realpath(__file__))
 pattern = re.compile(r'(?<!^)(?=[A-Z])')
 printer = pprint.PrettyPrinter(indent=4)
 
@@ -23,7 +25,7 @@ for module_name, class_name, test_template in _yield_module_class():
 
     if test_template.resource is not None:
         mocker = \
-f"""
+            f"""
     mocker.patch(
         # api_call is from slow.py but imported to main.py
         'tracardi.service.storage.driver.storage.driver.resource.load',
@@ -53,5 +55,5 @@ f"""
 """
     code = f"{code}\n\n{def_code}"
 
-with open('../test_plugin_set_up.py', 'w') as f:
+with open(os.path.join(dir_path, '../test_plugin_set_up.py'), 'w') as f:
     f.write(code)

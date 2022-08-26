@@ -8,6 +8,7 @@ from app.config import server
 from app.service.error_converter import convert_errors
 from tracardi.process_engine.action.v1.connectors.trello.add_card_action.model.config import Config
 from tracardi.process_engine.action.v1.connectors.trello.add_card_action.plugin import TrelloCardAdder, register
+from tracardi.process_engine.action.v1.connectors.trello.credentials import TrelloCredentials
 from tracardi.service.plugin.domain.register import Form, FormGroup, FormField, FormComponent, Plugin, Spec, MetaData, \
     Documentation, PortDoc
 from tracardi.service.plugin.runner import ActionRunner
@@ -27,10 +28,17 @@ class PluginConfig(BaseModel):
     registry: Plugin
 
 
+class ServiceResource(BaseModel):
+    form: Form
+    init: BaseModel
+    validator: Type[BaseModel]
+
+
 class ServiceConfig(BaseModel):
     name: str
     microservice: Plugin  # ? registry
     plugins: Dict[str, PluginConfig]
+    resource: Optional[ServiceResource] = None
 
 
 class ServicesRepo(BaseModel):
@@ -46,10 +54,9 @@ class ServicesRepo(BaseModel):
             for id, plugin_config in service.plugins.items():
                 yield id, plugin_config.name
 
-    def get_plugin_microservice_plugin_registry(self, service_id: str) -> Optional[Plugin]:
+    def get_service(self, service_id: str) -> Optional[ServiceConfig]:
         if service_id in self.repo:
-            service = self.repo[service_id]
-            return service.microservice
+            return self.repo[service_id]
         return None
 
     def get_plugin(self, service_id: str, plugin_id: str) -> Optional[Type[ActionRunner]]:
@@ -87,13 +94,42 @@ repo = ServicesRepo(
     repo={
         "a307b281-2629-4c12-b6e3-df1ec9bca35a": ServiceConfig(
             name="Trello",
+            resource=ServiceResource(
+                form=Form(groups=[
+                    FormGroup(
+                        name="Service connection configuration",
+                        description="This service needs to connect to Trello. Please provide API credentials.",
+                        fields=[
+                            FormField(
+                                id="api_key",
+                                name="Trello API KEY",
+                                description="Please Provide Trello API KEY.",
+                                component=FormComponent(type="text",
+                                                        props={"label": "API KEY"})
+                            ),
+                            FormField(
+                                id="token",
+                                name="Trello TOKEN",
+                                description="Please Provide Trello TOKEN.",
+                                component=FormComponent(type="text",
+                                                        props={"label": "TOKEN"})
+                            )
+                        ]
+                    )]),
+                init=TrelloCredentials(
+                    api_key="",
+                    token=""
+                ),
+                validator=TrelloCredentials
+            ),
+
             microservice=Plugin(
                 start=False,
                 spec=Spec(
                     module='tracardi.process_engine.action.v1.microservice.plugin',
                     className='MicroserviceAction',
                     inputs=["payload"],
-                    outputs=["payload", "error"],
+                    outputs=["response", "error"],
                     version='0.7.2',
                     license="MIT",
                     author="Risto Kowaczewski",
@@ -109,7 +145,8 @@ repo = ServicesRepo(
                             "payload": PortDoc(desc="This port takes payload object.")
                         },
                         outputs={
-                            "payload": PortDoc(desc="This port returns microservice response.")
+                            "response": PortDoc(desc="This port returns microservice response."),
+                            "error": PortDoc(desc="This port returns microservice error.")
                         }
                     )
                 )),
@@ -153,6 +190,11 @@ async def get_plugin(service_id: str, action_id: str):
         "init": init if init is not None else {},
         "form": form.dict() if form is not None else None
     }
+
+
+@router.get("/service/resource", tags=["microservice"], include_in_schema=server.expose_gui_api, response_model=dict)
+async def get_plugin_registry(service_id: str):
+    return repo.get_service(service_id).resource.dict(exclude={"validator": ...})
 
 
 @router.get("/plugin/registry", tags=["microservice"], include_in_schema=server.expose_gui_api, response_model=Plugin)
