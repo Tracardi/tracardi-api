@@ -7,7 +7,7 @@ from starlette.responses import JSONResponse
 from app.config import server
 from app.service.error_converter import convert_errors
 from tracardi.process_engine.action.v1.connectors.trello.add_card_action.model.config import Config
-from tracardi.process_engine.action.v1.connectors.trello.add_card_action.plugin import TrelloCardAdder
+from tracardi.process_engine.action.v1.connectors.trello.add_card_action.plugin import TrelloCardAdder, register
 from tracardi.service.plugin.domain.register import Form, FormGroup, FormField, FormComponent, Plugin, Spec, MetaData, \
     Documentation, PortDoc
 from tracardi.service.plugin.runner import ActionRunner
@@ -118,120 +118,7 @@ repo = ServicesRepo(
                     name="Add card 1",
                     validator=Config,
                     plugin=TrelloCardAdder,
-                    registry=Plugin(
-                        start=False,
-                        spec=Spec(
-                            module='plugins.trello.add_card.plugin',
-                            className='TrelloCardAdder',
-                            inputs=["payload"],
-                            outputs=["response", "error"],
-                            version='0.6.1',
-                            license="MIT",
-                            author="Dawid Kruk",
-                            manual="trello/add_trello_card_action",
-                            init={
-                                "source": {
-                                    "name": None,
-                                    "id": None
-                                },
-                                "board_url": "",
-                                "list_name": "",
-                                "card": {
-                                    "name": "",
-                                    "desc": "",
-                                    "urlSource": "",
-                                    "coordinates": "",
-                                    "due": ""
-                                }
-
-                            },
-                            form=Form(
-                                groups=[
-                                    FormGroup(
-                                        name="Plugin configuration",
-                                        fields=[
-                                            FormField(
-                                                id="source",
-                                                name="Trello resource",
-                                                description="Please select your Trello resource.",
-                                                component=FormComponent(type="resource",
-                                                                        props={"label": "Resource", "tag": "trello"})
-                                            ),
-                                            FormField(
-                                                id="board_url",
-                                                name="URL of Trello board",
-                                                description="Please the URL of your board.",
-                                                component=FormComponent(type="text", props={"label": "Board URL"})
-                                            ),
-                                            FormField(
-                                                id="list_name",
-                                                name="Name of Trello list",
-                                                description="Please provide the name of your Trello list.",
-                                                component=FormComponent(type="text", props={"label": "List name"})
-                                            ),
-                                            FormField(
-                                                id="card.name",
-                                                name="Name of your card",
-                                                description="Please provide path to the name of the card that you want to add.",
-                                                component=FormComponent(type="dotPath", props={"label": "Card name",
-                                                                                               "defaultMode": "2"})
-                                            ),
-                                            FormField(
-                                                id="card.desc",
-                                                name="Card description",
-                                                description="Please provide description of your card. It's fully functional in terms of"
-                                                            " using templates.",
-                                                component=FormComponent(type="textarea",
-                                                                        props={"label": "Card description"})
-                                            ),
-                                            FormField(
-                                                id="card.urlSource",
-                                                name="Card link",
-                                                description="You can add an URL to your card as an attachment.",
-                                                component=FormComponent(type="dotPath", props={"label": "Card link",
-                                                                                               "defaultMode": "2"})
-                                            ),
-                                            FormField(
-                                                id="card.coordinates",
-                                                name="Card coordinates",
-                                                description="You can add location coordinates to your card. This should be a path"
-                                                            " to an object, containing 'longitude' and 'latitude' fields.",
-                                                component=FormComponent(type="dotPath",
-                                                                        props={"label": "Card coordinates",
-                                                                               "defaultMode": "2"})
-                                            ),
-                                            FormField(
-                                                id="card.due",
-                                                name="Card due date",
-                                                description="You can add due date to your card. Various formats should work, but "
-                                                            "UTC format seems to be the best option.",
-                                                component=FormComponent(type="dotPath",
-                                                                        props={"defaultMode": "2",
-                                                                               "label": "Card due date"})
-                                            )
-                                        ]
-                                    )
-                                ]
-                            )
-                        ),
-                        # todo this may be not need
-                        metadata=MetaData(
-                            name='Add Trello card',
-                            desc='Adds card to given list on given board in Trello.',
-                            icon='trello',
-                            group=["Trello"],
-                            documentation=Documentation(
-                                inputs={
-                                    "payload": PortDoc(desc="This port takes payload object.")
-                                },
-                                outputs={
-                                    "response": PortDoc(desc="This port returns a response from Trello API."),
-                                    "error": PortDoc(desc="This port gets triggered if an error occurs.")
-                                }
-                            ),
-                            pro=True
-                        )
-                    )
+                    registry=register()
                 )
             }
         )
