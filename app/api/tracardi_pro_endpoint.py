@@ -2,12 +2,11 @@ import logging
 from collections import OrderedDict
 
 import grpc
-from dotty_dict import dotty
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import ValidationError
 
 from app.api.auth.permissions import Permissions
-from app.api.domain.tpro_microservice_resource import TProMicroserviceResource
+from app.api.domain.tpro_microservice_resource import TProMicroserviceResource, TProMicroserviceCredentials
 from tracardi.domain.resource_metadata import ResourceMetadata
 from tracardi.service.plugin.domain.register import Plugin
 from tracardi.service.plugin.plugin_install import install_remote_plugin
@@ -140,7 +139,6 @@ async def get_available_services(module: str):
 
 @router.post("/tpro/resource", tags=["tpro"], include_in_schema=server.expose_gui_api)
 async def save_tracardi_pro_resource(resource: Resource, metadata: ResourceMetadata):
-
     """
     Adds new Tracardi PRO resource
     """
@@ -157,38 +155,53 @@ async def save_tracardi_pro_resource(resource: Resource, metadata: ResourceMetad
     result = await StorageFor(record).index().save()
     await storage.driver.resource.refresh()
 
+    return result
+
+
+@router.post("/tpro/microservice", tags=["tpro"], include_in_schema=server.expose_gui_api)
+async def save_tracardi_pro_microservice(resource: Resource, microservice: TProMicroserviceResource):
+    """
+    Adds new Tracardi PRO resource
+    """
+
+    def _remove_redundant_data(credentials):
+        credentials.pop('name', None)
+        credentials.pop('description', None)
+        return credentials
+
+    resource.credentials.production = _remove_redundant_data(resource.credentials.production)
+    resource.credentials.test = _remove_redundant_data(resource.credentials.test)
+
+    production_credentials = TProMicroserviceCredentials(**resource.credentials.production)
+
+    record = ResourceRecord.encode(resource)
+    result = await StorageFor(record).index().save()
+    await storage.driver.resource.refresh()
+
     # Create plugin
 
-    if metadata.has_microservice_plugin():
-        credentials = dotty(resource.credentials.production)
+    if not microservice.service.id or not production_credentials.is_configured():
+        raise AssertionError("Microservice Host, Token or Service not configured")
 
-        microservice_plugin_url = credentials[metadata.plugin[0]].strip('/')
-        microservice_token = credentials[metadata.plugin[1]]
-        microservice_service_id = credentials[metadata.plugin[2]]
+    microservice_plugin_url = f"{production_credentials.url}/plugin/registry?service_id={microservice.service.id}"
 
-        if not microservice_service_id or not microservice_service_id or not microservice_token:
-            raise AssertionError("Microservice Host, Token or Service not configured")
+    async with HttpClient(3, 200, headers={
+        'X-Token': production_credentials.token
+    }) as client:
+        async with client.get(url=microservice_plugin_url) as response:
+            plugin = await response.json()
+            plugin = Plugin(**plugin)
 
-        microservice_plugin_url = f"{microservice_plugin_url}/plugin/registry?service_id={microservice_service_id}"
+            plugin.spec.microservice.service.id = microservice.service.id
+            plugin.spec.microservice.service.name = microservice.service.name
+            # Set credentials, exclude service data
+            plugin.spec.microservice.server.credentials = resource.credentials
+            # Configure microservice to be connected with created resource
+            plugin.spec.microservice.server.resource.name = resource.name
+            plugin.spec.microservice.server.resource.id = resource.id
+            # Plugin resources
+            plugin.spec.microservice.plugin.resource = microservice.credentials
 
-        async with HttpClient(3, 200, headers={
-            'X-Token': microservice_token
-        }) as client:
-            async with client.get(url=microservice_plugin_url) as response:
-                plugin = await response.json()
-                plugin = Plugin(**plugin)
-
-                # Select current resource as production resource
-                tpro_resource_creds = TProMicroserviceResource(**resource.credentials.production)
-
-                plugin.spec.microservice.service.id = tpro_resource_creds.service.id
-                plugin.spec.microservice.service.name = tpro_resource_creds.service.name
-                # Set credentials, exclude service data
-                plugin.spec.microservice.server.credentials = tpro_resource_creds.credentials
-                # Configure microservice to be connected with created resource
-                plugin.spec.microservice.server.resource.name = resource.name
-                plugin.spec.microservice.server.resource.id = resource.id
-
-                await install_remote_plugin(plugin)
+            await install_remote_plugin(plugin)
 
     return result
