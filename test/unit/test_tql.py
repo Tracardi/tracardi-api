@@ -6,11 +6,13 @@ from tracardi.domain.flow import Flow, FlowSchema
 from tracardi.domain.resource import Resource
 from tracardi.process_engine.tql.parser import Parser
 from tracardi.process_engine.tql.transformer.expr_transformer import ExprTransformer
+from lark.exceptions import VisitError
+import pytest
 
 payload = {
     "a": {
         "b": 1,
-        "c": [1, 2, 3],
+        "c": [1, 2, 3, "4"],
         "d": {"aa": 1},
         "e": "test",
         'f': 1,
@@ -427,27 +429,87 @@ def test_should_parse_offset():
     tree = parser.parse("datetime.timezone(payload@a.i, \"europe/warsaw\") < now(\"europe/paris\")")
     assert ExprTransformer(dot=dot).transform(tree)
 
-    # missing field
-
-    tree = parser.parse("datetime.offset(payload@a.missing, \"-1m\") < now()")
-    assert not ExprTransformer(dot=dot).transform(tree)
-
-    # None field
-
-    tree = parser.parse("datetime.offset(payload@a.h, \"-1m\") < now()")
-    assert not ExprTransformer(dot=dot).transform(tree)
+    with pytest.raises(VisitError):
+        tree = parser.parse("datetime.offset(payload@a.missing, \"-1m\") < now()")
+        ExprTransformer(dot=dot).transform(tree)
+    with pytest.raises(VisitError):
+        tree = parser.parse("datetime.offset(payload@a.h, \"-1m\") < now()")
+        ExprTransformer(dot=dot).transform(tree)
 
 
 def test_should_parse_contains():
-    tree = parser.parse('payload@text CONTAINS "Hello"')
+    # test string-string
+    tree = parser.parse('payload@a.text CONTAINS "ello"')
     assert ExprTransformer(dot=dot).transform(tree)
+    tree = parser.parse('payload@a.text CONTAINS "something"')
+    assert not ExprTransformer(dot=dot).transform(tree)
+    # test array-string
+    tree = parser.parse('payload@a.c CONTAINS "4"')
+    assert ExprTransformer(dot=dot).transform(tree)
+    tree = parser.parse('payload@a.c CONTAINS "5"')
+    assert not ExprTransformer(dot=dot).transform(tree)
+    # test bad types
+    with pytest.raises(VisitError):
+        tree = parser.parse('payload@a.b CONTAINS 0')
+        ExprTransformer(dot=dot).transform(tree)
+    with pytest.raises(VisitError):
+        tree = parser.parse('payload@a.g CONTAINS null')
+        ExprTransformer(dot=dot).transform(tree)
+    with pytest.raises(VisitError):
+        tree = parser.parse('payload@a.h CONTAINS 4')
+        ExprTransformer(dot=dot).transform(tree)
+    with pytest.raises(VisitError):
+        tree = parser.parse('payload@a.k CONTAINS "5"')
+        ExprTransformer(dot=dot).transform(tree)
 
 
 def test_should_parse_starts_with():
-    tree = parser.parse('payload@text STARTS WITH "Hello"')
+    # test string-string
+    tree = parser.parse('payload@a.text STARTS WITH "Hello"')
     assert ExprTransformer(dot=dot).transform(tree)
+    tree = parser.parse('payload@a.text STARTS WITH "ello"')
+    assert not ExprTransformer(dot=dot).transform(tree)
+    # test array-[int/str]
+    tree = parser.parse('payload@a.c STARTS WITH 1')
+    assert ExprTransformer(dot=dot).transform(tree)
+    tree = parser.parse('payload@a.c STARTS WITH "5"')
+    assert not ExprTransformer(dot=dot).transform(tree)
+    # test bad types
+    with pytest.raises(VisitError):
+        tree = parser.parse('payload@a.b STARTS WITH 0')
+        ExprTransformer(dot=dot).transform(tree)
+    with pytest.raises(VisitError):
+        tree = parser.parse('payload@a.g STARTS WITH null')
+        ExprTransformer(dot=dot).transform(tree)
+    with pytest.raises(VisitError):
+        tree = parser.parse('payload@a.h STARTS WITH 4')
+        ExprTransformer(dot=dot).transform(tree)
+    with pytest.raises(VisitError):
+        tree = parser.parse('payload@a.k STARTS WITH "5"')
+        ExprTransformer(dot=dot).transform(tree)
 
 
 def test_should_parse_ends_with():
-    tree = parser.parse('payload@text ENDS WITH "world"')
+    # test string-string
+    tree = parser.parse('payload@a.text ENDS WITH "world"')
     assert ExprTransformer(dot=dot).transform(tree)
+    tree = parser.parse('payload@a.text ENDS WITH "worl"')
+    assert not ExprTransformer(dot=dot).transform(tree)
+    # test array-[int/str]
+    tree = parser.parse('payload@a.c ENDS WITH "4"')
+    assert ExprTransformer(dot=dot).transform(tree)
+    tree = parser.parse('payload@a.c ENDS WITH "2"')
+    assert not ExprTransformer(dot=dot).transform(tree)
+    # test bad types
+    with pytest.raises(VisitError):
+        tree = parser.parse('payload@a.b ENDS WITH 0')
+        ExprTransformer(dot=dot).transform(tree)
+    with pytest.raises(VisitError):
+        tree = parser.parse('payload@a.g ENDS WITH null')
+        ExprTransformer(dot=dot).transform(tree)
+    with pytest.raises(VisitError):
+        tree = parser.parse('payload@a.h ENDS WITH 4')
+        ExprTransformer(dot=dot).transform(tree)
+    with pytest.raises(VisitError):
+        tree = parser.parse('payload@a.k ENDS WITH "5"')
+        ExprTransformer(dot=dot).transform(tree)
