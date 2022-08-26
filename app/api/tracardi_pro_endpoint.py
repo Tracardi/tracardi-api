@@ -191,7 +191,7 @@ async def save_tracardi_pro_microservice(resource: Resource, microservice: TProM
         async with client.get(url=microservice_plugin_url) as response:
             plugin = await response.json()
             plugin = Plugin(**plugin)
-
+            print(plugin.spec.microservice)
             plugin.spec.microservice.service.id = microservice.service.id
             plugin.spec.microservice.service.name = microservice.service.name
             # Set credentials, exclude service data
