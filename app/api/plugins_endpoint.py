@@ -60,7 +60,8 @@ async def plugins():
 async def validate_plugin_configuration(plugin_id: str,
                                         action_id: Optional[str] = "",
                                         service_id: Optional[str] = "",
-                                        config: dict = None):
+                                        config: dict = None,
+                                        credentials: dict = None):
     """
     Validates given configuration (obj) of plugin with given ID (str)
     """
@@ -83,16 +84,20 @@ async def validate_plugin_configuration(plugin_id: str,
             # Run validation thru remote validator not local microservice plugin
 
             microservice = action_record.plugin.spec.microservice
-            microservice_url = f"{microservice.server.credentials['url']}/plugin/validate" \
+            production_credentials = microservice.server.credentials.production
+            microservice_url = f"{production_credentials['url']}/plugin/validate" \
                                f"?service_id={service_id}" \
                                f"&action_id={action_id}"
 
             async with aiohttp.ClientSession(headers={
-                'X-Token': microservice.server.credentials['token']
+                'X-Token': production_credentials['token']
             }) as client:
                 async with client.post(
                         url=microservice_url,
-                        json=config) as remote_response:
+                        json={
+                            "config": config,
+                            "credentials": credentials
+                        }) as remote_response:
                     return JSONResponse(
                         status_code=remote_response.status,
                         content=jsonable_encoder(await remote_response.json())
