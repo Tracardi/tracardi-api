@@ -141,6 +141,8 @@ async def save_tracardi_pro_resource(pro: ProService):
     """
     Adds new Tracardi PRO resource
     """
+    result = {}
+
     if 'resource' in pro.service.metadata.submit:
         resource = Resource.from_pro_service(pro)
 
@@ -153,15 +155,15 @@ async def save_tracardi_pro_resource(pro: ProService):
         resource.credentials.test = _remove_redundant_data(resource.credentials.test)
 
         record = ResourceRecord.encode(resource)
-        result = await StorageFor(record).index().save()
+        result['resource'] = await StorageFor(record).index().save()
         await storage.driver.resource.refresh()
 
-        return result
+    if 'plugin' in pro.service.metadata.submit and pro.plugin is not None:
+        plugin = Plugin(**pro.plugin)
+        result['plugin'] = await storage.driver.action.save_plugin(plugin)
+        await storage.driver.action.refresh()
 
-    elif 'plugin' in pro.service.metadata.submit:
-        pass
-
-    return None
+    return result
 
 
 @router.post("/tpro/install/microservice", tags=["tpro"], include_in_schema=server.expose_gui_api)
