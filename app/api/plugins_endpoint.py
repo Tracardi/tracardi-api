@@ -90,7 +90,7 @@ async def validate_plugin_configuration(plugin_id: str,
                                f"&action_id={action_id}"
 
             async with aiohttp.ClientSession(headers={
-                'X-Token': production_credentials['token']
+                'Authorization': f"Bearer {production_credentials['token']}"
             }) as client:
                 async with client.post(
                         url=microservice_url,

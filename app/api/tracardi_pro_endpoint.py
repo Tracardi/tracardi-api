@@ -186,11 +186,15 @@ async def save_tracardi_pro_microservice(resource: Resource, microservice: TProM
     microservice_plugin_url = f"{production_credentials.url}/plugin/registry?service_id={microservice.service.id}"
 
     async with HttpClient(3, 200, headers={
-        'X-Token': production_credentials.token
+        'Authorization': f"Bearer {production_credentials.token}"
     }) as client:
         async with client.get(url=microservice_plugin_url) as response:
-            plugin = await response.json()
-            plugin = Plugin(**plugin)
+            data = await response.json()
+
+            if response.status != 200:
+                raise HTTPException(status_code=response.status, detail=data)
+
+            plugin = Plugin(**data)
 
             plugin.metadata.name = resource.name
 
