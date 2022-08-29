@@ -6,8 +6,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from pydantic import ValidationError
 
 from app.api.auth.permissions import Permissions
-from app.api.domain.tpro_microservice_resource import TProMicroserviceResource, TProMicroserviceCredentials
-from tracardi.domain.resource_metadata import ResourceMetadata
+from tracardi.domain.pro_service_form_data import TProMicroserviceCredentials, ProService, ProMicroService
 from tracardi.service.plugin.domain.register import Plugin
 from tracardi.service.plugin.plugin_install import install_remote_plugin
 from tracardi.service.storage.factory import StorageFor
@@ -137,32 +136,41 @@ async def get_available_services(module: str):
         raise HTTPException(detail=e.details(), status_code=403 if e.code().name == 'UNAUTHENTICATED' else 500)
 
 
-@router.post("/tpro/resource", tags=["tpro"], include_in_schema=server.expose_gui_api)
-async def save_tracardi_pro_resource(resource: Resource, metadata: ResourceMetadata):
+@router.post("/tpro/install", tags=["tpro"], include_in_schema=server.expose_gui_api)
+async def save_tracardi_pro_resource(pro: ProService):
+    """
+    Adds new Tracardi PRO resource
+    """
+    if 'resource' in pro.service.metadata.submit:
+        resource = Resource.from_pro_service(pro)
+
+        def _remove_redundant_data(credentials):
+            credentials.pop('name', None)
+            credentials.pop('description', None)
+            return credentials
+
+        resource.credentials.production = _remove_redundant_data(resource.credentials.production)
+        resource.credentials.test = _remove_redundant_data(resource.credentials.test)
+
+        record = ResourceRecord.encode(resource)
+        result = await StorageFor(record).index().save()
+        await storage.driver.resource.refresh()
+
+        return result
+
+    elif 'plugin' in pro.service.metadata.submit:
+        pass
+
+    return None
+
+
+@router.post("/tpro/install/microservice", tags=["tpro"], include_in_schema=server.expose_gui_api)
+async def save_tracardi_pro_microservice(pro: ProMicroService):
     """
     Adds new Tracardi PRO resource
     """
 
-    def _remove_redundant_data(credentials):
-        credentials.pop('name', None)
-        credentials.pop('description', None)
-        return credentials
-
-    resource.credentials.production = _remove_redundant_data(resource.credentials.production)
-    resource.credentials.test = _remove_redundant_data(resource.credentials.test)
-
-    record = ResourceRecord.encode(resource)
-    result = await StorageFor(record).index().save()
-    await storage.driver.resource.refresh()
-
-    return result
-
-
-@router.post("/tpro/microservice", tags=["tpro"], include_in_schema=server.expose_gui_api)
-async def save_tracardi_pro_microservice(resource: Resource, microservice: TProMicroserviceResource):
-    """
-    Adds new Tracardi PRO resource
-    """
+    resource = Resource.from_pro_service(pro)
 
     def _remove_redundant_data(credentials):
         credentials.pop('name', None)
@@ -180,10 +188,10 @@ async def save_tracardi_pro_microservice(resource: Resource, microservice: TProM
 
     # Create plugin
 
-    if not microservice.service.id or not production_credentials.is_configured():
+    if not pro.microservice.service.id or not production_credentials.is_configured():
         raise AssertionError("Microservice Host, Token or Service not configured")
 
-    microservice_plugin_url = f"{production_credentials.url}/plugin/registry?service_id={microservice.service.id}"
+    microservice_plugin_url = f"{production_credentials.url}/plugin/registry?service_id={pro.microservice.service.id}"
 
     async with HttpClient(3, 200, headers={
         'Authorization': f"Bearer {production_credentials.token}"
@@ -198,15 +206,15 @@ async def save_tracardi_pro_microservice(resource: Resource, microservice: TProM
 
             plugin.metadata.name = resource.name
 
-            plugin.spec.microservice.service.id = microservice.service.id
-            plugin.spec.microservice.service.name = microservice.service.name
+            plugin.spec.microservice.service.id = pro.microservice.service.id
+            plugin.spec.microservice.service.name = pro.microservice.service.name
             # Set credentials, exclude service data
             plugin.spec.microservice.server.credentials = resource.credentials
             # Configure microservice to be connected with created resource
             plugin.spec.microservice.server.resource.name = resource.name
             plugin.spec.microservice.server.resource.id = resource.id
             # Plugin resources
-            plugin.spec.microservice.plugin.resource = microservice.credentials
+            plugin.spec.microservice.plugin.resource = pro.microservice.credentials
 
             await install_remote_plugin(plugin)
 
