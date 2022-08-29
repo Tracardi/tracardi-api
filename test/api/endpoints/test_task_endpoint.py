@@ -13,10 +13,17 @@ def _add_task(task=None):
             "status": 'pending',
             "progress": 1.1,
             "type": "test",
-            "params": {}
+            "params": {
+                "name": "test-name",
+                "age": 0
+            }
         }
 
         response = endpoint.post("/task", task)
+        result = response.json()
+
+        assert not result["errors"]
+        assert result["ids"] == ["test-id"]
         assert response.status_code == 200
 
         return response
@@ -69,22 +76,23 @@ def test_should_add_new_task():
         assert result["ids"] == ["test-id"]
 
         task = {
-            "id": "test-id",
+            "id": "test-id1",
             "name": "second-task",
             "task_id": "test-task",
             "timestamp": "2022-08-25T20:18:09.278Z",
             "status": 'pending',
             "progress": 1.1,
             "type": "test",
-            "params": {}
+            "params": {
+                "name": "john",
+                "age": 25}
         }
 
-        result = endpoint.post("/task", task)
-        result = result.json()
-
+        response = endpoint.post("/task", task)
+        result = response.json()
         assert not result["errors"]
         assert result["saved"] == 1
-        assert result["ids"] == ["test-id"]
+        assert result["ids"] == ["test-id1"]
 
     finally:
         endpoint.delete("/task/test-task")
