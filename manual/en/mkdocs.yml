@@ -112,6 +112,8 @@ nav:
                   - flow/actions/update_event_action.md
                   - flow/actions/update_session_action.md
               - flow/actions/if_action.md
+              - flow/actions/elastic_email_contact_action.md
+              - flow/actions/elastic_email_transactional_action.md
               - flow/actions/detect_client_agent_action.md
               - flow/actions/inject_action.md
               - flow/actions/event_scheduler_action.md
