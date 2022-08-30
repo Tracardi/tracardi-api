@@ -432,9 +432,55 @@ def test_should_parse_offset():
     with pytest.raises(VisitError):
         tree = parser.parse("datetime.offset(payload@a.missing, \"-1m\") < now()")
         ExprTransformer(dot=dot).transform(tree)
+
+    # payload@a.missing is Missing so it should return False
+    tree = parser.parse("payload@a.missing EXISTS and datetime.offset(payload@a.missing, \"-1m\") < now()")
+    assert not ExprTransformer(dot=dot).transform(tree)
+
+
+def test_should_parse_empty_with_missing_value():
+    # payload@a.missing is Missing so it should return False
+    tree = parser.parse("payload@a.missing EMPTY")
+    assert ExprTransformer(dot=dot).transform(tree)
+
+    tree = parser.parse("payload@a.missing NOT EMPTY and datetime.offset(payload@a.missing, \"-1m\") < now()")
+    assert not ExprTransformer(dot=dot).transform(tree)
+
+
+def test_should_run_or_with_missing_value():
+    # Missing Value OR Missing Value
+    tree = parser.parse(
+        "datetime.offset(payload@a.missing, \"-1m\") < now() OR datetime.offset(payload@a.missing, \"-1m\") < now()")
+    with pytest.raises(VisitError):
+        ExprTransformer(dot=dot).transform(tree)
+
+
+def test_should_run_and_or_with_missing_value():
+    # Missing Value OR Missing Value -> MISSING VALUE
+    tree = parser.parse(
+        "datetime.offset(payload@a.missing, \"-1m\") < now() OR payload@a.h is NULL")
+    with pytest.raises(VisitError):
+        ExprTransformer(dot=dot).transform(tree)
+
+    # (FALSE AND MISSING) OR TRUE -> FALSE OR TRUE -> TRUE
+    tree = parser.parse(
+        "(payload@a.missing EXISTS AND datetime.offset(payload@a.missing, \"-1m\") < now()) OR payload@a.h is NULL")
+    assert ExprTransformer(dot=dot).transform(tree)
+
+    # TRUE OR MISSING_VALUE -> TRUE
+    tree = parser.parse(
+        "payload@a.h IS NULL OR datetime.offset(payload@a.missing, \"-1m\") > 0")
+    assert ExprTransformer(dot=dot).transform(tree)
+
+
+def test_should_parse_offset_with_null_value():
     with pytest.raises(VisitError):
         tree = parser.parse("datetime.offset(payload@a.h, \"-1m\") < now()")
         ExprTransformer(dot=dot).transform(tree)
+
+    # payload@a.h is NULL so it should return False
+    tree = parser.parse("payload@a.h is not null AND datetime.offset(payload@a.h, \"-1m\") < now()")
+    assert not ExprTransformer(dot=dot).transform(tree)
 
 
 def test_should_parse_contains():
@@ -513,3 +559,20 @@ def test_should_parse_ends_with():
     with pytest.raises(VisitError):
         tree = parser.parse('payload@a.k ENDS WITH "5"')
         ExprTransformer(dot=dot).transform(tree)
+
+
+def test_should_use_exists_before_checking_reference_to_missing_value():
+    tree = parser.parse("payload@a.missing EXISTS AND payload@a.missing == 1")
+    print(ExprTransformer(dot=dot).transform(tree))
+
+
+def test_should_use_exists_before_checking_the_missing_value_in_func():
+    # payload@a.missing does not exist so it should return False
+    tree = parser.parse("payload@a.missing EXISTS AND datetime.offset(payload@a.missing, \"-1m\") < now()")
+    assert not ExprTransformer(dot=dot).transform(tree)
+
+
+def test_should_use_exists_before_checking_the_missing_value_in_complex_condition():
+    tree = parser.parse(
+        "(payload@a.missing EXISTS AND datetime.offset(payload@a.missing, \"-1m\") < now()) OR payload@a.text EXISTS")
+    assert ExprTransformer(dot=dot).transform(tree)
