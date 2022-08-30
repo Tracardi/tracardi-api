@@ -4,7 +4,6 @@ from fastapi import HTTPException, Depends
 from fastapi.responses import Response
 from tracardi.domain.session import Session
 from tracardi.service.storage.driver import storage
-from tracardi.service.storage.factory import storage_manager
 from .auth.permissions import Permissions
 from ..config import server
 
@@ -43,10 +42,7 @@ async def import_profiles(sessions: List[Session]):
     """
     Adds given sessions to database
     """
-    try:
-        return await storage.driver.session.save_sessions(sessions)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    return await storage.driver.session.save_sessions(sessions)
 
 
 @router.get("/session/{id}",
@@ -58,10 +54,7 @@ async def get_session_by_id(id: str, response: Response):
     """
     Returns session with given ID (str)
     """
-    try:
-        result = await storage_manager("session").load(id)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    result = await storage.driver.session.load(id)
 
     if result is None:
         response.status_code = 404
@@ -90,11 +83,9 @@ async def delete_session(id: str, response: Response):
             dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer"]))],
             include_in_schema=server.expose_gui_api)
 async def get_nth_last_session_for_profile(profile_id: str, n: Optional[int] = 0):
-    try:
-        result = await storage.driver.session.get_nth_last_session(profile_id, n + 1)
-        return {"id": result["id"], "duration": result["metadata"]["time"]["duration"],
-                "insert": result["metadata"]["time"]["insert"]} if result is not None else \
-            None
-
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    result = await storage.driver.session.get_nth_last_session(profile_id, n + 1)
+    return {
+        "id": result["id"],
+        "duration": result["metadata"]["time"]["duration"],
+        "insert": result["metadata"]["time"]["insert"]} \
+        if result is not None else None

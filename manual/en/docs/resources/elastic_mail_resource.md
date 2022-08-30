@@ -3,6 +3,7 @@ To use Elastic mail you will need an API Key from their dashboard.
 To obtain Email Marketing API KEY: 
 
 1. Log in to Elastic Email
+
 2. Go to Settings
 3. Click Manage API Keys
 4. Click Create in the upper right corner

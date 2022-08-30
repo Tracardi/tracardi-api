@@ -1,3 +1,6 @@
+from typing import Optional
+
+import aiohttp
 from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import ValidationError
 from starlette.responses import JSONResponse
@@ -43,8 +46,6 @@ async def get_data_for_plugin(module: str, endpoint_function: str, request: Requ
         raise e
     except AttributeError as e:
         raise HTTPException(status_code=404, detail=str(e))
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.get("/action/plugins", tags=["action"], include_in_schema=server.expose_gui_api)
@@ -55,17 +56,20 @@ async def plugins():
     return await storage.driver.action.load_all()
 
 
-@router.post("/action/{id}/config/validate", tags=["action"], include_in_schema=server.expose_gui_api)
-async def validate_plugin_configuration(id: str, config: dict = None):
+@router.post("/plugin/{plugin_id}/config/validate", tags=["action"], include_in_schema=server.expose_gui_api)
+async def validate_plugin_configuration(plugin_id: str,
+                                        action_id: Optional[str] = "",
+                                        service_id: Optional[str] = "",
+                                        config: dict = None):
     """
     Validates given configuration (obj) of plugin with given ID (str)
     """
 
     try:
-        record = await storage.driver.action.load_by_id(id)
+        record = await storage.driver.action.load_by_id(plugin_id)
 
         if record is None:
-            raise HTTPException(status_code=404, detail=f"No action plugin for id `{id}`")
+            raise HTTPException(status_code=404, detail=f"No action plugin for id `{plugin_id}`")
 
         try:
             action_record = FlowActionPluginRecord(**record)
@@ -73,15 +77,40 @@ async def validate_plugin_configuration(id: str, config: dict = None):
             raise HTTPException(status_code=404, detail="Action plugin id `{id}` could not be"
                                                         "validated and mapped into FlowActionPluginRecord object."
                                                         f"Internal error: {str(e)}")
+        # todo move to action_record class
 
-        validate = action_record.get_validator()
+        if action_record.plugin.metadata.remote is True:
+            # Run validation thru remote validator not local microservice plugin
 
-        if config is None:
-            raise HTTPException(status_code=404, detail="No validate function provided. "
-                                                        "Could not validate on server side.")
-        if is_coroutine(validate):
-            return await validate(config)
-        return validate(config)
+            microservice = action_record.plugin.spec.microservice
+            microservice_url = f"{microservice.resource.current.url}/plugin/validate" \
+                               f"?service_id={service_id}" \
+                               f"&action_id={action_id}"
+
+            async with aiohttp.ClientSession(headers={
+                # todo add authorization
+            }) as client:
+                async with client.post(
+                        url=microservice_url,
+                        json=config) as remote_response:
+                    return JSONResponse(
+                        status_code=remote_response.status,
+                        content=jsonable_encoder(await remote_response.json())
+                    )
+
+        else:
+
+            # Run validation locally
+
+            validate = action_record.get_validator()
+
+            if config is None:
+                raise HTTPException(status_code=404, detail="No validate function provided. "
+                                                            "Could not validate on server side.")
+
+            if is_coroutine(validate):
+                return await validate(config)
+            return validate(config)
 
     except HTTPException as e:
         raise e
@@ -92,5 +121,3 @@ async def validate_plugin_configuration(id: str, config: dict = None):
             status_code=422,
             content=jsonable_encoder(convert_errors(e))
         )
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))

@@ -1,9 +1,8 @@
 from datetime import datetime
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from app.config import server
 from tracardi.service.storage.driver import storage
-from elasticsearch import ElasticsearchException
 from .auth.permissions import Permissions
 
 router = APIRouter(
@@ -16,10 +15,7 @@ async def get_elastic_indices():
     """
     Returns list of Elasticsearch indices
     """
-    try:
-        return await storage.driver.raw.indices()
-    except ElasticsearchException as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    return await storage.driver.raw.indices()
 
 
 @router.get("/debug/server/time", tags=["debug"], include_in_schema=server.expose_gui_api)

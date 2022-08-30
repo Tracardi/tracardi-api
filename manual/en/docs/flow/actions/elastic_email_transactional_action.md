@@ -103,7 +103,3 @@ On ElasticEmail site, you can turn on the test mode after clicking on you userna
 In the test mode, you can generate test API key. You can use it in Tracardi for test purposes - 
 messages won't be sent, but ElasticEmail will act like they are, so you can test your
 configuration without being charged a single cent.
-
-
-
-

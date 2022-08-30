@@ -2,10 +2,14 @@ import logging
 from collections import OrderedDict
 
 import grpc
+from dotty_dict import dotty
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import ValidationError
 
 from app.api.auth.permissions import Permissions
+from tracardi.domain.resource_metadata import ResourceMetadata
+from tracardi.service.plugin.domain.register import Plugin
+from tracardi.service.plugin.plugin_install import install_remote_plugin
 from tracardi.service.storage.factory import StorageFor
 
 from app.api.domain.credentials import Credentials
@@ -16,6 +20,7 @@ from app.api.proto.tracard_pro_client import TracardiProClient
 from tracardi.exceptions.log_handler import log_handler
 from tracardi.service.storage.driver import storage
 from app.config import server
+from tracardi.service.tracardi_http_client import HttpClient
 
 logging.basicConfig(level=logging.ERROR)
 logger = logging.getLogger(__name__)
@@ -69,16 +74,16 @@ async def tracardi_pro_sign_in(credentials: Credentials):
             result = await storage.driver.pro.save_pro_service_endpoint(sign_up_record)
 
             if result.saved == 0:
-                raise HTTPException(status_code=500, detail="Could not save Tracardi Pro data.")
+                raise ConnectionError("Could not save Tracardi Pro data.")
 
         return True
     except PermissionError as e:
         msg = "Access denied due to server error:  {}".format(str(e))
-        logger.warning(msg)
+        logger.warning(msg, exc_info=True)
         raise HTTPException(detail=msg,
                             status_code=403)  # Must be 403 because 401 logs out gui
     except Exception as e:
-        logger.error(str(e))
+        logger.error(str(e), exc_info=True)
         raise HTTPException(detail=str(e), status_code=403)  # Must be 403 because 401 logs out gui
 
 
@@ -94,7 +99,7 @@ async def tracardi_pro_sign_up(sign_up_data: SignUpData):
         result = await storage.driver.pro.save_pro_service_endpoint(sign_up_record)
 
         if result.saved == 0:
-            raise HTTPException(status_code=500, detail="Could not save Tracardi Pro endpoint.")
+            raise ConnectionError("Could not save Tracardi Pro endpoint.")
 
         return True
 
@@ -102,8 +107,6 @@ async def tracardi_pro_sign_up(sign_up_data: SignUpData):
         raise HTTPException(
             detail="Access denied due to RPC error \"{}\". Error status: {}".format(e.details(), e.code().name),
             status_code=403)  # Must be 403 because 401 logs out gui
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=repr(e))
 
 
 @router.get("/tpro/available_services", tags=["tpro"], include_in_schema=server.expose_gui_api)
@@ -135,7 +138,8 @@ async def get_available_services(module: str):
 
 
 @router.post("/tpro/resource", tags=["tpro"], include_in_schema=server.expose_gui_api)
-async def save_tracardi_pro_resource(resource: Resource):
+async def save_tracardi_pro_resource(resource: Resource, metadata: ResourceMetadata):
+
     """
     Adds new Tracardi PRO resource
     """
@@ -148,10 +152,37 @@ async def save_tracardi_pro_resource(resource: Resource):
     resource.credentials.production = _remove_redundant_data(resource.credentials.production)
     resource.credentials.test = _remove_redundant_data(resource.credentials.test)
 
-    try:
-        record = ResourceRecord.encode(resource)
-        result = await StorageFor(record).index().save()
-        await storage.driver.resource.refresh()
-        return result
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    record = ResourceRecord.encode(resource)
+    result = await StorageFor(record).index().save()
+    await storage.driver.resource.refresh()
+
+    # Create plugin
+
+    if metadata.has_microservice_plugin():
+        credentials = dotty(resource.credentials.production)
+
+        microservice_plugin_url = credentials[metadata.plugin[0]].strip('/')
+        microservice_token = credentials[metadata.plugin[1]]
+        microservice_service_id = credentials[metadata.plugin[2]]
+
+        if not microservice_service_id or not microservice_service_id or not microservice_token:
+            raise AssertionError("Microservice Host, Token or Service not configured")
+
+        microservice_plugin_url = f"{microservice_plugin_url}/plugin/registry?service_id={microservice_service_id}"
+
+        async with HttpClient(3, 200, headers={
+            # todo add token
+        }) as client:
+            async with client.get(url=microservice_plugin_url) as response:
+                plugin = await response.json()
+                plugin = Plugin(**plugin)
+
+                # Configure microservice to be connected with created resource
+                plugin.spec.microservice.resource.name = resource.name
+                plugin.spec.microservice.resource.id = resource.id
+                # Select current resource as production resource
+                plugin.spec.microservice.resource.current = resource.credentials.production
+
+                await install_remote_plugin(plugin)
+
+    return result

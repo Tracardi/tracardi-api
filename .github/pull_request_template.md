@@ -24,4 +24,4 @@ Pull Request description
 We need your declaration that your contribution is MIT licensed without it, we can not merge your code.
 To make clear that you license your contribution under the MIT you have to acknowledge this by using the following check-box.
 
- - [ ] I hereby declare this contribution to be licenced under the [MIT license](https://opensource.org/licenses/MIT)
+ - [ ] I hereby declare this contribution to be licensed under the [MIT license](https://opensource.org/licenses/MIT)
