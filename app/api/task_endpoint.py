@@ -71,4 +71,6 @@ async def delete_task(id: str):
 
 @router.post("/task", tags=["task"], include_in_schema=server.expose_gui_api)
 async def upsert_task(task: Task):
-    return await storage.driver.task.upsert_task(task)
+    result = await storage.driver.task.upsert_task(task)
+    await storage.driver.task.refresh()
+    return result

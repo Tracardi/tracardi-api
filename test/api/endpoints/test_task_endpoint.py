@@ -19,14 +19,10 @@ def _add_task(task=None):
             }
         }
 
-        response = endpoint.post("/task", task)
-        result = response.json()
+    response = endpoint.post("/task", task)
+    assert response.status_code == 200
 
-        assert not result["errors"]
-        assert result["ids"] == ["test-id"]
-        assert response.status_code == 200
-
-        return response
+    return response
 
 
 def test_should_load_task():
@@ -88,7 +84,7 @@ def test_should_add_new_task():
                 "age": 25}
         }
 
-        response = endpoint.post("/task", task)
+        response = _add_task(task)
         result = response.json()
         assert not result["errors"]
         assert result["saved"] == 1
