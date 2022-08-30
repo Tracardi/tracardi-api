@@ -8,6 +8,7 @@ from starlette.responses import JSONResponse
 from app.api.auth.permissions import Permissions
 from app.config import server
 from app.service.error_converter import convert_errors
+from tracardi.domain.config_validation_payload import ConfigValidationPayload
 from tracardi.domain.record.flow_action_plugin_record import FlowActionPluginRecord
 from tracardi.service.module_loader import is_coroutine
 from tracardi.service.storage.driver import storage
@@ -60,8 +61,7 @@ async def plugins():
 async def validate_plugin_configuration(plugin_id: str,
                                         action_id: Optional[str] = "",
                                         service_id: Optional[str] = "",
-                                        config: dict = None,
-                                        credentials: dict = None):
+                                        config: ConfigValidationPayload = None):
     """
     Validates given configuration (obj) of plugin with given ID (str)
     """
@@ -109,13 +109,13 @@ async def validate_plugin_configuration(plugin_id: str,
 
             validate = action_record.get_validator()
 
-            if config is None:
+            if config.config is None:
                 raise HTTPException(status_code=404, detail="No validate function provided. "
                                                             "Could not validate on server side.")
 
             if is_coroutine(validate):
-                return await validate(config)
-            return validate(config)
+                return await validate(config.config)
+            return validate(config.config)
 
     except HTTPException as e:
         raise e

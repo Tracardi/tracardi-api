@@ -6,11 +6,13 @@ from tracardi.domain.flow import Flow, FlowSchema
 from tracardi.domain.resource import Resource
 from tracardi.process_engine.tql.parser import Parser
 from tracardi.process_engine.tql.transformer.expr_transformer import ExprTransformer
+from lark.exceptions import VisitError
+import pytest
 
 payload = {
     "a": {
         "b": 1,
-        "c": [1, 2, 3],
+        "c": [1, 2, 3, "4"],
         "d": {"aa": 1},
         "e": "test",
         'f': 1,
@@ -427,27 +429,150 @@ def test_should_parse_offset():
     tree = parser.parse("datetime.timezone(payload@a.i, \"europe/warsaw\") < now(\"europe/paris\")")
     assert ExprTransformer(dot=dot).transform(tree)
 
-    # missing field
+    with pytest.raises(VisitError):
+        tree = parser.parse("datetime.offset(payload@a.missing, \"-1m\") < now()")
+        ExprTransformer(dot=dot).transform(tree)
 
-    tree = parser.parse("datetime.offset(payload@a.missing, \"-1m\") < now()")
+    # payload@a.missing is Missing so it should return False
+    tree = parser.parse("payload@a.missing EXISTS and datetime.offset(payload@a.missing, \"-1m\") < now()")
     assert not ExprTransformer(dot=dot).transform(tree)
 
-    # None field
 
-    tree = parser.parse("datetime.offset(payload@a.h, \"-1m\") < now()")
+def test_should_parse_empty_with_missing_value():
+    # payload@a.missing is Missing so it should return False
+    tree = parser.parse("payload@a.missing EMPTY")
+    assert ExprTransformer(dot=dot).transform(tree)
+
+    tree = parser.parse("payload@a.missing NOT EMPTY and datetime.offset(payload@a.missing, \"-1m\") < now()")
+    assert not ExprTransformer(dot=dot).transform(tree)
+
+
+def test_should_run_or_with_missing_value():
+    # Missing Value OR Missing Value
+    tree = parser.parse(
+        "datetime.offset(payload@a.missing, \"-1m\") < now() OR datetime.offset(payload@a.missing, \"-1m\") < now()")
+    with pytest.raises(VisitError):
+        ExprTransformer(dot=dot).transform(tree)
+
+
+def test_should_run_and_or_with_missing_value():
+    # Missing Value OR Missing Value -> MISSING VALUE
+    tree = parser.parse(
+        "datetime.offset(payload@a.missing, \"-1m\") < now() OR payload@a.h is NULL")
+    with pytest.raises(VisitError):
+        ExprTransformer(dot=dot).transform(tree)
+
+    # (FALSE AND MISSING) OR TRUE -> FALSE OR TRUE -> TRUE
+    tree = parser.parse(
+        "(payload@a.missing EXISTS AND datetime.offset(payload@a.missing, \"-1m\") < now()) OR payload@a.h is NULL")
+    assert ExprTransformer(dot=dot).transform(tree)
+
+    # TRUE OR MISSING_VALUE -> TRUE
+    tree = parser.parse(
+        "payload@a.h IS NULL OR datetime.offset(payload@a.missing, \"-1m\") > 0")
+    assert ExprTransformer(dot=dot).transform(tree)
+
+
+def test_should_parse_offset_with_null_value():
+    with pytest.raises(VisitError):
+        tree = parser.parse("datetime.offset(payload@a.h, \"-1m\") < now()")
+        ExprTransformer(dot=dot).transform(tree)
+
+    # payload@a.h is NULL so it should return False
+    tree = parser.parse("payload@a.h is not null AND datetime.offset(payload@a.h, \"-1m\") < now()")
     assert not ExprTransformer(dot=dot).transform(tree)
 
 
 def test_should_parse_contains():
-    tree = parser.parse('payload@text CONTAINS "Hello"')
+    # test string-string
+    tree = parser.parse('payload@a.text CONTAINS "ello"')
     assert ExprTransformer(dot=dot).transform(tree)
+    tree = parser.parse('payload@a.text CONTAINS "something"')
+    assert not ExprTransformer(dot=dot).transform(tree)
+    # test array-string
+    tree = parser.parse('payload@a.c CONTAINS "4"')
+    assert ExprTransformer(dot=dot).transform(tree)
+    tree = parser.parse('payload@a.c CONTAINS "5"')
+    assert not ExprTransformer(dot=dot).transform(tree)
+    # test bad types
+    with pytest.raises(VisitError):
+        tree = parser.parse('payload@a.b CONTAINS 0')
+        ExprTransformer(dot=dot).transform(tree)
+    with pytest.raises(VisitError):
+        tree = parser.parse('payload@a.g CONTAINS null')
+        ExprTransformer(dot=dot).transform(tree)
+    with pytest.raises(VisitError):
+        tree = parser.parse('payload@a.h CONTAINS 4')
+        ExprTransformer(dot=dot).transform(tree)
+    with pytest.raises(VisitError):
+        tree = parser.parse('payload@a.k CONTAINS "5"')
+        ExprTransformer(dot=dot).transform(tree)
 
 
 def test_should_parse_starts_with():
-    tree = parser.parse('payload@text STARTS WITH "Hello"')
+    # test string-string
+    tree = parser.parse('payload@a.text STARTS WITH "Hello"')
     assert ExprTransformer(dot=dot).transform(tree)
+    tree = parser.parse('payload@a.text STARTS WITH "ello"')
+    assert not ExprTransformer(dot=dot).transform(tree)
+    # test array-[int/str]
+    tree = parser.parse('payload@a.c STARTS WITH 1')
+    assert ExprTransformer(dot=dot).transform(tree)
+    tree = parser.parse('payload@a.c STARTS WITH "5"')
+    assert not ExprTransformer(dot=dot).transform(tree)
+    # test bad types
+    with pytest.raises(VisitError):
+        tree = parser.parse('payload@a.b STARTS WITH 0')
+        ExprTransformer(dot=dot).transform(tree)
+    with pytest.raises(VisitError):
+        tree = parser.parse('payload@a.g STARTS WITH null')
+        ExprTransformer(dot=dot).transform(tree)
+    with pytest.raises(VisitError):
+        tree = parser.parse('payload@a.h STARTS WITH 4')
+        ExprTransformer(dot=dot).transform(tree)
+    with pytest.raises(VisitError):
+        tree = parser.parse('payload@a.k STARTS WITH "5"')
+        ExprTransformer(dot=dot).transform(tree)
 
 
 def test_should_parse_ends_with():
-    tree = parser.parse('payload@text ENDS WITH "world"')
+    # test string-string
+    tree = parser.parse('payload@a.text ENDS WITH "world"')
+    assert ExprTransformer(dot=dot).transform(tree)
+    tree = parser.parse('payload@a.text ENDS WITH "worl"')
+    assert not ExprTransformer(dot=dot).transform(tree)
+    # test array-[int/str]
+    tree = parser.parse('payload@a.c ENDS WITH "4"')
+    assert ExprTransformer(dot=dot).transform(tree)
+    tree = parser.parse('payload@a.c ENDS WITH "2"')
+    assert not ExprTransformer(dot=dot).transform(tree)
+    # test bad types
+    with pytest.raises(VisitError):
+        tree = parser.parse('payload@a.b ENDS WITH 0')
+        ExprTransformer(dot=dot).transform(tree)
+    with pytest.raises(VisitError):
+        tree = parser.parse('payload@a.g ENDS WITH null')
+        ExprTransformer(dot=dot).transform(tree)
+    with pytest.raises(VisitError):
+        tree = parser.parse('payload@a.h ENDS WITH 4')
+        ExprTransformer(dot=dot).transform(tree)
+    with pytest.raises(VisitError):
+        tree = parser.parse('payload@a.k ENDS WITH "5"')
+        ExprTransformer(dot=dot).transform(tree)
+
+
+def test_should_use_exists_before_checking_reference_to_missing_value():
+    tree = parser.parse("payload@a.missing EXISTS AND payload@a.missing == 1")
+    print(ExprTransformer(dot=dot).transform(tree))
+
+
+def test_should_use_exists_before_checking_the_missing_value_in_func():
+    # payload@a.missing does not exist so it should return False
+    tree = parser.parse("payload@a.missing EXISTS AND datetime.offset(payload@a.missing, \"-1m\") < now()")
+    assert not ExprTransformer(dot=dot).transform(tree)
+
+
+def test_should_use_exists_before_checking_the_missing_value_in_complex_condition():
+    tree = parser.parse(
+        "(payload@a.missing EXISTS AND datetime.offset(payload@a.missing, \"-1m\") < now()) OR payload@a.text EXISTS")
     assert ExprTransformer(dot=dot).transform(tree)
