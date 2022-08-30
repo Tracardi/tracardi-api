@@ -158,9 +158,11 @@ async def save_tracardi_pro_resource(pro: ProService):
         result['resource'] = await StorageFor(record).index().save()
         await storage.driver.resource.refresh()
 
-    if 'plugin' in pro.service.metadata.submit and pro.plugin is not None:
-        plugin = Plugin(**pro.plugin)
-        result['plugin'] = await storage.driver.action.save_plugin(plugin)
+    if isinstance(pro.plugins, list):
+        result['plugin'] = []
+        for plugin in pro.plugins:
+            plugin = Plugin(**plugin)
+            result['plugin'].append(await storage.driver.action.save_plugin(plugin))
         await storage.driver.action.refresh()
 
     return result

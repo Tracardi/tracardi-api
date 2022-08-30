@@ -20,7 +20,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x12pro_services.proto\x12\x0ctracardi_pro\x1a\x1cgoogle/protobuf/struct.proto\"\r\n\x0b\x45mptyParams\"\x8f\x01\n\x0fServiceMetadata\x12\x0c\n\x04type\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\x13\n\x0b\x64\x65scription\x18\x03 \x01(\t\x12\x0f\n\x07traffic\x18\x04 \x01(\t\x12\x0c\n\x04icon\x18\x05 \x01(\t\x12\x0c\n\x04tags\x18\x06 \x03(\t\x12\x0e\n\x06submit\x18\x07 \x03(\t\x12\x0e\n\x06prefix\x18\x08 \x01(\t\"\x91\x01\n\x08Services\x12\x36\n\x08services\x18\x01 \x03(\x0b\x32$.tracardi_pro.Services.ServicesEntry\x1aM\n\rServicesEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12+\n\x05value\x18\x02 \x01(\x0b\x32\x1c.tracardi_pro.ServiceEnvelop:\x02\x38\x01\" \n\x0ePluginMetaData\x12\x0e\n\x06module\x18\x01 \x01(\t\"V\n\x06Plugin\x12%\n\x04init\x18\x01 \x01(\x0b\x32\x17.google.protobuf.Struct\x12%\n\x04\x66orm\x18\x02 \x01(\x0b\x32\x17.google.protobuf.Struct\"\x16\n\x05Hosts\x12\r\n\x05hosts\x18\x01 \x03(\t\"\xe6\x01\n\x0eServiceEnvelop\x12/\n\x08metadata\x18\x01 \x01(\x0b\x32\x1d.tracardi_pro.ServiceMetadata\x12%\n\x04\x66orm\x18\x02 \x01(\x0b\x32\x17.google.protobuf.Struct\x12%\n\x04init\x18\x03 \x01(\x0b\x32\x17.google.protobuf.Struct\x12,\n\x0b\x64\x65stination\x18\x04 \x01(\x0b\x32\x17.google.protobuf.Struct\x12\'\n\x06plugin\x18\x05 \x03(\x0b\x32\x17.google.protobuf.Struct\"1\n\x0b\x43redentials\x12\x10\n\x08username\x18\x01 \x01(\t\x12\x10\n\x08password\x18\x02 \x01(\t\"C\n\x0fHostCredentials\x12\x10\n\x08username\x18\x01 \x01(\t\x12\x10\n\x08password\x18\x02 \x01(\t\x12\x0c\n\x04host\x18\x03 \x01(\t\"\x16\n\x05Token\x12\r\n\x05token\x18\x01 \x01(\t\"\'\n\x08UserData\x12\r\n\x05token\x18\x01 \x01(\t\x12\x0c\n\x04host\x18\x02 \x01(\t2\xdb\x02\n\x07Service\x12M\n\x16get_available_services\x12\x19.tracardi_pro.EmptyParams\x1a\x16.tracardi_pro.Services\"\x00\x12\x42\n\nget_plugin\x12\x1c.tracardi_pro.PluginMetaData\x1a\x14.tracardi_pro.Plugin\"\x00\x12?\n\x07sign_up\x12\x1d.tracardi_pro.HostCredentials\x1a\x13.tracardi_pro.Token\"\x00\x12>\n\x07sign_in\x12\x19.tracardi_pro.Credentials\x1a\x16.tracardi_pro.UserData\"\x00\x12<\n\x08validate\x12\x19.tracardi_pro.EmptyParams\x1a\x13.tracardi_pro.Token\"\x00\x62\x06proto3'
+  serialized_pb=b'\n\x12pro_services.proto\x12\x0ctracardi_pro\x1a\x1cgoogle/protobuf/struct.proto\"\r\n\x0b\x45mptyParams\"\x8f\x01\n\x0fServiceMetadata\x12\x0c\n\x04type\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\x13\n\x0b\x64\x65scription\x18\x03 \x01(\t\x12\x0f\n\x07traffic\x18\x04 \x01(\t\x12\x0c\n\x04icon\x18\x05 \x01(\t\x12\x0c\n\x04tags\x18\x06 \x03(\t\x12\x0e\n\x06submit\x18\x07 \x03(\t\x12\x0e\n\x06prefix\x18\x08 \x01(\t\"\x91\x01\n\x08Services\x12\x36\n\x08services\x18\x01 \x03(\x0b\x32$.tracardi_pro.Services.ServicesEntry\x1aM\n\rServicesEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12+\n\x05value\x18\x02 \x01(\x0b\x32\x1c.tracardi_pro.ServiceEnvelop:\x02\x38\x01\" \n\x0ePluginMetaData\x12\x0e\n\x06module\x18\x01 \x01(\t\"V\n\x06Plugin\x12%\n\x04init\x18\x01 \x01(\x0b\x32\x17.google.protobuf.Struct\x12%\n\x04\x66orm\x18\x02 \x01(\x0b\x32\x17.google.protobuf.Struct\"\x16\n\x05Hosts\x12\r\n\x05hosts\x18\x01 \x03(\t\"\xe7\x01\n\x0eServiceEnvelop\x12/\n\x08metadata\x18\x01 \x01(\x0b\x32\x1d.tracardi_pro.ServiceMetadata\x12%\n\x04\x66orm\x18\x02 \x01(\x0b\x32\x17.google.protobuf.Struct\x12%\n\x04init\x18\x03 \x01(\x0b\x32\x17.google.protobuf.Struct\x12,\n\x0b\x64\x65stination\x18\x04 \x01(\x0b\x32\x17.google.protobuf.Struct\x12(\n\x07plugins\x18\x05 \x03(\x0b\x32\x17.google.protobuf.Struct\"1\n\x0b\x43redentials\x12\x10\n\x08username\x18\x01 \x01(\t\x12\x10\n\x08password\x18\x02 \x01(\t\"C\n\x0fHostCredentials\x12\x10\n\x08username\x18\x01 \x01(\t\x12\x10\n\x08password\x18\x02 \x01(\t\x12\x0c\n\x04host\x18\x03 \x01(\t\"\x16\n\x05Token\x12\r\n\x05token\x18\x01 \x01(\t\"\'\n\x08UserData\x12\r\n\x05token\x18\x01 \x01(\t\x12\x0c\n\x04host\x18\x02 \x01(\t2\xdb\x02\n\x07Service\x12M\n\x16get_available_services\x12\x19.tracardi_pro.EmptyParams\x1a\x16.tracardi_pro.Services\"\x00\x12\x42\n\nget_plugin\x12\x1c.tracardi_pro.PluginMetaData\x1a\x14.tracardi_pro.Plugin\"\x00\x12?\n\x07sign_up\x12\x1d.tracardi_pro.HostCredentials\x1a\x13.tracardi_pro.Token\"\x00\x12>\n\x07sign_in\x12\x19.tracardi_pro.Credentials\x1a\x16.tracardi_pro.UserData\"\x00\x12<\n\x08validate\x12\x19.tracardi_pro.EmptyParams\x1a\x13.tracardi_pro.Token\"\x00\x62\x06proto3'
   ,
   dependencies=[google_dot_protobuf_dot_struct__pb2.DESCRIPTOR,])
 
@@ -343,7 +343,7 @@ _SERVICEENVELOP = _descriptor.Descriptor(
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='plugin', full_name='tracardi_pro.ServiceEnvelop.plugin', index=4,
+      name='plugins', full_name='tracardi_pro.ServiceEnvelop.plugins', index=4,
       number=5, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
@@ -362,7 +362,7 @@ _SERVICEENVELOP = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=522,
-  serialized_end=752,
+  serialized_end=753,
 )
 
 
@@ -400,8 +400,8 @@ _CREDENTIALS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=754,
-  serialized_end=803,
+  serialized_start=755,
+  serialized_end=804,
 )
 
 
@@ -446,8 +446,8 @@ _HOSTCREDENTIALS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=805,
-  serialized_end=872,
+  serialized_start=806,
+  serialized_end=873,
 )
 
 
@@ -478,8 +478,8 @@ _TOKEN = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=874,
-  serialized_end=896,
+  serialized_start=875,
+  serialized_end=897,
 )
 
 
@@ -517,8 +517,8 @@ _USERDATA = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=898,
-  serialized_end=937,
+  serialized_start=899,
+  serialized_end=938,
 )
 
 _SERVICES_SERVICESENTRY.fields_by_name['value'].message_type = _SERVICEENVELOP
@@ -530,7 +530,7 @@ _SERVICEENVELOP.fields_by_name['metadata'].message_type = _SERVICEMETADATA
 _SERVICEENVELOP.fields_by_name['form'].message_type = google_dot_protobuf_dot_struct__pb2._STRUCT
 _SERVICEENVELOP.fields_by_name['init'].message_type = google_dot_protobuf_dot_struct__pb2._STRUCT
 _SERVICEENVELOP.fields_by_name['destination'].message_type = google_dot_protobuf_dot_struct__pb2._STRUCT
-_SERVICEENVELOP.fields_by_name['plugin'].message_type = google_dot_protobuf_dot_struct__pb2._STRUCT
+_SERVICEENVELOP.fields_by_name['plugins'].message_type = google_dot_protobuf_dot_struct__pb2._STRUCT
 DESCRIPTOR.message_types_by_name['EmptyParams'] = _EMPTYPARAMS
 DESCRIPTOR.message_types_by_name['ServiceMetadata'] = _SERVICEMETADATA
 DESCRIPTOR.message_types_by_name['Services'] = _SERVICES
@@ -639,8 +639,8 @@ _SERVICE = _descriptor.ServiceDescriptor(
   index=0,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=940,
-  serialized_end=1287,
+  serialized_start=941,
+  serialized_end=1288,
   methods=[
   _descriptor.MethodDescriptor(
     name='get_available_services',
