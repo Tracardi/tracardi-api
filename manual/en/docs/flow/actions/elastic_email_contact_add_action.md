@@ -16,12 +16,10 @@ occurs.
 #### Form fields
 
 - Elastic Email resource - please select your Elastic Email resource. It should contain:
-    - Elastic Email Client api key
+- Elastic Email Client Public Account ID
 - Email address - please type in the path to the email address of your new contact.
 - Additional fields - you can add optional mapping for your contact, for example **lastname:
-  profile@traits.public.last_name**. Remember to use field aliases from Elastic Email.
-- Overwrite with blank - you can overwrite the fields that are not mentioned in configuration, with empty values. ON -
-  overwrite with empty, OFF - do not do so.
+  profile@traits.public.last_name**. Remember to use field aliases from Elastic Email. https://elasticemail.com/developers/api-documentation/web-api-v2#Contact_Add
 
 #### JSON configuration
 
@@ -33,8 +31,9 @@ occurs.
   },
   "email": "<path-to-email-of-new-contact>",
   "additional_mapping": {
-    "country": "<path-to-country-data>",
-    "firstname": "<path-to-first-name>",
+    "field_country": "<path-to-country-data>",
+    "firstName": "<path-to-first-name>",
+    "lastName": "<path-to-last-name>",
     "...": "..."
   },
 }
