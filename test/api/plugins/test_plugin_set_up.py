@@ -1126,18 +1126,6 @@ async def test_should_set_up_plugin_zapier_web_hook_action():
     await plugin.set_up(None)
 
 
-async def test_should_set_up_plugin_pushover_action():
-    
-    module = import_package("tracardi.process_engine.action.v1.connectors.pushover.push.plugin")
-    plugin_class = load_callable(module, "PushoverAction")
-    plugin = plugin_class()
-    plugin.node = Node(id="node-id", 
-                       name="test-node", 
-                       module="tracardi.process_engine.action.v1.connectors.pushover.push.plugin", 
-                       className="PushoverAction")
-    await plugin.set_up(None)
-
-
 async def test_should_set_up_plugin_discord_web_hook_action():
     
     module = import_package("tracardi.process_engine.action.v1.connectors.discord.push.plugin")
@@ -1210,81 +1198,6 @@ async def test_should_set_up_plugin_weather_action():
     await plugin.set_up({'city': None, 'system': 'C'})
 
 
-async def test_should_set_up_plugin_sentiment_analysis_action(mocker):
-    
-    mocker.patch(
-        # api_call is from slow.py but imported to main.py
-        'tracardi.service.storage.driver.storage.driver.resource.load',
-        return_value=Resource(
-            id="test-resource",
-            type="test",
-            credentials=ResourceCredentials(
-                production={'token': 'token'},
-                test={'token': 'token'}
-            )
-        )
-    )
-
-    module = import_package("tracardi.process_engine.action.v1.connectors.meaningcloud.sentiment_analysis.plugin")
-    plugin_class = load_callable(module, "SentimentAnalysisAction")
-    plugin = plugin_class()
-    plugin.node = Node(id="node-id", 
-                       name="test-node", 
-                       module="tracardi.process_engine.action.v1.connectors.meaningcloud.sentiment_analysis.plugin", 
-                       className="SentimentAnalysisAction")
-    await plugin.set_up(None)
-
-
-async def test_should_set_up_plugin_language_detect_action(mocker):
-    
-    mocker.patch(
-        # api_call is from slow.py but imported to main.py
-        'tracardi.service.storage.driver.storage.driver.resource.load',
-        return_value=Resource(
-            id="test-resource",
-            type="test",
-            credentials=ResourceCredentials(
-                production={'token': 'token'},
-                test={'token': 'token'}
-            )
-        )
-    )
-
-    module = import_package("tracardi.process_engine.action.v1.connectors.meaningcloud.language_detection.plugin")
-    plugin_class = load_callable(module, "LanguageDetectAction")
-    plugin = plugin_class()
-    plugin.node = Node(id="node-id", 
-                       name="test-node", 
-                       module="tracardi.process_engine.action.v1.connectors.meaningcloud.language_detection.plugin", 
-                       className="LanguageDetectAction")
-    await plugin.set_up(None)
-
-
-async def test_should_set_up_plugin_text_classification_action(mocker):
-    
-    mocker.patch(
-        # api_call is from slow.py but imported to main.py
-        'tracardi.service.storage.driver.storage.driver.resource.load',
-        return_value=Resource(
-            id="test-resource",
-            type="test",
-            credentials=ResourceCredentials(
-                production={'token': 'token'},
-                test={'token': 'token'}
-            )
-        )
-    )
-
-    module = import_package("tracardi.process_engine.action.v1.connectors.meaningcloud.text_classification.plugin")
-    plugin_class = load_callable(module, "TextClassificationAction")
-    plugin = plugin_class()
-    plugin.node = Node(id="node-id", 
-                       name="test-node", 
-                       module="tracardi.process_engine.action.v1.connectors.meaningcloud.text_classification.plugin", 
-                       className="TextClassificationAction")
-    await plugin.set_up(None)
-
-
 async def test_should_set_up_plugin_token_getter():
     
     module = import_package("tracardi.process_engine.action.v1.connectors.oauth2_token.plugin")
@@ -1319,106 +1232,6 @@ async def test_should_set_up_plugin_google_sheets_integrator_action():
                        module="tracardi.process_engine.action.v1.connectors.google.sheets.modify.plugin", 
                        className="GoogleSheetsIntegratorAction")
     await plugin.set_up({'range': None, 'read': False, 'sheet_name': None, 'source': {'id': '1', 'name': 'Some value'}, 'spreadsheet_id': None, 'values': '[["Name", "John"]]', 'write': False})
-
-
-async def test_should_set_up_plugin_deep_categorization_plugin(mocker):
-    
-    mocker.patch(
-        # api_call is from slow.py but imported to main.py
-        'tracardi.service.storage.driver.storage.driver.resource.load',
-        return_value=Resource(
-            id="test-resource",
-            type="test",
-            credentials=ResourceCredentials(
-                production={'token': 'token'},
-                test={'token': 'token'}
-            )
-        )
-    )
-
-    module = import_package("tracardi.process_engine.action.v1.connectors.meaningcloud.deep_categorization.plugin")
-    plugin_class = load_callable(module, "DeepCategorizationPlugin")
-    plugin = plugin_class()
-    plugin.node = Node(id="node-id", 
-                       name="test-node", 
-                       module="tracardi.process_engine.action.v1.connectors.meaningcloud.deep_categorization.plugin", 
-                       className="DeepCategorizationPlugin")
-    await plugin.set_up({'source': {'name': 'Test', 'id': '1'}, 'text': 'Text', 'model': 'IAB_2.0-tier3'})
-
-
-async def test_should_set_up_plugin_corporate_reputation_plugin(mocker):
-    
-    mocker.patch(
-        # api_call is from slow.py but imported to main.py
-        'tracardi.service.storage.driver.storage.driver.resource.load',
-        return_value=Resource(
-            id="test-resource",
-            type="test",
-            credentials=ResourceCredentials(
-                production={'token': 'token'},
-                test={'token': 'token'}
-            )
-        )
-    )
-
-    module = import_package("tracardi.process_engine.action.v1.connectors.meaningcloud.corporate_reputation.plugin")
-    plugin_class = load_callable(module, "CorporateReputationPlugin")
-    plugin = plugin_class()
-    plugin.node = Node(id="node-id", 
-                       name="test-node", 
-                       module="tracardi.process_engine.action.v1.connectors.meaningcloud.corporate_reputation.plugin", 
-                       className="CorporateReputationPlugin")
-    await plugin.set_up({'source': {'name': 'Test', 'id': '1'}, 'text': 'text', 'lang': 'auto', 'focus': 'focus', 'company_type': 'type', 'relaxed_typography': False})
-
-
-async def test_should_set_up_plugin_topics_extraction_plugin(mocker):
-    
-    mocker.patch(
-        # api_call is from slow.py but imported to main.py
-        'tracardi.service.storage.driver.storage.driver.resource.load',
-        return_value=Resource(
-            id="test-resource",
-            type="test",
-            credentials=ResourceCredentials(
-                production={'token': 'token'},
-                test={'token': 'token'}
-            )
-        )
-    )
-
-    module = import_package("tracardi.process_engine.action.v1.connectors.meaningcloud.topics_extraction.plugin")
-    plugin_class = load_callable(module, "TopicsExtractionPlugin")
-    plugin = plugin_class()
-    plugin.node = Node(id="node-id", 
-                       name="test-node", 
-                       module="tracardi.process_engine.action.v1.connectors.meaningcloud.topics_extraction.plugin", 
-                       className="TopicsExtractionPlugin")
-    await plugin.set_up({'source': {'name': 'test', 'id': '1'}, 'text': 'test', 'lang': 'auto'})
-
-
-async def test_should_set_up_plugin_summarization_plugin(mocker):
-    
-    mocker.patch(
-        # api_call is from slow.py but imported to main.py
-        'tracardi.service.storage.driver.storage.driver.resource.load',
-        return_value=Resource(
-            id="test-resource",
-            type="test",
-            credentials=ResourceCredentials(
-                production={'token': 'token'},
-                test={'token': 'token'}
-            )
-        )
-    )
-
-    module = import_package("tracardi.process_engine.action.v1.connectors.meaningcloud.summarization.plugin")
-    plugin_class = load_callable(module, "SummarizationPlugin")
-    plugin = plugin_class()
-    plugin.node = Node(id="node-id", 
-                       name="test-node", 
-                       module="tracardi.process_engine.action.v1.connectors.meaningcloud.summarization.plugin", 
-                       className="SummarizationPlugin")
-    await plugin.set_up({'source': {'name': 'Test', 'id': '1'}, 'text': 'text', 'lang': 'auto', 'sentences': '2'})
 
 
 async def test_should_set_up_plugin_influx_sender():
@@ -1541,66 +1354,6 @@ async def test_should_set_up_plugin_elastic_email_bulk_mail_sender():
                        module="tracardi.process_engine.action.v1.connectors.elastic_email.bulk_email.plugin", 
                        className="ElasticEmailBulkMailSender")
     await plugin.set_up({'message': {'content': '', 'recipient': '', 'subject': ''}, 'sender_email': '', 'source': {'id': '', 'name': ''}})
-
-
-async def test_should_set_up_plugin_mautic_contact_adder():
-    
-    module = import_package("tracardi.process_engine.action.v1.connectors.mautic.add_contact.plugin")
-    plugin_class = load_callable(module, "MauticContactAdder")
-    plugin = plugin_class()
-    plugin.node = Node(id="node-id", 
-                       name="test-node", 
-                       module="tracardi.process_engine.action.v1.connectors.mautic.add_contact.plugin", 
-                       className="MauticContactAdder")
-    await plugin.set_up({'additional_mapping': {}, 'email': None, 'overwrite_with_blank': False, 'source': {'id': '1', 'name': 'Some value'}})
-
-
-async def test_should_set_up_plugin_mautic_contact_by_i_d_fetcher():
-    
-    module = import_package("tracardi.process_engine.action.v1.connectors.mautic.fetch_contact_by_id.plugin")
-    plugin_class = load_callable(module, "MauticContactByIDFetcher")
-    plugin = plugin_class()
-    plugin.node = Node(id="node-id", 
-                       name="test-node", 
-                       module="tracardi.process_engine.action.v1.connectors.mautic.fetch_contact_by_id.plugin", 
-                       className="MauticContactByIDFetcher")
-    await plugin.set_up({'contact_id': None, 'source': {'id': None, 'name': None}})
-
-
-async def test_should_set_up_plugin_mautic_contact_by_email_fetcher():
-    
-    module = import_package("tracardi.process_engine.action.v1.connectors.mautic.fetch_contact_by_email.plugin")
-    plugin_class = load_callable(module, "MauticContactByEmailFetcher")
-    plugin = plugin_class()
-    plugin.node = Node(id="node-id", 
-                       name="test-node", 
-                       module="tracardi.process_engine.action.v1.connectors.mautic.fetch_contact_by_email.plugin", 
-                       className="MauticContactByEmailFetcher")
-    await plugin.set_up({'contact_email': None, 'source': {'id': None, 'name': None}})
-
-
-async def test_should_set_up_plugin_mautic_points_editor():
-    
-    module = import_package("tracardi.process_engine.action.v1.connectors.mautic.edit_points.plugin")
-    plugin_class = load_callable(module, "MauticPointsEditor")
-    plugin = plugin_class()
-    plugin.node = Node(id="node-id", 
-                       name="test-node", 
-                       module="tracardi.process_engine.action.v1.connectors.mautic.edit_points.plugin", 
-                       className="MauticPointsEditor")
-    await plugin.set_up({'action': None, 'contact_id': None, 'points': None, 'source': {'id': '1', 'name': 'Some value'}})
-
-
-async def test_should_set_up_plugin_mautic_segment_editor():
-    
-    module = import_package("tracardi.process_engine.action.v1.connectors.mautic.add_remove_segment.plugin")
-    plugin_class = load_callable(module, "MauticSegmentEditor")
-    plugin = plugin_class()
-    plugin.node = Node(id="node-id", 
-                       name="test-node", 
-                       module="tracardi.process_engine.action.v1.connectors.mautic.add_remove_segment.plugin", 
-                       className="MauticSegmentEditor")
-    await plugin.set_up({'action': None, 'contact_id': None, 'segment': None, 'source': {'id': None, 'name': None}})
 
 
 async def test_should_set_up_plugin_send_to_airtable_action():
@@ -1903,18 +1656,6 @@ async def test_should_set_up_plugin_require_consents_action():
     await plugin.set_up({'consent_ids': [], 'require_all': False})
 
 
-async def test_should_set_up_plugin_scheduler_plugin():
-    
-    module = import_package("tracardi.process_engine.action.v1.pro.scheduler.plugin")
-    plugin_class = load_callable(module, "SchedulerPlugin")
-    plugin = plugin_class()
-    plugin.node = Node(id="node-id", 
-                       name="test-node", 
-                       module="tracardi.process_engine.action.v1.pro.scheduler.plugin", 
-                       className="SchedulerPlugin")
-    await plugin.set_up(None)
-
-
 async def test_should_set_up_plugin_rabbit_publisher_action():
     
     module = import_package("tracardi.process_engine.action.v1.connectors.rabbitmq.publish.plugin")
@@ -1951,8 +1692,21 @@ async def test_should_set_up_plugin_contains_string_action():
     await plugin.set_up({'field': 'payload@field', 'substring': 'contains'})
 
 
-async def test_should_set_up_plugin_aws_sqs_action():
+async def test_should_set_up_plugin_aws_sqs_action(mocker):
     
+    mocker.patch(
+        # api_call is from slow.py but imported to main.py
+        'tracardi.service.storage.driver.storage.driver.resource.load',
+        return_value=Resource(
+            id="test-resource",
+            type="test",
+            credentials=ResourceCredentials(
+                production={'token': 'token'},
+                test={'token': 'token'}
+            )
+        )
+    )
+
     module = import_package("tracardi.process_engine.action.v1.connectors.aws.sqs.plugin")
     plugin_class = load_callable(module, "AwsSqsAction")
     plugin = plugin_class()
@@ -1960,6 +1714,31 @@ async def test_should_set_up_plugin_aws_sqs_action():
                        name="test-node", 
                        module="tracardi.process_engine.action.v1.connectors.aws.sqs.plugin", 
                        className="AwsSqsAction")
+    await plugin.set_up(None)
+
+
+async def test_should_set_up_plugin_scheduler_plugin(mocker):
+    
+    mocker.patch(
+        # api_call is from slow.py but imported to main.py
+        'tracardi.service.storage.driver.storage.driver.resource.load',
+        return_value=Resource(
+            id="test-resource",
+            type="test",
+            credentials=ResourceCredentials(
+                production={'callback_host': 'http://localhost:8686'},
+                test={'callback_host': 'http://localhost:8686'}
+            )
+        )
+    )
+
+    module = import_package("tracardi.process_engine.action.v1.pro.scheduler.registry")
+    plugin_class = load_callable(module, "SchedulerPlugin")
+    plugin = plugin_class()
+    plugin.node = Node(id="node-id", 
+                       name="test-node", 
+                       module="tracardi.process_engine.action.v1.pro.scheduler.registry", 
+                       className="SchedulerPlugin")
     await plugin.set_up(None)
 
 
@@ -1978,11 +1757,336 @@ async def test_should_set_up_plugin_novu_trigger_action(mocker):
         )
     )
 
-    module = import_package("tracardi.process_engine.action.v1.connectors.novu.plugin")
+    module = import_package("tracardi.process_engine.action.v1.connectors.novu.trigger.registry")
     plugin_class = load_callable(module, "NovuTriggerAction")
     plugin = plugin_class()
     plugin.node = Node(id="node-id", 
                        name="test-node", 
-                       module="tracardi.process_engine.action.v1.connectors.novu.plugin", 
+                       module="tracardi.process_engine.action.v1.connectors.novu.trigger.registry", 
                        className="NovuTriggerAction")
     await plugin.set_up({'payload': '{}', 'recipient_email': 'profile@pii.email', 'source': {'id': '', 'name': ''}, 'subscriber_id': 'profile@id', 'template': {'id': '', 'name': ''}})
+
+
+async def test_should_set_up_plugin_pushover_action(mocker):
+    
+    mocker.patch(
+        # api_call is from slow.py but imported to main.py
+        'tracardi.service.storage.driver.storage.driver.resource.load',
+        return_value=Resource(
+            id="test-resource",
+            type="test",
+            credentials=ResourceCredentials(
+                production={'token': '<token>', 'user': '<user>'},
+                test={'token': '<token>', 'user': '<user>'}
+            )
+        )
+    )
+
+    module = import_package("tracardi.process_engine.action.v1.connectors.pushover.push.plugin")
+    plugin_class = load_callable(module, "PushoverAction")
+    plugin = plugin_class()
+    plugin.node = Node(id="node-id", 
+                       name="test-node", 
+                       module="tracardi.process_engine.action.v1.connectors.pushover.push.plugin", 
+                       className="PushoverAction")
+    await plugin.set_up(None)
+
+
+async def test_should_set_up_plugin_sentiment_analysis_action(mocker):
+    
+    mocker.patch(
+        # api_call is from slow.py but imported to main.py
+        'tracardi.service.storage.driver.storage.driver.resource.load',
+        return_value=Resource(
+            id="test-resource",
+            type="test",
+            credentials=ResourceCredentials(
+                production={'token': 'token'},
+                test={'token': 'token'}
+            )
+        )
+    )
+
+    module = import_package("tracardi.process_engine.action.v1.connectors.meaningcloud.sentiment_analysis.plugin")
+    plugin_class = load_callable(module, "SentimentAnalysisAction")
+    plugin = plugin_class()
+    plugin.node = Node(id="node-id", 
+                       name="test-node", 
+                       module="tracardi.process_engine.action.v1.connectors.meaningcloud.sentiment_analysis.plugin", 
+                       className="SentimentAnalysisAction")
+    await plugin.set_up(None)
+
+
+async def test_should_set_up_plugin_language_detect_action(mocker):
+    
+    mocker.patch(
+        # api_call is from slow.py but imported to main.py
+        'tracardi.service.storage.driver.storage.driver.resource.load',
+        return_value=Resource(
+            id="test-resource",
+            type="test",
+            credentials=ResourceCredentials(
+                production={'token': 'token'},
+                test={'token': 'token'}
+            )
+        )
+    )
+
+    module = import_package("tracardi.process_engine.action.v1.connectors.meaningcloud.language_detection.plugin")
+    plugin_class = load_callable(module, "LanguageDetectAction")
+    plugin = plugin_class()
+    plugin.node = Node(id="node-id", 
+                       name="test-node", 
+                       module="tracardi.process_engine.action.v1.connectors.meaningcloud.language_detection.plugin", 
+                       className="LanguageDetectAction")
+    await plugin.set_up(None)
+
+
+async def test_should_set_up_plugin_text_classification_action(mocker):
+    
+    mocker.patch(
+        # api_call is from slow.py but imported to main.py
+        'tracardi.service.storage.driver.storage.driver.resource.load',
+        return_value=Resource(
+            id="test-resource",
+            type="test",
+            credentials=ResourceCredentials(
+                production={'token': 'token'},
+                test={'token': 'token'}
+            )
+        )
+    )
+
+    module = import_package("tracardi.process_engine.action.v1.connectors.meaningcloud.text_classification.plugin")
+    plugin_class = load_callable(module, "TextClassificationAction")
+    plugin = plugin_class()
+    plugin.node = Node(id="node-id", 
+                       name="test-node", 
+                       module="tracardi.process_engine.action.v1.connectors.meaningcloud.text_classification.plugin", 
+                       className="TextClassificationAction")
+    await plugin.set_up(None)
+
+
+async def test_should_set_up_plugin_corporate_reputation_plugin(mocker):
+    
+    mocker.patch(
+        # api_call is from slow.py but imported to main.py
+        'tracardi.service.storage.driver.storage.driver.resource.load',
+        return_value=Resource(
+            id="test-resource",
+            type="test",
+            credentials=ResourceCredentials(
+                production={'token': 'token'},
+                test={'token': 'token'}
+            )
+        )
+    )
+
+    module = import_package("tracardi.process_engine.action.v1.connectors.meaningcloud.corporate_reputation.plugin")
+    plugin_class = load_callable(module, "CorporateReputationPlugin")
+    plugin = plugin_class()
+    plugin.node = Node(id="node-id", 
+                       name="test-node", 
+                       module="tracardi.process_engine.action.v1.connectors.meaningcloud.corporate_reputation.plugin", 
+                       className="CorporateReputationPlugin")
+    await plugin.set_up({'source': {'name': 'Test', 'id': '1'}, 'text': 'text', 'lang': 'auto', 'focus': 'focus', 'company_type': 'type', 'relaxed_typography': False})
+
+
+async def test_should_set_up_plugin_topics_extraction_plugin(mocker):
+    
+    mocker.patch(
+        # api_call is from slow.py but imported to main.py
+        'tracardi.service.storage.driver.storage.driver.resource.load',
+        return_value=Resource(
+            id="test-resource",
+            type="test",
+            credentials=ResourceCredentials(
+                production={'token': 'token'},
+                test={'token': 'token'}
+            )
+        )
+    )
+
+    module = import_package("tracardi.process_engine.action.v1.connectors.meaningcloud.topics_extraction.plugin")
+    plugin_class = load_callable(module, "TopicsExtractionPlugin")
+    plugin = plugin_class()
+    plugin.node = Node(id="node-id", 
+                       name="test-node", 
+                       module="tracardi.process_engine.action.v1.connectors.meaningcloud.topics_extraction.plugin", 
+                       className="TopicsExtractionPlugin")
+    await plugin.set_up({'source': {'name': 'test', 'id': '1'}, 'text': 'test', 'lang': 'auto'})
+
+
+async def test_should_set_up_plugin_summarization_plugin(mocker):
+    
+    mocker.patch(
+        # api_call is from slow.py but imported to main.py
+        'tracardi.service.storage.driver.storage.driver.resource.load',
+        return_value=Resource(
+            id="test-resource",
+            type="test",
+            credentials=ResourceCredentials(
+                production={'token': 'token'},
+                test={'token': 'token'}
+            )
+        )
+    )
+
+    module = import_package("tracardi.process_engine.action.v1.connectors.meaningcloud.summarization.plugin")
+    plugin_class = load_callable(module, "SummarizationPlugin")
+    plugin = plugin_class()
+    plugin.node = Node(id="node-id", 
+                       name="test-node", 
+                       module="tracardi.process_engine.action.v1.connectors.meaningcloud.summarization.plugin", 
+                       className="SummarizationPlugin")
+    await plugin.set_up({'source': {'name': 'Test', 'id': '1'}, 'text': 'text', 'lang': 'auto', 'sentences': '2'})
+
+
+async def test_should_set_up_plugin_deep_categorization_plugin(mocker):
+    
+    mocker.patch(
+        # api_call is from slow.py but imported to main.py
+        'tracardi.service.storage.driver.storage.driver.resource.load',
+        return_value=Resource(
+            id="test-resource",
+            type="test",
+            credentials=ResourceCredentials(
+                production={'token': 'token'},
+                test={'token': 'token'}
+            )
+        )
+    )
+
+    module = import_package("tracardi.process_engine.action.v1.connectors.meaningcloud.deep_categorization.plugin")
+    plugin_class = load_callable(module, "DeepCategorizationPlugin")
+    plugin = plugin_class()
+    plugin.node = Node(id="node-id", 
+                       name="test-node", 
+                       module="tracardi.process_engine.action.v1.connectors.meaningcloud.deep_categorization.plugin", 
+                       className="DeepCategorizationPlugin")
+    await plugin.set_up({'source': {'name': 'Test', 'id': '1'}, 'text': 'Text', 'model': 'IAB_2.0-tier3'})
+
+
+async def test_should_set_up_plugin_mautic_contact_adder(mocker):
+    
+    mocker.patch(
+        # api_call is from slow.py but imported to main.py
+        'tracardi.service.storage.driver.storage.driver.resource.load',
+        return_value=Resource(
+            id="test-resource",
+            type="test",
+            credentials=ResourceCredentials(
+                production={'public_key': '<client-public-key>', 'private_key': '<client-private-key>', 'api_url': '<url-of-mautic-instance>'},
+                test={'public_key': '<client-public-key>', 'private_key': '<client-private-key>', 'api_url': '<url-of-mautic-instance>'}
+            )
+        )
+    )
+
+    module = import_package("tracardi.process_engine.action.v1.connectors.mautic.add_contact.plugin")
+    plugin_class = load_callable(module, "MauticContactAdder")
+    plugin = plugin_class()
+    plugin.node = Node(id="node-id", 
+                       name="test-node", 
+                       module="tracardi.process_engine.action.v1.connectors.mautic.add_contact.plugin", 
+                       className="MauticContactAdder")
+    await plugin.set_up({'additional_mapping': {}, 'email': None, 'overwrite_with_blank': False, 'source': {'id': '1', 'name': 'Some value'}})
+
+
+async def test_should_set_up_plugin_mautic_contact_by_i_d_fetcher(mocker):
+    
+    mocker.patch(
+        # api_call is from slow.py but imported to main.py
+        'tracardi.service.storage.driver.storage.driver.resource.load',
+        return_value=Resource(
+            id="test-resource",
+            type="test",
+            credentials=ResourceCredentials(
+                production={'public_key': '<client-public-key>', 'private_key': '<client-private-key>', 'api_url': '<url-of-mautic-instance>'},
+                test={'public_key': '<client-public-key>', 'private_key': '<client-private-key>', 'api_url': '<url-of-mautic-instance>'}
+            )
+        )
+    )
+
+    module = import_package("tracardi.process_engine.action.v1.connectors.mautic.fetch_contact_by_id.plugin")
+    plugin_class = load_callable(module, "MauticContactByIDFetcher")
+    plugin = plugin_class()
+    plugin.node = Node(id="node-id", 
+                       name="test-node", 
+                       module="tracardi.process_engine.action.v1.connectors.mautic.fetch_contact_by_id.plugin", 
+                       className="MauticContactByIDFetcher")
+    await plugin.set_up({'contact_id': None, 'source': {'id': None, 'name': None}})
+
+
+async def test_should_set_up_plugin_mautic_contact_by_email_fetcher(mocker):
+    
+    mocker.patch(
+        # api_call is from slow.py but imported to main.py
+        'tracardi.service.storage.driver.storage.driver.resource.load',
+        return_value=Resource(
+            id="test-resource",
+            type="test",
+            credentials=ResourceCredentials(
+                production={'public_key': '<client-public-key>', 'private_key': '<client-private-key>', 'api_url': '<url-of-mautic-instance>'},
+                test={'public_key': '<client-public-key>', 'private_key': '<client-private-key>', 'api_url': '<url-of-mautic-instance>'}
+            )
+        )
+    )
+
+    module = import_package("tracardi.process_engine.action.v1.connectors.mautic.fetch_contact_by_email.plugin")
+    plugin_class = load_callable(module, "MauticContactByEmailFetcher")
+    plugin = plugin_class()
+    plugin.node = Node(id="node-id", 
+                       name="test-node", 
+                       module="tracardi.process_engine.action.v1.connectors.mautic.fetch_contact_by_email.plugin", 
+                       className="MauticContactByEmailFetcher")
+    await plugin.set_up({'contact_email': None, 'source': {'id': None, 'name': None}})
+
+
+async def test_should_set_up_plugin_mautic_points_editor(mocker):
+    
+    mocker.patch(
+        # api_call is from slow.py but imported to main.py
+        'tracardi.service.storage.driver.storage.driver.resource.load',
+        return_value=Resource(
+            id="test-resource",
+            type="test",
+            credentials=ResourceCredentials(
+                production={'public_key': '<client-public-key>', 'private_key': '<client-private-key>', 'api_url': '<url-of-mautic-instance>'},
+                test={'public_key': '<client-public-key>', 'private_key': '<client-private-key>', 'api_url': '<url-of-mautic-instance>'}
+            )
+        )
+    )
+
+    module = import_package("tracardi.process_engine.action.v1.connectors.mautic.edit_points.plugin")
+    plugin_class = load_callable(module, "MauticPointsEditor")
+    plugin = plugin_class()
+    plugin.node = Node(id="node-id", 
+                       name="test-node", 
+                       module="tracardi.process_engine.action.v1.connectors.mautic.edit_points.plugin", 
+                       className="MauticPointsEditor")
+    await plugin.set_up({'action': None, 'contact_id': None, 'points': None, 'source': {'id': '1', 'name': 'Some value'}})
+
+
+async def test_should_set_up_plugin_mautic_segment_editor(mocker):
+    
+    mocker.patch(
+        # api_call is from slow.py but imported to main.py
+        'tracardi.service.storage.driver.storage.driver.resource.load',
+        return_value=Resource(
+            id="test-resource",
+            type="test",
+            credentials=ResourceCredentials(
+                production={'public_key': '<client-public-key>', 'private_key': '<client-private-key>', 'api_url': '<url-of-mautic-instance>'},
+                test={'public_key': '<client-public-key>', 'private_key': '<client-private-key>', 'api_url': '<url-of-mautic-instance>'}
+            )
+        )
+    )
+
+    module = import_package("tracardi.process_engine.action.v1.connectors.mautic.add_remove_segment.plugin")
+    plugin_class = load_callable(module, "MauticSegmentEditor")
+    plugin = plugin_class()
+    plugin.node = Node(id="node-id", 
+                       name="test-node", 
+                       module="tracardi.process_engine.action.v1.connectors.mautic.add_remove_segment.plugin", 
+                       className="MauticSegmentEditor")
+    await plugin.set_up({'action': None, 'contact_id': None, 'segment': None, 'source': {'id': None, 'name': None}})
