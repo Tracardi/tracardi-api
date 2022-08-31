@@ -20,7 +20,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x12pro_services.proto\x12\x0ctracardi_pro\x1a\x1cgoogle/protobuf/struct.proto\"\r\n\x0b\x45mptyParams\"\x7f\n\x0fServiceMetadata\x12\x0c\n\x04type\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\x13\n\x0b\x64\x65scription\x18\x03 \x01(\t\x12\x0f\n\x07traffic\x18\x04 \x01(\t\x12\x0c\n\x04icon\x18\x05 \x01(\t\x12\x0c\n\x04tags\x18\x06 \x03(\t\x12\x0e\n\x06prefix\x18\x07 \x01(\t\"\x91\x01\n\x08Services\x12\x36\n\x08services\x18\x01 \x03(\x0b\x32$.tracardi_pro.Services.ServicesEntry\x1aM\n\rServicesEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12+\n\x05value\x18\x02 \x01(\x0b\x32\x1c.tracardi_pro.ServiceEnvelop:\x02\x38\x01\" \n\x0ePluginMetaData\x12\x0e\n\x06module\x18\x01 \x01(\t\"V\n\x06Plugin\x12%\n\x04init\x18\x01 \x01(\x0b\x32\x17.google.protobuf.Struct\x12%\n\x04\x66orm\x18\x02 \x01(\x0b\x32\x17.google.protobuf.Struct\"\x16\n\x05Hosts\x12\r\n\x05hosts\x18\x01 \x03(\t\"\xbd\x01\n\x0eServiceEnvelop\x12/\n\x08metadata\x18\x01 \x01(\x0b\x32\x1d.tracardi_pro.ServiceMetadata\x12%\n\x04\x66orm\x18\x02 \x01(\x0b\x32\x17.google.protobuf.Struct\x12%\n\x04init\x18\x03 \x01(\x0b\x32\x17.google.protobuf.Struct\x12,\n\x0b\x64\x65stination\x18\x04 \x01(\x0b\x32\x17.google.protobuf.Struct\"1\n\x0b\x43redentials\x12\x10\n\x08username\x18\x01 \x01(\t\x12\x10\n\x08password\x18\x02 \x01(\t\"C\n\x0fHostCredentials\x12\x10\n\x08username\x18\x01 \x01(\t\x12\x10\n\x08password\x18\x02 \x01(\t\x12\x0c\n\x04host\x18\x03 \x01(\t\"\x16\n\x05Token\x12\r\n\x05token\x18\x01 \x01(\t\"\'\n\x08UserData\x12\r\n\x05token\x18\x01 \x01(\t\x12\x0c\n\x04host\x18\x02 \x01(\t2\xdb\x02\n\x07Service\x12M\n\x16get_available_services\x12\x19.tracardi_pro.EmptyParams\x1a\x16.tracardi_pro.Services\"\x00\x12\x42\n\nget_plugin\x12\x1c.tracardi_pro.PluginMetaData\x1a\x14.tracardi_pro.Plugin\"\x00\x12?\n\x07sign_up\x12\x1d.tracardi_pro.HostCredentials\x1a\x13.tracardi_pro.Token\"\x00\x12>\n\x07sign_in\x12\x19.tracardi_pro.Credentials\x1a\x16.tracardi_pro.UserData\"\x00\x12<\n\x08validate\x12\x19.tracardi_pro.EmptyParams\x1a\x13.tracardi_pro.Token\"\x00\x62\x06proto3'
+  serialized_pb=b'\n\x12pro_services.proto\x12\x0ctracardi_pro\x1a\x1cgoogle/protobuf/struct.proto\"\r\n\x0b\x45mptyParams\"\x8f\x01\n\x0fServiceMetadata\x12\x0c\n\x04type\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\x13\n\x0b\x64\x65scription\x18\x03 \x01(\t\x12\x0f\n\x07traffic\x18\x04 \x01(\t\x12\x0c\n\x04icon\x18\x05 \x01(\t\x12\x0c\n\x04tags\x18\x06 \x03(\t\x12\x0e\n\x06plugin\x18\x07 \x03(\t\x12\x0e\n\x06prefix\x18\x08 \x01(\t\"\x91\x01\n\x08Services\x12\x36\n\x08services\x18\x01 \x03(\x0b\x32$.tracardi_pro.Services.ServicesEntry\x1aM\n\rServicesEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12+\n\x05value\x18\x02 \x01(\x0b\x32\x1c.tracardi_pro.ServiceEnvelop:\x02\x38\x01\" \n\x0ePluginMetaData\x12\x0e\n\x06module\x18\x01 \x01(\t\"V\n\x06Plugin\x12%\n\x04init\x18\x01 \x01(\x0b\x32\x17.google.protobuf.Struct\x12%\n\x04\x66orm\x18\x02 \x01(\x0b\x32\x17.google.protobuf.Struct\"\x16\n\x05Hosts\x12\r\n\x05hosts\x18\x01 \x03(\t\"\xbd\x01\n\x0eServiceEnvelop\x12/\n\x08metadata\x18\x01 \x01(\x0b\x32\x1d.tracardi_pro.ServiceMetadata\x12%\n\x04\x66orm\x18\x02 \x01(\x0b\x32\x17.google.protobuf.Struct\x12%\n\x04init\x18\x03 \x01(\x0b\x32\x17.google.protobuf.Struct\x12,\n\x0b\x64\x65stination\x18\x04 \x01(\x0b\x32\x17.google.protobuf.Struct\"1\n\x0b\x43redentials\x12\x10\n\x08username\x18\x01 \x01(\t\x12\x10\n\x08password\x18\x02 \x01(\t\"C\n\x0fHostCredentials\x12\x10\n\x08username\x18\x01 \x01(\t\x12\x10\n\x08password\x18\x02 \x01(\t\x12\x0c\n\x04host\x18\x03 \x01(\t\"\x16\n\x05Token\x12\r\n\x05token\x18\x01 \x01(\t\"\'\n\x08UserData\x12\r\n\x05token\x18\x01 \x01(\t\x12\x0c\n\x04host\x18\x02 \x01(\t2\xdb\x02\n\x07Service\x12M\n\x16get_available_services\x12\x19.tracardi_pro.EmptyParams\x1a\x16.tracardi_pro.Services\"\x00\x12\x42\n\nget_plugin\x12\x1c.tracardi_pro.PluginMetaData\x1a\x14.tracardi_pro.Plugin\"\x00\x12?\n\x07sign_up\x12\x1d.tracardi_pro.HostCredentials\x1a\x13.tracardi_pro.Token\"\x00\x12>\n\x07sign_in\x12\x19.tracardi_pro.Credentials\x1a\x16.tracardi_pro.UserData\"\x00\x12<\n\x08validate\x12\x19.tracardi_pro.EmptyParams\x1a\x13.tracardi_pro.Token\"\x00\x62\x06proto3'
   ,
   dependencies=[google_dot_protobuf_dot_struct__pb2.DESCRIPTOR,])
 
@@ -103,8 +103,15 @@ _SERVICEMETADATA = _descriptor.Descriptor(
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='prefix', full_name='tracardi_pro.ServiceMetadata.prefix', index=6,
-      number=7, type=9, cpp_type=9, label=1,
+      name='plugin', full_name='tracardi_pro.ServiceMetadata.plugin', index=6,
+      number=7, type=9, cpp_type=9, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='prefix', full_name='tracardi_pro.ServiceMetadata.prefix', index=7,
+      number=8, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -121,8 +128,8 @@ _SERVICEMETADATA = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=81,
-  serialized_end=208,
+  serialized_start=82,
+  serialized_end=225,
 )
 
 
@@ -160,8 +167,8 @@ _SERVICES_SERVICESENTRY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=279,
-  serialized_end=356,
+  serialized_start=296,
+  serialized_end=373,
 )
 
 _SERVICES = _descriptor.Descriptor(
@@ -191,8 +198,8 @@ _SERVICES = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=211,
-  serialized_end=356,
+  serialized_start=228,
+  serialized_end=373,
 )
 
 
@@ -223,8 +230,8 @@ _PLUGINMETADATA = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=358,
-  serialized_end=390,
+  serialized_start=375,
+  serialized_end=407,
 )
 
 
@@ -262,8 +269,8 @@ _PLUGIN = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=392,
-  serialized_end=478,
+  serialized_start=409,
+  serialized_end=495,
 )
 
 
@@ -294,8 +301,8 @@ _HOSTS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=480,
-  serialized_end=502,
+  serialized_start=497,
+  serialized_end=519,
 )
 
 
@@ -347,8 +354,8 @@ _SERVICEENVELOP = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=505,
-  serialized_end=694,
+  serialized_start=522,
+  serialized_end=711,
 )
 
 
@@ -386,8 +393,8 @@ _CREDENTIALS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=696,
-  serialized_end=745,
+  serialized_start=713,
+  serialized_end=762,
 )
 
 
@@ -432,8 +439,8 @@ _HOSTCREDENTIALS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=747,
-  serialized_end=814,
+  serialized_start=764,
+  serialized_end=831,
 )
 
 
@@ -464,8 +471,8 @@ _TOKEN = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=816,
-  serialized_end=838,
+  serialized_start=833,
+  serialized_end=855,
 )
 
 
@@ -503,8 +510,8 @@ _USERDATA = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=840,
-  serialized_end=879,
+  serialized_start=857,
+  serialized_end=896,
 )
 
 _SERVICES_SERVICESENTRY.fields_by_name['value'].message_type = _SERVICEENVELOP
@@ -624,8 +631,8 @@ _SERVICE = _descriptor.ServiceDescriptor(
   index=0,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=882,
-  serialized_end=1229,
+  serialized_start=899,
+  serialized_end=1246,
   methods=[
   _descriptor.MethodDescriptor(
     name='get_available_services',

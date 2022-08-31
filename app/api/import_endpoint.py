@@ -1,10 +1,8 @@
-import redis
 from fastapi import APIRouter, HTTPException, Depends
 from tracardi.service.storage.driver import storage
 from worker.celery_worker import celery
 from .auth.permissions import Permissions
 from ..config import server
-from tracardi.exceptions.exception import StorageException
 from tracardi.domain.import_config import ImportConfig
 from tracardi.service.setup.setup_import_types import get_import_types
 from tracardi.service.module_loader import import_package
@@ -51,10 +49,6 @@ async def run_import(import_id: str, name: str = None, debug: bool = True):
 
     except AttributeError as e:
         raise HTTPException(status_code=404, detail=str(e))
-    except StorageException as e:
-        raise HTTPException(status_code=500, detail=str(e))
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.get("/import/task/{task_id}/status", tags=["import"], include_in_schema=server.expose_gui_api)
@@ -62,16 +56,13 @@ def get_status(task_id):
     """
     Takes worker task id and returns current status
     """
-    try:
-        task_result = AsyncResult(task_id, app=celery)
-        result = {
-            "id": task_result.id,
-            "status": task_result.status,
-            "progress": task_result.result
-        }
-        return result
-    except redis.exceptions.ConnectionError as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    task_result = AsyncResult(task_id, app=celery)
+    result = {
+        "id": task_result.id,
+        "status": task_result.status,
+        "progress": task_result.result
+    }
+    return result
 
 
 @router.delete("/import/task/{task_id}", tags=["import"], include_in_schema=server.expose_gui_api)
@@ -103,15 +94,11 @@ async def get_import_by_id(import_id: str):
     Returns import configuration.
     """
 
-    try:
-        result = await storage.driver.import_config.load(import_id)
-        if result is not None:
-            return result
-        else:
-            raise HTTPException(status_code=404, detail=f"No import configuration found for id {import_id}")
-
-    except StorageException as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    result = await storage.driver.import_config.load(import_id)
+    if result is not None:
+        return result
+    else:
+        raise HTTPException(status_code=404, detail=f"No import configuration found for id {import_id}")
 
 
 @router.post("/import", tags=["import"], include_in_schema=server.expose_gui_api)
@@ -140,8 +127,6 @@ async def save_import_config(import_configuration: dict):
             status_code=422,
             content=jsonable_encoder(convert_errors(e))
         )
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.delete("/import/{import_id}", tags=["import"], include_in_schema=server.expose_gui_api)
@@ -151,13 +136,9 @@ async def delete_import_configuration(import_id: str):
     Deletes import configuration
     """
 
-    try:
-        result = await storage.driver.import_config.delete(import_id)
-        await storage.driver.import_config.refresh()
-        return result
-
-    except StorageException as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    result = await storage.driver.import_config.delete(import_id)
+    await storage.driver.import_config.refresh()
+    return result
 
 
 @router.get("/imports", tags=["import"], include_in_schema=server.expose_gui_api)
@@ -167,12 +148,8 @@ async def get_all_imports(limit: int = 50, query: str = None):
     Returns all imports.
     """
 
-    try:
-        result = await storage.driver.import_config.load_all(limit, query)
-        return {"grouped": {"General": result}} if result else {}
-
-    except StorageException as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    result = await storage.driver.import_config.load_all(limit, query)
+    return {"grouped": {"General": result}} if result else {}
 
 
 @router.get("/import/form/{module}", tags=["import"], include_in_schema=server.expose_gui_api)

@@ -7,7 +7,7 @@ uvicorn app.main:application --reload --host 0.0.0.0 --port 8686 --ssl-keyfile s
 gunicorn -b 0.0.0.0:443 --keyfile ssl/key.pem --certfile ssl/cert.pem -k uvicorn.workers.UvicornWorker app.main:application
 
 # Run local Kibana
-docker run -p 5601:5601 -m 4g -e ELASTICSEARCH_HOSTS=http://192.168.1.103:9200 docker.elastic.co/kibana/kibana:7.13.2
+docker run -p 5601:5601 -m 4g -e ELASTICSEARCH_HOSTS=http://192.168.1.101:9200 docker.elastic.co/kibana/kibana:7.13.2
 
 # Run local ElasticSearch
 docker run -p 9200:9200 -p 9300:9300 -m 8g -e "discovery.type=single-node" -v "/opt/esdata:/usr/share/elasticsearch/data" docker.elastic.co/elasticsearch/elasticsearch:7.13.2
@@ -72,3 +72,4 @@ docker run docker.elastic.co/beats/metricbeat:7.13.4 setup -E setup.kibana.host=
 # Celery worker
 celery -A worker.celery_worker worker --loglevel=info -E
 docker run -e REDIS_HOST=redis://redis-0.redis.redis.svc.cluster.local tracardi/worker
+docker run -e REDIS_HOST=redis://192.168.1.101 tracardi/worker

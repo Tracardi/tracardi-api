@@ -39,11 +39,11 @@ class Authentication:
 
         if user.disabled:
             await storage.driver.user_log.add_log(email=username, successful=False)
-            raise ValueError("This account was disabled")
+            raise LoginException("This account was disabled")
 
         if user.is_expired():
             await storage.driver.user_log.add_log(email=username, successful=False)
-            raise ValueError("This account has expired.")
+            raise LoginException("This account has expired.")
 
         await storage.driver.user_log.add_log(email=username, successful=True)
 

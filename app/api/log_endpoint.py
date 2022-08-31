@@ -1,8 +1,6 @@
 from typing import Optional
 
 from fastapi import APIRouter, Depends
-from fastapi import HTTPException
-
 from app.api.auth.permissions import Permissions
 from app.config import server
 from tracardi.service.storage.driver import storage
@@ -18,22 +16,15 @@ async def get_logs(page: Optional[int] = None, query: Optional[str] = None):
     """
     Returns list of all Tracardi API logs. Accessible by roles: "admin"
     """
-    try:
-        if page is None:
-            page = 0
-            page_size = 100
-        else:
-            page_size = server.page_size * 2
-        start = page * page_size
-        limit = page_size
+    if page is None:
+        page = 0
+        page_size = 100
+    else:
+        page_size = server.page_size * 2
+    start = page * page_size
+    limit = page_size
 
-        result = await storage.driver.log.load_all(start, limit) if query is None else \
-            await storage.driver.log.load_by_query_string(query, start, limit)
+    result = await storage.driver.log.load_all(start, limit) if query is None else \
+        await storage.driver.log.load_by_query_string(query, start, limit)
 
-        return {
-            "total": result.total,
-            "result": list(result)
-        }
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
+    return result.dict()

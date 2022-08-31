@@ -143,9 +143,11 @@ class ProfileQuery:
         # print(info)
         # fields = info.selected_fields
         # print(fields[0].selections)
-        profile = await storage.driver.profile.load_by_id(id)
-        if profile is None:
+        record = await storage.driver.profile.load_by_id(id)
+        if record is None:
             raise ValueError("There is no profile {}".format(id))
+        profile = domain.profile.Profile(**record).set_meta_data(record.get_meta_data())
+
         return Profile(
             id=profile.id,
             metadata=ProfileMeta(time=profile.metadata.time.insert,

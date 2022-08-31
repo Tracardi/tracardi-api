@@ -38,7 +38,6 @@ class Permissions:
 
             auth = Authentication()
             user = await auth.get_user_by_token(token)
-
         except ElasticsearchException as e:
             logger.error(str(e))
             raise HTTPException(

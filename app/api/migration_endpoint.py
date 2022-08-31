@@ -37,9 +37,6 @@ async def run_migration(migration: MigrationPayload):
     except MigrationNotFoundException as e:
         raise HTTPException(status_code=404, detail=str(e))
 
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
 
 @router.get("/migration/{from_version}", tags=["migration"], include_in_schema=server.expose_gui_api)
 async def get_migration_schemas(from_version: str, from_prefix: Optional[str] = None):
@@ -55,14 +52,7 @@ async def get_migration_schemas(from_version: str, from_prefix: Optional[str] = 
     except MigrationNotFoundException as e:
         raise HTTPException(status_code=404, detail=str(e))
 
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
 
 @router.get("/migrations", tags=["migration"], include_in_schema=server.expose_gui_api, response_model=list)
 async def get_migrations_for_current_version():
-    try:
-        return MigrationManager.get_available_migrations_for_version(tracardi.version)
-
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    return MigrationManager.get_available_migrations_for_version(tracardi.version)

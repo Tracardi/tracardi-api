@@ -18,49 +18,39 @@ router = APIRouter(
 
 
 @router.post("/{index}/select",
-             tags=["generic", "event", "profile", "resource", "rule", "session", "flow", "segment"],
+             tags=["data"],
              include_in_schema=server.expose_gui_api)
 async def select_by_sql(index: IndexesSearch, query: Optional[SqlQuery] = None):
-    try:
-        if query is None:
-            query = SqlQuery()
-        return await storage.driver.raw.index(index.value).query_by_sql(query.where, start=0, limit=query.limit)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    if query is None:
+        query = SqlQuery()
+    result = await storage.driver.raw.index(index.value).query_by_sql(query.where, start=0, limit=query.limit)
+    return result.dict()
 
 
 @router.post("/{index}/select/range/page/{page}",
-             tags=["generic", "event", "profile", "resource", "rule", "session", "flow", "segment"],
+             tags=["data"],
              include_in_schema=server.expose_gui_api)
 @router.post("/{index}/select/range",
-             tags=["generic", "event", "profile", "resource", "rule", "session", "flow", "segment"],
+             tags=["data"],
              include_in_schema=server.expose_gui_api)
 async def time_range_with_sql(index: IndexesHistogram, query: DatetimeRangePayload, page: Optional[int] = None,
                               query_type: str = None):
-    try:
+    if query_type is None:
+        query_type = tracardi.query_language
 
-        if query_type is None:
-            query_type = tracardi.query_language
-
-        if page is not None:
-            page_size = 25
-            query.start = page_size * page
-            query.limit = page_size
-        return await storage.driver.raw.index(index.value).query_by_sql_in_time_range(query, query_type)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    if page is not None:
+        page_size = 25
+        query.start = page_size * page
+        query.limit = page_size
+    return await storage.driver.raw.index(index.value).query_by_sql_in_time_range(query, query_type)
 
 
 @router.post("/{index}/select/histogram",
-             tags=["generic", "event", "profile", "resource", "rule", "session", "flow", "segment"],
+             tags=["data"],
              include_in_schema=server.expose_gui_api)
 async def histogram_with_sql(index: IndexesHistogram, query: DatetimeRangePayload, query_type: str = None,
                              group_by: str = None):
-    try:
+    if query_type is None:
+        query_type = tracardi.query_language
 
-        if query_type is None:
-            query_type = tracardi.query_language
-
-        return await storage.driver.raw.index(index.value).histogram_by_sql_in_time_range(query, query_type, group_by)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    return await storage.driver.raw.index(index.value).histogram_by_sql_in_time_range(query, query_type, group_by)

@@ -1,9 +1,7 @@
-from elasticsearch import ElasticsearchException
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter
 from app.config import server
 from tracardi.config import tracardi
 from tracardi.domain.version import Version
-from tracardi.exceptions.exception import StorageException
 from tracardi.service.storage.driver import storage
 
 router = APIRouter()
@@ -17,18 +15,12 @@ async def get_version():
     return tracardi.version.version
 
 
-@router.get("/info/version/details", tags=["version"], include_in_schema=server.expose_gui_api, response_model=Version)
+@router.get("/info/version/details", tags=["info"], include_in_schema=server.expose_gui_api, response_model=Version)
 async def get_current_backend_version():
 
     """
     Returns current backend version with previous versions.
     """
 
-    try:
-
-        result = await storage.driver.version.load()
-        return Version(**result)
-
-    except (ElasticsearchException, StorageException) as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
+    result = await storage.driver.version.load()
+    return Version(**result)
