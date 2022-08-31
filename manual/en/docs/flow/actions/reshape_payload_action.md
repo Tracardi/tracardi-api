@@ -1,15 +1,12 @@
-# Reshape payload action
+# Create payload action
 
-This node reshapes data provided in payload, profile, 
-session, or flow into another schema that is returned 
-on output payload. 
+This node creates data as payload output. It can reference profile, 
+session, or flow in the created object. 
 
 # Configuration
 
-In order to reshape the input payload user must provide 
-transformation configuration. Below you can find an 
-example of such configuration. Use dot notation to access json 
-properties from payload, profile, etc.
+In order to create payload user must provide transformation configuration. Below you can find an 
+example of such configuration. Use dot notation to access json properties from payload, profile, etc.
 
 You can mix regular values with values read from profile, session, etc.
 
@@ -39,7 +36,3 @@ This configuration will return an object new with the following properties.
     "event": <data_from_event>
 }
 ```
-
-## Side effects
-
-This action does not have side effects.

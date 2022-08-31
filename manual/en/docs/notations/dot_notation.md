@@ -1,8 +1,8 @@
 # Dot notation
 
 Dot notation is a way to access data in internal state of workflow. It is a standard 
-way to access data in Tracardi. It is used across many places in Tracari such as 
-plugins, etc. 
+way to reference data in Tracardi. It is used across many places in Tracari such as 
+plugins, destinations, etc. 
 
 ## Example of dot notation
 
@@ -17,6 +17,7 @@ Dot notation is build from *source* and *path to data*. Available sources are:
 * payload
 * flow
 * session
+* memory
 
 Path is a string of keys that indicate where the data is placed.
 
@@ -37,7 +38,8 @@ The full access dot notation is *profile@key.data*.
 !!! Warning
 
     If there is an error in dot notation or it is not in a right format e.g `profile.data.name` instead of 
-    `profile@data.name` then the result of it is the typed value, in this example `profile.data.name`
+    `profile@data.name` then the result is the typed value, in this example `profile.data.name`. That means that any 
+    value that is not a valid dot notation will be returned as is.
 
 ## Path to part of data
 
@@ -79,4 +81,13 @@ payload@data.0
 !!! Tip
 
     Also objects embeded inside arrays can be retrieved the same way.
+
+
+# Read also about:
+
+Notations that use dot notation:
+
+* [Templates](templates.md)
+* [Object templates](object_template.md)
+* [Logic notation](logic_notation.md)
 
