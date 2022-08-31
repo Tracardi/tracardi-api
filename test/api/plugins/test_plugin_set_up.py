@@ -423,7 +423,7 @@ async def test_should_set_up_plugin_array_reducer():
                        name="test-node", 
                        module="tracardi.process_engine.action.v1.operations.reduce_array.plugin", 
                        className="ArrayReducer")
-    await plugin.set_up({'array': ''})
+    await plugin.set_up({'array': 'payload@test'})
 
 
 async def test_should_set_up_plugin_write_to_memory_action():
@@ -1517,6 +1517,18 @@ async def test_should_set_up_plugin_elastic_email_contact_adder():
                        module="tracardi.process_engine.action.v1.connectors.elastic_email.add_contact.plugin", 
                        className="ElasticEmailContactAdder")
     await plugin.set_up({'additional_mapping': {}, 'email': None, 'source': {'id': None, 'name': None}})
+
+
+async def test_should_set_up_plugin_elastic_email_contact_status_change():
+    
+    module = import_package("tracardi.process_engine.action.v1.connectors.elastic_email.contact_status_change.plugin")
+    plugin_class = load_callable(module, "ElasticEmailContactStatusChange")
+    plugin = plugin_class()
+    plugin.node = Node(id="node-id", 
+                       name="test-node", 
+                       module="tracardi.process_engine.action.v1.connectors.elastic_email.contact_status_change.plugin", 
+                       className="ElasticEmailContactStatusChange")
+    await plugin.set_up({'email': None, 'status': None, 'source': {'id': None, 'name': None}})
 
 
 async def test_should_set_up_plugin_elastic_email_transactional_mail_sender():
