@@ -1,5 +1,6 @@
 import logging
 from collections import OrderedDict
+from typing import Optional
 
 import grpc
 from fastapi import APIRouter, Depends, HTTPException
@@ -109,13 +110,29 @@ async def tracardi_pro_sign_up(sign_up_data: SignUpData):
 
 
 @router.get("/tpro/available_services", tags=["tpro"], include_in_schema=server.expose_gui_api)
-async def get_available_services():
+async def get_available_services(query: Optional[str] = "", category: Optional[str] = ""):
     """
     Returns available Tracardi PRO services
     """
     try:
+        print(category)
         services = await tracardi_pro_client.get_available_services()
-        services['services'] = OrderedDict(sorted(services['services'].items()))
+
+        if query:
+            query = query.lower()
+            result = {key: value for key, value in services['services'].items() if
+                      query in value['metadata']['name'].lower() or query in value['metadata']['description'].lower()}
+        elif category:
+            print("fil cat")
+            for key, value in services['services'].items():
+                print(value['metadata']['tags'], category, category in value['metadata']['tags'])
+            result = {key: value for key, value in services['services'].items() if
+                      category in value['metadata']['tags']}
+
+        else:
+            result = services['services']
+
+        services['services'] = OrderedDict(sorted(result.items()))
         return services
 
     except grpc.RpcError as e:
