@@ -61,6 +61,29 @@ payload@numberOfPurchases == 1 AND payload@title == "Title"
 This example will return True if *numberOfPurchases* in payload equals 1 and *title* in payload 
 equals "Title".
 
+
+## Operator order
+
+If there is a data missing. For example:
+
+```
+profile@missing.data == 1
+```
+
+then you will see an error: Missing Value. To prevent it you will need to check if the data exists or is not empty.
+To do so type:
+
+```
+profile@missing.data NOT EMPTY AND profile@missing.data == 1
+```
+
+This way when data does not exist or is empty then the rest of the condition will not be checked and the result will be
+FALSE. Otherwise, when the `profile@missing.data` exists and is equal 1 then the result is TRUE. 
+
+The order in the condition does mather.
+
+## Type of operators
+
 There are other operators possible like:
 
 * less then (<)
@@ -72,6 +95,16 @@ There are other operators possible like:
 * not exists (*field_name* NOT EXISTS)
 * empty (*field_name* EMPTY)
 * not empty (*field_name* NOT EMPTY)
+* consists (*field_name* CONSIST "text" )
+* starts with (*field_name* STARTS WITH "text" )
+* ends with (*field_name* ENDS WITH "text" )
+
+### Example of operator use
+
+``` title="Example"
+payload@path.to.data NOT EMPTY
+```
+
 
 ## Value types
 
@@ -108,4 +141,10 @@ Functions can be used to convert value, for example to certain types.
 * uppercase(*field_name*) - returns upper-cased text value of *field_name*
 * datetime.from_timestamp(*field_name*) - returns date and time created from timestamp
   content of field *field_name*
+
+### Example of function use
+
+``` title="Example"
+datetime.from_timestamp(payload@path.to.data) > datetime.from_timestamp(payload@path.to.time)
+```
 

@@ -99,7 +99,11 @@ nav:
           - profiles/index.md
           - profiles/profile_merging.md
           - profiles/profile_segmentation.md
-
+      - Resources:
+          - resources/elastic_mail_resource.md
+          - resources/matomo_resource.md
+          - resources/novu_resource.md
+          - resources/redis_resource.md
       - Workflows:
           - flow/index.md
           - Actions:
@@ -154,6 +158,17 @@ nav:
                   - flow/actions/fetch_from_airtable_action.md
                   - flow/actions/fetch_from_influxdb_action.md
                   - flow/actions/elasticsearch_query_action.md
+                  - flow/password_generator_action.md
+                  - flow/actions/contains_string_action.md
+                  - flow/actions/ends_with_action.md
+                  - flow/actions/starts_with_action.md
+                  - flow/actions/weekdays_checker_action.md
+                  - Novu:
+                      - flow/actions/novu_plugin_action.md
+                  - Elastic mail:
+                      - flow/actions/elastic_email_bulk_action.md
+                      - flow/actions/elastic_email_change_contact_status_action.md
+                      - flow/actions/elastic_email_contact_add_action.md
                   - Trello:
                       - flow/actions/trello/add_trello_card_action.md
                       - flow/actions/trello/add_trello_member_action.md
@@ -245,6 +260,7 @@ nav:
           - notations/dot_notation.md
           - notations/logic_notation.md
           - notations/templates.md
+          - notations/object_template.md
   - api/index.md
   - Developers:
       - DevEnv set-up:
