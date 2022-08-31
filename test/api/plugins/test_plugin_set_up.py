@@ -1210,18 +1210,6 @@ async def test_should_set_up_plugin_weather_action():
     await plugin.set_up({'city': None, 'system': 'C'})
 
 
-async def test_should_set_up_plugin_aws_sqs_action():
-    
-    module = import_package("tracardi.process_engine.action.v1.connectors.aws.sqs.plugin")
-    plugin_class = load_callable(module, "AwsSqsAction")
-    plugin = plugin_class()
-    plugin.node = Node(id="node-id", 
-                       name="test-node", 
-                       module="tracardi.process_engine.action.v1.connectors.aws.sqs.plugin", 
-                       className="AwsSqsAction")
-    await plugin.set_up(None)
-
-
 async def test_should_set_up_plugin_sentiment_analysis_action(mocker):
     
     mocker.patch(
@@ -1519,6 +1507,18 @@ async def test_should_set_up_plugin_elastic_email_contact_adder():
     await plugin.set_up({'additional_mapping': {}, 'email': None, 'source': {'id': None, 'name': None}})
 
 
+async def test_should_set_up_plugin_elastic_email_contact_status_change():
+    
+    module = import_package("tracardi.process_engine.action.v1.connectors.elastic_email.contact_status_change.plugin")
+    plugin_class = load_callable(module, "ElasticEmailContactStatusChange")
+    plugin = plugin_class()
+    plugin.node = Node(id="node-id", 
+                       name="test-node", 
+                       module="tracardi.process_engine.action.v1.connectors.elastic_email.contact_status_change.plugin", 
+                       className="ElasticEmailContactStatusChange")
+    await plugin.set_up({'email': None, 'status': None, 'source': {'id': None, 'name': None}})
+
+
 async def test_should_set_up_plugin_elastic_email_transactional_mail_sender():
     
     module = import_package("tracardi.process_engine.action.v1.connectors.elastic_email.transactional_email.plugin")
@@ -1685,18 +1685,6 @@ async def test_should_set_up_plugin_data_extension_sender():
                        module="tracardi.process_engine.action.v1.connectors.salesforce.marketing_cloud.send.plugin", 
                        className="DataExtensionSender")
     await plugin.set_up({'extension_id': None, 'mapping': {}, 'source': {'id': '', 'name': ''}, 'update': False})
-
-
-async def test_should_set_up_plugin_notification_generator_action():
-    
-    module = import_package("tracardi.process_engine.action.v1.connectors.novu.plugin")
-    plugin_class = load_callable(module, "NotificationGeneratorAction")
-    plugin = plugin_class()
-    plugin.node = Node(id="node-id", 
-                       name="test-node", 
-                       module="tracardi.process_engine.action.v1.connectors.novu.plugin", 
-                       className="NotificationGeneratorAction")
-    await plugin.set_up({'payload': '{}', 'recipient_email': 'profile@pii.email', 'source': {'id': '', 'name': ''}, 'subscriber_id': 'profile@id', 'template_name': None})
 
 
 async def test_should_set_up_plugin_assign_profile_id_action():
@@ -1961,3 +1949,40 @@ async def test_should_set_up_plugin_contains_string_action():
                        module="tracardi.process_engine.action.v1.contains_string_action", 
                        className="ContainsStringAction")
     await plugin.set_up({'field': 'payload@field', 'substring': 'contains'})
+
+
+async def test_should_set_up_plugin_aws_sqs_action():
+    
+    module = import_package("tracardi.process_engine.action.v1.connectors.aws.sqs.plugin")
+    plugin_class = load_callable(module, "AwsSqsAction")
+    plugin = plugin_class()
+    plugin.node = Node(id="node-id", 
+                       name="test-node", 
+                       module="tracardi.process_engine.action.v1.connectors.aws.sqs.plugin", 
+                       className="AwsSqsAction")
+    await plugin.set_up(None)
+
+
+async def test_should_set_up_plugin_novu_trigger_action(mocker):
+    
+    mocker.patch(
+        # api_call is from slow.py but imported to main.py
+        'tracardi.service.storage.driver.storage.driver.resource.load',
+        return_value=Resource(
+            id="test-resource",
+            type="test",
+            credentials=ResourceCredentials(
+                production={'token': 'token'},
+                test={'token': 'token'}
+            )
+        )
+    )
+
+    module = import_package("tracardi.process_engine.action.v1.connectors.novu.plugin")
+    plugin_class = load_callable(module, "NovuTriggerAction")
+    plugin = plugin_class()
+    plugin.node = Node(id="node-id", 
+                       name="test-node", 
+                       module="tracardi.process_engine.action.v1.connectors.novu.plugin", 
+                       className="NovuTriggerAction")
+    await plugin.set_up({'payload': '{}', 'recipient_email': 'profile@pii.email', 'source': {'id': '', 'name': ''}, 'subscriber_id': 'profile@id', 'template': {'id': '', 'name': ''}})

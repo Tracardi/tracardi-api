@@ -43,8 +43,6 @@ async def get_data_for_plugin(module: str, endpoint_function: str, request: Requ
             status_code=422,
             content=jsonable_encoder(convert_errors(e))
         )
-    except HTTPException as e:
-        raise e
     except AttributeError as e:
         raise HTTPException(status_code=404, detail=str(e))
 
