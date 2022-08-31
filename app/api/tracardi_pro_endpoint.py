@@ -115,7 +115,6 @@ async def get_available_services(query: Optional[str] = "", category: Optional[s
     Returns available Tracardi PRO services
     """
     try:
-        print(category)
         services = await tracardi_pro_client.get_available_services()
 
         if query:
@@ -123,9 +122,6 @@ async def get_available_services(query: Optional[str] = "", category: Optional[s
             result = {key: value for key, value in services['services'].items() if
                       query in value['metadata']['name'].lower() or query in value['metadata']['description'].lower()}
         elif category:
-            print("fil cat")
-            for key, value in services['services'].items():
-                print(value['metadata']['tags'], category, category in value['metadata']['tags'])
             result = {key: value for key, value in services['services'].items() if
                       category in value['metadata']['tags']}
 
