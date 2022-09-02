@@ -115,22 +115,21 @@ async def get_available_services(query: Optional[str] = "", category: Optional[s
     Returns available Tracardi PRO services
     """
     try:
-        services = await tracardi_pro_client.get_available_services()
+        services = await tracardi_pro_client.get_available_services(query, category)
+        if 'services' in services:
+            if category:
+                result = {key: value for key, value in services['services'].items() if
+                          category in value['metadata']['tags']}
 
-        if query:
-            query = query.lower()
-            result = {key: value for key, value in services['services'].items() if
-                      query in value['metadata']['name'].lower() or query in value['metadata']['description'].lower()}
-        elif category:
-            result = {key: value for key, value in services['services'].items() if
-                      category in value['metadata']['tags']}
+            else:
+                result = services['services']
 
-        else:
-            result = services['services']
+            services['services'] = OrderedDict(sorted(result.items()))
+            return services
 
-        services['services'] = OrderedDict(sorted(result.items()))
-        return services
-
+        return {
+            "services": {}
+        }
     except grpc.RpcError as e:
         # Must be 403 because 401 logs out gui
         raise HTTPException(detail=e.details(), status_code=403 if e.code().name == 'UNAUTHENTICATED' else 500)

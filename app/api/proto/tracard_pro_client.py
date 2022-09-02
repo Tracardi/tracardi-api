@@ -54,8 +54,9 @@ class TracardiProClient(object):
         except grpc.RpcError as e:
             raise PermissionError(e.details())
 
-    async def get_available_services(self):
-        message = pb2.EmptyParams()
+    async def get_available_services(self, query="", category=""):
+        message = pb2.ServiceQuery(query=query, category=category, version=tracardi.version.version)
+
         services = self.stub.get_available_services(message, metadata=[('token', await get_tpro_token())])
         return json_format.MessageToDict(services)
 

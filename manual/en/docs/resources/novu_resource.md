@@ -1,3 +1,6 @@
+Novu is the open-source notification infrastructure for developers. You can register an notification event in Novu 
+and the system will send to your user via different means of messaging, e.g. e-mail, SMS, push message.
+
 # Novu Credentials
 
 To use the novu plugin you will need to provide Apikey and create your notification template.
