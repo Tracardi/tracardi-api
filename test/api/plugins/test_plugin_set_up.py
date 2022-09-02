@@ -423,7 +423,7 @@ async def test_should_set_up_plugin_array_reducer():
                        name="test-node", 
                        module="tracardi.process_engine.action.v1.operations.reduce_array.plugin", 
                        className="ArrayReducer")
-    await plugin.set_up({'array': ''})
+    await plugin.set_up({'array': 'payload@test'})
 
 
 async def test_should_set_up_plugin_write_to_memory_action():
