@@ -414,10 +414,10 @@ def test_datetime_from_timestamp():
 
 
 def test_should_parse_offset():
-    tree = parser.parse("now.offset(\"+1m\") > now()")
+    tree = parser.parse("now.offset(\"-1m\") < now()")
     assert ExprTransformer(dot=dot).transform(tree)
 
-    tree = parser.parse("now.offset(\"-1m\") < now()")
+    tree = parser.parse("now.offset(\"+1m\") > now()")
     assert ExprTransformer(dot=dot).transform(tree)
 
     tree = parser.parse("datetime.offset(payload@a.i, \"-1m\") < now()")

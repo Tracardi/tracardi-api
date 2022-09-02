@@ -9,6 +9,6 @@ hiredis==2.0.0
 redis==4.0.2
 elasticsearch[async]==7.10.1
 prodict==0.8.18
-lark==1.0.0
+lark==1.1.2
 
 git+https://github.com/Tracardi/tracardi.git@master
