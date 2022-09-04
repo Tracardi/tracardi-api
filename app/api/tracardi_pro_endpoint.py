@@ -117,14 +117,7 @@ async def get_available_services(query: Optional[str] = "", category: Optional[s
     try:
         services = await tracardi_pro_client.get_available_services(query, category)
         if 'services' in services:
-            if category:
-                result = {key: value for key, value in services['services'].items() if
-                          category in value['metadata']['tags']}
-
-            else:
-                result = services['services']
-
-            services['services'] = OrderedDict(sorted(result.items()))
+            services['services'] = OrderedDict(sorted(services['services'].items()))
             return services
 
         return {
