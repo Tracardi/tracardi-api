@@ -930,18 +930,6 @@ async def test_should_set_up_plugin_json_to_object_action():
     await plugin.set_up({'to_data': None})
 
 
-async def test_should_set_up_plugin_transactional_mail_sender():
-    
-    module = import_package("tracardi.process_engine.action.v1.connectors.mailchimp.transactional_email.plugin")
-    plugin_class = load_callable(module, "TransactionalMailSender")
-    plugin = plugin_class()
-    plugin.node = Node(id="node-id", 
-                       name="test-node", 
-                       module="tracardi.process_engine.action.v1.connectors.mailchimp.transactional_email.plugin", 
-                       className="TransactionalMailSender")
-    await plugin.set_up({'message': {'content': None, 'recipient': None, 'subject': None}, 'sender_email': None, 'source': {'id': '1', 'name': 'Some value'}})
-
-
 async def test_should_set_up_plugin_elastic_search_fetcher():
     
     module = import_package("tracardi.process_engine.action.v1.connectors.elasticsearch.query.plugin")
@@ -952,30 +940,6 @@ async def test_should_set_up_plugin_elastic_search_fetcher():
                        module="tracardi.process_engine.action.v1.connectors.elasticsearch.query.plugin", 
                        className="ElasticSearchFetcher")
     await plugin.set_up({'index': None, 'query': '{"query":{"match_all":{}}}', 'source': {'id': '1', 'name': 'Some value'}})
-
-
-async def test_should_set_up_plugin_mail_chimp_audience_adder():
-    
-    module = import_package("tracardi.process_engine.action.v1.connectors.mailchimp.add_to_audience.plugin")
-    plugin_class = load_callable(module, "MailChimpAudienceAdder")
-    plugin = plugin_class()
-    plugin.node = Node(id="node-id", 
-                       name="test-node", 
-                       module="tracardi.process_engine.action.v1.connectors.mailchimp.add_to_audience.plugin", 
-                       className="MailChimpAudienceAdder")
-    await plugin.set_up({'email': 'email@email.com', 'list_id': '1', 'merge_fields': {}, 'source': {'id': '1', 'name': 'test'}, 'subscribed': False, 'update': False})
-
-
-async def test_should_set_up_plugin_mail_chimp_audience_remover():
-    
-    module = import_package("tracardi.process_engine.action.v1.connectors.mailchimp.remove_from_audience.plugin")
-    plugin_class = load_callable(module, "MailChimpAudienceRemover")
-    plugin = plugin_class()
-    plugin.node = Node(id="node-id", 
-                       name="test-node", 
-                       module="tracardi.process_engine.action.v1.connectors.mailchimp.remove_from_audience.plugin", 
-                       className="MailChimpAudienceRemover")
-    await plugin.set_up({'delete': False, 'email': None, 'list_id': None, 'source': {'id': None, 'name': None}})
 
 
 async def test_should_set_up_plugin_trello_card_adder(mocker):
@@ -2090,3 +2054,39 @@ async def test_should_set_up_plugin_mautic_segment_editor(mocker):
                        module="tracardi.process_engine.action.v1.connectors.mautic.add_remove_segment.plugin", 
                        className="MauticSegmentEditor")
     await plugin.set_up({'action': None, 'contact_id': None, 'segment': None, 'source': {'id': None, 'name': None}})
+
+
+async def test_should_set_up_plugin_transactional_mail_sender():
+    
+    module = import_package("tracardi.process_engine.action.v1.connectors.mailchimp.transactional_email.plugin")
+    plugin_class = load_callable(module, "TransactionalMailSender")
+    plugin = plugin_class()
+    plugin.node = Node(id="node-id", 
+                       name="test-node", 
+                       module="tracardi.process_engine.action.v1.connectors.mailchimp.transactional_email.plugin", 
+                       className="TransactionalMailSender")
+    await plugin.set_up({'message': {'content': None, 'recipient': None, 'subject': None}, 'sender_email': None, 'source': {'id': '1', 'name': 'Some value'}})
+
+
+async def test_should_set_up_plugin_mail_chimp_audience_adder():
+    
+    module = import_package("tracardi.process_engine.action.v1.connectors.mailchimp.add_to_audience.plugin")
+    plugin_class = load_callable(module, "MailChimpAudienceAdder")
+    plugin = plugin_class()
+    plugin.node = Node(id="node-id", 
+                       name="test-node", 
+                       module="tracardi.process_engine.action.v1.connectors.mailchimp.add_to_audience.plugin", 
+                       className="MailChimpAudienceAdder")
+    await plugin.set_up({'email': 'email@email.com', 'list_id': '1', 'merge_fields': {}, 'source': {'id': '1', 'name': 'test'}, 'subscribed': False, 'update': False})
+
+
+async def test_should_set_up_plugin_mail_chimp_audience_remover():
+    
+    module = import_package("tracardi.process_engine.action.v1.connectors.mailchimp.remove_from_audience.plugin")
+    plugin_class = load_callable(module, "MailChimpAudienceRemover")
+    plugin = plugin_class()
+    plugin.node = Node(id="node-id", 
+                       name="test-node", 
+                       module="tracardi.process_engine.action.v1.connectors.mailchimp.remove_from_audience.plugin", 
+                       className="MailChimpAudienceRemover")
+    await plugin.set_up({'delete': False, 'email': None, 'list_id': None, 'source': {'id': None, 'name': None}})

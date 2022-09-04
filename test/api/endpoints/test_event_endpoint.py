@@ -117,35 +117,36 @@ def test_should_return_process_time():
 
 
 def test_should_return_event_meta():
-    response = endpoint.get('/events/metadata/type?limit=100')
+    response = endpoint.get('/events/metadata/type?limit=1000')
     assert response.status_code == 200
     result = response.json()
 
     assert result['total'] >= 0
     assert isinstance(result['result'], list)
 
-    source_id = str(uuid4())
-    session_id = str(uuid4())
-    response, _, event_id, profile_id = _make_event("test", source_id=source_id, session_id=session_id)
+    if result['total'] < 1000:
+        source_id = str(uuid4())
+        session_id = str(uuid4())
+        response, _, event_id, profile_id = _make_event("test", source_id=source_id, session_id=session_id)
 
-    try:
+        try:
 
-        response = endpoint.get('/events/metadata/type?limit=100')
-        assert response.status_code == 200
-        result = response.json()
-        assert 'test' in result['result']
+            response = endpoint.get('/events/metadata/type?limit=1000')
+            assert response.status_code == 200
+            result = response.json()
+            assert 'test' in result['result']
 
-    finally:
-        assert endpoint.delete(f'/event/{event_id}').status_code == 200
-        assert endpoint.get('/events/refresh').status_code == 200
+        finally:
+            assert endpoint.delete(f'/event/{event_id}').status_code == 200
+            assert endpoint.get('/events/refresh').status_code == 200
 
-        assert endpoint.delete(f'/event-source/{source_id}').status_code == 200
-        assert endpoint.get('/event-sources/refresh').status_code == 200
+            assert endpoint.delete(f'/event-source/{source_id}').status_code == 200
+            assert endpoint.get('/event-sources/refresh').status_code == 200
 
-        assert endpoint.delete(f'/profile/{profile_id}').status_code == 200
-        assert endpoint.get('/profiles/refresh').status_code == 200
+            assert endpoint.delete(f'/profile/{profile_id}').status_code == 200
+            assert endpoint.get('/profiles/refresh').status_code == 200
 
-        assert endpoint.delete(f'/session/{session_id}').status_code == 200
+            assert endpoint.delete(f'/session/{session_id}').status_code == 200
 
 
 def test_should_return_events_by_type_for_profile():
@@ -313,7 +314,7 @@ def test_should_return_events_by_status():
 
 
 def test_should_return_events_by_source():
-    response = endpoint.get(f'/events/by_source')
+    response = endpoint.get(f'/events/by_source?buckets_size=100')
     assert response.status_code == 200
     result = response.json()
 
@@ -326,7 +327,7 @@ def test_should_return_events_by_source():
     response, _, event_id1, profile_id1 = _make_event(event_type, session_id=session_id, source_id=source_id)
 
     try:
-        response = endpoint.get(f'/events/by_source')
+        response = endpoint.get(f'/events/by_source?buckets_size=100')
         assert response.status_code == 200
         result = response.json()
         result = {item['name']: item['value'] for item in result}

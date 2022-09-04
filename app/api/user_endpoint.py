@@ -75,14 +75,19 @@ async def delete_user(id: str, user=Depends(Permissions(["admin"]))):
 
 @router.get("/user/{id}", tags=["user"], include_in_schema=server.expose_gui_api, response_model=dict)
 async def get_user(id: str):
+
     """
     Returns user with given ID
     """
-    result = await storage.driver.user.get_by_id(id)
-    if result is None:
+
+    record = await storage.driver.user.get_by_id(id)
+    if record is None:
         raise HTTPException(status_code=404, detail=f"User {id} not found.")
 
-    return result.dict(exclude={"token"})
+    if 'token' in record:
+        del(record['token'])
+
+    return record
 
 
 @router.get("/users/{start}/{limit}", tags=["user"], include_in_schema=server.expose_gui_api, response_model=list)

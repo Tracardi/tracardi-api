@@ -23,12 +23,12 @@ def _yield_module_class() -> Iterator[Tuple[str, str, PluginTestTemplate]]:
     for plugin_module, test_template in installed_plugins.items():
         plugin_registry = _load_plugin_registry_metadata(plugin_module)
 
-        yield plugin_module, plugin_registry.spec.className, test_template
+        yield plugin_registry.spec.module, plugin_registry.spec.className, test_template
 
     for plugin_module, test_template in test_plugins.items():
         plugin_registry = _load_plugin_registry_metadata(plugin_module)
 
-        yield plugin_module, plugin_registry.spec.className, test_template
+        yield plugin_registry.spec.module, plugin_registry.spec.className, test_template
 
 
 def test_should_find_all_plugins_modules():

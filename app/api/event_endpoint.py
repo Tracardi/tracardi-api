@@ -136,11 +136,11 @@ async def aggregate_event_statuses():
 
 
 @router.get("/events/by_source", tags=["event"], include_in_schema=server.expose_gui_api)
-async def aggregate_event_tags():
+async def aggregate_event_tags(buckets_size: int = 30):
     """
     Returns number of events grouped by event source
     """
-    return await storage.driver.event.aggregate_events_by_source()
+    return await storage.driver.event.aggregate_events_by_source(buckets_size=buckets_size)
 
 
 # todo not used -  not in tests
