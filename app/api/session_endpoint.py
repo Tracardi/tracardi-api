@@ -54,7 +54,7 @@ async def get_session_by_id(id: str, response: Response):
     """
     Returns session with given ID (str)
     """
-    result = await storage.driver.session.load(id)
+    result = await storage.driver.session.load_by_id(id)
 
     if result is None:
         response.status_code = 404
@@ -87,5 +87,5 @@ async def get_nth_last_session_for_profile(profile_id: str, n: Optional[int] = 0
     return {
         "id": result["id"],
         "duration": result["metadata"]["time"]["duration"],
-        "insert": result["metadata"]["time"]["insert"]} \
+        "insert": result["metadata"]["time"].get("insert", None)} \
         if result is not None else None

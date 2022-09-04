@@ -140,13 +140,10 @@ class Profile(Entity):
 class ProfileQuery:
     @strawberry.field
     async def profile(self, info: Info, id: strawberry.ID) -> Profile:
-        # print(info)
-        # fields = info.selected_fields
-        # print(fields[0].selections)
         record = await storage.driver.profile.load_by_id(id)
         if record is None:
             raise ValueError("There is no profile {}".format(id))
-        profile = domain.profile.Profile(**record).set_meta_data(record.get_meta_data())
+        profile = record.to_entity(domain.profile.Profile)
 
         return Profile(
             id=profile.id,
