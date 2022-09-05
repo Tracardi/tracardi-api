@@ -392,6 +392,7 @@ def test_should_return_event_console_log():
         assert endpoint.get('/event-sources/refresh').status_code == 200
         assert endpoint.get('/sessions/refresh').status_code == 200
 
+
 # ---------------
 
 def test_should_return_event_histogram_data():
