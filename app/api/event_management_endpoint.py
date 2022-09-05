@@ -6,11 +6,15 @@ from app.service.grouping import group_records
 from tracardi.domain.event_payload_validator import EventTypeManager, EventPayloadValidatorRecord
 from tracardi.service.storage.driver import storage
 from typing import Optional
+from tracardi.service.storage.redis_client import RedisClient
+import json
 
 router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin", "developer"]))],
     prefix="/event-type"
 )
+
+redis_client = RedisClient()
 
 
 @router.put("/management/refresh", tags=["event-type"], include_in_schema=server.expose_gui_api,
@@ -29,6 +33,11 @@ async def add_event_type_prerequisites(event_type_metadata: EventTypeManager):
     Creates new event type prerequisites and validation schema in database
     """
     result = await storage.driver.event_management.add_event_type_metadata(event_type_metadata)
+    redis_client.client.setex(
+        f"EVENT-TYPE-MANAGER-{event_type_metadata.event_type}",
+        value=json.dumps(event_type_metadata.dict()),
+        time=15 * 60
+    )
     await storage.driver.event_management.refresh()
 
     return {"added": result.saved}
@@ -53,6 +62,7 @@ async def del_event_type_prerequisites(event_type: str):
     Deletes event type prerequisites and validation schema for given event type
     """
     result = await storage.driver.event_management.del_event_type_metadata(event_type)
+    redis_client.client.delete(f"EVENT-TYPE-MANAGER-{event_type}")
     await storage.driver.event_management.refresh()
 
     return {"deleted": 1 if result is not None and result["result"] == "deleted" else 0}
