@@ -19,6 +19,12 @@ def _add_event_management_data(event_type, data=None):
                         "type": "object"
                     }
                 }
+            },
+            "reshaping": {
+                "condition": "event@properties.x EXISTS",
+                "template": {
+                    "key": "event@properties.value"
+                }
             }
         }
 
