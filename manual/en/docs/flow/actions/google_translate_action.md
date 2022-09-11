@@ -1,6 +1,9 @@
 # Google translate plugin
 
-This plugin translate the given text according to given source language
+This plugin translate the delivered text to English .
+
+__CAUTION__: This plugin is __experimental__. It is based on the library **googletrans** which may stop working because it uses
+the public JSON API which is not intended for this kind of use.
 
 # JSON Configuration
 
