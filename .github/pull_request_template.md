@@ -7,7 +7,7 @@ Tips
  * Give the same name to the pull request as the name of ticket if possible
  * Make the title in form of: Pull request title (#<issue-id>)
  * Write a pull request description that is detailed enough to understand what the pull request does, how, and why.
- * Test your code throughly before PR.
+ * Test your code thoroughly before PR.
 
 Pull Request title
 -------------------

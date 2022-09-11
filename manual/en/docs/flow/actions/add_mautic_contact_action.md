@@ -35,7 +35,7 @@ occurs.
   },
   "email": "<path-to-email-of-new-contact>",
   "additional_mapping": {
-    "country": "<path-to-country-data",
+    "country": "<path-to-country-data>",
     "firstname": "<path-to-first-name>",
     "...": "..."
   },

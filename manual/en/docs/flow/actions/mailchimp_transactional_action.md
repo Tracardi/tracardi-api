@@ -48,7 +48,7 @@ message recipient's email(s), message subject and message content.
 
 #### Mailchimp resource
 
-MailChimp token must be stored in Tracardis resources. Please remember to provide noth test and production API key 
+MailChimp token must be stored in Tracardis resources. Please remember to provide both test and production API key 
 (token) in resource configuration.
 
 MailChimp API Tokens can be found in **settings -> SMTP & API Info** on mandrillapp.com. It is a string with random characters.
