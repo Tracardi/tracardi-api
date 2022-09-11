@@ -13,3 +13,15 @@ the public JSON API which is not intended for this kind of use.
   "source_language": "la"
 }
 ```
+
+
+# Output 
+
+Returns result on the output port in the following schema:
+
+```json
+{
+  "translation": "translated text"
+}
+```
+
