@@ -36,7 +36,7 @@ tracardi_pro_client = TracardiProClient(host=tracardi.tracardi_pro_host,
                                         secure=False)
 
 
-@router.get("/tpro/validate", tags=["tpro"], include_in_schema=server.expose_gui_api, response_model=bool)
+@router.get("/tpro/validate", tags=["tpro"], include_in_schema=server.expose_gui_api)
 async def is_token_valid():
     """
     Return None if not configured otherwise returns True if credentials are valid or False.
