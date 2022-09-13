@@ -20,18 +20,30 @@ port **error** if one occurs.
 
 #### Form fields
 
-- MailChimp resource - here select your MailChimp marketing resource with API key.
-- ID of your list (audience) - it's your audience's ID, that you can easily check on MailChimp website.
-- Contact's email address - that's path to email address of your contact. Notice that field can contain multiple values,
+* MailChimp resource - here select your MailChimp marketing resource with API key.
+* ID of your list (audience) - it's your audience's ID, that you can easily check on MailChimp website (see below for instructions).
+* Contact's email address - that's path to email address of your contact. Notice that field can contain multiple values,
   so if profile after merging has two email addresses, then plugin will add two contacts to your audience.
-- MailChimp merge fields - here you can determine relation between your audience's merge fields and fields in Tracardi
+* MailChimp merge fields - here you can determine relation between your audience's merge fields and fields in Tracardi
   data. If you associate merge field **FNAME** (which is default merge field for first name) with dot path **
   profile@pii.name**, then your contact's first name will be taken from this Tracardi field.
-- Subscribed - this parameter determines whether contact is ready for sending emails or should receive confirmation
+* Subscribed - this parameter determines whether contact is ready for sending emails or should receive confirmation
   email from MailChimp. According to MailChimp's policy, you must have contact's explicit consent in order to mark them
   as subscribed.
-- Update existing data - here you can determine whether plugin is allowed to edit existing contacts according to email
+* Update existing data - here you can determine whether plugin is allowed to edit existing contacts according to email
   address compatibility.
+
+# Where do I find Mailchimp audience ID?
+
+To find your audience ID do the following steps:
+
+* Click Audience.
+* Click All contacts.
+* If you have more than one audience, click the Current audience drop-down and choose the one you want to work with.
+* In the tabs find Settings and click the Setting's drop-down
+* Choose "Audience name and defaults".
+* In the Audience ID section, you'll see a string of letters and numbers.
+
 
 #### Config with JSON:
 

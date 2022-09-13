@@ -21,18 +21,30 @@ port **error** if one occurs.
 #### Config with form
 
 - MailChimp resource - here select your MailChimp marketing resource with API key.
-- ID of your list (audience) - it's your audience's ID, that you can easily check on MailChimp website.
+- ID of your list (audience) - it's your audience's ID, that you can easily check on MailChimp website (see below for instructions).
 - Contact's email address - that's path to email address of your contact. Notice that field can contain multiple values,
   therefore if profile after merging has two email addresses, then plugin will add two contacts to your audience.
 - Permanently delete contact - Here you can determine whether given contact should be archived (such that you can re-add
   them)
   or permanently deleted, with no way of recreating and no data left (at least without their consent).
 
-!!! danger "Possible lose of data"
+!!! DANGER "Possible lose of data"
 
     Removing an email from the recipient list with the delete option has serious ramifications. 
     Once deleted, an e-mail cannot be added without the consent of its owner again. Use the delete 
     option with caution. In most cases, delete: false is the correct configuration
+
+
+# Where do I find Mailchimp audience ID?
+
+To find your audience ID do the following steps:
+
+* Click Audience.
+* Click All contacts.
+* If you have more than one audience, click the Current audience drop-down and choose the one you want to work with.
+* In the tabs find Settings and click the Setting's drop-down
+* Choose "Audience name and defaults".
+* In the Audience ID section, you'll see a string of letters and numbers.
 
 
 #### Config with JSON
