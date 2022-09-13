@@ -31,6 +31,7 @@ class TracardiProClient(object):
         self.server_port = port
 
         host = '{}:{}'.format(self.host, self.server_port)
+        logger.info(f"Tracardi PRO set to {host}")
         if secure:
             self.channel = grpc.secure_channel(host, credentials)
         else:

@@ -78,6 +78,13 @@ system_settings = [
     ),
     SystemSettings(
         **{
+            "label": "TRACARDI_PRO_PORT",
+            "value": tracardi.tracardi_pro_port,
+            "desc": "Defines the Tracardi Pro Services Port."
+        }
+    ),
+    SystemSettings(
+        **{
             "label": "TRACARDI_SCHEDULER_HOST",
             "value": tracardi.tracardi_scheduler_host,
             "desc": "Defines the Tracardi Pro Scheduler Host."

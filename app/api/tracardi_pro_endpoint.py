@@ -32,7 +32,7 @@ router = APIRouter(
 )
 
 tracardi_pro_client = TracardiProClient(host=tracardi.tracardi_pro_host,
-                                        port=50000,
+                                        port=tracardi.tracardi_pro_port,
                                         secure=False)
 
 
