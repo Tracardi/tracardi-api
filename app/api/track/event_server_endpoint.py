@@ -24,6 +24,13 @@ logger.addHandler(log_handler)
 router = APIRouter()
 
 
+def get_headers(request: Request):
+    headers = dict(request.headers)
+    if 'authorization' in headers:
+        del headers['authorization']
+    return headers
+
+
 async def _track(tracker_payload: TrackerPayload, host: str, profile_less: bool = False):
     try:
         return await synchronized_event_tracking(tracker_payload, host, profile_less, allowed_bridges=['rest'])
@@ -54,7 +61,6 @@ async def _track(tracker_payload: TrackerPayload, host: str, profile_less: bool 
 
 @router.post("/collect/{event_type}/{source_id}/{session_id}", tags=['context-server'])
 async def track_post_webhook(event_type: str, source_id: str, request: Request, session_id: Optional[str] = None):
-
     """
     Collects data from request POST and adds event type. It stays profile-less if no session provided.
     Session is saved when event is not profile less.
@@ -69,7 +75,9 @@ async def track_post_webhook(event_type: str, source_id: str, request: Request, 
         source=Entity(id=source_id),
         session=Entity(id=session_id),
         metadata=EventPayloadMetadata(time=Time()),
-        context={},
+        context={
+            "headers": get_headers(request)
+        },
         properties={},
         events=[
             EventPayload(type=event_type, properties=properties)
@@ -81,7 +89,6 @@ async def track_post_webhook(event_type: str, source_id: str, request: Request, 
 
 @router.post("/collect/{event_type}/{source_id}", tags=['context-server'])
 async def track_post_webhook(event_type: str, source_id: str, request: Request):
-
     """
     Collects data from request POST and adds event type. It stays profile-less.
     """
@@ -108,7 +115,6 @@ async def track_post_webhook(event_type: str, source_id: str, request: Request):
 
 @router.get("/collect/{event_type}/{source_id}/{session_id}", tags=['context-server'])
 async def track_get_webhook(event_type: str, source_id: str, request: Request, session_id: Optional[str] = None):
-
     """
     Collects data from request GET and adds event type. It stays profile-less if no session provided.
     Session is saved when event is not profile less.
@@ -122,7 +128,9 @@ async def track_get_webhook(event_type: str, source_id: str, request: Request, s
         source=Entity(id=source_id),
         session=Entity(id=session_id),
         metadata=EventPayloadMetadata(time=Time()),
-        context={},
+        context={
+            "headers": get_headers(request)
+        },
         properties={},
         events=[
             EventPayload(type=event_type, properties=properties)
@@ -134,7 +142,6 @@ async def track_get_webhook(event_type: str, source_id: str, request: Request, s
 
 @router.get("/collect/{event_type}/{source_id}", tags=['context-server'])
 async def track_get_webhook(event_type: str, source_id: str, request: Request):
-
     """
     Collects data from request GET and adds event type. It stays profile-less if no session provided.
     Session is saved when event is not profile less.
@@ -160,4 +167,5 @@ async def track_get_webhook(event_type: str, source_id: str, request: Request):
 
 @router.post("/track", tags=['context-server'])
 async def track(tracker_payload: TrackerPayload, request: Request, profile_less: bool = False):
+    tracker_payload.context['headers'] = get_headers(request)
     return await _track(tracker_payload, get_ip_address(request), profile_less)
