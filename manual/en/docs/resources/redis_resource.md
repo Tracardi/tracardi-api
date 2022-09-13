@@ -1,11 +1,13 @@
-# Redis
-This resource is for Redis database.
+Redis is an open source, in-memory data structure store, used as a database, cache, and message broker. Redis' versatile
+in-memory data structures enable building data infrastructure for real-time applications that require low latency and
+high-throughput.
 
-### Proper configuration
-```json
-{
-  "url": "<url-of-your-redis-database>",
-  "user": "<username-to-use-for-authorization>",
-  "password": "<password-associated-with-this-user>"
-}
-```
+# Resource configuration and set-up
+
+In order to connect to Redis you need the following information:
+
+* url: Url of your redis database
+* username: Set-up during redis installation
+* password: Set-up during redis installation
+
+All above information is required. None can be left empty.

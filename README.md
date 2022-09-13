@@ -63,7 +63,7 @@ If you do not want to synchronize you profiles with remote system you can skip R
 Now pull and run Tracardi backend.
 
 ```
-docker run -p 8686:80 -e ELASTIC_HOST=http://<your-laptop-ip>:9200 -e REDIS_HOST=redis://<your-laptop-ip>:6379 tracardi/tracardi-api
+docker run -p 8686:80 -e ELASTIC_HOST=http://<your-laptop-ip>:9200 -e REDIS_HOST=redis://<your-laptop-ip>:6379 tracardi/tracardi-api:0.7.1
 ```
 
 Tracardi must connect to elastic. To do that you have to set ELASTIC_HOST variable to reference your laptop's IP. 
@@ -81,7 +81,7 @@ For more trouble shooting solutions go to [http://docs.tracardi.com/trouble/](ht
 If you have an elasticsearch instance and you would like to connect to it via HTTPS this is the command you may find useful. 
 
 ```
-docker run -p 8686:80 -e ELASTIC_HOST=https://user:password@<your-laptop-ip>:9200 -e ELASTIC_VERIFY_CERTS=no -e REDIS_HOST=redis://<your-laptop-ip>:6379 tracardi/tracardi-api
+docker run -p 8686:80 -e ELASTIC_HOST=https://user:password@<your-laptop-ip>:9200 -e ELASTIC_VERIFY_CERTS=no -e REDIS_HOST=redis://<your-laptop-ip>:6379 tracardi/tracardi-api:0.7.1
 ```
 
 ## Start Tracardi GUI
@@ -89,7 +89,7 @@ docker run -p 8686:80 -e ELASTIC_HOST=https://user:password@<your-laptop-ip>:920
 Now pull and run Tracardi Graphical User Interface.
 
 ```
-docker run -p 8787:80 -e API_URL=//127.0.0.1:8686 tracardi/tracardi-gui
+docker run -p 8787:80 -e API_URL=//127.0.0.1:8686 tracardi/tracardi-gui:0.7.1
 ```
 
 ## Start Tracardi Documentation

@@ -184,6 +184,6 @@ async def get_plugins_list(query: Optional[str] = None):
     groups = {k: sorted(v, key=lambda r: r.plugin.metadata.name, reverse=False) for k, v in groups.items()}
 
     return {
-        "total": result.total,
+        "total": len(_result),
         "grouped": groups
     }
