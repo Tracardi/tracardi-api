@@ -185,8 +185,8 @@ nav:
                       - flow/actions/send_to_mixpanel_action.md
                   - Mailchimp:
                       - flow/actions/mailchimp_transactional_action.md
-                      - flow/actions/add_to_mailchimp_audience_action.md
-                      - flow/actions/remove_from_mailchimp_audience_action.md
+                      - flow/actions/mailchimp_add_to_audience_action.md
+                      - flow/actions/mailchimp_remove_from_audience_action.md
                   - Sales force:
                       - flow/actions/send_to_data_extension_action.md
                   - Active campaign:
