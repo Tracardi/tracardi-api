@@ -100,7 +100,7 @@ nav:
           - profiles/profile_merging.md
           - profiles/profile_segmentation.md
       - Resources:
-          - resources/elastic_mail_resource.md
+          - resources/elastic_email_resource.md
           - resources/matomo_resource.md
           - resources/novu_resource.md
           - resources/redis_resource.md
