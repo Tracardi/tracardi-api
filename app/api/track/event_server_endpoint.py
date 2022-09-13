@@ -78,9 +78,10 @@ async def track_post_webhook(event_type: str, source_id: str, request: Request, 
         session=Entity(id=session_id),
         metadata=EventPayloadMetadata(time=Time()),
         context={},
-        properties={
-            "headers": get_headers(request)  # it will be an event context value
+        request={
+            "headers": get_headers(request)  # it will be an event request value
         },
+        properties={},
         events=[
             EventPayload(type=event_type, properties=properties)
         ],
@@ -106,9 +107,10 @@ async def track_post_webhook(event_type: str, source_id: str, request: Request):
         metadata=EventPayloadMetadata(time=Time()),
         profile=None,
         context={},
-        properties={
-            "headers": get_headers(request)  # it will be an event context value
+        request={
+            "headers": get_headers(request)  # it will be an event request value
         },
+        properties={},
         events=[
             EventPayload(type=event_type, properties=properties)
         ],
@@ -133,9 +135,10 @@ async def track_get_webhook(event_type: str, source_id: str, request: Request, s
         session=Entity(id=session_id),
         metadata=EventPayloadMetadata(time=Time()),
         context={},
-        properties={
-            "headers": get_headers(request)  # it will be an event context value
+        request={
+            "headers": get_headers(request)  # it will be an event request value
         },
+        properties={},
         events=[
             EventPayload(type=event_type, properties=properties)
         ],
@@ -160,9 +163,10 @@ async def track_get_webhook(event_type: str, source_id: str, request: Request):
         session=None,
         metadata=EventPayloadMetadata(time=Time()),
         context={},
-        properties={
-            "headers": get_headers(request)  # it will be an event context value
+        request={
+            "headers": get_headers(request)  # it will be an event request value
         },
+        properties={},
         events=[
             EventPayload(type=event_type, properties=properties)
         ],
@@ -173,5 +177,5 @@ async def track_get_webhook(event_type: str, source_id: str, request: Request):
 
 @router.post("/track", tags=['context-server'])
 async def track(tracker_payload: TrackerPayload, request: Request, profile_less: bool = False):
-    tracker_payload.properties['headers'] = get_headers(request)
+    tracker_payload.request['headers'] = get_headers(request)
     return await _track(tracker_payload, get_ip_address(request), profile_less)
