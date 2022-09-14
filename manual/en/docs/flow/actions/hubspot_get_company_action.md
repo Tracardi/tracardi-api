@@ -1,6 +1,6 @@
-# Update contact from HubSpot plugin
+# Get company from HubSpot plugin
 
-This plugin updates a contact from HubSpot, based on provided data.
+This plugin gets a company from HubSpot, based on provided company Id.
 
 ## Input
 This plugin takes any payload as input.
@@ -8,8 +8,6 @@ This plugin takes any payload as input.
 ## Outputs
 This plugin returns response from HubSpot API on port **response**, or optional
 error info on port **error** if one occurs.
-
-Warning: although the plugin updates a contact, HubSpotAPI sometimes returns an unknown error.
 
 ## HubSpot app
 Firstly, you need to [create an app](https://legacydocs.hubspot.com/docs/faq/how-do-i-create-an-app-in-hubspot) in 
@@ -29,12 +27,11 @@ There are your client ID and client secret and here you need to define your redi
   security reasons, this URL must use https in production. When testing using localhost, http can be used. 
   Also, you must use a domain, as IP addresses are not supported.
   
-* scopes: for adding contact, you need to choose crm.objects.contacts.write scope, but this match only with this 
-  and Update Contact from HubSpot plugin. For other plugins connecting to HubSpot, you should choose other scopes.   
+* scopes: for getting company, you need to choose crm.objects.companies.read scope, but this match only with this 
+  and Get Company from HubSpot plugin. For other plugins connecting to HubSpot, you should choose other scopes.
   We recommend choose all the following scopes: 
   
         crm.objects.companies.write, crm.objects.companies.read, crm.objects.contacts.write, crm.schemas.contacts.read, content
-
 
 After filling the fields, copy link and open this. After that, choose the account that match the app you want to
 connect with HubSpot and press the button. You'll be asked for granting access to your app, then be redirected to 
@@ -61,28 +58,15 @@ In the last site URL, there is a code you can use later.
 * is token got - please select true if you've got access token. If you select false and then make any operation 
   to HubSpot with Tracardi, you should select true - in this case, you don't need to remember tokens - Tracardi
   will do it for you.
-* contact id - id of a contact you want to update.
-* properties - you can add properties for your contact. Remember to use field aliases from HubSpot.
+* company id - id of a company you want to get.
 
 #### JSON configuration - example
 
 ```json
 {
   "source": {
-    "client_id": "<your-client-id>",
-    "client_secret": "<your-client-secret>",
-    "refresh_token": "<your-refresh-token-optionally>",
     "access_token": "<your-access-token-optionally>",
-    "redirect_url": "<your-redirect-url-optionally>",
-    "code": "<your-code-optionally-optionally>"
   },
-  "is_token_got": false,
-  "contact_id": "<your-contact-id>",
-  "properties":
-    {
-      "email": "<a-contact-email>",
-      "firstname": "<a-contact-firstname>",
-      "lastname": "<a-contact-lastname>"
-    }
+  "company_id": "<your-company-id>"
 }
 ```
