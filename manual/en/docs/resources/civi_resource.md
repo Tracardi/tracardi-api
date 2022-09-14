@@ -20,11 +20,11 @@ can vary between CMSs and versions. The file should contain something like:
 
 ```php
 if (!defined('CIVICRM_SITE_KEY')) {
-  define( 'CIVICRM_SITE_KEY', 'J8UdnKcpN93x0mvv');
+  define( 'CIVICRM_SITE_KEY', 'qwednKcpN93x0mvv');
 }
 ```
 
-In this case, the Site key is __J8UdnKcpN93x0mvv__.
+In this case, the Site key is __qwednKcpN93x0mvv__.
 
 ### API URL
 
