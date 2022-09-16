@@ -148,6 +148,8 @@ async def save_tracardi_pro_resource(pro: ProService):
     """
     result = {}
 
+    # Add resource
+
     if 'resource' in pro.service.metadata.submit:
         resource = Resource.from_pro_service(pro)
 
@@ -162,6 +164,8 @@ async def save_tracardi_pro_resource(pro: ProService):
         record = ResourceRecord.encode(resource)
         result['resource'] = await StorageFor(record).index().save()
         await storage.driver.resource.refresh()
+
+    # Add plugins
 
     if isinstance(pro.plugins, list):
         result['plugin'] = []
