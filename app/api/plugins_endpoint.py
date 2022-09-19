@@ -1,3 +1,4 @@
+from json import JSONDecodeError
 from typing import Optional
 
 import aiohttp
@@ -34,9 +35,14 @@ async def get_data_for_plugin(module: str, endpoint_function: str, request: Requ
         endpoint_module = load_callable(module, 'Endpoint')
         function_to_call = getattr(endpoint_module, endpoint_function)
 
+        try:
+            body = await request.json()
+        except JSONDecodeError:
+            body = {}
+
         if is_coroutine(function_to_call):
-            return await function_to_call(await request.json())
-        return function_to_call(await request.json())
+            return await function_to_call(body)
+        return function_to_call(body)
 
     except ValidationError as e:
         return JSONResponse(

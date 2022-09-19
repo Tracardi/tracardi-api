@@ -1,3 +1,8 @@
+HubSpot's integrated CRM platform contains the marketing, sales, service, operations, and website-building software you
+need to grow your business.
+
+# Resource configuration and set-up
+
 To use Hubspot you will need an API Key from their dashboard.
 
 To obtain AccessToken/API KEY:
