@@ -109,8 +109,8 @@ application = FastAPI(
                 "its broad set of features",
     version=str(tracardi.version),
     openapi_tags=tags_metadata if server.expose_gui_api else None,
-    docs_url=server.api_docs,
-    redoc_url=server.api_docs,
+    docs_url='/docs' if server.api_docs else None,
+    redoc_url='/redoc' if server.api_docs else None,
     contact={
         "name": "Risto Kowaczewski",
         "url": "http://github.com/tracardi/tracardi",
