@@ -12,6 +12,7 @@ class ServerConfig:
         self.page_size = int(env['AUTOLOAD_PAGE_SIZE']) if 'AUTOLOAD_PAGE_SIZE' in env else 25
         self.expose_gui_api = (env['EXPOSE_GUI_API'].lower() == "yes") if 'EXPOSE_GUI_API' in env else True
         self.x_forwarded_ip_header = env['USE_X_FORWARDED_IP'] if 'USE_X_FORWARDED_IP' in env else None
+        self.api_docs = env['API_DOCS'] if 'API_DOCS' in env else None
 
 
 server = ServerConfig(os.environ)
