@@ -24,6 +24,13 @@ system_settings = [
     ),
     SystemSettings(
         **{
+            "label": "API_DOCS",
+            "value": server.api_docs,
+            "desc": "Default: Yes. Turns off APi documentations at /docs."
+        }
+    ),
+    SystemSettings(
+        **{
             "label": "RUN_HEARTBEAT_EVERY",
             "value": server.heartbeat_every,
             "desc": "Default: 300. The time each worker reports its health."
