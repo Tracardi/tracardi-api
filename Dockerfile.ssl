@@ -19,6 +19,12 @@ COPY uix uix/
 
 ## Copy manual
 COPY manual manual/
+
+# Remove test page
+
+RUN rm -rf app/tracker/index.html
+RUN rm -rf app/tracker/index.css
+
 ENV VARIABLE_NAME="application"
 
 # ENV GUNICORN_CMD_ARGS="--keyfile=/ssl/key.pem --certfile=/ssl/cert.pem --timeout=90"

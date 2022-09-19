@@ -27,8 +27,15 @@ COPY uix uix/
 ## Copy manual
 COPY manual manual/
 
+# Remove test page
+
+RUN rm -rf app/tracker/index.html
+RUN rm -rf app/tracker/index.css
+
 ## Install dependencies
 RUN pip --default-timeout=240 install -r manual/requirements.txt
+
+# Install manual
 WORKDIR /app/manual/en
 RUN mkdocs build
 

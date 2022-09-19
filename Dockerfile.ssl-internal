@@ -17,6 +17,11 @@ COPY uix uix/
 COPY ssl ssl/
 COPY manual manual/
 
+# Remove test page
+
+RUN rm -rf app/tracker/index.html
+RUN rm -rf app/tracker/index.css
+
 RUN pip install wheel
 RUN pip --default-timeout=180 install -r manual/requirements.txt
 WORKDIR /app/manual/en
