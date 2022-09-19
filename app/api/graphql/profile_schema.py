@@ -33,7 +33,7 @@ class ProfilePII:
     name: typing.Optional[str]
     last_name: typing.Optional[str]
     birth_date: typing.Optional[str]
-    marital_status:  typing.Optional[str]
+    marital_status: typing.Optional[str]
     email: typing.Optional[str]
     telephone: typing.Optional[str]
     twitter: typing.Optional[str]
@@ -123,6 +123,7 @@ class Profile(Entity):
 
         events = await storage.driver.event.load_event_by_values(key_value_pais, sort_by, limit=limit)
         return [
+            # todo add request data to event
             Event(
                 id=event.id,
                 metadata=EventMeta(time=original_event['metadata']['time']['insert']),
