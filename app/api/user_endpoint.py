@@ -3,7 +3,7 @@ from tracardi.domain.user import User
 from app.config import server
 from tracardi.service.storage.driver import storage
 from pydantic import BaseModel
-from typing import Optional
+from typing import Optional, Union
 
 from .auth.permissions import Permissions
 from .domain.user_payload import UserPayload
@@ -19,6 +19,40 @@ class UserSoftEditPayload(BaseModel):
 router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin"]))]
 )
+
+
+@router.get("/user/preference/{key}", tags=["user"], include_in_schema=server.expose_gui_api,
+            response_model=Optional[dict])
+async def get_user_preference(key: str, user=Depends(Permissions(["admin", "developer", "marketer", "maintainer"]))):
+    """
+    Returns user preference
+    """
+    return user.preference.get(key, None)
+
+
+@router.post("/user/preference/{key}", tags=["user"], include_in_schema=server.expose_gui_api, response_model=dict)
+async def set_user_preference(key: str, preference: Union[dict, str, int, float],
+                              user=Depends(Permissions(["admin", "developer", "marketer", "maintainer"]))):
+    """
+    Sets user preference.Uses key to set the preference
+    """
+    pass
+
+
+@router.delete("/user/preference/{key}", tags=["user"], include_in_schema=server.expose_gui_api, response_model=dict)
+async def delete_user_preference(key: str, user=Depends(Permissions(["admin", "developer", "marketer", "maintainer"]))):
+    """
+    Deletes user preference
+    """
+    pass
+
+
+@router.get("/user/preferences", tags=["user"], include_in_schema=server.expose_gui_api, response_model=dict)
+async def gets_all_user_preferences(user=Depends(Permissions(["admin", "developer", "marketer", "maintainer"]))):
+    """
+    Returns all user preferences
+    """
+    pass
 
 
 @router.get("/user/refresh", tags=["user"], include_in_schema=server.expose_gui_api, response_model=dict)
@@ -75,7 +109,6 @@ async def delete_user(id: str, user=Depends(Permissions(["admin"]))):
 
 @router.get("/user/{id}", tags=["user"], include_in_schema=server.expose_gui_api, response_model=dict)
 async def get_user(id: str):
-
     """
     Returns user with given ID
     """
@@ -85,7 +118,7 @@ async def get_user(id: str):
         raise HTTPException(status_code=404, detail=f"User {id} not found.")
 
     if 'token' in record:
-        del(record['token'])
+        del (record['token'])
 
     return record
 
