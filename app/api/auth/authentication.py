@@ -31,7 +31,7 @@ class Authentication:
         user = await storage.driver.user.get_by_credentials(
             email=username,
             password=password
-        )
+        )  # type: User
 
         if user is None:
             await storage.driver.user_log.add_log(email=username, successful=False)
@@ -60,7 +60,7 @@ class Authentication:
         # save token, match token with user in token2user
         await self.token2user.set(token, user)
 
-        return {"access_token": token, "token_type": "bearer", "roles": user.roles}
+        return {"access_token": token, "token_type": "bearer", "roles": user.roles, "preference": user.preference}
 
     async def logout(self, token):
         await self.token2user.delete(token)
