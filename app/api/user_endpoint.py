@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Header
 from tracardi.domain.user import User
 from app.config import server
 from tracardi.service.storage.driver import storage
@@ -9,6 +9,9 @@ from .auth.permissions import Permissions
 from .domain.user_payload import UserPayload
 from ..service.user_manager import update_user
 from .auth.user_db import token2user
+from fastapi.security import OAuth2PasswordRequestForm
+from starlette import status
+from .auth.authentication import Authentication, get_authentication
 
 
 class UserSoftEditPayload(BaseModel):
@@ -19,6 +22,39 @@ class UserSoftEditPayload(BaseModel):
 router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin"]))]
 )
+
+auth_router = APIRouter()
+
+
+@auth_router.post("/user/token", tags=["user", "authorization"], include_in_schema=server.expose_gui_api)
+async def login(login_form_data: OAuth2PasswordRequestForm = Depends(),
+                auth: Authentication = Depends(get_authentication)):
+    """
+    Returns OAuth2 token for login purposes
+    """
+    if not server.expose_gui_api:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Access forbidden")
+
+    try:
+        token = await auth.login(login_form_data.username, login_form_data.password)
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+    return token
+
+
+@auth_router.post("/user/logout", tags=["user", "authorization"], include_in_schema=server.expose_gui_api)
+async def logout(authorization: Union[str, None] = Header(default=None),
+                 auth: Authentication = Depends(get_authentication)):
+
+    if authorization is None:
+        raise HTTPException(status_code=401, detail="No authorization header provided.")
+
+    else:
+        _, token = authorization.split(" ")
+        await auth.logout(token)
 
 
 @router.get("/user/preference/{key}", tags=["user"], include_in_schema=server.expose_gui_api,
