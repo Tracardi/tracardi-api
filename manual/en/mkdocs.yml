@@ -104,6 +104,25 @@ nav:
           - resources/matomo_resource.md
           - resources/novu_resource.md
           - resources/redis_resource.md
+          - resources/activecampaign_resource.md
+          - resources/airtable_resource.md
+          - resources/amplitude_resource.md
+          - resources/aws_resource.md
+          - resources/civi_resource.md
+          - resources/fullcontact_resource.md
+          - resources/hubspot_resource.md
+          - resources/mailchimp_resource.md
+          - resources/mautic_resource.md
+          - resources/meaningcloud_resource.md
+          - resources/microservice_resource.md
+          - resources/mongo_resource.md
+          - resources/mysql_resource.md
+          - resources/postgresql_resource.md
+          - resources/pushover_resource.md
+          - resources/rabbitmq_resource.md
+          - resources/scheduler_resource.md
+          - resources/sendgrid_resource.md
+
       - Workflows:
           - flow/index.md
           - Actions:
@@ -253,6 +272,18 @@ nav:
               - flow/actions/assign_condition_result_action.md
               - flow/actions/reduce_array_action.md
               - flow/actions/password_generator_action.md
+              - flow/actions/contains_pattern_action.md
+              - flow/actions/google_translate_action.md
+              - flow/actions/hubspot_get_company_action.md
+              - flow/actions/hubspot_get_contact_action.md
+              - flow/actions/hubspot_update_company_action.md
+              - flow/actions/hubspot_update_contact_action.md
+              - flow/actions/join_output_payloads.md
+              - flow/actions/sendgrid_add_contact_to_list.md
+              - flow/actions/sendgrid_add_to_global_suppression.md
+              - flow/actions/sendgrid_send_email.md
+              - flow/actions/hubspot/hubspot_add_company_action.md
+              - flow/actions/hubspot/hubspot_add_contact_action.md
 
       - Filtering:
           - running/filtering.md
