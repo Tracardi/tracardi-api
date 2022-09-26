@@ -55,14 +55,14 @@ def test_should_handle_multiple_sessions():
             assert response.status_code == 200
 
             endpoint.set_token(token1)
-            endpoint.post("/logout")
+            endpoint.post("/user/logout")
             response = endpoint.get("/settings")
             assert response.status_code == 401
 
             endpoint.set_token(token2)
             response = endpoint.get("/settings")
             assert response.status_code == 200
-            endpoint.post("/logout")
+            endpoint.post("/user/logout")
             response = endpoint.get("/settings")
             assert response.status_code == 401
 

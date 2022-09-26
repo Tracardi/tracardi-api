@@ -30,6 +30,12 @@ def test_source_rule_and_flow():
     assert settings.status_code == 200
     settings = SystemSettings(**settings.json())
 
+    max_threads = endpoint.get('/setting/SYNC_PROFILE_TRACKS_MAX_REPEATS')
+    assert max_threads.status_code == 200
+    max_threads = SystemSettings(**max_threads.json())
+
+    max_concurrent_threads = max_threads.value
+
     if settings.value is True:
         try:
 
@@ -118,7 +124,7 @@ def test_source_rule_and_flow():
             )
             start = time()
             coros = []
-            for x in range(0, 20):
+            for x in range(0, max_concurrent_threads):
                 coros.append(loop.run_in_executor(executor, call, profile_id))
 
             loop.run_until_complete(asyncio.gather(*coros))
@@ -131,7 +137,7 @@ def test_source_rule_and_flow():
             assert endpoint.get('/profiles/refresh').status_code == 200
             assert endpoint.get('/sessions/refresh').status_code == 200
 
-            assert result['profile']['stats']['views'] == 22
+            assert result['profile']['stats']['views'] == max_concurrent_threads+2
             print(time() - start)
 
         finally:

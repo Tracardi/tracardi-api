@@ -6,14 +6,26 @@ from tracardi.service.module_loader import load_callable, import_package
 from tracardi.service.wf.domain.node import Node
 
 
+async def test_should_set_up_plugin_contains_pattern_action():
+    
+    module = import_package("tracardi.process_engine.action.v1.operations.contains_pattern.plugin")
+    plugin_class = load_callable(module, "ContainsPatternAction")
+    plugin = plugin_class()
+    plugin.node = Node(id="node-id", 
+                       name="test-node", 
+                       module="tracardi.process_engine.action.v1.operations.contains_pattern.plugin", 
+                       className="ContainsPatternAction")
+    await plugin.set_up({'field': 'payload@field', 'pattern': 'all'})
+
+
 async def test_should_set_up_plugin_google_translate_action():
     
-    module = import_package("tracardi.process_engine.action.v1.google_translator_action")
+    module = import_package("tracardi.process_engine.action.v1.connectors.google.translate.plugin")
     plugin_class = load_callable(module, "GoogleTranslateAction")
     plugin = plugin_class()
     plugin.node = Node(id="node-id", 
                        name="test-node", 
-                       module="tracardi.process_engine.action.v1.google_translator_action", 
+                       module="tracardi.process_engine.action.v1.connectors.google.translate.plugin", 
                        className="GoogleTranslateAction")
     await plugin.set_up({'text_to_translate': 'Hello', 'source_language': 'en'})
 
@@ -579,7 +591,7 @@ async def test_should_set_up_plugin_event_counter():
                        name="test-node", 
                        module="tracardi.process_engine.action.v1.events.event_counter.plugin", 
                        className="EventCounter")
-    await plugin.set_up({'event_type': 'page-view', 'time_span': '-15m'})
+    await plugin.set_up({'event_type': {'id': '1', 'name': 'Some value'}, 'time_span': '-15m'})
 
 
 async def test_should_set_up_plugin_event_aggregator():
@@ -591,7 +603,7 @@ async def test_should_set_up_plugin_event_aggregator():
                        name="test-node", 
                        module="tracardi.process_engine.action.v1.events.event_aggregator.plugin", 
                        className="EventAggregator")
-    await plugin.set_up({'field': 'event@type', 'time_span': '-15m'})
+    await plugin.set_up({'field': {'id': '1', 'name': 'Some value'}, 'time_span': '-15m'})
 
 
 async def test_should_set_up_plugin_event_discarder():
@@ -675,7 +687,7 @@ async def test_should_set_up_plugin_splitter_action():
                        name="test-node", 
                        module="tracardi.process_engine.action.v1.strings.string_splitter.plugin", 
                        className="SplitterAction")
-    await plugin.set_up({'delimiter': '.', 'string': None})
+    await plugin.set_up({'delimiter': '.', 'string': 'test.test'})
 
 
 async def test_should_set_up_plugin_parse_u_r_l_parameters():
@@ -699,7 +711,7 @@ async def test_should_set_up_plugin_regex_replacer():
                        name="test-node", 
                        module="tracardi.process_engine.action.v1.strings.regex_replace.plugin", 
                        className="RegexReplacer")
-    await plugin.set_up({'find_regex': None, 'replace_with': None, 'string': None})
+    await plugin.set_up({'find_regex': 'abc', 'replace_with': '123', 'string': 'abc'})
 
 
 async def test_should_set_up_plugin_sleep_action():
@@ -735,7 +747,7 @@ async def test_should_set_up_plugin_day_night_action():
                        name="test-node", 
                        module="tracardi.process_engine.action.v1.time.day_night.plugin", 
                        className="DayNightAction")
-    await plugin.set_up({'latitude': None, 'longitude': None})
+    await plugin.set_up({'latitude': 1.2, 'longitude': 2.1})
 
 
 async def test_should_set_up_plugin_local_time_span_action():
@@ -747,7 +759,7 @@ async def test_should_set_up_plugin_local_time_span_action():
                        name="test-node", 
                        module="tracardi.process_engine.action.v1.time.local_time_span.plugin", 
                        className="LocalTimeSpanAction")
-    await plugin.set_up({'end': None, 'start': None, 'timezone': 'session@context.time.tz'})
+    await plugin.set_up({'end': '10:10:10', 'start': '12:10:10', 'timezone': 'session@context.time.tz'})
 
 
 async def test_should_set_up_plugin_time_diff_calculator():
@@ -759,7 +771,7 @@ async def test_should_set_up_plugin_time_diff_calculator():
                        name="test-node", 
                        module="tracardi.process_engine.action.v1.time.time_difference.plugin", 
                        className="TimeDiffCalculator")
-    await plugin.set_up({'now': 'now', 'reference_date': None})
+    await plugin.set_up({'now': 'now', 'reference_date': '12:10:10'})
 
 
 async def test_should_set_up_plugin_consent_ux():
@@ -807,7 +819,7 @@ async def test_should_set_up_plugin_smtp_dispatcher_action():
                        name="test-node", 
                        module="tracardi.process_engine.action.v1.connectors.smtp_call.plugin", 
                        className="SmtpDispatcherAction")
-    await plugin.set_up({'message': {'message': '', 'reply_to': '', 'send_from': '', 'send_to': '', 'title': ''}, 'source': {'id': '', 'name': ''}})
+    await plugin.set_up({'message': {'message': 'message', 'reply_to': 'mail@mail.co', 'send_from': 'mail@mail.co', 'send_to': 'mail@mail.co', 'title': 'title'}, 'source': {'id': '', 'name': ''}})
 
 
 async def test_should_set_up_plugin_profile_segment_action():
@@ -831,7 +843,7 @@ async def test_should_set_up_plugin_object_to_json_action():
                        name="test-node", 
                        module="tracardi.process_engine.action.v1.converters.data_to_json.plugin", 
                        className="ObjectToJsonAction")
-    await plugin.set_up({'to_json': None})
+    await plugin.set_up({'to_json': '{}'})
 
 
 async def test_should_set_up_plugin_json_to_object_action():
@@ -843,7 +855,7 @@ async def test_should_set_up_plugin_json_to_object_action():
                        name="test-node", 
                        module="tracardi.process_engine.action.v1.converters.json_to_data.plugin", 
                        className="JsonToObjectAction")
-    await plugin.set_up({'to_data': None})
+    await plugin.set_up({'to_data': '{}'})
 
 
 async def test_should_set_up_plugin_elastic_search_fetcher():
@@ -855,19 +867,7 @@ async def test_should_set_up_plugin_elastic_search_fetcher():
                        name="test-node", 
                        module="tracardi.process_engine.action.v1.connectors.elasticsearch.query.plugin", 
                        className="ElasticSearchFetcher")
-    await plugin.set_up({'index': None, 'query': '{"query":{"match_all":{}}}', 'source': {'id': '1', 'name': 'Some value'}})
-
-
-async def test_should_set_up_plugin_mongo_connector_action():
-    
-    module = import_package("tracardi.process_engine.action.v1.connectors.mongo.query.plugin")
-    plugin_class = load_callable(module, "MongoConnectorAction")
-    plugin = plugin_class()
-    plugin.node = Node(id="node-id", 
-                       name="test-node", 
-                       module="tracardi.process_engine.action.v1.connectors.mongo.query.plugin", 
-                       className="MongoConnectorAction")
-    await plugin.set_up({'collection': None, 'database': None, 'query': '{}', 'source': {'id': None}})
+    await plugin.set_up({'index': 'index', 'query': '{"query":{"match_all":{}}}', 'source': {'id': '1', 'name': 'Some value'}})
 
 
 async def test_should_set_up_plugin_discord_web_hook_action():
@@ -879,7 +879,7 @@ async def test_should_set_up_plugin_discord_web_hook_action():
                        name="test-node", 
                        module="tracardi.process_engine.action.v1.connectors.discord.push.plugin", 
                        className="DiscordWebHookAction")
-    await plugin.set_up({'message': '', 'timeout': 10, 'url': None, 'username': None})
+    await plugin.set_up({'message': 'message', 'timeout': 10, 'url': None, 'username': None})
 
 
 async def test_should_set_up_plugin_geo_i_p_action():
@@ -891,19 +891,7 @@ async def test_should_set_up_plugin_geo_i_p_action():
                        name="test-node", 
                        module="tracardi.process_engine.action.v1.connectors.maxmind.geoip.plugin", 
                        className="GeoIPAction")
-    await plugin.set_up({'ip': 'event@metadata.ip', 'source': {'id': '1', 'name': 'Some value'}})
-
-
-async def test_should_set_up_plugin_postgre_s_q_l_connector_action():
-    
-    module = import_package("tracardi.process_engine.action.v1.connectors.postgresql.query.plugin")
-    plugin_class = load_callable(module, "PostgreSQLConnectorAction")
-    plugin = plugin_class()
-    plugin.node = Node(id="node-id", 
-                       name="test-node", 
-                       module="tracardi.process_engine.action.v1.connectors.postgresql.query.plugin", 
-                       className="PostgreSQLConnectorAction")
-    await plugin.set_up({'query': None, 'source': {'id': '1', 'name': 'Some value'}, 'timeout': 20})
+    await plugin.set_up({'ip': 'event@request.ip', 'source': {'id': '1', 'name': 'Some value'}})
 
 
 async def test_should_set_up_plugin_weather_action():
@@ -939,7 +927,7 @@ async def test_should_set_up_plugin_slack_poster():
                        name="test-node", 
                        module="tracardi.process_engine.action.v1.connectors.slack.send_message.plugin", 
                        className="SlackPoster")
-    await plugin.set_up({'channel': None, 'message': None, 'source': {'id': '1', 'name': 'Some value'}})
+    await plugin.set_up({'channel': 'xxx', 'message': 'xxx', 'source': {'id': '1', 'name': 'Some value'}})
 
 
 async def test_should_set_up_plugin_google_sheets_integrator_action():
@@ -951,7 +939,7 @@ async def test_should_set_up_plugin_google_sheets_integrator_action():
                        name="test-node", 
                        module="tracardi.process_engine.action.v1.connectors.google.sheets.modify.plugin", 
                        className="GoogleSheetsIntegratorAction")
-    await plugin.set_up({'range': None, 'read': False, 'sheet_name': None, 'source': {'id': '1', 'name': 'Some value'}, 'spreadsheet_id': None, 'values': '[["Name", "John"]]', 'write': False})
+    await plugin.set_up({'range': 'A1:A2', 'read': False, 'sheet_name': 'sheet', 'source': {'id': '1', 'name': 'Some value'}, 'spreadsheet_id': '1', 'values': '[["Name", "John"]]', 'write': False})
 
 
 async def test_should_set_up_plugin_influx_sender():
@@ -963,7 +951,7 @@ async def test_should_set_up_plugin_influx_sender():
                        name="test-node", 
                        module="tracardi.process_engine.action.v1.connectors.influxdb.send.plugin", 
                        className="InfluxSender")
-    await plugin.set_up({'bucket': None, 'fields': {}, 'measurement': None, 'organization': None, 'source': {'id': '1', 'name': 'Some value'}, 'tags': {}, 'time': None})
+    await plugin.set_up({'bucket': 'bucket', 'fields': {}, 'measurement': 'measurement', 'organization': 'measurement', 'source': {'id': '1', 'name': 'Some value'}, 'tags': {}, 'time': None})
 
 
 async def test_should_set_up_plugin_influx_fetcher():
@@ -987,7 +975,7 @@ async def test_should_set_up_plugin_elastic_email_contact_adder():
                        name="test-node", 
                        module="tracardi.process_engine.action.v1.connectors.elastic_email.add_contact.plugin", 
                        className="ElasticEmailContactAdder")
-    await plugin.set_up({'additional_mapping': {}, 'email': None, 'source': {'id': None, 'name': None}})
+    await plugin.set_up({'additional_mapping': {}, 'email': None, 'source': {'id': '1', 'name': '1'}})
 
 
 async def test_should_set_up_plugin_elastic_email_contact_status_change():
@@ -999,7 +987,7 @@ async def test_should_set_up_plugin_elastic_email_contact_status_change():
                        name="test-node", 
                        module="tracardi.process_engine.action.v1.connectors.elastic_email.contact_status_change.plugin", 
                        className="ElasticEmailContactStatusChange")
-    await plugin.set_up({'email': None, 'status': None, 'source': {'id': None, 'name': None}})
+    await plugin.set_up({'email': 'test@rest.co', 'status': 'status', 'source': {'id': '1', 'name': '1'}})
 
 
 async def test_should_set_up_plugin_elastic_email_transactional_mail_sender():
@@ -1011,7 +999,7 @@ async def test_should_set_up_plugin_elastic_email_transactional_mail_sender():
                        name="test-node", 
                        module="tracardi.process_engine.action.v1.connectors.elastic_email.transactional_email.plugin", 
                        className="ElasticEmailTransactionalMailSender")
-    await plugin.set_up({'message': {'content': '', 'recipient': '', 'subject': ''}, 'sender_email': '', 'source': {'id': '', 'name': ''}})
+    await plugin.set_up({'message': {'content': 'content', 'recipient': 'test@rest.co', 'subject': 'subject'}, 'sender_email': 'test@rest.co', 'source': {'id': '1', 'name': '1'}})
 
 
 async def test_should_set_up_plugin_elastic_email_bulk_mail_sender():
@@ -1023,11 +1011,24 @@ async def test_should_set_up_plugin_elastic_email_bulk_mail_sender():
                        name="test-node", 
                        module="tracardi.process_engine.action.v1.connectors.elastic_email.bulk_email.plugin", 
                        className="ElasticEmailBulkMailSender")
-    await plugin.set_up({'message': {'content': '', 'recipient': '', 'subject': ''}, 'sender_email': '', 'source': {'id': '', 'name': ''}})
+    await plugin.set_up({'message': {'content': 'content', 'recipient': 'test@rest.co', 'subject': 'subject'}, 'sender_email': 'test@rest.co', 'source': {'id': '1', 'name': '1'}})
 
 
-async def test_should_set_up_plugin_sendgrid_contact_adder():
+async def test_should_set_up_plugin_sendgrid_contact_adder(mocker):
     
+    mocker.patch(
+        # api_call is from slow.py but imported to main.py
+        'tracardi.service.storage.driver.storage.driver.resource.load',
+        return_value=Resource(
+            id="test-resource",
+            type="test",
+            credentials=ResourceCredentials(
+                production={'token': '<token>'},
+                test={'token': '<token>'}
+            )
+        )
+    )
+
     module = import_package("tracardi.process_engine.action.v1.connectors.sendgrid.add_contact_to_list.plugin")
     plugin_class = load_callable(module, "SendgridContactAdder")
     plugin = plugin_class()
@@ -1035,11 +1036,24 @@ async def test_should_set_up_plugin_sendgrid_contact_adder():
                        name="test-node", 
                        module="tracardi.process_engine.action.v1.connectors.sendgrid.add_contact_to_list.plugin", 
                        className="SendgridContactAdder")
-    await plugin.set_up({'additional_mapping': {}, 'list_ids': None, 'email': None, 'source': {'id': None, 'name': None}})
+    await plugin.set_up({'additional_mapping': {}, 'list_ids': 'a,b', 'email': 'test@rest.co', 'source': {'id': '1', 'name': '1'}})
 
 
-async def test_should_set_up_plugin_sendgrid_global_suppression_adder():
+async def test_should_set_up_plugin_sendgrid_global_suppression_adder(mocker):
     
+    mocker.patch(
+        # api_call is from slow.py but imported to main.py
+        'tracardi.service.storage.driver.storage.driver.resource.load',
+        return_value=Resource(
+            id="test-resource",
+            type="test",
+            credentials=ResourceCredentials(
+                production={'token': '<token>'},
+                test={'token': '<token>'}
+            )
+        )
+    )
+
     module = import_package("tracardi.process_engine.action.v1.connectors.sendgrid.add_email_to_global_suppression.plugin")
     plugin_class = load_callable(module, "SendgridGlobalSuppressionAdder")
     plugin = plugin_class()
@@ -1047,11 +1061,24 @@ async def test_should_set_up_plugin_sendgrid_global_suppression_adder():
                        name="test-node", 
                        module="tracardi.process_engine.action.v1.connectors.sendgrid.add_email_to_global_suppression.plugin", 
                        className="SendgridGlobalSuppressionAdder")
-    await plugin.set_up({'email': None, 'source': {'id': None, 'name': None}})
+    await plugin.set_up({'email': 'test@rest.co', 'source': {'id': '1', 'name': '1'}})
 
 
-async def test_should_set_up_plugin_sendgrid_e_mail_sender():
+async def test_should_set_up_plugin_sendgrid_e_mail_sender(mocker):
     
+    mocker.patch(
+        # api_call is from slow.py but imported to main.py
+        'tracardi.service.storage.driver.storage.driver.resource.load',
+        return_value=Resource(
+            id="test-resource",
+            type="test",
+            credentials=ResourceCredentials(
+                production={'token': '<token>'},
+                test={'token': '<token>'}
+            )
+        )
+    )
+
     module = import_package("tracardi.process_engine.action.v1.connectors.sendgrid.send_email.plugin")
     plugin_class = load_callable(module, "SendgridEMailSender")
     plugin = plugin_class()
@@ -1059,7 +1086,7 @@ async def test_should_set_up_plugin_sendgrid_e_mail_sender():
                        name="test-node", 
                        module="tracardi.process_engine.action.v1.connectors.sendgrid.send_email.plugin", 
                        className="SendgridEMailSender")
-    await plugin.set_up({'message': {'content': '', 'recipient': '', 'subject': ''}, 'sender_email': '', 'source': {'id': '', 'name': ''}})
+    await plugin.set_up({'message': {'content': 'content', 'recipient': 'test@rest.co', 'subject': 'subject'}, 'sender_email': 'test@rest.co', 'source': {'id': '1', 'name': '1'}})
 
 
 async def test_should_set_up_plugin_assign_profile_id_action():
@@ -1095,7 +1122,7 @@ async def test_should_set_up_plugin_inject_event():
                        name="test-node", 
                        module="tracardi.process_engine.action.v1.internal.inject_event.plugin", 
                        className="InjectEvent")
-    await plugin.set_up({'event_id': None})
+    await plugin.set_up({'event_id': 'abc'})
 
 
 async def test_should_set_up_plugin_inject_profile():
@@ -1107,7 +1134,7 @@ async def test_should_set_up_plugin_inject_profile():
                        name="test-node", 
                        module="tracardi.process_engine.action.v1.internal.inject_profile.plugin", 
                        className="InjectProfile")
-    await plugin.set_up({'query': ''})
+    await plugin.set_up({'query': '{}'})
 
 
 async def test_should_set_up_plugin_add_empty_profile_action():
@@ -1179,7 +1206,7 @@ async def test_should_set_up_plugin_entity_upsert_action():
                        name="test-node", 
                        module="tracardi.process_engine.action.v1.internal.entity.upsert.plugin", 
                        className="EntityUpsertAction")
-    await plugin.set_up({'id': None, 'properties': '{}', 'reference_profile': True, 'traits': '{}', 'type': ''})
+    await plugin.set_up({'id': '1', 'properties': '{}', 'reference_profile': True, 'traits': '{}', 'type': 'type'})
 
 
 async def test_should_set_up_plugin_entity_load_action():
@@ -1191,7 +1218,7 @@ async def test_should_set_up_plugin_entity_load_action():
                        name="test-node", 
                        module="tracardi.process_engine.action.v1.internal.entity.load.plugin", 
                        className="EntityLoadAction")
-    await plugin.set_up({'id': None, 'reference_profile': True, 'type': {'id': '', 'name': ''}})
+    await plugin.set_up({'id': '1', 'reference_profile': True, 'type': {'id': 'type', 'name': 'type'}})
 
 
 async def test_should_set_up_plugin_entity_delete_action():
@@ -1203,7 +1230,7 @@ async def test_should_set_up_plugin_entity_delete_action():
                        name="test-node", 
                        module="tracardi.process_engine.action.v1.internal.entity.delete.plugin", 
                        className="EntityDeleteAction")
-    await plugin.set_up({'id': '', 'reference_profile': True, 'type': {'id': '', 'name': ''}})
+    await plugin.set_up({'id': '1', 'reference_profile': True, 'type': {'id': 'type', 'name': 'type'}})
 
 
 async def test_should_set_up_plugin_get_report_action():
@@ -1300,6 +1327,43 @@ async def test_should_set_up_plugin_contains_string_action():
                        module="tracardi.process_engine.action.v1.contains_string_action", 
                        className="ContainsStringAction")
     await plugin.set_up({'field': 'payload@field', 'substring': 'contains'})
+
+
+async def test_should_set_up_plugin_postgre_s_q_l_connector_action():
+    
+    module = import_package("tracardi.process_engine.action.v1.connectors.postgresql.query.plugin")
+    plugin_class = load_callable(module, "PostgreSQLConnectorAction")
+    plugin = plugin_class()
+    plugin.node = Node(id="node-id", 
+                       name="test-node", 
+                       module="tracardi.process_engine.action.v1.connectors.postgresql.query.plugin", 
+                       className="PostgreSQLConnectorAction")
+    await plugin.set_up({'query': None, 'source': {'id': '1', 'name': 'Some value'}, 'timeout': 20})
+
+
+async def test_should_set_up_plugin_mongo_connector_action(mocker):
+    
+    mocker.patch(
+        # api_call is from slow.py but imported to main.py
+        'tracardi.service.storage.driver.storage.driver.resource.load',
+        return_value=Resource(
+            id="test-resource",
+            type="test",
+            credentials=ResourceCredentials(
+                production={'uri': 'mongodb://127.0.0.1:27017/', 'timeout': 5000},
+                test={'uri': 'mongodb://127.0.0.1:27017/', 'timeout': 5000}
+            )
+        )
+    )
+
+    module = import_package("tracardi.process_engine.action.v1.connectors.mongo.query.plugin")
+    plugin_class = load_callable(module, "MongoConnectorAction")
+    plugin = plugin_class()
+    plugin.node = Node(id="node-id", 
+                       name="test-node", 
+                       module="tracardi.process_engine.action.v1.connectors.mongo.query.plugin", 
+                       className="MongoConnectorAction")
+    await plugin.set_up({'collection': None, 'database': None, 'query': '{}', 'source': {'id': '', 'name': ''}})
 
 
 async def test_should_set_up_plugin_mysql_connector_action(mocker):
@@ -1936,7 +2000,7 @@ async def test_should_set_up_plugin_sentiment_analysis_action(mocker):
                        name="test-node", 
                        module="tracardi.process_engine.action.v1.connectors.meaningcloud.sentiment_analysis.plugin", 
                        className="SentimentAnalysisAction")
-    await plugin.set_up(None)
+    await plugin.set_up({'source': {'id': '', 'name': ''}, 'language': 'en', 'text': 'text'})
 
 
 async def test_should_set_up_plugin_language_detect_action(mocker):
@@ -1961,7 +2025,7 @@ async def test_should_set_up_plugin_language_detect_action(mocker):
                        name="test-node", 
                        module="tracardi.process_engine.action.v1.connectors.meaningcloud.language_detection.plugin", 
                        className="LanguageDetectAction")
-    await plugin.set_up(None)
+    await plugin.set_up({'source': {'id': '', 'name': ''}, 'message': 'Hello world', 'timeout': 15})
 
 
 async def test_should_set_up_plugin_text_classification_action(mocker):
@@ -1986,7 +2050,7 @@ async def test_should_set_up_plugin_text_classification_action(mocker):
                        name="test-node", 
                        module="tracardi.process_engine.action.v1.connectors.meaningcloud.text_classification.plugin", 
                        className="TextClassificationAction")
-    await plugin.set_up(None)
+    await plugin.set_up({'source': {'id': '', 'name': ''}, 'language': 'en', 'model': 'social', 'title': 'title', 'text': 'text'})
 
 
 async def test_should_set_up_plugin_corporate_reputation_plugin(mocker):
