@@ -118,6 +118,23 @@ system_settings = [
     ),
     SystemSettings(
         **{
+            "label": "SYNC_PROFILE_TRACKS_MAX_REPEATS",
+            "value": tracardi.sync_profile_tracks_max_repeats,
+            "desc": "Maximum number of repeated requests the must be synchronized. If this number is crossed then "
+                    "the requests will not be synchronized. Do not set it to big number as this can block server. "
+                    "Default: 10"
+        }
+    ),
+    SystemSettings(
+        **{
+            "label": "SYNC_PROFILE_TRACKS_WAIT",
+            "value": tracardi.sync_profile_tracks_wait,
+            "desc": "Maximum number of seconds to wait between profile synchronization attempts. Profile must be saved "
+                    "before the next rule can be run  on it. Default: 1"
+        }
+    ),
+    SystemSettings(
+        **{
             "label": "POSTPONE_DESTINATION_SYNC",
             "value": tracardi.postpone_destination_sync,
             "desc": "Postpone destination synchronisation. Default 0, means do not wait. Destinations are called only "

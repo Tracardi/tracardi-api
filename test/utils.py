@@ -1,16 +1,14 @@
-import asyncio
 import json
 import os
 import requests
 from dotenv import load_dotenv
 from tracardi.domain.profile import Profile
 from tracardi.domain.session import Session, SessionMetadata
-from tracardi.service.singleton import Singleton
 
 load_dotenv()
 
 
-class Endpoint(metaclass=Singleton):
+class Endpoint:
 
     def __init__(self, auth=True):
         if auth:
@@ -26,7 +24,7 @@ class Endpoint(metaclass=Singleton):
         self.token = self.auth(username, password)
 
     def auth(self, username: str = None, password: str = None):
-        response = requests.post(self.host('/token'),
+        response = requests.post(self.host('/user/token'),
                                  {"username": os.environ['LOGIN'] if username is None else username,
                                   "password": os.environ['PASS'] if password is None else password}
                                  )
