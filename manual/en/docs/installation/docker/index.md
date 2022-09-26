@@ -34,7 +34,7 @@ docker run -p 6379:6379 redis
 !!! Note
 
     The following instalation description use the latest tracardi container version. If you would like to install stable version 
-    of the system, what we strongly recommend, please add to `tracard/tracardi-api` a tag with version, e.g `tracardi/tracardi-api:0.7.1`. 
+    of the system, what we strongly recommend, please add to `tracard/tracardi-api` a tag with version, e.g `tracardi/tracardi-api:0.7.2`. 
     The same applies to `tracardi/tracardi-gui`. Keep the version of API and GUI the same. 
 
 ### Run Tracardi API
@@ -69,7 +69,7 @@ useful.
 docker run -p 8686:80 -e ELASTIC_HOST=https://user:password@<your-laptop-ip>:9200 -e ELASTIC_VERIFY_CERTS=no -e REDIS_HOST=redis://<your-laptop-ip>:6379 tracardi/tracardi-api #(1)
 ```
 
-1. If you want a certain version of docker image add version tag, e.g. `tracardi/tracardi-api:0.7.1`
+1. If you want a certain version of docker image add version tag, e.g. `tracardi/tracardi-api:0.7.2`
 
 !!! Warning "ELASTIC_VERIFY_CERTS set to No"
 
@@ -84,7 +84,7 @@ Pull and run Tracardi Graphical User Interface.
 docker run -p 8787:80 -e API_URL=//127.0.0.1:8686 tracardi/tracardi-gui #(1)
 ```
 
-1. If you want a certain version of docker image add version tag, e.g. `tracardi/tracardi-gui:0.7.1`
+1. If you want a certain version of docker image add version tag, e.g. `tracardi/tracardi-gui:0.7.2`
 
 !!! Note
 
@@ -100,7 +100,7 @@ command to start the worker.
 docker run -e REDIS_HOST=redis://<redis-ip>:6379 -d tracardi/worker #(1)
 ```
 
-1. If you want a certain version of docker image add version tag, e.g. `tracardi/worker:0.7.1`
+1. If you want a certain version of docker image add version tag, e.g. `tracardi/worker:0.7.2`
 
 
 !!! Note
