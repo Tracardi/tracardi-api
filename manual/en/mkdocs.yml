@@ -211,6 +211,17 @@ nav:
                   - Active campaign:
                       - flow/actions/fetch_ac_contact_by_email_action.md
                       - flow/actions/add_active_campaign_contact_action.md
+                  - Hubspot:
+                      - flow/actions/hubspot_get_company_action.md
+                      - flow/actions/hubspot_get_contact_action.md
+                      - flow/actions/hubspot_update_company_action.md
+                      - flow/actions/hubspot/hubspot_add_company_action.md
+                      - flow/actions/hubspot/hubspot_add_contact_action.md
+                      - flow/actions/hubspot_update_contact_action.md
+                  - Sendgrid:
+                      - flow/actions/sendgrid_add_contact_to_list.md
+                      - flow/actions/sendgrid_add_to_global_suppression.md
+                      - flow/actions/sendgrid_send_email.md
 
               - Regex:
                   - flow/actions/regex/regex_validator_action.md
@@ -224,6 +235,7 @@ nav:
                   - flow/actions/day_night_split_action.md
                   - flow/actions/local_time_span_action.md
                   - flow/actions/calculate_time_difference_action.md
+                  - flow/actions/today_action.md
 
               - Processing:
                   - flow/actions/url_parser_action.md
@@ -268,22 +280,13 @@ nav:
 
               - flow/actions/calculator_action.md
               - flow/actions/random_element_action.md
-              - flow/actions/today_action.md
               - flow/actions/assign_condition_result_action.md
               - flow/actions/reduce_array_action.md
               - flow/actions/password_generator_action.md
               - flow/actions/contains_pattern_action.md
               - flow/actions/google_translate_action.md
-              - flow/actions/hubspot_get_company_action.md
-              - flow/actions/hubspot_get_contact_action.md
-              - flow/actions/hubspot_update_company_action.md
-              - flow/actions/hubspot_update_contact_action.md
               - flow/actions/join_output_payloads.md
-              - flow/actions/sendgrid_add_contact_to_list.md
-              - flow/actions/sendgrid_add_to_global_suppression.md
-              - flow/actions/sendgrid_send_email.md
-              - flow/actions/hubspot/hubspot_add_company_action.md
-              - flow/actions/hubspot/hubspot_add_contact_action.md
+
 
       - Filtering:
           - running/filtering.md
