@@ -12,7 +12,7 @@ from tracardi.service.storage.driver import storage
 from hashlib import sha1
 
 _singleton = None
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/user/token")
 
 logger = logging.getLogger(__name__)
 logger.setLevel(tracardi.logging_level)
