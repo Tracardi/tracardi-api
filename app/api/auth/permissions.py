@@ -9,7 +9,7 @@ from app.config import server
 from tracardi.config import tracardi
 from tracardi.exceptions.log_handler import log_handler
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/user/token")
 
 logger = logging.getLogger(__name__)
 logger.setLevel(tracardi.logging_level)
