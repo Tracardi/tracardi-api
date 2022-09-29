@@ -16,7 +16,7 @@ class ServiceStub(object):
         """
         self.get_available_services = channel.unary_unary(
                 '/tracardi_pro.Service/get_available_services',
-                request_serializer=pro__services__pb2.EmptyParams.SerializeToString,
+                request_serializer=pro__services__pb2.ServiceQuery.SerializeToString,
                 response_deserializer=pro__services__pb2.Services.FromString,
                 )
         self.get_plugin = channel.unary_unary(
@@ -79,7 +79,7 @@ def add_ServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'get_available_services': grpc.unary_unary_rpc_method_handler(
                     servicer.get_available_services,
-                    request_deserializer=pro__services__pb2.EmptyParams.FromString,
+                    request_deserializer=pro__services__pb2.ServiceQuery.FromString,
                     response_serializer=pro__services__pb2.Services.SerializeToString,
             ),
             'get_plugin': grpc.unary_unary_rpc_method_handler(
@@ -124,7 +124,7 @@ class Service(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/tracardi_pro.Service/get_available_services',
-            pro__services__pb2.EmptyParams.SerializeToString,
+            pro__services__pb2.ServiceQuery.SerializeToString,
             pro__services__pb2.Services.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
