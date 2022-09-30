@@ -1,3 +1,5 @@
+from typing import Optional
+
 from fastapi import APIRouter, Response, Depends
 
 from tracardi.service.setup.setup_resources import get_destinations
@@ -25,13 +27,12 @@ async def save_destination(destination: Destination):
     return result
 
 
-@router.get("/destination/{id}", tags=["destination"], response_model=Destination,
+@router.get("/destination/{id}", tags=["destination"], response_model=Optional[Destination],
             include_in_schema=server.expose_gui_api)
 async def get_destination(id: str, response: Response):
     """
     Returns destination or None if destination does not exist.
     """
-
     destination_record = await storage.driver.destination.load(id)
 
     if destination_record is None:

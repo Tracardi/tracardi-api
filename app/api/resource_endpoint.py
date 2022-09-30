@@ -216,7 +216,7 @@ async def upsert_resource(resource: Resource):
 
 
 @router.delete("/resource/{id}", tags=["resource"],
-               response_model=dict,
+               response_model=Optional[dict],
                include_in_schema=server.expose_gui_api)
 async def delete_resource(id: str, response: Response):
     result = await StorageFor(Entity(id=id)).index("resource").delete()
