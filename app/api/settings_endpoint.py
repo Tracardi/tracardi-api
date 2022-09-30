@@ -245,7 +245,7 @@ system_settings = [
     ),
     SystemSettings(
         **{
-            "label": "ELASTIC_CAFILE",
+            "label": "ELASTIC_CA_FILE",
             "value": elastic.ca_file,
             "desc": "Default: None. Elastic CA file. Search for elastic authentication for more information on how "
                     "to configure connection to elastic."

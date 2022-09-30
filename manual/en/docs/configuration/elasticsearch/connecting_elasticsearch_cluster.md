@@ -30,7 +30,7 @@ There is another way to connect to elastic cluster.
 To include certificate verification and HTTP type the following line:
 
 ```yaml
-    ELASTIC_CAFILE: "path to certificate",
+    ELASTIC_CA_FILE: "path to certificate",
 ```
 
 ### Connect using API_KEY
