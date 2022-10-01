@@ -100,7 +100,7 @@ async def load_flow_draft(id: str, response: Response):
     return flow_record.get_empty_workflow(id)
 
 
-@router.get("/flow/production/{id}", tags=["flow"], response_model=Flow, include_in_schema=server.expose_gui_api)
+@router.get("/flow/production/{id}", tags=["flow"], response_model=Optional[Flow], include_in_schema=server.expose_gui_api)
 async def get_flow(id: str, response: Response):
     """
     Returns production version of flow with given ID (str)
@@ -329,7 +329,7 @@ async def debug_flow(flow: GraphFlow):
     }
 
 
-@router.delete("/flow/{id}", tags=["flow"], response_model=dict, include_in_schema=server.expose_gui_api)
+@router.delete("/flow/{id}", tags=["flow"], response_model=Optional[dict], include_in_schema=server.expose_gui_api)
 async def delete_flow(id: str, response: Response):
     """
     Deletes flow with given id (str)

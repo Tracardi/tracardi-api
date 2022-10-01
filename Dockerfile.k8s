@@ -1,4 +1,4 @@
-FROM tiangolo/uvicorn-gunicorn-fastapi:python3.9
+FROM python:3.9
 MAINTAINER office@tracardi.com
 
 RUN apt-get update
@@ -39,4 +39,7 @@ RUN pip --default-timeout=240 install -r manual/requirements.txt
 WORKDIR /app/manual/en
 RUN mkdocs build
 
+WORKDIR /app
 ENV VARIABLE_NAME="application"
+
+CMD ["uvicorn", "app.main:application", "--proxy-headers", "--host", "0.0.0.0",  "--port", "80"]

@@ -1,5 +1,5 @@
 import asyncio
-from typing import List
+from typing import List, Optional
 
 from fastapi import APIRouter, Response, HTTPException, Depends
 from tracardi.service.storage.driver import storage
@@ -14,7 +14,7 @@ router = APIRouter(
 )
 
 
-@router.get("/rule/{id}", tags=["rule"], response_model=Rule, include_in_schema=server.expose_gui_api)
+@router.get("/rule/{id}", tags=["rule"], response_model=Optional[Rule], include_in_schema=server.expose_gui_api)
 async def get_rule(id: str, response: Response):
     """
     Returns rule or None if rule does not exist.

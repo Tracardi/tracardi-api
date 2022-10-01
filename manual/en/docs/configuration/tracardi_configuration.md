@@ -19,7 +19,7 @@ of all the environment variable names below.
 * `ELASTIC_HTTP_AUTH_PASSWORD` - Default: None. Elastic search password. Search for elastic authentication for more
   information on how to configure connection to elastic.
 * `ELASTIC_SCHEME` - Default: http. Available options http, https.
-* `ELASTIC_CAFILE` - Default: None. Elastic CA file. Search for elastic authentication for more information on how to
+* `ELASTIC_CA_FILE` - Default: None. Elastic CA file. Search for elastic authentication for more information on how to
   configure connection to elastic.
 * `ELASTIC_API_KEY` - Default: None. Elastic API key. Search for elastic authentication for more information on how to
   configure connection to elastic.
