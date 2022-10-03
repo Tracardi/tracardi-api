@@ -305,7 +305,8 @@ nav:
       - Plugins:
           - plugins/index.md
           - plugins/forms/list_of_field_types.md
-
+          - Tutorials:
+                - plugins/tutorial/part1.md
 
   - support_us.md
   - attribution.md

@@ -13,4 +13,4 @@ Below you will find information how to write plug-ins and how to install them in
 * Value inside `Result` should be `dict` in order to be processed by other nodes.
 * Plug-in must extend `ActionRunner` class.
 * Resources that need closing should be closed in `close()` method.
-* Static method `build` should be used to initiate async objects.
+* Async Method `set_up` should be used to initiate async objects.
