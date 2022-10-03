@@ -1,4 +1,4 @@
-# New plugins in Tracardi
+# Part 1: Code simple plugin in Tracardi
 
 Beginner Programmer's Guide
 
@@ -100,7 +100,7 @@ Our plugin could look like this:
 
     1. Extends ActionRunner class
     2. Runs the plugin
-    3. Returns the input paylaod data on the "MyEvent" port 
+    3. Returns the input payload data on the "MyEvent" port 
     4. Returns the empty dictionary on the "NotMyEvent" port 
 
 Note that we return the data using the `Result` class in which we provide the port name and value.
@@ -112,7 +112,7 @@ with the input and output ports, the name of the plugin, etc.
 The register function can be placed in the same file as the plugin or in any other file. I am placing it in the same
 file.
 
-Example:
+#### Example:
 
 === "/tracardi/process_engine/action/v1/my_plugin_folder/my_plugin.py"
 
@@ -136,10 +136,11 @@ Example:
             )
         )
     ```
+
     1. Returns Plugin class
-    2. sets spec property as Spec class
-    3. sets metadata property as Metadata class
-    4. sets `__name__` bacouse refister is in the same file as plugin: e.i. /tracardi/process_engine/action/v1/my_plugin_folder/my_plugin.py
+    2. Sets spec property as Spec class
+    3. Sets metadata property as Metadata class
+    4. Sets `__name__` because refister is in the same file as plugin: e.i. `/tracardi/process_engine/action/v1/my_plugin_folder/my_plugin.py`
 
 Let's analyze this code. It returns a plugin class that has the following properties.
 
@@ -182,16 +183,23 @@ dictionary where the key is the location of the register function. The value is 
 type, it is responsible for the test data for the plug-in. We will not write tests, so our block of code should look
 like this:
 
-```python
-"tracardi.process_engine.action.v1.my_plugin_folder.my_plugin": PluginTestTemplate(
-    init=None,
-    resource=None
-),
-```
+=== "/tracardi/service/setup/setup_plugins.py"
+
+    ```python
+    "tracardi.process_engine.action.v1.my_plugin_folder.my_plugin": PluginTestTemplate(  # (1)
+        init=None,
+        resource=None
+    ),
+    ```
+
+    1. Key is the package of the register function
 
 Type this into the `installed_plugins` dictionary and we are ready to install the plugin.
 
 Restart the Tracardi API so the changes are activated and go to `Processing/Workflows`, open any workflow and click the
 `Reinstall Plugins` button. Alternatively you can go to `Maintenance/Plug-ins` and click the `Reinstall Plugins` button.
+
+## Wrap-up
+
 And this concludes the first part of the tutorial. We added the first plugin and installed it. In the second part we
 will extend our plugin with the configuration form and we will try to reference data with dot notation. 
