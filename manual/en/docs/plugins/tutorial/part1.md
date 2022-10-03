@@ -7,10 +7,10 @@ This article describes how a python programmer can extend Tracardi with new func
 
 ## Introduction
 
-Event handling in tracardi is based on a __workflow__, which consists of individual __actions__ visualized as __nodes__ in the
-workflow. Workflow control when each action/node should be triggered. The action consists of an __input__, __a program__ that
-computes the input data, and __an output__ (the result of the program computation). In tracardi, an action can have one
-input and many outputs. In addition, the action has a configuration, it is a set of data that define how the program
+Event handling in tracardi is based on a __workflow__, which consists of individual __actions__ visualized as __nodes__
+in the workflow. Workflow control when each action/node should be triggered. The action consists of an __input__, __a
+program__ that computes the input data, and __an output__ (the result of the program computation). In tracardi, an action can have
+one input and many outputs. In addition, the action has a configuration, it is a set of data that define how the program
 should behave, Let's assume that we want to connect to external resources of some database, it is in the configuration
 that we will have information about where this database is, and what username and password to use to connect to the
 resource.
@@ -23,9 +23,9 @@ branch of the workflow.
 ## Development environment
 
 !!! Info
-    To start working with the system, we need to prepare a development environment. Refer to the 
+    To start working with the system, we need to prepare a development environment. Refer to the
     [Python development environment](../../development/python_env.md) and read how
-    to do this. 
+    to do this.
 
 ## Life-cycle plugin
 
@@ -48,10 +48,10 @@ When the workflow exits, it executes the close method on each node.
 In summary, we have the following methods in the plugin class.
 
 ```python
-    __init __ ()  # (1)
-    async set_up (config) # (2)
-    async run (input_payload) # (3)
-    async close () # (4)
+    __init__()  # (1)
+    async set_up(config)  # (2)
+    async run(input_payload)  # (3)
+    async close()  # (4)
 ```
 
 1. Inits the plugin object
@@ -74,13 +74,13 @@ Of-course we could use the built-in IF node, but we want to write our own.
 
 Theoretically, we should complete all the methods described above, but in our case not all are needed. We don't have
 configuration, so set_up method is not needed, we don't have connection to external systems, so close method is not
-needed either, we don't have an internal state of class, so __init__ will be empty.
+needed either, we don't have an internal state of class, so `__init__` will be empty.
 
 Before we start, let's create a file in which we will write the code. The tracardi plugins are in the directory:
-/tracardi/process_engine/action/v1. You can create your own catalog there or use an existing one. I will create
+`/tracardi/process_engine/action/v1`. You can create your own catalog there or use an existing one. I will create
 my_plugin_folder directory and put my_plugin.py file in it.
 
-### Now the code. 
+### Now the code.
 
 Our plugin could look like this:
 
@@ -106,8 +106,8 @@ Our plugin could look like this:
 Note that we return the data using the `Result` class in which we provide the port name and value.
 
 The only thing left for us to do is to describe the plugin in the system. This is done by defining a function called
-`register`. It contains the specification of the plugin that we wrote (it returns the plugin class) and the type metadata,
-with the input and output ports, the name of the plugin, etc.
+`register`. It contains the specification of the plugin that we wrote (it returns the plugin class) and the type
+metadata, with the input and output ports, the name of the plugin, etc.
 
 The register function can be placed in the same file as the plugin or in any other file. I am placing it in the same
 file.
@@ -144,12 +144,10 @@ file.
 
 Let's analyze this code. It returns a plugin class that has the following properties.
 
-* __start__ - sets whether the workflow can start from this node. In 99% of cases, we put `False` here. The startup nodes
-  are
-  already built into the system.
+* __start__ - sets whether the workflow can start from this node. In 99% of cases, we put `False` here. The startup
+  nodes are already built into the system.
 * __spec__ - describes the plugin specification, i.e. what class is to be run and what ports it contains on input and
-  output.
-  There can only be one port on input. In our case, we have the following data:
+  output. There can only be one port on input. In our case, we have the following data:
     * __module__ - where is the class package. `__name__` means that the class is in the same file as the register
       method.
       If we separate the plugin and register function, then you need to enter the package name of the plugin here, e.g.
@@ -157,10 +155,9 @@ Let's analyze this code. It returns a plugin class that has the following proper
     * __className__ - the name of the class. We named it MyPlugin. See class `MyPlugin (ActionRunner)`
     * __inputs__ - list with the names of the input ports. There can only be one input port.
     * __outputs__ - list with names of output ports. Here we define what ports we have. Port names can have any name you
-      like.
-      Remember, however, that they must correspond to what the code returns and our code returns, one time: `Result (port
-      ="MyEvent", value=payload)` and another time `Result (port="NotMyEvent", value={})`, i.e. possible output ports
-      are `["MyEvent", "NotMyEvent"]`
+      like. Remember, however, that they must correspond to what the code returns and our code returns, one
+      time: `Result (port="MyEvent", value=payload)` and another time `Result (port="NotMyEvent", value={})`, i.e. 
+      possible output ports are `["MyEvent", "NotMyEvent"]`
     * __version__ - enter the plugin version here
     * __license__ - license type, Tracardi is able to attach the plug-in only under the `MIT` or `Apache 2.0` license
     * __author__ - author's first and last name
@@ -202,4 +199,5 @@ Restart the Tracardi API so the changes are activated and go to `Processing/Work
 ## Wrap-up
 
 And this concludes the first part of the tutorial. We added the first plugin and installed it. In the second part we
-will extend our plugin with the configuration form and we will try to reference data with dot notation. 
+will extend our plugin with the configuration form and we will try to reference data
+with [dot notation](../../notations/dot_notation.md). 
