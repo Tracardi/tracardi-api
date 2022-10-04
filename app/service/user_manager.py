@@ -6,7 +6,7 @@ from tracardi.service.storage.driver import storage
 
 
 async def update_user(id, user_payload: UserPayload) -> Tuple[int, User]:
-    current_user = await storage.driver.user.get_by_id(id)
+    current_user = await storage.driver.user.load_by_id(id)
     if not current_user:
         raise LookupError(f"User does not exist {id}")
 
