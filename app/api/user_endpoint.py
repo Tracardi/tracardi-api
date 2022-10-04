@@ -72,7 +72,11 @@ async def set_user_preference(key: str, preference: Union[dict, str, int, float]
     """
     Sets user preference.Uses key to set the preference
     """
-    pass
+    user.set_preference(key, preference)
+    result = await storage.driver.user.update_user(user)
+    await storage.driver.user.refresh()
+
+    return result.saved
 
 
 @router.delete("/user/preference/{key}", tags=["user"], include_in_schema=server.expose_gui_api, response_model=dict)
@@ -80,7 +84,9 @@ async def delete_user_preference(key: str, user=Depends(Permissions(["admin", "d
     """
     Deletes user preference
     """
-    pass
+    user.delete_preference(key)
+
+    return {"Info": "Preference deleted"}
 
 
 @router.get("/user/preferences", tags=["user"], include_in_schema=server.expose_gui_api, response_model=dict)
@@ -88,7 +94,7 @@ async def gets_all_user_preferences(user=Depends(Permissions(["admin", "develope
     """
     Returns all user preferences
     """
-    pass
+    return user.preference
 
 
 @router.get("/user/refresh", tags=["user"], include_in_schema=server.expose_gui_api, response_model=dict)
