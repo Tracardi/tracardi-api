@@ -157,6 +157,16 @@ You have run a single instance of elasticsearch in the console. When you want to
     If you want elasticsearch to run in the background, type: 
     `docker run -d -p 9200: 9200 -p 9300: 9300 -e "discovery.type = single-node" docker.elastic.co/elasticsearch/elasticsearch:7.13.2`
 
+#### Redis
+
+You will need a redis instance as well. 
+
+Start it with:
+
+```
+docker run -p 6379:6379 redis
+```
+
 # Download the source code
 
 Open a terminal and go to the directory where you want to keep the code. Enter:
