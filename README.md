@@ -73,7 +73,7 @@ Tracardi must connect to elastic. To do that you have to set ELASTIC_HOST variab
 > connecting to the docker itself as localhost means local in docker. Obviously elastic is not there, so Tracardi will
 > never connect that is why you see "Waiting for application startup" information. Pass external ip for elastic. This may be your laptop IP if you are running Tracardi locally, e.g. 192.168.1.143:9200. Please refer to Tracardi documentation for more Troubleshooting information.
 
-For more trouble shooting solutions go to [http://docs.tracardi.com/trouble/](http://docs.tracardi.com/trouble/)
+For more troubleshooting solutions go to [http://docs.tracardi.com/trouble/](http://docs.tracardi.com/trouble/)
 
 ### Connecting Tracardi to Elastic via SSL connection
 
