@@ -136,7 +136,7 @@ application.mount("/tracker",
 application.mount("/manual",
                   StaticFiles(
                       html=True,
-                      directory=os.path.join(_local_dir, "../manual")),
+                      directory=os.path.join(_local_dir, "../site")),
                   name="manual")
 
 application.mount("/uix",

@@ -8,10 +8,11 @@ RUN apt-get install -y git
 RUN /usr/local/bin/python -m pip install --upgrade pip
 
 ## Copy manual
-COPY docs manual/
+COPY docs docs/
+COPY mkdocs.yml /
 
 ## Install dependencies
-RUN pip --default-timeout=180 install -r manual/requirements.txt
+RUN pip --default-timeout=180 install -r docs/requirements.txt
 WORKDIR /
 RUN mkdocs build
 

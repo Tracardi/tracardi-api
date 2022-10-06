@@ -17,14 +17,20 @@ RUN pip --default-timeout=180 install -r requirements.txt
 COPY app app/
 COPY uix uix/
 
-## Copy manual
-COPY docs manual/
-
 # Remove test page
 
 RUN rm -rf app/tracker/index.html
 RUN rm -rf app/tracker/index.css
 
+COPY docs docs/
+COPY mkdocs.yml /
+
+RUN pip install wheel
+RUN pip --default-timeout=180 install -r docs/requirements.txt
+WORKDIR /
+RUN mkdocs build
+
+WORKDIR /app
 ENV VARIABLE_NAME="application"
 
 # ENV GUNICORN_CMD_ARGS="--keyfile=/ssl/key.pem --certfile=/ssl/cert.pem --timeout=90"

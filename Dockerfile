@@ -24,20 +24,23 @@ RUN pip list
 COPY app app/
 COPY uix uix/
 
-## Copy manual
-COPY docs manual/
-
 # Remove test page
 
 RUN rm -rf app/tracker/index.html
 RUN rm -rf app/tracker/index.css
 
-## Install dependencies
-RUN pip --default-timeout=240 install -r manual/requirements.txt
+## Copy manual
+COPY docs docs/
+COPY mkdocs.yml /
+
+## Install docs dependencies
+RUN pip --default-timeout=240 install -r docs/requirements.txt
 
 # Install manual
 WORKDIR /
 RUN mkdocs build
+
+# Start up
 
 WORKDIR /app
 ENV VARIABLE_NAME="application"
