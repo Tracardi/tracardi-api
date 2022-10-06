@@ -3,4 +3,4 @@ the background and distribute the load to multiple servers.
 
 # Resource configuration and set-up
 
-No documentation provided by developer
+No documentation provided by developer.
