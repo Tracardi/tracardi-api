@@ -7,7 +7,7 @@ In the previous tutorial we wrote the plugin that performs a simple action and c
 is equal to "my-type". Our code looked like this:
 
 !!! Info
-Please click (+) to see the comments for the code
+    Please click (+) to see the comments for the code
 
 ```python
 if self.event.type == "my-event":  # (1)
@@ -200,10 +200,10 @@ Complete code looks like this:
     ```
 
 !!! Info
-Please check if the code works step by step. You do not have to implement everything to check if the code works.
-Every time you complete some part of the tutorial you may save the changes and reinstall plugins and see how it
-works in the workflow editor. Installation of the changed plugin can be done in the workflow editor by clicking
-the `Reinstall plugins` button.
+    Please check if the code works step by step. You do not have to implement everything to check if the code works.
+    Every time you complete some part of the tutorial you may save the changes and reinstall plugins and see how it
+    works in the workflow editor. Installation of the changed plugin can be done in the workflow editor by clicking
+    the `Reinstall plugins` button.
 
 ## Validation
 
@@ -305,15 +305,15 @@ class MyPlugin(ActionRunner):
 5. Here we use the Configuration object to compare values.
 
 !!! Info
-Please click (+) to see the comments for the code
+    Please click (+) to see the comments for the code
 
 Now it is time to see if the code works.
 
 !!! Info
-Please check if the code works step by step. You do not have to implement everything to check if the code works.
-Every time you complete some part of the tutorial you may save the changes and reinstall plugins and see how it
-works in the workflow editor. Installation of the changed plugin can be done in the workflow editor by clicking
-the `Reinstall plugins` button.
+    Please check if the code works step by step. You do not have to implement everything to check if the code works.
+    Every time you complete some part of the tutorial you may save the changes and reinstall plugins and see how it
+    works in the workflow editor. Installation of the changed plugin can be done in the workflow editor by clicking
+    the `Reinstall plugins` button.
 
 ## Plugin form
 
