@@ -27,7 +27,7 @@ branch of the workflow.
     [Python development environment](../../development/python_env.md) and read how
     to do this.
 
-## Life-cycle plugin
+## Plugin life-cycle 
 
 Plugins go through a life-cycle in which they are created, executed and recycled.
 
@@ -58,6 +58,9 @@ In summary, we have the following methods in the plugin class.
 2. Set-ups the configuration and async resources
 3. Gets the input payload as dictionary and runs the plugin, also returns results on ports
 4. Closes async resources
+
+!!! Info
+    Please click (+) to see the comments for the code
 
 ## Our first plugin
 
@@ -117,6 +120,8 @@ file.
 === "/tracardi/process_engine/action/v1/my_plugin_folder/my_plugin.py"
 
     ```python
+    from tracardi.service.plugin.domain.register import Plugin, Spec, MetaData
+
     def register() -> Plugin:
         return Plugin(   # (1)
             start=False,
