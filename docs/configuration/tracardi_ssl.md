@@ -34,7 +34,7 @@ RUN pip install -r requirements.txt
 ## Copy application
 COPY app app/
 COPY ssl ssl/
-COPY manual manual/
+COPY docs manual/
 ENV VARIABLE_NAME="application"
 
 EXPOSE 443
