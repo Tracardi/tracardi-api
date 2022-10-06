@@ -23,7 +23,7 @@ You can specify fields to search in the query syntax:
 
     Remember the operators like OR, AND must be uppercase.
 
-* where the event.properties.product field contains the exact phrase "Nike sneakers"
+* where the __event.properties.product__ field contains the exact phrase "Nike sneakers"
 
     ```
     event.properties.product:"Nike sneakers"
@@ -35,7 +35,7 @@ You can specify fields to search in the query syntax:
     profile.pii.first\ name:Alice
     ```
 
-* where any of the fields book.title, book.content or book.date contains quick or brown (note how we need to escape the
+* where any of the fields __book.title__, __book.content__ or __book.date__ contains quick or brown (note how we need to escape the
     * with a backslash):
 
     ```
