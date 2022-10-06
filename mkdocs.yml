@@ -44,12 +44,12 @@ extra:
     - icon: fontawesome/brands/facebook
       link: https://facebook.com/tracardi
     - icon: fontawesome/brands/github
-      link: https://github.com/atopmie/tracardi
+      link: https://github.com/Tracardi/tracardi
     - icon: fontawesome/brands/youtube
       link: https://www.youtube.com/channel/UC0atjYqW43MdqNiSJBvN__Q
 copyright: Copyright &copy; 2020 - 2021 Tracardi
-repo_url: https://github.com/tracardi/tracardi
-repo_name: tracardi/tracardi
+repo_url: https://github.com/tracardi/tracardi-api
+repo_name: tracardi/tracardi-api
 nav:
   - index.md
   - what_is_tracardi.md
