@@ -48,7 +48,7 @@ You can do it with this command.
 docker run -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" docker.elastic.co/elasticsearch/elasticsearch:7.13.2
 ```
 
-If you use features as destinations or synchronized events then you will need a redis instance as well. 
+You will need a redis instance as well. 
 
 Start it with:
 
@@ -56,7 +56,6 @@ Start it with:
 docker run -p 6379:6379 redis
 ```
 
-If you do not want to synchronize you profiles with remote system you can skip Redis installation.
 
 ## Start Tracardi API
 
