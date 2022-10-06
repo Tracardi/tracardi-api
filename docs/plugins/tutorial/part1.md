@@ -204,5 +204,4 @@ Restart the Tracardi API so the changes are activated and go to `Processing/Work
 ## Wrap-up
 
 And this concludes the first part of the tutorial. We added the first plugin and installed it. In the second part we
-will extend our plugin with the configuration form and we will try to reference data
-with [dot notation](../../notations/dot_notation.md). 
+will extend our plugin with the configuration form.

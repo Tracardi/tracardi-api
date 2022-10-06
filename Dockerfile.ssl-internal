@@ -15,7 +15,7 @@ RUN pip --default-timeout=180 install -r requirements.txt
 COPY app app/
 COPY uix uix/
 COPY ssl ssl/
-COPY manual manual/
+COPY docs manual/
 
 # Remove test page
 
@@ -24,7 +24,7 @@ RUN rm -rf app/tracker/index.css
 
 RUN pip install wheel
 RUN pip --default-timeout=180 install -r manual/requirements.txt
-WORKDIR /app/manual/en
+WORKDIR /
 RUN mkdocs build
 
 ENV VARIABLE_NAME="application"

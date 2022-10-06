@@ -7,7 +7,7 @@ In the previous tutorial we wrote the plugin that performs a simple action and c
 is equal to "my-type". Our code looked like this:
 
 !!! Info
-    Please click (+) to see the comments for the code
+Please click (+) to see the comments for the code
 
 ```python
 if self.event.type == "my-event":  # (1)
@@ -63,6 +63,7 @@ The entire register function should look like this:
 ```python
 from tracardi.service.plugin.domain.register import Plugin, Spec, MetaData
 
+
 def register() -> Plugin:
     return Plugin(
 
@@ -87,23 +88,24 @@ def register() -> Plugin:
     )
 ```
 
-1. Configuration initialisation 
+1. Configuration initialisation
 
-OK now let's use `event_type` in the plugin. First, we will have to read the initialized configuration and save it to the object.
+OK now let's use `event_type` in the plugin. First, we will have to read the initialized configuration and save it to
+the object.
 
 We will use the `set_up` method for this.
 
 ```python
 from tracardi.service.plugin.runner import ActionRunner
 
-class MyPlugin (ActionRunner):
 
+class MyPlugin(ActionRunner):
     config: dict
-    
-    async def set_up (self, config):
-      self.config = config
 
-    ... # (1)
+    async def set_up(self, config):
+        self.config = config
+
+    ...  # (1)
 ```
 
 1. The rest of the code
@@ -116,18 +118,18 @@ Now let's use the `self.config` property in the run method and replace __"my-eve
 from tracardi.service.plugin.runner import ActionRunner
 from tracardi.service.plugin.domain.result import Result
 
-class MyPlugin (ActionRunner):
 
+class MyPlugin(ActionRunner):
     config: dict
-    
+
     async def set_up(self, config):
-      self.config = config
-    
-    async def run (self, payload: dict, in_edge = None):
+        self.config = config
+
+    async def run(self, payload: dict, in_edge=None):
         if self.event.type == self.config['event-type']:
-            return Result (port = "MyEvent", value = payload)
+            return Result(port="MyEvent", value=payload)
         else:
-            return Result (port = "NotMyEvent", value = {})
+            return Result(port="NotMyEvent", value={})
 ```
 
 That's it for the moment.
@@ -142,7 +144,8 @@ the `Spec.init` property. In our case it is:
 ```
 
 When the user moves the plug-in to the workflow and starts it, the configuration from the plug-in is put as a parameter
-to the `set_up` method. In the method, we set `self.config` to the value from the parameter (i.e. the one from `spec.init`).
+to the `set_up` method. In the method, we set `self.config` to the value from the parameter (i.e. the one
+from `spec.init`).
 If the user changed the configuration in the editor before the first run, the changed values are of course substituted
 as the config parameter.
 
@@ -197,14 +200,15 @@ Complete code looks like this:
     ```
 
 !!! Info
-    Please check if the code works step by step. You do not have to implement everything to check if the code works. 
-    Every time you complete some part of the tutorial you may save the changes and reinstall plugins and see how it
-    works in the workflow editor. Installation of the changed plugin can be done in the workflow editor by clicking
-    the `Reinstall plugins` button. 
+Please check if the code works step by step. You do not have to implement everything to check if the code works.
+Every time you complete some part of the tutorial you may save the changes and reinstall plugins and see how it
+works in the workflow editor. Installation of the changed plugin can be done in the workflow editor by clicking
+the `Reinstall plugins` button.
 
 ## Validation
 
-Note that although the code works, there may be a situation in which the user in the json editor deletes the initialized value
+Note that although the code works, there may be a situation in which the user in the json editor deletes the initialized
+value
 
 ```json
 {
@@ -216,12 +220,12 @@ and puts any other, for example:
 
 ```json
 {
-   "Type": "",
-   "Position": 1
+  "Type": "",
+  "Position": 1
 }
 ```
 
-Then our code will not work, and we will get `KeyError` when trying to read the value in `self.config['event_type']`. 
+Then our code will not work, and we will get `KeyError` when trying to read the value in `self.config['event_type']`.
 So we need a validation that will not allow the user to enter incorrect values.
 
 For this we will use the `PluginConfig` object.
@@ -232,13 +236,13 @@ from tracardi.service.plugin.domain.config import PluginConfig
 
 
 class Configuration(PluginConfig):
-   event_type: str  # (1)
+    event_type: str  # (1)
 
-   @validator("event_type")  # (2)
-   def must_not_be_empty(cls, value): 
-      if len(value) == 0:
-         raise ValueError("Event type can not be empty.")
-      return value
+    @validator("event_type")  # (2)
+    def must_not_be_empty(cls, value):
+        if len(value) == 0:
+            raise ValueError("Event type can not be empty.")
+        return value
 ```
 
 1. Tells that the object has a property named `event_type` and it is of type string. `None` value is not allowed.
@@ -253,8 +257,8 @@ The above class defines what our configuration object should look like.
 Let's use a validator to validate the configuration. For this we need to create a validate function.
 
 ```python
-def validate (config: dict):
-   return Configuration(** config)
+def validate(config: dict):
+    return Configuration(**config)
 ```
 
 And we'll use it when setting up `self.config`.
@@ -267,31 +271,30 @@ from tracardi.service.plugin.domain.config import PluginConfig
 
 
 class Configuration(PluginConfig):  # (1)
-   event_type: str
+    event_type: str
 
-   @validator("event_type")
-   def must_not_be_empty(cls, value): 
-      if len(value) == 0:
-         raise ValueError("Event type can not be empty.")
-      return value
-   
+    @validator("event_type")
+    def must_not_be_empty(cls, value):
+        if len(value) == 0:
+            raise ValueError("Event type can not be empty.")
+        return value
+
 
 def validate(config: dict):  # (2)
-   return Configuration(**config)
+    return Configuration(**config)
 
 
-class MyPlugin (ActionRunner):
-
+class MyPlugin(ActionRunner):
     config: Configuration  # (3)
-    
+
     async def set_up(self, config):
-      self.config = validate(config)  # (4)
-    
-    async def run (self, payload: dict, in_edge = None):
+        self.config = validate(config)  # (4)
+
+    async def run(self, payload: dict, in_edge=None):
         if self.event.type == self.config.event_type:  # (5)
-            return Result (port = "MyEvent", value = payload)
+            return Result(port="MyEvent", value=payload)
         else:
-            return Result (port = "NotMyEvent", value = {})
+            return Result(port="NotMyEvent", value={})
 ```
 
 1. Definition of configuration schema. Any data passed to this object will be automatically validated.
@@ -302,27 +305,27 @@ class MyPlugin (ActionRunner):
 5. Here we use the Configuration object to compare values.
 
 !!! Info
-     Please click (+) to see the comments for the code
-   
-Now it is time to see if the code works. 
+Please click (+) to see the comments for the code
+
+Now it is time to see if the code works.
 
 !!! Info
-     Please check if the code works step by step. You do not have to implement everything to check if the code works. 
-     Every time you complete some part of the tutorial you may save the changes and reinstall plugins and see how it
-     works in the workflow editor. Installation of the changed plugin can be done in the workflow editor by clicking
-     the `Reinstall plugins` button. 
-
+Please check if the code works step by step. You do not have to implement everything to check if the code works.
+Every time you complete some part of the tutorial you may save the changes and reinstall plugins and see how it
+works in the workflow editor. Installation of the changed plugin can be done in the workflow editor by clicking
+the `Reinstall plugins` button.
 
 ## Plugin form
 
 Setting the configuration with the JSON editor is not very convenient. That's why we should add a form to make the
-process of plugin configuration easier. 
+process of plugin configuration easier.
 
 As you probably guessed, it is done by adding another parameter to the register function.
 
 ```python
 from tracardi.service.plugin.domain.register import Plugin, Spec, MetaData
 from tracardi.service.plugin.domain.register import Form, FormGroup, FormField, FormComponent  # (1)
+
 
 def register() -> Plugin:
     return Plugin(
@@ -367,12 +370,20 @@ def register() -> Plugin:
 3. Notice that `FormField` id is equal to init property. This is how you bind configuration with the form field.
 4. THis defines what kind of component to use in the field. This one is text.
 
-The form property defines a form that will be build automatically and will bind form fields with JSON configuration 
-object. Form consists of `FormGroups` and `FormFields` inside a `FormGroup`. `FormGroup` is just a type of grouping 
-to make forms more readable. YOu may have any number of groups you want. It consists of name and description and a 
+The form property defines a form that will be build automatically and will bind form fields with JSON configuration
+object. Form consists of `FormGroups` and `FormFields` inside a `FormGroup`. `FormGroup` is just a type of grouping
+to make forms more readable. YOu may have any number of groups you want. It consists of name and description and a
 list of `FormField` objects. Form field defines the type of field we display and an id. Id must be equal to one of the
-configuration properties. Here we bind first field with the `event_type` property of the JSON configuration object. 
+configuration properties. Here we bind first field with the `event_type` property of the JSON configuration object.
 Property `component` defines the field component to use to edit the `event_type`.
 
 The list of available components can be found [here](../forms/list_of_field_types.md).
 
+When you reinstall the plugin you should see the form in the plugin configuration. Everytime you change something in
+the form it should be visible in the JSON configuration and vice-versa.
+
+## Wrap-up
+
+And this concludes the second part of the tutorial. We added the plugin configuration and attached a from to it.
+In the third part we will extend our plugin with the resource and reference the data
+with [dot notation](../../notations/dot_notation.md).  
