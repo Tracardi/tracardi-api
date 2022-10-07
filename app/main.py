@@ -24,7 +24,7 @@ from app.api import rule_endpoint, resource_endpoint, event_endpoint, \
     settings_endpoint, event_source_endpoint, test_endpoint, \
     event_tag_endpoint, consent_type_endpoint, flow_action_endpoint, flows_endpoint, info_endpoint, \
     user_endpoint, event_management_endpoint, debug_endpoint, log_endpoint, tracardi_pro_endpoint, \
-    storage_endpoint, destination_endpoint, user_log_endpoint, user_account_endpoint, install_endpoint, import_endpoint, \
+    import_endpoint, \
     task_endpoint, storage_endpoint, destination_endpoint, user_log_endpoint, user_account_endpoint, install_endpoint, \
     delete_indices_endpoint, migration_endpoint, report_endpoint
 
@@ -227,7 +227,8 @@ async def app_starts():
             await asyncio.sleep(5)
             no_of_tries -= 1
             logger.error(
-                f"Could not connect to elasticsearch at {elastic.host}. Number of tries left: {no_of_tries}. Waiting 5s to retry.")
+                f"Could not connect to elasticsearch at {elastic.host}. Number of tries left: {no_of_tries}. "
+                f"Waiting 5s to retry.")
             if is_elastic_on_localhost():
                 logger.warning("You are trying to connect to 127.0.0.1. If this instance is running inside docker "
                                "then you can not use localhost as elasticsearch is probably outside the container. Use "

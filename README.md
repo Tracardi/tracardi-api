@@ -1,15 +1,28 @@
 ![github_banner](https://user-images.githubusercontent.com/16271564/148845983-7c9e85c1-465f-44ed-b1e9-7112908d2e83.png)
 
+  <p align="center">
+   <br/>
+    <a href="https://docs.tracardi.com" rel="dofollow"><strong>Explore Tracardi Documentation</strong></a> ·
+    <a href="https://opencollective.com/tracardi-cdp">Support the project</a> ·
+    <a href="https://join.slack.com/t/tracardi/shared_invite/zt-1bpf35skl-8Fr5FX5a6cji7tX18JNNDA">👨‍💻 Join community</a> ·
+    <a href="https://bit.ly/3pbdbPR">⭐️ Watch tutorials on YOUTUBE</a>
+   <br/>
+  </p>
+  
+[![contributors](https://opencollective.com/tracardi-cdp/tiers/badge.svg)](https://opencollective.com/tracardi-cdp)  [![Slack Status](https://img.shields.io/badge/slack-join_chat-white.svg?logo=slack&style=social)](https://join.slack.com/t/tracardi/shared_invite/zt-1bpf35skl-8Fr5FX5a6cji7tX18JNNDA)
+
 # Open-source Customer Engagement and Data Platform
 
-[Tracardi](http://www.tracardi.com) is an open-source system that supports customer engagement and enhances the consumer experience.
-Tracardi is intended for anyone who carries out any type of customer interaction, be it through sales or service delivery.
-Tracardi collects data from customer journeys and assigns it to a profile that is maintained throughout the period of interaction with the customer.
+[TRACARDI](http://www.tracardi.com) is an API-first solution, low-code / no-code platform aimed at any business that 
+wants to start using user data for automated customer engagement. Tracardi is intended for anyone who carries out any type of customer interaction, be it through sales or service delivery. Tracardi __collects data from customer journeys__ and assigns it to a profile, automates __data enhancement__, facilitates 🚀 __Machine Learning APIs__ usage.
 
+## ⭐️ Screenshots
 
-TRACARDI is an API-first solution, low-code / no-code platform aimed at any business that 
-wants to start using user data for automated customer engagement. If you own a brand new e-commerce platform or 
-a legacy system you can integrate TRACARDI easily. Use TRACARDI for:
+![flow-1](https://user-images.githubusercontent.com/16271564/145562599-a188de6e-639b-479a-b263-863e9133df53.png)
+
+## ✨ Features
+
+Use TRACARDI for:
 
  * **Customer Data Integration** - You can ingest, aggregate and store customer data
    from multiple sources in real time at any scale and speed due to elastic search backend.
@@ -26,122 +39,80 @@ a legacy system you can integrate TRACARDI easily. Use TRACARDI for:
  * **Automation** - TRACARDI is a great framework for creating
    marketing automation apps. You can send your data to other systems easily
 
-## Screenshots
+If you want to see Tracardi in action subscribe to our [Youtube channel](https://bit.ly/3pbdbPR).
 
-![flow-1](https://user-images.githubusercontent.com/16271564/145562599-a188de6e-639b-479a-b263-863e9133df53.png)
+## 👇 Installation and getting started
 
+The easiest way to run TRACARDI is to run it as a docker container. 
 
-# Installation
-
-The easiest way to run Tracardi is to run it as a docker container. If you are looking for other installation types 
-visit: [http://docs.tracardi.com/installation/](http://docs.tracardi.com/installation/)
-
-In order to do that you must have docker installed on your local machine. 
-Please refer to docker installation manual to see how to install docker.
-
-## Dependencies
-
-Tracardi need elasticsearch as its backend. Please pull and run elasticsearch single node docker before you start Tracardi. 
-
-You can do it with this command.
+Install docker and docker-compose on your local machine, go to TRACARDI folder, and run one line command:
 
 ```
-docker run -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" docker.elastic.co/elasticsearch/elasticsearch:7.13.2
+docker-compose up
 ```
 
-You will need a redis instance as well. 
+Visit http://127.0.0.1:8787 and complete installation in Tracardi GUI. 
 
-Start it with:
+## 👇 Other types of installation
 
-```
-docker run -p 6379:6379 redis
-```
+There are other types of installation. All are described in detail in our [documentation](http://docs.tracardi.com/installation/). 
 
+## 👇 Need help ?
 
-## Start Tracardi API
+<table align="center">
+<tr>
+<td>Join our community</td>
+<td>Visit YouTube Channel</td>
+</tr>
+<tr>
+<td  align="center"><a href="https://join.slack.com/t/tracardi/shared_invite/zt-10y7w0o9y-PmCBnK9qywchmd1~KIER2Q">
+    <img src="https://user-images.githubusercontent.com/16271564/151843970-5e869807-4ccf-46ab-98f5-6a65aea790f8.png" width="120px"/> 
+</a></td>
+<td  align="center"><a href="https://www.youtube.com/channel/UC0atjYqW43MdqNiSJBvN__Q">
+    <img src="https://user-images.githubusercontent.com/16271564/194526771-ab525c4f-b1fa-4d85-8834-340a40c8828b.png" width="120px"/> 
+</a></td>
+<tr>
+</table>
 
-Now pull and run Tracardi backend.
+## 👇 Documentation
 
-```
-docker run -p 8686:80 -e ELASTIC_HOST=http://<your-laptop-ip>:9200 -e REDIS_HOST=redis://<your-laptop-ip>:6379 tracardi/tracardi-api:0.7.1
-```
+* System documentation is available at: [http://docs.tracardi.com](http://docs.tracardi.com).
+* Api documentation is always available after installation at http://127.0.0.1:8686/docs.
+* Tracardi has also build-in documentation into the system.
 
-Tracardi must connect to elastic. To do that you have to set ELASTIC_HOST variable to reference your laptop's IP. 
+## 👇 Call for contributors
 
-> "Waiting for application startup" issue
-> 
-> Notice that when type `http://localhost:9200` as ELASTIC_HOST you try to connect to Elastic on localhost. This means that you're
-> connecting to the docker itself as localhost means local in docker. Obviously elastic is not there, so Tracardi will
-> never connect that is why you see "Waiting for application startup" information. Pass external ip for elastic. This may be your laptop IP if you are running Tracardi locally, e.g. 192.168.1.143:9200. Please refer to Tracardi documentation for more Troubleshooting information.
-
-For more troubleshooting solutions go to [http://docs.tracardi.com/trouble/](http://docs.tracardi.com/trouble/)
-
-### Connecting Tracardi to Elastic via SSL connection
-
-If you have an elasticsearch instance and you would like to connect to it via HTTPS this is the command you may find useful. 
-
-```
-docker run -p 8686:80 -e ELASTIC_HOST=https://user:password@<your-laptop-ip>:9200 -e ELASTIC_VERIFY_CERTS=no -e REDIS_HOST=redis://<your-laptop-ip>:6379 tracardi/tracardi-api:0.7.1
-```
-
-## Start Tracardi GUI
-
-Now pull and run Tracardi Graphical User Interface.
-
-```
-docker run -p 8787:80 -e API_URL=//127.0.0.1:8686 tracardi/tracardi-gui:0.7.1
-```
-
-## Start Tracardi Documentation
-
-Now pull and run Tracardi Documentation.
-
-```
-docker run -p 8585:8585 tracardi/tracardi-docs
-```
-
-## Log-in
-
-Visit http://127.0.0.1:8787 and login to Tracardi GUI with default username: admin and password: admin. 
-
-## System Documentation
-
-Visit http://127.0.0.1:8585. System documentations also available at: [http://docs.tracardi.com](http://docs.tracardi.com)
-
-## API Documentation
-
-Visit http://127.0.0.1:8686/docs
-
-
-# Scaling Tracardi for heavy load. 
- 
-TRACARDI was developed with scalability in mind. Scaling is as easy as scaling a docker container. 
-No additional configuration is needed. 
-
-# Development tracking
-
-TRACARDI is #buildinpublic that means that you can track and influence its development. 
-
-Take a look at [YouTube channel](https://bit.ly/3pbdbPR) and see what Tracardi can do for you.
-
-# Call for contributors
-
-We are looking for contributors. Would you like to help with Tracardi development fork Tracardi or contact us at 
+We are looking for contributors. Would you like to help with TRACARDI development fork TRACARDI or contact us at 
 tracardi.cdp@gmail.com or any social platform.
 
-# Support us
+## 👇 Support us
 
-If you would like to support us please follow us on [Facebook](https://bit.ly/3uPwP5a) or [Twitter](https://bit.ly/3uVJwLJ), tag us and leave your comments. Subscribe to our [Youtube channel](https://bit.ly/3pbdbPR) to see development process and new upcoming features.
+If you would like to support us please follow us on:
 
-Spread the news about TRACARDI so anyone interested get to know TRACARDI.
+* [Facebook](https://bit.ly/3uPwP5a) 
+* [Twitter](https://bit.ly/3uVJwLJ), tag us and leave your comments. 
+* Subscribe to our [Youtube channel](https://bit.ly/3pbdbPR) to see development process and new upcoming features.
+* ⭐️ Start TRACARDI GitHub project - it really matters and puts a smile on our faces.
 
 We appreciate any help that helps make TRACARDI popular. 
 
-# Donate
+## 👇 Donate
 
-You can support us on [BOUNTY-SOURCE](https://www.bountysource.com/teams/tracardi)
+You can support us on [Open Collective](https://www.opencollective.com/tracardi-cdp)
 
-# License
+## 👇 Referral programs
 
-Tracardi is available under MIT with Common Clause license.
+Support us via referral programs. If you buy service from the following link to support the project.
+
+[![DigitalOcean Referral Badge](https://web-platforms.sfo2.digitaloceanspaces.com/WWW/Badge%203.svg)](https://www.digitalocean.com/?refcode=882eb4bf23be&utm_campaign=Referral_Invite&utm_medium=Referral_Program&utm_source=badge)
+
+## 👇 License
+
+TRACARDI is available under MIT with Common Clause license.
+
+## 👇 Recent activities
+
+[![Stargazers repo roster for @tracardi/tracardi](https://reporoster.com/stars/tracardi/tracardi)](https://github.com/tracardi/tracardi/stargazers)
+
+[![Forkers repo roster for @tracardi/tracardi](https://reporoster.com/forks/tracardi/tracardi)](https://github.com/tracardi/tracardi/network/members)
 

@@ -2,7 +2,18 @@
 
 The easiest way to run Tracardi is to run it as a docker container.
 
-## Start database
+## Dependencies
+
+Tracardi needs the following elements to run:
+
+* Elasticsearch
+* Redis
+* Tracardi API
+* Tracardi GUI
+
+You will need to start the docker containers for all the above services. 
+
+## Start ElasticSearch database
 
 Tracardi need elasticsearch as its backend. Please pull and run elasticsearch single node docker before you start
 Tracardi.
