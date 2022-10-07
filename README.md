@@ -33,7 +33,8 @@ a legacy system you can integrate TRACARDI easily. Use TRACARDI for:
 
 # Installation
 
-The easiest way to run Tracardi is to run it as a docker container. If you are looking for other installation types visit: [http://docs.tracardi.com/installation/](http://docs.tracardi.com/installation/)
+The easiest way to run Tracardi is to run it as a docker container. If you are looking for other installation types 
+visit: [http://docs.tracardi.com/installation/](http://docs.tracardi.com/installation/)
 
 In order to do that you must have docker installed on your local machine. 
 Please refer to docker installation manual to see how to install docker.

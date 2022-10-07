@@ -133,10 +133,16 @@ application.mount("/tracker",
                       directory=os.path.join(_local_dir, "tracker")),
                   name="tracker")
 
-application.mount("/manual",
+application.mount("/documentation",
                   StaticFiles(
                       html=True,
                       directory=os.path.join(_local_dir, "../site")),
+                  name="documentation")
+
+application.mount("/manual/en/docs",
+                  StaticFiles(
+                      html=True,
+                      directory=os.path.join(_local_dir, "../docs")),
                   name="manual")
 
 application.mount("/uix",
