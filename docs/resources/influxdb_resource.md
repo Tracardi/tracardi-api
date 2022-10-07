@@ -17,12 +17,12 @@ To manage InfluxDB API Tokens in the __InfluxDB UI__:
 
 For Creating a token in the __InfluxDB UI__:
 
-1. From the API Tokens management page, click `Generate` and select a token type (Read/Write Token or All Access API
+1. From the API Tokens management page, click __Generate__ and select a token type (Read/Write Token or All Access API
    Token).
-2. In the window that appears, enter a description for your token in the `Description` field.<br>
+2. In the window that appears, enter a description for your token in the __Description__ field.<br>
 3. If generating a read/write token:
    * Search for and select buckets to read from in the Read pane.
    * Search for and select buckets to write to in the Write pane.
-4. Click `Save`.
+4. Click __Save__.
 
 If you need more help with getting your API Token visit: https://docs.influxdata.com/influxdb/v2.4/security/tokens/
