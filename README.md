@@ -3,13 +3,29 @@
   <p align="center">
    <br/>
     <a href="https://docs.tracardi.com" rel="dofollow"><strong>Explore Tracardi Documentation</strong></a> ·
-    <a href="https://opencollective.com/tracardi-cdp">Support the project</a> ·
+    <a href="https://opencollective.com/tracardi-cdp">⭐️ Support the project</a> ·
     <a href="https://join.slack.com/t/tracardi/shared_invite/zt-1bpf35skl-8Fr5FX5a6cji7tX18JNNDA">👨‍💻 Join community</a> ·
-    <a href="https://bit.ly/3pbdbPR">⭐️ Watch tutorials on YOUTUBE</a>
+    <a href="https://bit.ly/3pbdbPR">:tv: Watch tutorials on YOUTUBE</a>
    <br/>
   </p>
   
-[![contributors](https://opencollective.com/tracardi-cdp/tiers/badge.svg)](https://opencollective.com/tracardi-cdp)  [![Slack Status](https://img.shields.io/badge/slack-join_chat-white.svg?logo=slack&style=social)](https://join.slack.com/t/tracardi/shared_invite/zt-1bpf35skl-8Fr5FX5a6cji7tX18JNNDA)
+ <p align="center">
+  <a href="https://github.com/Tracardi/tracardi/">
+    <img alt="GitHub Repository Stars Count" src="https://img.shields.io/github/stars/Tracardi/tracardi?style=social" />
+  </a>
+    <a href="https://twitter.com/tracardi">
+        <img alt="Follow Us on Twitter" src="https://img.shields.io/twitter/follow/tracardi?style=social" />
+    </a>
+    <a href="https://www.youtube.com/channel/UC0atjYqW43MdqNiSJBvN__Q">
+        <img alt="Subscribe on our Youtube Channel" src="https://img.shields.io/youtube/channel/subscribers/UC0atjYqW43MdqNiSJBvN__Q?style=social" />
+    </a>
+    <a href="https://opencollective.com/tracardi-cdp">
+        <img alt="Subscribe on our Youtube Channel" src="https://opencollective.com/tracardi-cdp/tiers/badge.svg" />
+    </a>
+    <a href="https://join.slack.com/t/tracardi/shared_invite/zt-1bpf35skl-8Fr5FX5a6cji7tX18JNNDA">
+        <img alt="Subscribe on our Youtube Channel" src="https://img.shields.io/badge/slack-join_chat-white.svg?logo=slack&style=social" />
+    </a>
+</p>
 
 # Open-source Customer Engagement and Data Platform
 
@@ -18,7 +34,7 @@ wants to start using user data for automated customer engagement. Tracardi is in
 
 ## ⭐️ Screenshots
 
-![flow-1](https://user-images.githubusercontent.com/16271564/145562599-a188de6e-639b-479a-b263-863e9133df53.png)
+[![flow-1](https://user-images.githubusercontent.com/16271564/145562599-a188de6e-639b-479a-b263-863e9133df53.png)](https://www.youtube.com/watch?v=p_FOh7K828o)
 
 ## ✨ Features
 
@@ -39,15 +55,20 @@ Use TRACARDI for:
  * **Automation** - TRACARDI is a great framework for creating
    marketing automation apps. You can send your data to other systems easily
 
-If you want to see Tracardi in action subscribe to our [Youtube channel](https://bit.ly/3pbdbPR).
+If you want to see Tracardi in action subscribe to our [:tv: Youtube channel](https://bit.ly/3pbdbPR).
 
 ## 👇 Installation and getting started
 
-The easiest way to run TRACARDI is to run it as a docker container. 
+The easiest way to run TRACARDI is to run it as a :whale: docker container. Please install docker and docker-compose on your local machine 
+then clone [tracardi/tracardi-api](https://github.com/Tracardi/tracardi-api.git)
 
-Install docker and docker-compose on your local machine, go to TRACARDI folder, and run one line command:
-
+```bash
+git clone https://github.com/Tracardi/tracardi-api.git
 ```
+
+Go to TRACARDI API folder, and run one line command:
+
+```bash
 docker-compose up
 ```
 
@@ -61,8 +82,9 @@ There are other types of installation. All are described in detail in our [docum
 
 <table align="center">
 <tr>
-<td>Join our community</td>
-<td>Visit YouTube Channel</td>
+<td align="center">Join our community</td>
+<td align="center">Visit YouTube Channel</td>
+<td align="center">Tweet with us</td>
 </tr>
 <tr>
 <td  align="center"><a href="https://join.slack.com/t/tracardi/shared_invite/zt-10y7w0o9y-PmCBnK9qywchmd1~KIER2Q">
@@ -70,6 +92,9 @@ There are other types of installation. All are described in detail in our [docum
 </a></td>
 <td  align="center"><a href="https://www.youtube.com/channel/UC0atjYqW43MdqNiSJBvN__Q">
     <img src="https://user-images.githubusercontent.com/16271564/194526771-ab525c4f-b1fa-4d85-8834-340a40c8828b.png" width="120px"/> 
+</a></td>
+ <td  align="center"><a href="https://www.twitter.com/tracardi">
+    <img src="https://user-images.githubusercontent.com/16271564/194528790-83d1bdbb-0446-4147-a572-4dc12cc0a70f.png" width="120px"/> 
 </a></td>
 <tr>
 </table>
@@ -82,8 +107,9 @@ There are other types of installation. All are described in detail in our [docum
 
 ## 👇 Call for contributors
 
-We are looking for contributors. Would you like to help with TRACARDI development fork TRACARDI or contact us at 
-tracardi.cdp@gmail.com or any social platform.
+Have you found a bug :bug: ? Or maybe you have a nice feature :sparkles: to contribute ? The
+[CONTRIBUTING guide](https://github.com/Tracardi/tracardi/blob/master/CONTRIBUTING.md) will help you get your
+development environment ready in minutes.
 
 ## 👇 Support us
 
