@@ -133,11 +133,12 @@ application.mount("/tracker",
                       directory=os.path.join(_local_dir, "tracker")),
                   name="tracker")
 
-application.mount("/documentation",
-                  StaticFiles(
-                      html=True,
-                      directory=os.path.join(_local_dir, "../site")),
-                  name="documentation")
+if os.path.exists("../site"):
+    application.mount("/documentation",
+                      StaticFiles(
+                          html=True,
+                          directory=os.path.join(_local_dir, "../site")),
+                      name="documentation")
 
 application.mount("/manual/en/docs",
                   StaticFiles(
@@ -280,7 +281,6 @@ async def add_process_time_header(request: Request, call_next):
     finally:
         try:
             if tracardi.monitor_logs_event_type is not None:
-
                 source_id = "@monitoring"
 
                 tracker_payload = TrackerPayload(
