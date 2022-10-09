@@ -33,10 +33,17 @@ configuration. In the Tracardi system, the configuration is performed while edit
 ways.
 
 The first by providing a dictionary with configuration values (Below is a screenshot showing such a configuration in the
-JSON editor)
+JSON Editor and Configuration Form)
+
+=== "JSON configuration editor"
+    ![JSON configuration editor](../../images/JSON_configuration_editor.png)
+=== "Configuration form"
+    ![Configuration form](../../images/configuration_form.png)
 
 The second way is to complete the form. It is related to the JSON configuration in such a way that when filling in the
-form fields, we automatically fill/change the JSON object
+form fields, we automatically fill/change the JSON object.
+
+
 
 The first way is available out-of-the-box. Developer defines the default JSON object when registering the plugin and
 this is it. This object will appear in the `set_up` method as a `config` parameter.
