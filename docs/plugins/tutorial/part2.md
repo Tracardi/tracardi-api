@@ -1,4 +1,4 @@
-# Part 2: Configure plugin in Tracardi
+# Part 2: Configuring the plugin in Tracardi
 
 In the next part of our tutorial, we will learn how to configure a plugin and how to add a configuration form to that
 plugin.
