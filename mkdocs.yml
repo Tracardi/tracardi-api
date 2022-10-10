@@ -122,6 +122,12 @@ nav:
           - resources/rabbitmq_resource.md
           - resources/scheduler_resource.md
           - resources/sendgrid_resource.md
+          - resources/influxdb_resource.md
+          - resources/mixpanel_resource.md
+          - resources/mqtt_resource.md
+          - resources/salesforce_resource.md
+          - resources/zapier_resource.md
+
 
       - Workflows:
           - flow/index.md
@@ -308,6 +314,7 @@ nav:
           - Tutorials:
                 - plugins/tutorial/part1.md
                 - plugins/tutorial/part2.md
+                - plugins/tutorial/part3.md
 
   - support_us.md
   - attribution.md

@@ -67,7 +67,7 @@ This way we define that the object should have the "event_type" property, which 
 
 The entire register function should look like this:
 
-```python
+```python hl_lines="11-13"
 from tracardi.service.plugin.domain.register import Plugin, Spec, MetaData
 
 
