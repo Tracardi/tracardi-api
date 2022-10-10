@@ -17,6 +17,8 @@ Docker is required to start Tracardi storage (Elasticsearch) and Redis.
 
 Redis instance is required to start Tracardi.
 
+### Redis instance
+
 Start Redis with:
 
 ```

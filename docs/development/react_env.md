@@ -32,11 +32,11 @@ In the project directory, run:
 yarn start
 ```
 
-This will run the app in the development mode. Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
-The page will reload if you edit source code. You will also see any lint errors in the console.
+This will run the app in the development mode. Open [http://localhost:3000](http://localhost:3000) to view it in the
+browser. The page will reload if you edit source code. You will also see any lint errors in the console.
 
-!!! Info
-     In order to work with GUI you will need Tracardi API. Below you will find instructions how to run API with docker.  
+!!! Info In order to work with GUI you will need Tracardi API. Below you will find instructions how to run API with
+docker.
 
 ## Tracardi API
 
@@ -67,3 +67,8 @@ Start it with:
 ```
 docker run -p 6379:6379 redis
 ```
+
+## More information
+
+If you encounter some issues when starting the API please go to [installation guide](../installation/docker/index.md)
+for more information.
