@@ -135,13 +135,13 @@ python3.9 -m venv venv # (2)
 
 !!! Tip  
 
-    Before creating the virtual environment make sure you have version 3.8.x installed. Type `python --version` to 
+    Before creating the virtual environment make sure you have version 3.9.x installed. Type `python --version` to 
     see the python version.
 
 !!! Bug "Trouble shooting"
 
     If you see an error that some of the libraries can not be installed, this may mean that you do not have python 
-    version 3.8.x installed in your virtual environment.
+    version 3.9.x installed in your virtual environment.
 
 
 # Importing project into PyCharm 
