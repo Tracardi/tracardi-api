@@ -1,6 +1,5 @@
 # Python development environment
 
-
 ## Software prerequisites
 
 * Docker
@@ -12,25 +11,36 @@
 
 Install the above software and we're ready to start.
 
+Docker is required to start Tracardi storage (Elasticsearch) and Redis.
 
-# Launching Elasticsearch
+## Launching Redis and Elasticsearch
 
-Open a terminal and enter: 
+Redis instance is required to start Tracardi.
+
+Start Redis with:
+
+```
+docker run -p 6379:6379 redis
+```
+
+### Elasticsearch instance
+
+Elasticsearch is the database that Tracardi uses for storing data.
+
+Open a new terminal and enter to start Elasticsearch:
 
 ```
 docker run -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" docker.elastic.co/elasticsearch/elasticsearch:7.13.2
-
 ``` 
 
-You have run a single instance of elasticsearch in the console. When you want to stop it, press CTRL+C 
-
+When you want to stop Elasticsearch or redis, press CTRL+C in the terminal you started the docker containers.
 
 !!! Tip
 
     If you want elasticsearch to run in the background, type: 
     `docker run -d -p 9200: 9200 -p 9300: 9300 -e "discovery.type = single-node" docker.elastic.co/elasticsearch/elasticsearch:7.13.2`
 
-# Download the source code
+## Download the source code
 
 Open a terminal and go to the directory where you want to keep the code. Enter:
 
@@ -40,9 +50,9 @@ git clone https://github.com/Tracardi/tracardi-api #(2)
 ```
 
 1. Clones tracardi repository. Code will be available in tracardi folder.
-2.  Clones tracardi-api repository
+2. Clones tracardi-api repository
 
-# Create virtual environments 
+## Create virtual environments
 
 We need to create 2 virtual environments. Type:
 
@@ -57,12 +67,11 @@ python3.9 -m venv venv # (2)
 1. Installs virtual environment with python 3.9 for tracardi API
 2. Installs virtual environment with python 3.9 for tracardi library
 
-!!! Tip  
+!!! Tip
 
     Before creating the virtual environment make sure you have version 3.9.x installed. Type `python --version` to see the python version.
 
-# Install dependencies
-
+## Install dependencies
 
 === "Linux"
 
@@ -133,7 +142,7 @@ python3.9 -m venv venv # (2)
     1. Only tracardi-api is required to run the API. Tracardi library will be installed as dependency.
     2. Installs dependencies of Tracardi API.
 
-!!! Tip  
+!!! Tip
 
     Before creating the virtual environment make sure you have version 3.9.x installed. Type `python --version` to 
     see the python version.
@@ -143,18 +152,17 @@ python3.9 -m venv venv # (2)
     If you see an error that some of the libraries can not be installed, this may mean that you do not have python 
     version 3.9.x installed in your virtual environment.
 
+## Importing project into PyCharm
 
-# Importing project into PyCharm 
-
-The API and tracardi library are installed. Now it is time to open IDE and run it inside code editor.
-Tracardi API depends on tracardi library we will need to reference library inside Tracardi API project.
+The API and tracardi library are installed. Now it is time to open IDE and run it inside code editor. Tracardi API
+depends on tracardi library we will need to reference library inside Tracardi API project.
 
 1. Open `PyCharm`
 2. Click `File/Open`
 3. Find and select `tracardi-api` folder
 4. Click open project in `new window`
 5. In the right lower corner next to maser branch, select `<no-interpreter>`
-6. Click `add interpreter` and select existing environment 
+6. Click `add interpreter` and select existing environment
 
 Now it is time to open `tracardi library` and reference it as dependency of `tracardi-api`
 
@@ -167,7 +175,7 @@ You should see something like this in your PyCharm editor.
 
 ![Attached project in PyCharm](../images/attached-project.png)
 
-# Running inside PyCharm
+## Running inside PyCharm
 
 1. Find folder `app` in `tracardi-api`
 2. Find file `main.py`
