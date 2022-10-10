@@ -18,3 +18,5 @@ The following field types can be used in plugin's forms:
 * select
 * bool          
 * contentInput
+
+The list of form fields is getting bigger with every Tracardi release.

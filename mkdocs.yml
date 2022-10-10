@@ -303,18 +303,18 @@ nav:
           - notations/object_template.md
   - api/index.md
   - Developers:
-      - DevEnv set-up:
+      - Development environmet set-up:
           - development/react_env.md
           - development/python_env.md
       - Mirco frontend apps developement:
           - development/micro_frontend.md
       - Plugins:
           - plugins/index.md
-          - plugins/forms/list_of_field_types.md
           - Tutorials:
                 - plugins/tutorial/part1.md
                 - plugins/tutorial/part2.md
                 - plugins/tutorial/part3.md
+          - plugins/forms/list_of_field_types.md
 
   - support_us.md
   - attribution.md

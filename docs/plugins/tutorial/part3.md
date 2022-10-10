@@ -74,7 +74,7 @@ verify its correctness at the same time.
 
 So I would add to init:
 
-```python
+```python hl_lines="3"
 init = {
   "event_type": "",
   "data": ""
@@ -84,10 +84,10 @@ init = {
 and add to the `Configuration` object:
 
 
-```python hl_lines="12-16"
+```python hl_lines="3 12-16"
 class Configuration(PluginConfig):
     event_type: str
-    date: str
+    data: str
 
     @validator("event_type")
     def must_not_be_empty(cls, value):
@@ -103,7 +103,7 @@ class Configuration(PluginConfig):
         return value
 ```
 
-1. Validates the data property.
+1. Validates the data property. It is defied as string, but it __may not be empty__ string 
 
 We have configuration data, now it's time to read data entered in the form and read data
 from [dot notation](../../notations/dot_notation.md).
