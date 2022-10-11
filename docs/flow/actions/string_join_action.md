@@ -1,4 +1,4 @@
-# String join
+# Join string list
 
 This plugin joins each element in the list with a given delimiter.
 
