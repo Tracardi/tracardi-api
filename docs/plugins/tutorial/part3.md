@@ -293,7 +293,8 @@ def register () -> Plugin:
                     "id": "",
                     "name": ""
                 },
-                "event_type": ""
+                "event_type": "",
+                "data": ""
             },
             inputs = ["payload"],
             outputs = ["MyEvent", "NotMyEvent"],
@@ -318,12 +319,19 @@ from tracardi.domain.named_entity import NamedEntity
 class Configuration(PluginConfig):
     resource: NamedEntity # (1)
     event_type: str
+    data: str
 
     @validator("event_type")
     def must_not_be_empty (cls, value):
         if len (value) == 0:
             raise ValueError ("Event type can not be empty.")
         return value
+        
+    @validator("data") 
+    def data_must_not_be_empty(cls, value):
+        if len(value) == 0:
+            raise ValueError("Data can not be empty. ")
+        return value    
 
 ```
 
