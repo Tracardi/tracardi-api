@@ -73,3 +73,23 @@ def test_should_return_all_preferences():
 
     finally:
         endpoint.delete("/user/preference/test_preference")
+
+
+def test_should_return_status_404_if_preference_doesnt_exists():
+    result = endpoint.get("/user/preference/test400")
+    assert result.status_code == 404
+    assert result.json() is None
+
+
+def test_should_return_status_404_while_try_to_delete_wrong_preference():
+    result = endpoint.delete("/user/preference/test")
+    assert result.status_code == 404
+    assert result.json()['detail'] == 'Preference test not found'
+
+
+def test_should_pass_while_try_to_replace_preference():
+    result = endpoint.post("/user/preference/test", 'test')
+    assert result.status_code == 200
+
+    result = endpoint.post("/user/preference/test", 'test')
+    assert result.status_code == 200
