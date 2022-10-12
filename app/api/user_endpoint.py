@@ -100,16 +100,16 @@ async def delete_user_preference(key: str, user=Depends(Permissions(["admin", "d
     """
     Deletes user preference
     """
+    if key in user.preference():
+        user.delete_preference(key)
+        result = await storage.driver.user.update_user(user)
 
-    user.delete_preference(key)
-    result = await storage.driver.user.update_user(user)
-    await storage.driver.user.refresh()
-
-    if tracardi.tokens_in_redis is True:
-        token_memory = TokenMemory()
-        token_memory[user.token] = user.json()
-
-    return result
+        if tracardi.tokens_in_redis is True:
+            token_memory = TokenMemory()
+            token_memory[user.token] = user.json()
+        return result
+    else:
+        raise HTTPException(status_code=404, detail=f"Preference {key} not found")
 
 
 @router.get("/user/preferences", tags=["user"], include_in_schema=server.expose_gui_api, response_model=Optional[dict])
