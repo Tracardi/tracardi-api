@@ -1,4 +1,4 @@
-# Twitter tweet publisher
+# Send Twitter tweet plugin 
 
 This plugin adds tweets on your twitter feed.
 
@@ -13,8 +13,8 @@ This plugin takes any payload.
 
 ## Output
 
-Depending on the response the plugin it will trigger result port (if the response was successful) or error if the response
-has an error.
+Depending on the response, the plugin will trigger data on __response__ port (if the response was successful) or on 
+__error__ port if the response had an error.
 
 ## Config example
 
@@ -26,4 +26,13 @@ has an error.
   },
   "tweet": "Tweet content"
 }
+```
+
+Tweet can be a message template. Template is a text file with special mark-up. Within double curly braces you can place
+dot notation that reads data from internal state of the workflow.
+
+__Example__
+
+```
+Hello {{profile@pii.name}}
 ```
