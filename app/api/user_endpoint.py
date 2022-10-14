@@ -179,7 +179,7 @@ async def get_user(id: str):
     Returns user with given ID
     """
 
-    record = await storage.driver.user.get_by_id(id)
+    record = await storage.driver.user.load_by_id(id)
     if record is None:
         raise HTTPException(status_code=404, detail=f"User {id} not found.")
 

@@ -1,3 +1,5 @@
+from uuid import uuid4
+
 from test.utils import Endpoint
 
 endpoint = Endpoint()
@@ -82,9 +84,10 @@ def test_should_return_status_404_if_preference_doesnt_exists():
 
 
 def test_should_return_status_404_while_try_to_delete_wrong_preference():
-    result = endpoint.delete("/user/preference/test")
+    id = str(uuid4())
+    result = endpoint.delete(f"/user/preference/{id}")
     assert result.status_code == 404
-    assert result.json()['detail'] == 'Preference test not found'
+    assert result.json()['detail'] == f'Preference {id} not found'
 
 
 def test_should_pass_while_try_to_replace_preference():
