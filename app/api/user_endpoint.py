@@ -100,7 +100,7 @@ async def delete_user_preference(key: str, user=Depends(Permissions(["admin", "d
     """
     Deletes user preference
     """
-    if key in user.preference():
+    if key in user.preference:
         user.delete_preference(key)
         result = await storage.driver.user.update_user(user)
 
