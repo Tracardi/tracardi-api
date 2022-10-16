@@ -8,7 +8,7 @@ In order to connect to MQTT you need the following information:
 
 * url: Url of your MQTT Server
 * port: Port of your MQTT Server
-* username: Set-up during MQTT Server Registration
-* password: Set-up during MQTT Server Registration
+* username: Set-up during MQTT Server installation
+* password: Set-up during MQTT Server installation
 
 All above information is required. None can be left empty.
