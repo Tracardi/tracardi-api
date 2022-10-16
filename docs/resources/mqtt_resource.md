@@ -4,4 +4,11 @@ footprint and minimal network bandwidth.
 
 # Resource configuration and set-up
 
-Developer have not provided the documentation. 
+In order to connect to MQTT you need the following information:
+
+* url: Url of your MQTT Server
+* port: Port of your MQTT Server
+* username: Set-up during MQTT Server Registration
+* password: Set-up during MQTT Server Registration
+
+All above information is required. None can be left empty.
