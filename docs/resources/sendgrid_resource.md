@@ -6,12 +6,13 @@ In order to connect Sendgrid to Tracardi you need an API key. Sendgrid API key a
 
 To find your API Key:
 
-1. Navigate to Settings on the left navigation bar, and then select API Keys.
-2. Click Create API Key.
-3. Give your API key a name.
-4. Select Full Access, Restricted Access, or Billing Access.
-5. If you're selecting Restricted Access, or Billing Access, select the specific permissions to give each category. For more information, see API key permissions.
-6. Click Create & View.
-7. Copy your API key somewhere safe. For security reasons, do not put it directly in your code, or commit it somewhere public like GitHub.
+1. Go to sendgrid system and log-in. If you do not have account please sing-up first.
+2. Navigate to __Settings__ on the left navigation bar, and then select __API Keys__.
+3. Click __Create API Key__.
+4. Give your __API key__ a name.
+5. Select __Full Access__, __Restricted Access__, or __Billing Access__. Tracardi needs rights to add contacts and send emails.
+6. If you're selecting __Restricted Access__, or __Billing Access__, select the specific permissions to give each category. For more information, see API key permissions.
+7. Click __Create & View__.
+8. Copy your __API key__ to Tracardi form.
 
-For more information on how to get an API key and get started with Sendgrid visit: https://docs.sendgrid.com/for-developers/sending-email/api-getting-started
+For more information on how to get an API key and get started with Sendgrid visit (Sendgrid documentation)[https://docs.sendgrid.com/for-developers/sending-email/api-getting-started]
