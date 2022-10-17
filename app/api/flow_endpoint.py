@@ -189,12 +189,14 @@ async def upsert_flow_details(flow_metadata: FlowMetaData):
         flow_record.draft = encrypt(Flow(
             id=flow_metadata.id,
             name=flow_metadata.name,
-            description=flow_metadata.description
+            description=flow_metadata.description,
+            type=flow_metadata.type
         ).dict())
         flow_record.production = encrypt(Flow(
             id=flow_metadata.id,
             name=flow_metadata.name,
-            description=flow_metadata.description
+            description=flow_metadata.description,
+            type=flow_metadata.type
         ).dict())
 
     else:
@@ -208,6 +210,7 @@ async def upsert_flow_details(flow_metadata: FlowMetaData):
         flow_record.name = flow_metadata.name
         flow_record.description = flow_metadata.description
         flow_record.projects = flow_metadata.projects
+        flow_record.type = flow_metadata.type
 
     return await StorageFor(flow_record).index().save()
 
@@ -227,6 +230,7 @@ async def upsert_flow_details(flow_metadata: FlowMetaData):
     flow_record.name = flow_metadata.name
     flow_record.description = flow_metadata.description
     flow_record.projects = flow_metadata.projects
+    flow_record.type = flow_metadata.type
 
     if flow_record.draft:
         draft_workflow = flow_record.get_draft_workflow()
@@ -234,6 +238,7 @@ async def upsert_flow_details(flow_metadata: FlowMetaData):
         draft_workflow.name = flow_metadata.name
         draft_workflow.description = flow_metadata.description
         draft_workflow.projects = flow_metadata.projects
+        draft_workflow.type = flow_metadata.type
 
         flow_record.draft = encrypt(draft_workflow.dict())
 
