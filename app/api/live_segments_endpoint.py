@@ -57,14 +57,15 @@ async def get_live_segments(query: str = None):
     """
     result = await storage.driver.live_segment.load_all()
     total = result.total
-    result = [LiveSegment.construct(LiveSegment.__fields_set__, **r) for r in result]
+    result = [LiveSegment(**r) for r in result]
 
     # Filtering
     if query is not None and len(query) > 0:
         query = query.lower()
         if query:
             result = [r for r in result if
-                      query in r.name.lower() or (r.name is not None and search(query, [r.name]))]
+                      query in r.name.lower() or (r.name is not None and search(query, [
+                          r.name, r.description, r.workflow.name]))]
 
     # Grouping
     groups = defaultdict(list)
