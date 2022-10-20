@@ -30,7 +30,7 @@ from app.api import rule_endpoint, resource_endpoint, event_endpoint, \
 
 from app.api.graphql.profile import graphql_profiles
 from app.api.track import event_server_endpoint
-from app.api.livechat import javascript_endpoint
+from app.api.javascript import javascript_endpoint
 from app.config import server
 from app.setup.on_start import update_api_instance, clear_dead_api_instances
 from tracardi.config import tracardi, elastic
