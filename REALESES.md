@@ -10,6 +10,7 @@ Version 0.7.3-dev
 * SMS77 plugin
 * Plugin that sorts dictionary
 * Join array of strings into string plugin
+* String similarity plugin
 * New resource details page
 * New event source details page
 * Command CONTAINS, STARTS_WTH and ENDS_WITH to IF plugin
