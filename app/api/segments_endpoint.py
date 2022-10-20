@@ -96,7 +96,7 @@ async def get_segments(query: str = None):
              tags=["segment"],
              response_model=BulkInsertResult,
              include_in_schema=server.expose_gui_api)
-async def upsert_source(segment: Segment):
+async def upsert_segment(segment: Segment):
     """
     Adds new segment to database
     """
