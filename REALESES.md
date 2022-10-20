@@ -8,6 +8,8 @@ Version 0.7.3-dev
 * Google translator plugin
 * Twitter plugin
 * SMS77 plugin
+* Zendesk chat plugin
+* Chatwoot chat plugin
 * Plugin that sorts dictionary
 * Join array of strings into string plugin
 * String similarity plugin
