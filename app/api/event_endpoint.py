@@ -325,8 +325,7 @@ async def get_events_for_session(session_id: str, profile_id: str, limit: int = 
     more_to_load = result.total > len(result)
     result = [{
         "id": doc["id"],
-        "insert": doc["metadata"]["time"].get("insert", None),
-        "status": doc["metadata"].get("status", "n/a"),
+        "metadata": doc["metadata"],
         "type": doc["type"]
     } for doc in result]
 
