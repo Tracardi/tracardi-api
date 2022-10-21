@@ -1,11 +1,10 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from app.api.auth.permissions import Permissions
 from app.config import server
 from app.service.grouping import group_records
 
 from tracardi.domain.consent_type import ConsentType
 from tracardi.service.storage.driver import storage
-from elasticsearch import ElasticsearchException
 from tracardi.service.storage.factory import StorageForBulk
 
 router = APIRouter()
