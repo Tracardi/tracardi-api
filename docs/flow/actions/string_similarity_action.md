@@ -10,7 +10,7 @@ Example:
 {
    "first_string": "event@properties.some_value1",
    "second_string": "event@properties.some_value2",
-   "searching_algorithm": "Levenshtein"
+   "algorithm": "Levenshtein"
 }
 ```
 
@@ -20,7 +20,7 @@ This plugin takes payload as input
 
 # Output
 
-Returns result of the searching algorithm
+Returns the result of similarity check.
 
 Example:
 
@@ -29,3 +29,5 @@ Example:
   "similarity": "1"
 }
 ```
+
+In this example 1 means full similarity
