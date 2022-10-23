@@ -137,12 +137,15 @@ async def upsert_plugin(action: FlowActionPlugin):
 
 @router.get("/flow/action/plugins", tags=["flow", "action"],
             include_in_schema=server.expose_gui_api)
-async def get_plugins_list(flow_type: Optional[str] = 'collect', query: Optional[str] = None):
+async def get_plugins_list(flow_type: Optional[str] = None, query: Optional[str] = None):
     """
     Returns a list of available plugins.
     """
     _current_plugin = None
-    result = await storage.driver.action.load_all(limit=500)
+    if flow_type is None:
+        result = await storage.driver.action.load_all(limit=500)
+    else:
+        result = await storage.driver.action.filter(purpose=flow_type, limit=500)
 
     _result = []
     for r in result:
