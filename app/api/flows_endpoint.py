@@ -1,3 +1,5 @@
+from typing import Optional
+
 from fastapi import APIRouter
 from fastapi import Depends
 from tracardi.service.storage.driver import storage
@@ -14,11 +16,16 @@ router = APIRouter(
 
 
 @router.get("/flows/entity", tags=["flow"], include_in_schema=server.expose_gui_api)
-async def get_flows(limit: int = 500):
+async def get_flows(type: Optional[str] = None, limit: int = 500):
     """
     Loads flows according to given limit (int) parameter
     """
-    result = await storage.driver.flow.load_all(limit=limit)
+
+    if type is None:
+        result = await storage.driver.flow.load_all(limit=limit)
+    else:
+        result = await storage.driver.flow.filter(type=type, limit=limit)
+
     total = result.total
     result = [NamedEntity(**r) for r in result]
 
@@ -58,9 +65,12 @@ async def refresh_flows():
 
 
 @router.get("/flows/by_tag", tags=["flow"], include_in_schema=server.expose_gui_api)
-async def get_grouped_flows(query: str = None, limit: int = 100):
+async def get_grouped_flows(type: Optional[str] = None, query: str = None, limit: int = 100):
     """
     Returns workflows grouped according to given query (str) and limit (int) parameters
     """
-    result = await storage.driver.flow.load_all(limit=limit)
+    if type is None:
+        result = await storage.driver.flow.load_all(limit=limit)
+    else:
+        result = await storage.driver.flow.filter(type=type, limit=limit)
     return group_records(result, query, group_by='projects', search_by='name', sort_by='name')
