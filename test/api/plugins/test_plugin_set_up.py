@@ -1125,18 +1125,6 @@ async def test_should_set_up_plugin_inject_event():
     await plugin.set_up({'event_id': 'abc'})
 
 
-async def test_should_set_up_plugin_inject_profile():
-    
-    module = import_package("tracardi.process_engine.action.v1.internal.inject_profile.plugin")
-    plugin_class = load_callable(module, "InjectProfile")
-    plugin = plugin_class()
-    plugin.node = Node(id="node-id", 
-                       name="test-node", 
-                       module="tracardi.process_engine.action.v1.internal.inject_profile.plugin", 
-                       className="InjectProfile")
-    await plugin.set_up({'query': '{}'})
-
-
 async def test_should_set_up_plugin_add_empty_profile_action():
     
     module = import_package("tracardi.process_engine.action.v1.internal.add_empty_profile.plugin")
