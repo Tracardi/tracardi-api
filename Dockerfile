@@ -29,6 +29,8 @@ COPY uix uix/
 RUN rm -rf app/tracker/index.html
 RUN rm -rf app/tracker/index.css
 
+WORKDIR /
+
 ## Copy manual
 COPY docs docs/
 COPY mkdocs.yml /
@@ -37,7 +39,7 @@ COPY mkdocs.yml /
 RUN pip --default-timeout=240 install -r docs/requirements.txt
 
 # Install manual
-WORKDIR /
+
 RUN mkdocs build
 
 # Start up
