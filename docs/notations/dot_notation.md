@@ -1,7 +1,7 @@
 # Dot notation
 
 Dot notation is a way to access data in internal state of workflow. It is a standard 
-way to reference data in Tracardi. It is used across many places in Tracari such as 
+way to reference data in Tracardi. It is used across many places in Tracardi such as 
 plugins, destinations, etc. 
 
 ## Example of dot notation

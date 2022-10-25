@@ -183,7 +183,7 @@ You should see something like this in your PyCharm editor.
 2. Find file `main.py`
 3. Right click on it and select `Run 'main.py'`
 
-Now the Tracardi API is running. You sould see the following logs:
+Now the Tracardi API is running. You should see the following logs:
 
 ```text
 INFO:     Started server process [59653]

@@ -14,7 +14,7 @@ To start developing Micro Frontend App use the tracardi-uix-template on http://g
 This will create a repo with files needed to start working on the app.
 
 If you would like to cooperate with other contributors on this app or want the repo to be part of Tracardi organization
-on the github let us know (on
+on the GitHub let us know (on
 our [Slack workspace](https://join.slack.com/t/tracardi/shared_invite/zt-10y7w0o9y-PmCBnK9qywchmd1~KIER2Q)). We will
 create a repo that you can fork.
 
@@ -140,7 +140,7 @@ window. To configure the app and pass data from Tracardi use `data attributes`. 
 You can test the app as regular app with `yarn start`. When it is finished, and you have bundled widget file; open
 the `index.html` in your browser and see if it loads.
 
-## Trouble-shooting
+## Troubleshooting
 
 If you use async functions in your app (what is very probable) you may encounter the problem that the app does not build
 when build with `yarn build:widget`. Then follow the tip below.

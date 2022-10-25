@@ -14,7 +14,7 @@ will be:
 }
 ```
 
-If the connections are not named then data form incommin connection will be copied available under the connection id
+If the connections are not named then data form incoming connection will be copied available under the connection id
 key. 
 
 # Merged data output reshaping
@@ -45,7 +45,7 @@ Here is an example of reshape template.
 Notice that some parts of this object reference data with dot notation. The data will be replaced be
 the referenced data.
 
-Let'ss assume that the merged payloads look like this:
+Let's assume that the merged payloads look like this:
 
 ```json
 {

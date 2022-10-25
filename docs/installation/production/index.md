@@ -60,7 +60,7 @@ A: This all depends on your traffic. If you do not have big traffic you
 could run one cluster of APIs with 2 instances and install GUI on your local machine.
 
 Q: __Do tracardi need any particular routing inside cluster?__ 
-A: The internal routing from load balancer to Tracardi instances can be for example: round robin. Tracardi do not 
+A: The internal routing from load balancer to Tracardi instances can be for example: round-robin. Tracardi do not 
 require long-lasting sticky sessions.
 
 Q: __What load can take Tracardi?__

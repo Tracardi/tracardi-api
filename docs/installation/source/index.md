@@ -82,7 +82,7 @@ purposes of our demonstration of a single-server configuration, we will only adj
 Elasticsearch listens for traffic from everywhere on port 9200. You will want to restrict outside access to your
 Elasticsearch instance to prevent outsiders from reading your data or shutting down your Elasticsearch cluster through
 its [REST API] (https://en.wikipedia.org/wiki/Representational_state_transfer). To restrict access and therefore
-increase security, find the line that specifies network.host, uncomment it, and replace its value with localhost so it
+increase security, find the line that specifies network.host, uncomment it, and replace its value with localhost, so it
 looks like this:
 
 ``` 

@@ -1,6 +1,6 @@
 # Object template
 
-There are places where you may want to create an object that consist of the data prom profile, payload, memory. etc. Is
+There are places where you may want to create an object that consist of the data from profile, payload, memory. etc. Is
 such cases you should use an object template. It will allow you to reshape the data into any object you want.
 
 Here is an example of object template.
@@ -10,7 +10,7 @@ Here is an example of object template.
   "some-data": {
     "key": "value",  // This is static value
     "value": "profile@id"  // Reads value from profile and saves it in object new.value
-    "list": [1, "payload@data"] // Reads data value from payload and saves it as 2nf element of list
+    "list": [1, "payload@data"] // Reads data value from payload and saves it as 2nd element of list
     "event": "event@..."  // Saves in event all data from event.
   }
 }

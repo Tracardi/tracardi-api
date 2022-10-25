@@ -14,7 +14,7 @@ To start working on Tracardi GUI clone tracardi-gui repo.
 git clone http://github.com/tracardi/tracardi-gui  #(1)
 ```
 
-1. Clones GUI source code from github
+1. Clones GUI source code from GitHub
 
 Then run:
 

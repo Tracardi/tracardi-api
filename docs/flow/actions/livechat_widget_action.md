@@ -3,7 +3,7 @@
 This plugin injects the LiveChat widget into your web page.
 
 In order to integrate this application with your webpage you will need to open an account at www.livechat.com. During
-sign-up you will be presented with the following code:
+sign-up, you will be presented with the following code:
 
 ```html
 <!-- Start of LiveChat (www.livechat.com) code -->
@@ -26,5 +26,5 @@ the same code.
 ## Form
 
 * License - Copy from LiveChat system
-* Tracardi API - this is the URL to Tracardi API. When you log-in to Tracardi you must provide Api URL. It can always be
+* Tracardi API - this is the URL to Tracardi API. When you log in to Tracardi you must provide Api URL. It can always be
   found in the upper right corner of Tracardi GUI (Go to Inbound Traffic to see it).  

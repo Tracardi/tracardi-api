@@ -1,10 +1,10 @@
 # Send Twitter tweet plugin 
 
-This plugin adds tweets on your twitter feed.
+This plugin adds tweets on your Twitter feed.
 
 ## Requirements
 
-You'll need a twitter account where you need to create a application and generate access keys. There are 4 keys in
+You'll need a Twitter account where you need to create an application and generate access keys. There are 4 keys in
 total. For more details check twitter resource documentation.
 
 ## Input

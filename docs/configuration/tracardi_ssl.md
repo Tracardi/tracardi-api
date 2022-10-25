@@ -66,7 +66,7 @@ And the API will be available __https://localhost__.
 
 ## Running Tracardi API with SSL certificates provided from outside container
 
-Sometimes you do not want to build the docker yourself. Then you can use the prebuild docker and attach
+Sometimes you do not want to build the docker yourself. Then you can use the prebuilt docker and attach
 your certificates. To do that pull `tracardi/tracardi-api-ssl`.
 
 ```
@@ -86,12 +86,12 @@ tracardi/tracardi-api-ssl
 ```
 
 It will start Tracardi with files from your local `/local/path/to/ssl` folder copied/linked to internal docker folder called `/ssl`.
-If you placed certificates inside that folder then the files will be accessable form `/ssl` in docker. 
+If you placed certificates inside that folder then the files will be accessible form `/ssl` in docker.
 The Docker image expects na SSL key file to be named `key.pem` and certificate to be named `cert.pem`.
 
 ## Tracardi API behind HTTPS proxy
 
-You can use treafic to hide Tracardi API behind HTTPS proxy.
+You can use treafik to hide Tracardi API behind HTTPS proxy.
 
 Refer to this link for instructions:
 https://traefik.io/resources/traefik-fastapi-kuberrnetes-ai-ml/

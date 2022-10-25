@@ -16,14 +16,14 @@ graphical editor, which is part of the Tracardi system.
 Customer data is aggregated in the profile. The method of attaching data to the profile is defined in the graphical
 editor, which is part of the Tracardi system.
 
-By integrating Tracardi with your system, eg. saas service, you can use Tracardi to track each customer's interaction
+By integrating Tracardi with your system, e.g. SaaS service, you can use Tracardi to track each customer's interaction
 with the company. The information you collect may cover various consumer decisions, including
 
 * If the customer decides to subscribe to your services;
 * Under what circumstances (the so-called event context);
 * Whether the customer is satisfied with your service or wants to cancel it;
 
-# Data processing and decision making
+# Data processing and decision-making
 
 The scope of data processing depends on what the administrator creates in the graphical data editor. Tracardi can
 connect to other systems, such as AI, to analyze, for example, whether a customer who left a product description is

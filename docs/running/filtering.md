@@ -1,4 +1,4 @@
-FIltering is used in Tracardi to limit the number of event, profiles, etc on the page. It uses a query parser that
+Filtering is used in Tracardi to limit the number of event, profiles, etc. on the page. It uses a query parser that
 allows to define the rules of filtering.
 
 The query string is parsed into a series of terms and operators. A term can be a single word a phrase, surrounded by
@@ -111,7 +111,7 @@ quikc~1
 ## Ranges
 
 Ranges can be specified for date, numeric or string fields. Inclusive ranges are specified with square brackets 
-[min TO max] and exclusive ranges with curly brackets {min TO max}. By default when you filter by query ranges in 
+[min TO max] and exclusive ranges with curly brackets {min TO max}. By default, when you filter by query ranges in 
 filtering box (right to the filter textbox) are disabled. You can define ranges as query.
 
 

@@ -74,6 +74,6 @@ You will not see data from other triggered flows by RAISE EVENT.
 
 ## Cyclic flows
 
-Raised event can form a never ending cycles. For example flow-1 raises event X which triggers flow-2. And flow-2 raises event Y which tiggers flow-1, and flow-2 again triggers event X ... This execution can never end.
+Raised event can form a never ending cycles. For example flow-1 raises event X which triggers flow-2. And flow-2 raises event Y which triggers flow-1, and flow-2 again triggers event X ... This execution can never end.
 
 To prevent this type of cyclic execution TRACARDI will stop sending new events when it detects a possible cyclic execution.

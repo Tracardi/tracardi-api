@@ -3,7 +3,7 @@ and summation, corporate reputation, etc.
 
 # Resource configuration and set-up
 
-In order to start usung Meaning Cloud Plugin please follow the steps:
+In order to start using Meaning Cloud Plugin please follow the steps:
 
 1. Visit https://www.meaningcloud.com/ and create free account
 2. Your license key should be available at https://www.meaningcloud.com/developer/account/subscriptions or look for

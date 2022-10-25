@@ -43,7 +43,7 @@ def test_session_exists_profile_exists():
         if 'debugging' not in result:
             raise ValueError(
                 'Could not perform test due to bad server configuration. No debugging allowed. '
-                'Start Tracardi wiht TRACK_DEBUG=yes.')
+                'Start Tracardi with TRACK_DEBUG=yes.')
 
         assert result['debugging']['session']['saved'] == 0  # session is not saved because it did not change
         assert result['debugging']['events']['saved'] == 1

@@ -1,6 +1,6 @@
 # Language detection Plugin
 
-The purpose of this plugin is detect language from given string with meaningcloud API
+The purpose of this plugin is to detect language from given string with meaningcloud API
 
 # Configuration
 

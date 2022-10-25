@@ -24,7 +24,7 @@ which may result in the loss of continuity of updates. As a result, it may be di
 As it was said above the versions prior to 0.7.0 are not aware of previous data schemas. Therefore, the system does not
 know what indexes were used previously and it is not able to check the changes that have occurred in their schemas. That
 means, the manual data migration by re-indexing is necessary. If the collected data in previous versions is not
-important and it is possible to lose it, we recommend fresh install.
+important and it is possible to lose it, we recommend a fresh install.
 
 ## Manual transfer
 

@@ -45,7 +45,7 @@ equation will return the following result.
 ```
 
 This way you can construct object that have different values that are calculated and assigned to variables. Of course
-the variable ca be assigned to profile, session, etc. This is the last example with variable result.value assingned to
+the variable ca be assigned to profile, session, etc. This is the last example with variable result.value assigned to
 profile@traits.private.interests.sports
 
 ```

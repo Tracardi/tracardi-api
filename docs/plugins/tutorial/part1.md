@@ -7,7 +7,7 @@ This article describes how a python programmer can extend Tracardi with new func
 
 ## Introduction
 
-Event handling in tracardi is based on a __workflow__, which consists of individual __actions__ visualized as __nodes__
+Event handling in Tracardi is based on a __workflow__, which consists of individual __actions__ visualized as __nodes__
 in the workflow. Workflow control when each action/node should be triggered. The action consists of an __input__, __a
 program__ that computes the input data, and __an output__ (the result of the program computation). In tracardi, an action can have
 one input and many outputs. In addition, the action has a configuration, it is a set of data that define how the program
@@ -54,7 +54,7 @@ In summary, we have the following methods in the plugin class.
     async close()  # (4)
 ```
 
-1. Inits the plugin object
+1. Initializes the plugin object
 2. Set-ups the configuration and async resources
 3. Gets the input payload as dictionary and runs the plugin, also returns results on ports
 4. Closes async resources
@@ -79,7 +79,7 @@ Theoretically, we should complete all the methods described above, but in our ca
 configuration, so set_up method is not needed, we don't have connection to external systems, so close method is not
 needed either, we don't have an internal state of class, so `__init__` will be empty.
 
-Before we start, let's create a file in which we will write the code. The tracardi plugins are in the directory:
+Before we start, let's create a file in which we will write the code. The Tracardi plugins are in the directory:
 `/tracardi/process_engine/action/v1`. You can create your own catalog there or use an existing one. I will create
 my_plugin_folder directory and put my_plugin.py file in it.
 
@@ -127,7 +127,7 @@ file.
             start=False,
             spec=Spec(  # (2)
                 module=__name__,  # (4)
-                className=MyPlugin,
+                className='MyPlugin',
                 inputs=["payload"],
                 outputs=["MyEvent", "NotMyEvent"],
                 version='0.1',
@@ -196,7 +196,7 @@ like this:
 
     1. Key is the package of the register function
 
-Type this into the `installed_plugins` dictionary and we are ready to install the plugin.
+Type this into the `installed_plugins` dictionary, and we are ready to install the plugin.
 
 Restart the Tracardi API so the changes are activated and go to `Processing/Workflows`, open any workflow and click the
 `Reinstall Plugins` button. Alternatively you can go to `Maintenance/Plug-ins` and click the `Reinstall Plugins` button.

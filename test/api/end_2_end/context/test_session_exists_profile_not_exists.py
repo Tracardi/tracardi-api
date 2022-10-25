@@ -38,7 +38,7 @@ def test_session_exists_profile_not_exists():
         if 'debugging' not in result:
             raise ValueError(
                 'Could not perform test due to bad server configuration. No debugging allowed. '
-                'Start Tracardi wiht TRACK_DEBUG=yes.')
+                'Start Tracardi with TRACK_DEBUG=yes.')
 
         assert result['debugging']['session']['saved'] == 1  # session is saved again because
         # new profile is created and session has to be updated. Previous session had no profile.id

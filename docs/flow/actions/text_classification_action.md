@@ -17,7 +17,7 @@ This plugin classifies provided text.
 }
 ```
 
-* *source.id* - Id that points to resource with an access token. See below for resource configuration schema.
+* *source.id* - ID that points to resource with an access token. See below for resource configuration schema.
 * *language* - language of the text to classify. (en|sp|it|pt|ct|fr)
 * *title* - optional title of the text
 * *text* - text to classify

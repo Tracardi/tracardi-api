@@ -12,7 +12,7 @@ Tracardi default username and password is:
  password: admin
 ```
 
-This can be different if Tracardi was configured not to use default user name and password. Search for Tracardi
+This can be different if Tracardi was configured not to use default username and password. Search for Tracardi
 configuration for more details.
 
 ## Tracardi API instance

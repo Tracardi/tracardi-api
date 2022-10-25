@@ -34,8 +34,8 @@ with the same e-mail as defined in the current profile are searched).
 The system then automatically excludes profiles that were previously merged.
 
 Now comes the process of merging the data. If there are different values for the same field, e.g. for the `name` field,
-one is "Bill", the second time it is "Whiliam", then the data will be combined and we will get a value `name`
-= ["Bill", "Whiliam"].
+one is "Bill", the second time it is "William", then the data will be combined and we will get a value `name`
+= ["Bill", "William"].
 
 The linked profiles are given the new ID and a new profile record is created. The merged profile is saved in the
 database and the remaining profiles are marked with `metadata.merged_with` field equal to the id of the newly created merged

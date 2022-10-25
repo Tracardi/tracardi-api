@@ -379,8 +379,8 @@ def register() -> Plugin:
 
 The form property defines a form that will be build automatically and will bind form fields with JSON configuration
 object. Form consists of `FormGroups` and `FormFields` inside a `FormGroup`. `FormGroup` is just a type of grouping
-to make forms more readable. YOu may have any number of groups you want. It consists of name and description and a
-list of `FormField` objects. Form field defines the type of field we display and an id. Id must be equal to one of the
+to make forms more readable. You may have any number of groups you want. It consists of name and description and a
+list of `FormField` objects. Form field defines the type of field we display and an id. ID must be equal to one of the
 configuration properties. Here we bind first field with the `event_type` property of the JSON configuration object.
 Property `component` defines the field component to use to edit the `event_type`.
 

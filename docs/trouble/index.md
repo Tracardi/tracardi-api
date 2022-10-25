@@ -1,4 +1,4 @@
-# Trouble shooting
+# Troubleshooting
 
 Known issues that may come up while running Tracardi.
 
@@ -121,7 +121,7 @@ in document with id '052df0ed-e719-457c-9de1-3b197c44b44e'. Preview of field's v
 
 Failed connection with error: CORS request did not succeed
 
-Why this happends.
+Why this happens.
 
 The HTTP request which makes use of CORS failed because the HTTP connection failed at either the network or protocol
 level. The error is not directly related to CORS, but is a fundamental network error of some kind.
@@ -140,7 +140,7 @@ Other possible causes include:
 ## Missing /track endpoint
 
 Track endpoint with trailing backslash may fail if you use HTTPS connection. If you, by mistake, use URL `/track/` instead of
-`/track` with https connection, the system will redirect `/track/` to `/track`. But it will loose https connection. This is
+`/track` with https connection, the system will redirect `/track/` to `/track`. But it will lose https connection. This is
 a know error in fastAPI: [https://github.com/tiangolo/fastapi/issues/4990](https://github.com/tiangolo/fastapi/issues/4990).
 Please do not use backslash at the end of any API call.
 
