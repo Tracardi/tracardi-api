@@ -5,7 +5,7 @@ RUN apt-get update
 RUN apt-get install -y git
 
 # update pip
-RUN /usr/local/bin/python3 -m pip install --upgrade pip
+RUN /usr/local/bin/python3 -m pip install pip==22.2.2
 
 # set the working directory in the container
 RUN mkdir app/
