@@ -69,7 +69,7 @@ async def upsert_flow_draft(draft: Flow, rearrange_nodes: Optional[bool] = False
     flow_record = await storage.driver.flow.load_record(draft.id)  # type: FlowRecord
 
     if flow_record is None:
-        flow_record = draft.get_empty_workflow_record()
+        flow_record = draft.get_empty_workflow_record(draft.type)
 
     flow_record.draft = encrypt(draft.dict())
 
