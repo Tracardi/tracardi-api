@@ -127,7 +127,7 @@ file.
             start=False,
             spec=Spec(  # (2)
                 module=__name__,  # (4)
-                className='MyPlugin',
+                className=MyPlugin.__name__,
                 inputs=["payload"],
                 outputs=["MyEvent", "NotMyEvent"],
                 version='0.1',
