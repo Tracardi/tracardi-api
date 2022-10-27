@@ -222,7 +222,7 @@ async def get_event_logs(id: str):
             include_in_schema=server.expose_gui_api, response_model=dict)
 async def get_grouped_by_tags_profile(profile_id: str):
     """
-    Returns events gruped by tags for profile with given ID
+    Returns events grouped by tags for profile with given ID
     """
     aggregate_query = {
         "for_tags": {

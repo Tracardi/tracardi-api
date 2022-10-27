@@ -6,10 +6,10 @@ of all the environment variable names below.
 
 ## Elastic configuration
 
-* `ELASTIC_HOST` - Default: 127.0.0.1. This setting defines a IP address of elastic search instance.
+* `ELASTIC_HOST` - Default: 127.0.0.1. This setting defines an IP address of elastic search instance.
   See `Connecting to elastic cluster` for more information how to connect to a cluster of servers.
 * `ELASTIC_SNIFF_ON_START` - Default: None. When you enable this option, the client will attempt to execute an
-  elasitcsearch sniff request during the client initialization or first usage. Search documentation for sniffing to get
+  Elasticsearch sniff request during the client initialization or first usage. Search documentation for sniffing to get
   more information.
 * `ELASTIC_SNIFF_ON_CONNECTION_FAIL` - Default: None. If you enable this option, the client will attempt to execute a
   sniff request every time a node is faulty, which means a broken connection or a dead node.

@@ -4,7 +4,7 @@ Returns a string build from template.
 
 # Input
 
-Plugin requires template that contains placeholders with referenced data. Placeholders atar with {{ and end with }}.
+Plugin requires template that contains placeholders with referenced data. Placeholders start with {{ and end with }}.
 Placeholders are replaced by the referenced data. See how to [reference data](../../notations/dot_notation.md) for more information: 
 
 *Example*

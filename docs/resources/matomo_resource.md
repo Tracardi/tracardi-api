@@ -48,5 +48,5 @@ To find out the site ID value for a given website, you can follow these steps:
 * Click on the Measurables(or Websites) > Manage page. You will find a list of all websites on this page.
 * The website ID is on the left of the table listing all websites directly below the website name.
 
-If you are using Matomo for WordPress, your Site ID should be 1 and you can double check this ID in Matomo Analytics >
+If you are using Matomo for WordPress, your Site ID should be 1 and you can double-check this ID in Matomo Analytics >
 System Report > Matomo Blog idSite.

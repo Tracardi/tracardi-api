@@ -45,7 +45,7 @@ a new profile and assign upcoming events to it.
 
 Tracardi saves the collected event and then looks for the rules that define the workflow to use to process the events. A
 rule is a simple filtering process that checks that an event comes from a defined source and has a defined event type.
-For example, a simple rule might require a website to be the source of an event and a page-view for the event. Then if
+For example, a simple rule might require a website to be the source of an event and a page-view for the event. Then, if
 an event occurs meets these criteria, the rule will run the defined flow and send the event data.
 
 The rules connect events of a given type with the indicated workflow.

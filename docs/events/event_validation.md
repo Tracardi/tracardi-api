@@ -69,7 +69,7 @@ like the system to cache the validation.
 
 ## Validation errors
 
-If the validations does not pass an error 406 - NOT ACCEPTABLE status is returned with the information on the reason why
+If the validations do not pass, an error 406 - NOT ACCEPTABLE status is returned with the information on the reason why
 the validation did not pass.
 
 ```json

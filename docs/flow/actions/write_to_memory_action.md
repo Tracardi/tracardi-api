@@ -11,7 +11,7 @@ This plugin takes any payload as input.
 
 ## Outputs
 This plugin return payload on port **success** if the value was successfully written
-to memory, or error detail on port **error** if one occured.
+to memory, or error detail on port **error** if one occurred.
 
 ## Configuration
 

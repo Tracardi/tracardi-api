@@ -1,6 +1,6 @@
 # Get company from HubSpot plugin
 
-This plugin gets a company from HubSpot, based on provided company Id.
+This plugin gets a company from HubSpot, based on provided company ID.
 
 ## Input
 This plugin takes any payload as input.

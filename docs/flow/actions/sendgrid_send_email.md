@@ -47,7 +47,7 @@ message recipient's email(s), message subject and message content.
 
 #### Sendgrid resource
 
-Sendgrid token must be stored in Tracardis resources. Please remember to provide both test and production API key 
+Sendgrid token must be stored in Tracardi's resources. Please remember to provide both test and production API key 
 (token) in resource configuration.
 
 Sendgrid API Tokens can be found in **settings -> SMTP & API Info** on  It is a string with random characters.

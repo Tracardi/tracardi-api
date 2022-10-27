@@ -9,7 +9,7 @@ To get your access key ID and secret access key
 
 1. Open the IAM console at https://console.aws.amazon.com/iam/
 2. On the navigation menu, choose Users. If you do not see user in menu type in search box Users and click IAM.
-3. Choose your IAM user name (not the check box).
+3. Choose your IAM username (not the checkbox).
 4. Open the Security credentials tab, and then choose Create access key.
 5. To see the new access key, choose Show. Your credentials resemble the following:
 

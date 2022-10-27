@@ -7,7 +7,7 @@ elastic change ELASTIC_HOST in docker-standalone.yaml file.
     ELASTIC_HOST: "node-1,node-2,node-3"
 ```
 
-If your cluster is behinde a reverse proxy you will need only one url.
+If your cluster is behind a reverse proxy you will need only one url.
 
 ### SSL and Authentication
 

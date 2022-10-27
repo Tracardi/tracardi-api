@@ -34,7 +34,7 @@ def test_track_payload():
         if 'debugging' not in result:
             raise ValueError(
                 'Could not perform test due to bad server configuration. No debugging allowed. '
-                'Start Tracardi wiht TRACK_DEBUG=yes.')
+                'Start Tracardi with TRACK_DEBUG=yes.')
 
         assert result['debugging']['events']['saved'] == 1
         assert len(result['debugging']['events']['errors']) == 0

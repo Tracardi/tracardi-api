@@ -11,7 +11,7 @@ To create your twitter application please follow these steps.
 Now you have to change your access level from Essential to Elevated, to do this you have to go through a few
 steps.
 
-1. Go to https://developer.twitter.com/en/portal/products/elevated and change your access to elevated, than click __"
+1. Go to https://developer.twitter.com/en/portal/products/elevated and change your access to elevated, then click __"
    Apply"__.
 2. Now you will need to provide information why you do you need elevated access.
 

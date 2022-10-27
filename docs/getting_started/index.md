@@ -19,7 +19,7 @@ If you are a user please read the following first:
 
 
 If you want to develop Tracardi plugins please go to Developer section where you can find 
-an information on how to set-up a [development environment for GUI developer](../development/react_env.md) 
+an information on how to set up a [development environment for GUI developer](../development/react_env.md) 
 or for [backend plugin developer](../development/python_env.md).
 
 !!! Tip

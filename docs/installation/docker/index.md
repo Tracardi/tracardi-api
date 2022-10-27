@@ -68,7 +68,7 @@ server IP.
     connecting to the docker itself as localhost means local in docker. Obviously elastic is not there, so Tracardi will
     never connect. Pass external ip for elastic. This may be your laptop IP if you are running Tracardi locally.
 
-For more trouble-shooting solutions go to [Troubleshooting](../../trouble/index.md)
+For more troubleshooting solutions go to [Troubleshooting](../../trouble/index.md)
 
 
 ### Connecting Tracardi to ElasticSearch via SSL
@@ -104,7 +104,7 @@ docker run -p 8787:80 -e API_URL=//127.0.0.1:8686 tracardi/tracardi-gui #(1)
 
 ## Import worker
 
-To run an import worker you will need the tracari/worker to do the background importing of the data. Run the following 
+To run an import worker you will need the tracardi/worker to do the background importing of the data. Run the following 
 command to start the worker. 
 
 ```bash
@@ -129,7 +129,7 @@ docker run -p 8585:8585 tracardi/tracardi-docs
 
 ## Tracardi Graphical User Interface
 
-Visit http://127.0.0.1:8787 and follow the instructions to set-up Tracardi.
+Visit http://127.0.0.1:8787 and follow the instructions to set up Tracardi.
 
 ## System Documentation
 

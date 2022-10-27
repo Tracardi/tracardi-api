@@ -28,7 +28,7 @@ This node requires configuration.
 * to: None, - Choose *e-mail* recipient
 * from: None, - Choose your *e-mail*
 * replyTo: None,- Select to whom the reply should be sent
-* title: Enter a *E-mail subject*,
+* title: Enter an *E-mail subject*,
 * message: Enter your *message*, HTML is allowed as well as message template.
 
 ### Message

@@ -24,7 +24,7 @@ segmentation id. Name will be lower-cased and spaces will be replaced with dashe
 
 A profile will be attached to a given segment if the data contained in it meet the defined segment criteria.
 
-Criteria is nothing more than a logical rule. For example, a user must visit our website at least 10 times.
+Criteria are nothing more than a logical rule. For example, a user must visit our website at least 10 times.
 
 For example:
 

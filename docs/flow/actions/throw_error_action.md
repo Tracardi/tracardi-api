@@ -1,6 +1,6 @@
 # Throw error plugin
 
-This plugins ends workflow with given error message.
+This plugin ends workflow with given error message.
 
 
 ## Input

@@ -53,8 +53,8 @@ context in which the event was launched, it can be, among others, the type of de
 
 Events represent something that is happening at a given time. They can be used to track
 visitor behaviour. Examples of events may include a click on a link on a web page, a login, a form submission, a page
-view or any other action that needs to be tracked, e.g. purchase order. Events can pass additional data such as user
-name, purchased item, viewed page, etc.
+view or any other action that needs to be tracked, e.g. purchase order. Events can pass additional data such as
+username, purchased item, viewed page, etc.
 
 Site events are triggered when JavaScript is executed on the selected page or an API query to `/track` endpoint is
 made. Since the tracking code is on every page, it can emit events. The events and their types are configurable by you.

@@ -103,7 +103,7 @@ class Configuration(PluginConfig):
         return value
 ```
 
-1. Validates the data property. It is defied as string, but it __may not be empty__ string 
+1. Validates the data property. It is defined as string, but it __may not be empty__ string
 
 We have configuration data, now it's time to read data entered in the form and read data
 from [dot notation](../../notations/dot_notation.md).
@@ -118,13 +118,13 @@ async def run(self, payload: dict, in_edge=None):
     data_to_send = dot[self.config.data]  # (2)
 
     if self.event.type == self.config.event_type:
-        return Result(port="MyEvent", value=payload)
+        return Result(port="MyEvent", value=data_to_send)
     else:
         return Result(port="NotMyEvent", value={})
 ```
 
 1. Get the DotAccessor object that will convert the dot notation to the data. 
-2. Convert anything that is defined in `config.data` to the real data form the workflow and assign it to data_to_send
+2. Convert anything that is defined in `config.data` to the real data from the workflow and assign it to data_to_send
 
 ## Resource
 
@@ -173,7 +173,7 @@ ResourceSettings(
 6. The documentation file is located in the __tracardi-api/docs/resources__ directory
 
 This is the set of data the system needs to add a resource. After restarting the server, we can click on `Resources` in
-the Tracardi GUI menu, then` Add new resource` and the list of resources will include `Custom API URL`. The resource we just created.
+the Tracardi GUI menu, then `Add new resource` and the list of resources will include `Custom API URL`. The resource we just created.
 The form will also include an object:
 
 ```json
@@ -197,7 +197,7 @@ self.credentials = resource.credentials.get_credentials (self, output = MyResour
 ```
 
 1. Read resource id from `config.resource.id`. Note the object `config.resource` must be defined in the config 
-2. Get data for authorization (credentials), which is an object defined in `ResourceSettings` in the` config` property,
+2. Get data for authorization (credentials), which is an object defined in `ResourceSettings` in the `config` property,
    and filled in by the user when creating the resource.
 
 The first line reads the resource id from `config.resource.id`. Note that we do not have such field in the config yet
