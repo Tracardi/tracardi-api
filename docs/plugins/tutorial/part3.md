@@ -287,7 +287,7 @@ def register () -> Plugin:
         start = False,
         spec = Spec (
             module = __name__,
-            className = 'MyPlugin',
+            className = MyPlugin.__name__,
             init = {
                 "resource": {
                     "id": "",
