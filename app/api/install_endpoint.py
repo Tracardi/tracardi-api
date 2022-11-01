@@ -27,25 +27,17 @@ async def check_if_installation_complete():
     """
     Returns list of missing and updated indices
     """
-    # Missing indices
 
-    _indices = [item async for item in get_indices_status()]
-    missing_indices = [idx[1] for idx in _indices if idx[0] == 'missing_index']
-    existing_indices = [idx[1] for idx in _indices if idx[0] == 'existing_index']
-    missing_templates = [idx[1] for idx in _indices if idx[0] == 'missing_template']
-    missing_aliases = [idx[1] for idx in _indices if idx[0] == 'missing_alias']
-    existing_aliases = [idx[1] for idx in _indices if idx[0] == 'existing_alias']
-    # existing_templates = [idx[1] for idx in _indices if idx[0] == 'existing_template']
+    is_schema_ok, indices = await storage.driver.system.is_schema_ok()
 
     # Missing admin
-
+    existing_aliases = [idx[1] for idx in indices if idx[0] == 'existing_alias']
     index = resources.get_index('user')
     if index.get_index_alias() in existing_aliases:
         admins = await storage.driver.user.search_by_role('admin')
     else:
         admins = None
 
-    is_schema_ok = not missing_indices and not missing_aliases and not missing_aliases
     has_admin_account = admins is not None and admins.total > 0
 
     return {
