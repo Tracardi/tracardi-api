@@ -301,7 +301,6 @@ async def get_for_source_grouped_by_tags_time(source_id: str, time_span: TimeSpa
             response_model=dict)
 async def get_events_for_session(session_id: str, limit: int = 20):
     result = await storage.driver.event.get_events_by_session(session_id, limit)
-    print(result)
     more_to_load = result.total > len(result)
     result = [{
         "id": doc["id"],
