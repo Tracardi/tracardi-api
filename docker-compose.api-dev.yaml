@@ -1,0 +1,26 @@
+version: "3.7"
+services:
+
+  tracardi-gui:
+    image: tracardi/tracardi-gui:0.7.3-dev
+    environment:
+      API_URL: http://<laptop-ip>:8686
+    ports:
+      - 8787:80
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.13.2
+    environment:
+      bootstrap.memory_lock: "true"
+      ES_JAVA_OPTS: "-Xms512m -Xmx512m"
+      discovery.type: single-node
+      xpack.security.enabled: "false"
+      cluster.name: contextElasticSearch
+    ports: # Expose Elasticsearch ports
+      - 9300:9300
+      - 9200:9200
+
+  redis:
+    image: redis
+    ports:
+      - 6379:6379
