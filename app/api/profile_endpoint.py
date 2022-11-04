@@ -78,13 +78,3 @@ async def delete_profile(id: str, response: Response):
 
     return result
 
-
-@router.get("/profile/logs/{id}", tags=["profile"],
-            dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer"]))],
-            response_model=list, include_in_schema=server.expose_gui_api)
-async def get_profile_logs(id: str):
-    """
-    Gets logs for profile with given ID (str)
-    """
-    log_records = await storage.driver.console_log.load_by_profile(id)
-    return list(log_records)

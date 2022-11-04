@@ -26,7 +26,7 @@ from app.api import rule_endpoint, resource_endpoint, event_endpoint, \
     user_endpoint, event_management_endpoint, debug_endpoint, log_endpoint, tracardi_pro_endpoint, \
     import_endpoint, \
     task_endpoint, storage_endpoint, destination_endpoint, user_log_endpoint, user_account_endpoint, install_endpoint, \
-    delete_indices_endpoint, migration_endpoint, report_endpoint, live_segments_endpoint
+    delete_indices_endpoint, migration_endpoint, report_endpoint, live_segments_endpoint, console_log_endpoint
 
 from app.api.graphql.profile import graphql_profiles
 from app.api.track import event_server_endpoint
@@ -190,6 +190,7 @@ application.include_router(delete_indices_endpoint.router)
 application.include_router(migration_endpoint.router)
 application.include_router(report_endpoint.router)
 application.include_router(live_segments_endpoint.router)
+application.include_router(console_log_endpoint.router)
 
 # GraphQL
 

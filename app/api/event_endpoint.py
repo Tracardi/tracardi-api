@@ -208,15 +208,6 @@ async def get_event_debug_info(id: str):
     return None
 
 
-@router.get("/event/logs/{id}", tags=["event"], response_model=list, include_in_schema=server.expose_gui_api)
-async def get_event_logs(id: str):
-    """
-    Returns event logs for event with given ID
-    """
-    log_records = await storage.driver.console_log.load_by_event(id)
-    return [Console.decode_record(log) for log in log_records]
-
-
 # todo not used -  not in tests
 @router.get("/event/group/by_tags/profile/{profile_id}", tags=["event"],
             include_in_schema=server.expose_gui_api, response_model=dict)

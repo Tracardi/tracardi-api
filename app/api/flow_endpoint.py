@@ -8,6 +8,7 @@ from tracardi.domain.console import Console
 from tracardi.service.secrets import encrypt
 from tracardi.service.storage.driver import storage
 from tracardi.service.storage.factory import StorageFor
+from tracardi.service.utils.getters import get_entity_id
 from tracardi.service.wf.domain.flow_history import FlowHistory
 from tracardi.service.wf.domain.work_flow import WorkFlow
 from tracardi.service.plugin.domain.console import Log
@@ -301,8 +302,10 @@ async def debug_flow(flow: GraphFlow):
         for log in flow_invoke_result.log_list:  # type: Log
             console = Console(
                 origin="node",
-                event_id=flow_invoke_result.event.id,
+                event_id=get_entity_id(flow_invoke_result.event),
                 flow_id=flow.id,
+                profile_id=get_entity_id(flow_invoke_result.profile),
+                node_id=log.node_id,
                 module=log.module,
                 class_name=log.class_name,
                 type=log.type,
@@ -317,7 +320,7 @@ async def debug_flow(flow: GraphFlow):
     except StorageException as e:
         console = Console(
             origin="profile",
-            event_id=flow_invoke_result.event.id,
+            event_id=get_entity_id(flow_invoke_result.event),
             flow_id=flow.id,
             module='tracardi_api.flow_endpoint',
             class_name='log.class_name',
