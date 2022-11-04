@@ -1,3 +1,5 @@
+from pprint import pprint
+
 from fastapi import APIRouter, Depends
 
 from app.api.auth.permissions import Permissions
@@ -14,6 +16,11 @@ async def get_event_logs(event_id: str, sort: str = None):
     """
     Returns event logs for event with given ID
     """
+
+    if sort in ['asc', 'desc']:
+        sort = [{
+            "metadata.timestamp": sort
+        }]
 
     storage_records = await storage.driver.console_log.load_by_event(event_id, sort=sort)
     return {
@@ -48,6 +55,10 @@ async def get_flow_logs(flow_id: str, sort: str = None):
     """
     Returns flow console log.
     """
+    if sort in ['asc', 'desc']:
+        sort = [{
+            "metadata.timestamp": sort
+        }]
 
     storage_records = await storage.driver.console_log.load_by_flow(flow_id, sort=sort)
 
@@ -64,7 +75,14 @@ async def get_profile_logs(id: str, sort: str = None):
     """
     Gets logs for profile with given ID (str)
     """
+
+    if sort in ['asc', 'desc']:
+        sort = [{
+            "metadata.timestamp": sort
+        }]
+
     storage_records = await storage.driver.console_log.load_by_profile(id, sort=sort)
+
     return {
         "result": [Console.decode_record(log) for log in storage_records],
         "total": storage_records.total
