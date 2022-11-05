@@ -42,6 +42,7 @@ RUN pip --default-timeout=240 install -r docs/requirements.txt
 
 RUN mkdocs build
 RUN mv site app
+RUN mv docs app
 
 # Start up
 
