@@ -43,7 +43,8 @@ docker.
 To start Tracardi API pull and run Tracardi API docker image.
 
 ```bash
-docker run -p 8787:80 -e API_URL=//127.0.0.1:8686 tracardi/tracardi-api
+
+docker run -p 8686:80 -e ELASTIC_HOST=http://<elasticsearch-IP>:9200 tracardi/tracardi-api
 ```
 
 This will start tracardi API on port 8686
