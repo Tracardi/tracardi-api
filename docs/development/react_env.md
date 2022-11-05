@@ -67,10 +67,13 @@ docker run -p 6379:6379 redis
 To start Tracardi API pull and run Tracardi API docker image.
 
 ```bash
-docker run -p 8686:80 -e ELASTIC_HOST=http://<elasticsearch-IP>:9200 -e REDIS_HOST=redis://<redis-IP>:6379 tracardi/tracardi-api
+docker run -p 8686:80 -e ELASTIC_HOST=http://<elasticsearch-IP>:9200 -e REDIS_HOST=redis://<redis-IP>:6379 tracardi/tracardi-api:<version>
 ```
 
 Replace `<elasticsearch-IP>` and `<redis-IP>` with your laptop ip. You can obtain it in windows by typing command line `ipconfig`. 
+Replace version with current development version, for example: 0.7.3-dev. If you do not the current development version 
+please contact us at: office(at)tracardi.com or on any social media: `http://twitter.com/tracardi`, `http://www.youtube.com/@tracardi`,
+or via slack or github.
 
 This will start tracardi API on port 8686
 
