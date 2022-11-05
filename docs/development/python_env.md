@@ -226,3 +226,19 @@ INFO:uvicorn.error:Uvicorn running on http://0.0.0.0:8686 (Press CTRL+C to quit)
 
     This warining may appear when you connect to elasticsearch without credentials set-up. This is not an issue when 
     you run development version of Tracardi. 
+
+
+## Wrap-up
+
+Testing API can be via `http://localhost:8686/docs`. If you need to test API with GUI console run the following docker 
+command:
+
+```bash
+docker run -p 8787:80 -e API_URL=//127.0.0.1:8787 tracardi/tracardi-gui:<version>
+```
+
+!!! Info
+
+    1. Replace `<version>` with current development version, for example: `0.7.3-dev`. If you do not know the current development version 
+       please contact us at: __office(at)tracardi.com__ or on any social media: `http://twitter.com/tracardi`, `http://www.youtube.com/@tracardi`,
+       or via slack or github.
