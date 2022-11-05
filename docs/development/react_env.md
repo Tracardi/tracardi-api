@@ -42,7 +42,7 @@ docker.
 
 Tracardi GUI depends on 1 service: Tracardi-API, but API depends on another 2 services which are: elasticsearch and redis.
 
-### Tracardi Database
+### Tracardi Database- Elasticsearch
 
 You need elasticsearch for Tracardi to work.
 
