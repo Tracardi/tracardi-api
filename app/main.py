@@ -133,7 +133,8 @@ application.mount("/tracker",
                       directory=os.path.join(_local_dir, "tracker")),
                   name="tracker")
 
-if os.path.exists("../site"):
+print(os.path.join(_local_dir,"../site"))
+if os.path.exists(os.path.join(_local_dir,"../site")):
     application.mount("/documentation",
                       StaticFiles(
                           html=True,
