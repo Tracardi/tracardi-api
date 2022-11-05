@@ -211,7 +211,7 @@ INFO:uvicorn.error:Uvicorn running on http://0.0.0.0:8686 (Press CTRL+C to quit)
     uvicorn app.main:application --reload --host 0.0.0.0 --port 8686  #(1)
     ```
 
-    1. Sets default username: password as admin: admin and runs Tracardi API on port 8686.
+    1. Runs Tracardi API on port 8686 via uvicorn.
 
     The above command will run serveral copies (workers) of Tracardi API.
 
