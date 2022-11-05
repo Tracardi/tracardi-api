@@ -22,13 +22,20 @@ COPY uix uix/
 RUN rm -rf app/tracker/index.html
 RUN rm -rf app/tracker/index.css
 
+WORKDIR /
+
+## Copy manual
 COPY docs docs/
 COPY mkdocs.yml /
 
-RUN pip install wheel
-RUN pip --default-timeout=180 install -r docs/requirements.txt
-WORKDIR /
+## Install docs dependencies
+RUN pip --default-timeout=240 install -r docs/requirements.txt
+
+# Install manual
+
 RUN mkdocs build
+RUN mv site app
+RUN mv docs app
 
 WORKDIR /app
 ENV VARIABLE_NAME="application"
