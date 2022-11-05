@@ -74,8 +74,8 @@ docker run -p 8686:80 -e ELASTIC_HOST=http://<elasticsearch-IP>:9200 -e REDIS_HO
 
     1. Replace `<elasticsearch-IP>` and `<redis-IP>` with your __laptop ip__. You can obtain it in windows by typing command line `ipconfig`. 
     2. Replace `<version>` with current development version, for example: `0.7.3-dev`. If you do not know the current development version 
-       please contact us at: __office(at)tracardi.com__ or on any social media: `http://twitter.com/tracardi`, `http://www.youtube.com/@tracardi`,
-       or via slack or github.
+       please contact us at: __office(at)tracardi.com__ or on any social media: __http://twitter.com/tracardi__, __http://www.youtube.com/@tracardi__,
+       or via __slack__ or __https://github.com/Tracardi/tracardi__
 
 This will start tracardi API on port 8686
 
