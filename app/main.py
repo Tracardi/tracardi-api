@@ -143,10 +143,12 @@ if os.path.exists(documentation):
                           directory=documentation),
                       name="documentation")
 
+md_docs = os.path.join(_local_dir, "../docs")
+if os.path.exists(documentation):
     application.mount("/manual/en/docs",
                       StaticFiles(
                           html=True,
-                          directory=documentation),
+                          directory=md_docs),
                       name="manual")
 
 application.mount("/uix",
