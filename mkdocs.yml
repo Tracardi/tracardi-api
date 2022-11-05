@@ -127,6 +127,11 @@ nav:
           - resources/mqtt_resource.md
           - resources/salesforce_resource.md
           - resources/zapier_resource.md
+          - resources/chatwoot_resource.md
+          - resources/elasticsearch_resource.md
+          - resources/sms77_resource.md
+          - resources/twitter_resource.md
+
 
 
       - Workflows:
@@ -158,6 +163,18 @@ nav:
               - flow/actions/template_action.md
               - flow/actions/append_remove_trait_action.md
               - flow/actions/start_action.md
+              - flow/actions/base64_decode.md
+              - flow/actions/base64_encode.md
+              - flow/actions/data_exists_action.md
+              - flow/actions/profile_inject_action.md
+              - flow/actions/sort_array_action.md
+              - flow/actions/sorted_dict_action.md
+              - flow/actions/string_join_action.md
+              - flow/actions/string_similarity_action.md
+              - flow/actions/twitter_tweet_action.md
+              - flow/actions/geo/geo_ip_locator.md
+              - flow/actions/sms77/sms77_send_sms_plugin.md
+
               - Stats:
                   - flow/actions/increment_action.md
                   - flow/actions/decrement_action.md
@@ -270,6 +287,11 @@ nav:
                   - flow/actions/rating_popup_action.md
                   - flow/actions/contact_popup_action.md
                   - flow/actions/generic_uix_action.md
+                  - Chat:
+                      - flow/actions/chatwoot_widget_action.md
+                      - flow/actions/intercom_widget_action.md
+                      - flow/actions/livechat_widget_action.md
+                      - flow/actions/zendesk_widget_action.md
 
               - Memory:
                   - flow/actions/write_to_memory_action.md
