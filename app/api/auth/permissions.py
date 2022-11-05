@@ -37,7 +37,8 @@ class Permissions:
         try:
 
             auth = Authentication()
-            user = await auth.get_user_by_token(token)
+            user = auth.get_user_by_token(token)
+
         except ElasticsearchException as e:
             logger.error(str(e))
             raise HTTPException(
@@ -53,10 +54,9 @@ class Permissions:
 
         # Not authenticated if no user or insufficient roles
 
-        if user and tracardi.tokens_in_redis:
-            await auth.refresh_token(token)
-
-        if not user:
+        if user:
+            auth.refresh_token(token)
+        else:
             logger.warning(f"Unauthorized access. User not available for {token}")
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,

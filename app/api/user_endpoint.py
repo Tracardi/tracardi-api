@@ -30,8 +30,8 @@ auth_router = APIRouter()
 
 
 @auth_router.post("/user/token", tags=["user", "authorization"], include_in_schema=server.expose_gui_api)
-async def login(login_form_data: OAuth2PasswordRequestForm = Depends(),
-                auth: Authentication = Depends(get_authentication)):
+async def get_token(login_form_data: OAuth2PasswordRequestForm = Depends(),
+                    auth: Authentication = Depends(get_authentication)):
     """
     Returns OAuth2 token for login purposes
     """
@@ -56,7 +56,7 @@ async def logout(authorization: Union[str, None] = Header(default=None),
 
     else:
         _, token = authorization.split(" ")
-        await auth.logout(token)
+        auth.logout(token)
 
 
 @router.get("/user/preference/{key}", tags=["user"], include_in_schema=server.expose_gui_api)
@@ -87,9 +87,8 @@ async def set_user_preference(key: str, preference: Union[dict, str, int, float]
     result = await storage.driver.user.update_user(user)
     await storage.driver.user.refresh()
 
-    if tracardi.tokens_in_redis is True:
-        token_memory = TokenMemory()
-        token_memory[user.token] = user.json()
+    token_memory = TokenMemory()
+    token_memory[user.token] = user.json()
 
     return result
 
@@ -104,9 +103,9 @@ async def delete_user_preference(key: str, user=Depends(Permissions(["admin", "d
         user.delete_preference(key)
         result = await storage.driver.user.update_user(user)
 
-        if tracardi.tokens_in_redis is True:
-            token_memory = TokenMemory()
-            token_memory[user.token] = user.json()
+        token_memory = TokenMemory()
+        token_memory[user.token] = user.json()
+
         return result
     else:
         raise HTTPException(status_code=404, detail=f"Preference {key} not found")
@@ -207,7 +206,7 @@ async def edit_user(id: str, user_payload: UserPayload, user=Depends(Permissions
     try:
 
         saved, updated_user = await update_user(id, user_payload)
-        token2user.update_user(updated_user)
+        token2user.update(updated_user)
 
         return {"inserted": saved}
 

@@ -58,18 +58,18 @@ class Authentication:
         token = f"{sha1(user.email.encode('utf-8')).hexdigest()}-{self._generate_token()}"
 
         # save token, match token with user in token2user
-        await self.token2user.set(token, user)
+        self.token2user.set(token, user)
 
         return {"access_token": token, "token_type": "bearer", "roles": user.roles, "preference": user.preference}
 
-    async def logout(self, token):
-        await self.token2user.delete(token)
+    def logout(self, token):
+        self.token2user.delete(token)
 
-    async def get_user_by_token(self, token) -> Optional[User]:
-        return await self.token2user.get(token)
+    def get_user_by_token(self, token) -> Optional[User]:
+        return self.token2user.get(token)
 
-    async def refresh_token(self, token) -> None:
-        await self.token2user.refresh_token(token)
+    def refresh_token(self, token) -> None:
+        self.token2user.refresh_token(token)
 
 
 def get_authentication():
