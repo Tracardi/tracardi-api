@@ -1,22 +1,27 @@
 import json
 import logging
+from hashlib import sha1
 from typing import Optional
 
 from app.api.auth.token_memory import TokenMemory
 from tracardi.config import tracardi
 from tracardi.domain.user import User
 from tracardi.exceptions.log_handler import log_handler
-from hashlib import sha1
+from tracardi.service.singleton import Singleton
 
 logger = logging.getLogger(__name__)
 logger.setLevel(tracardi.logging_level)
 logger.addHandler(log_handler)
 
 
-class TokenDb:
+class TokenDb(metaclass=Singleton):
 
     def __init__(self):
         self._token_memory = TokenMemory()
+        self.salt = "skdjsd9328r&"
+
+    def _get_token(self, user: User) -> str:
+        return sha1((user.id + self.salt).encode('utf-8')).hexdigest()
 
     def delete(self, token: str):
         del self._token_memory[token]
@@ -31,15 +36,15 @@ class TokenDb:
 
         return None
 
-    def set(self, token, user: User):
+    def set(self, user: User) -> str:
+        token = self._get_token(user)
         self._token_memory[token] = user.json()
+        return token
 
-    def update(self, user: User) -> None:
-        for key in self._token_memory.get_keys_by_email_hash(sha1(user.email.encode("utf-8")).hexdigest()):
-            self._token_memory[key] = user.json()
-
-    def refresh_token(self, token) -> None:
+    def refresh(self, user: User) -> str:
+        token = self._get_token(user)
         self._token_memory.refresh(token)
+        return token
 
 
 token2user = TokenDb()

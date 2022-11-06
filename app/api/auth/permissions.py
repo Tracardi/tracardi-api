@@ -1,10 +1,9 @@
 import logging
 
-from elasticsearch import ElasticsearchException
 from fastapi import Depends, HTTPException, status, Request
 from fastapi.security import OAuth2PasswordBearer
 
-from app.api.auth.authentication import Authentication
+from app.api.auth.user_db import token2user
 from app.config import server
 from tracardi.config import tracardi
 from tracardi.exceptions.log_handler import log_handler
@@ -36,43 +35,47 @@ class Permissions:
 
         try:
 
-            auth = Authentication()
-            user = auth.get_user_by_token(token)
+            user = token2user.get(token)
 
-        except ElasticsearchException as e:
-            logger.error(str(e))
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail=str(e)
-            )
+            # Not authenticated if no user or insufficient roles
+
+            if not user:
+                logger.warning(f"Unauthorized access. User not available for {token}")
+                raise HTTPException(
+                    status_code=status.HTTP_401_UNAUTHORIZED,
+                    detail="Invalid authentication credentials",
+                    headers={"WWW-Authenticate": "Bearer"},
+                )
+
+            refreshed_token = token2user.refresh(user)
+
+            if refreshed_token != token:
+
+                token2user.delete(token)
+                token2user.delete(refreshed_token)
+
+                logger.warning(f"Unauthorized access. User token mismatch {token} != {refreshed_token}")
+                raise HTTPException(
+                    status_code=status.HTTP_401_UNAUTHORIZED,
+                    detail="Invalid authentication credentials",
+                    headers={"WWW-Authenticate": "Bearer"},
+                )
+
+            if not user.has_roles(self.roles):
+                logger.warning(f"User {user.email}. Unauthorized access to {request.url}. Required roles {self.roles}, "
+                               f"granted {user.roles} ")
+
+                raise HTTPException(
+                    status_code=status.HTTP_401_UNAUTHORIZED,
+                    detail="Invalid authentication credentials",
+                    headers={"WWW-Authenticate": "Bearer"},
+                )
+
+            return user
+
         except Exception as e:
-            logger.error(str(e))
+            logger.error(repr(e))
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="Access forbidden",
             )
-
-        # Not authenticated if no user or insufficient roles
-
-        if user:
-            auth.refresh_token(token)
-        else:
-            logger.warning(f"Unauthorized access. User not available for {token}")
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Invalid authentication credentials",
-                headers={"WWW-Authenticate": "Bearer"},
-            )
-
-        if not user.has_roles(self.roles):
-            logger.warning(f"User {user.email}. Unauthorized access to {request.url}. Required roles {self.roles}, "
-                           f"granted {user.roles} ")
-
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Invalid authentication credentials",
-                headers={"WWW-Authenticate": "Bearer"},
-            )
-
-        return user
-

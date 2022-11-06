@@ -1,6 +1,7 @@
 import logging
 import os
 from typing import Optional
+from uuid import uuid4
 
 from fastapi import APIRouter
 from app.config import server
@@ -13,7 +14,6 @@ from tracardi.service.setup.setup_indices import create_indices, update_current_
 from tracardi.service.setup.setup_plugins import add_plugins
 from tracardi.service.storage.driver import storage
 from tracardi.service.storage.index import resources
-from tracardi.service.storage.indices_manager import get_indices_status
 from app.setup.on_start import update_api_instance
 
 router = APIRouter()
@@ -73,7 +73,7 @@ async def install(credentials: Optional[Credentials]):
         if credentials.not_empty() and credentials.username_as_email():
 
             user = User(
-                id=credentials.username,
+                id=str(uuid4()),
                 password=credentials.password,
                 roles=['admin', 'maintainer'],
                 email=credentials.username,
