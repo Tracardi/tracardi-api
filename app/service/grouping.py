@@ -10,7 +10,7 @@ def group_records(
         group_by: str = "tags",
         search_by="name",
         sort_by="name"
-    ):
+) -> dict:
     total = result.total
 
     # Filtering
