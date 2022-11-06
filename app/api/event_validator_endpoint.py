@@ -24,30 +24,32 @@ async def refresh_validators():
     await storage.driver.event_validation.refresh()
 
 
-@router.post("/event-validator", tags=["validation"], include_in_schema=server.expose_gui_api, response_model=dict)
+@router.post("/event-validator", tags=["validation"], include_in_schema=server.expose_gui_api)
 async def add_validator(data: EventValidator):
     result = await storage.driver.event_validation.upsert(data)
     cache.upsert_item(data)
+    await storage.driver.event_validation.refresh()
     return {"saved": result.saved}
 
 
-@router.delete("/event-validator", tags=["validation"], include_in_schema=server.expose_gui_api, response_model=dict)
-async def delete_validator(id: str, event_type: str):
+@router.delete("/event-validator/{id}", tags=["validation"], include_in_schema=server.expose_gui_api)
+async def delete_validator(id: str):
     result = await storage.driver.event_validation.delete(id)
-    cache.delete_item(id, event_type)
-    return {"deleted": result.deleted}
+    # cache.delete_item(id, event_type)
+    await storage.driver.event_validation.refresh()
+    return result
 
 
-@router.get("/event-validator", tags=["validation"], include_in_schema=server.expose_gui_api, response_model=dict)
+@router.get("/event-validator/{id}", tags=["validation"], include_in_schema=server.expose_gui_api, response_model=dict)
 async def get_validator(id: str):
     result = await storage.driver.event_validation.load(id)
     if not result:
         raise HTTPException(status_code=404, detail=f"No event validation with ID {id} found.")
 
-    return {"result": result}
+    return result
 
 
 @router.get("/event-validators", tags=["validation"], include_in_schema=server.expose_gui_api, response_model=dict)
 async def load_validators(limit: int = 100, query: str = None):
-    result, total = await storage.driver.event_validation.load_all(limit)
+    result = await storage.driver.event_validation.load_all(limit)
     return group_records(result, query, group_by='tags', search_by='name', sort_by='name')
