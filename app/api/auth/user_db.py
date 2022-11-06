@@ -7,14 +7,13 @@ from app.api.auth.token_memory import TokenMemory
 from tracardi.config import tracardi
 from tracardi.domain.user import User
 from tracardi.exceptions.log_handler import log_handler
-from tracardi.service.singleton import Singleton
 
 logger = logging.getLogger(__name__)
 logger.setLevel(tracardi.logging_level)
 logger.addHandler(log_handler)
 
 
-class TokenDb(metaclass=Singleton):
+class TokenDb:
 
     def __init__(self):
         self._token_memory = TokenMemory()
