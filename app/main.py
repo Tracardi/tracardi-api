@@ -23,10 +23,11 @@ from app.api import rule_endpoint, resource_endpoint, event_endpoint, \
     tql_endpoint, health_endpoint, session_endpoint, instance_endpoint, plugins_endpoint, \
     settings_endpoint, event_source_endpoint, test_endpoint, \
     event_tag_endpoint, consent_type_endpoint, flow_action_endpoint, flows_endpoint, info_endpoint, \
-    user_endpoint, event_management_endpoint, debug_endpoint, log_endpoint, tracardi_pro_endpoint, \
+    user_endpoint, debug_endpoint, log_endpoint, tracardi_pro_endpoint, \
     import_endpoint, \
     task_endpoint, storage_endpoint, destination_endpoint, user_log_endpoint, user_account_endpoint, install_endpoint, \
-    delete_indices_endpoint, migration_endpoint, report_endpoint, live_segments_endpoint, console_log_endpoint
+    delete_indices_endpoint, migration_endpoint, report_endpoint, live_segments_endpoint, event_validator_endpoint, \
+    event_reshaping_schema_endpoint, console_log_endpoint
 
 from app.api.graphql.profile import graphql_profiles
 from app.api.track import event_server_endpoint
@@ -180,7 +181,6 @@ application.include_router(consent_type_endpoint.router)
 application.include_router(info_endpoint.router)
 application.include_router(user_endpoint.router)
 application.include_router(event_source_endpoint.router)
-application.include_router(event_management_endpoint.router)
 application.include_router(debug_endpoint.router)
 application.include_router(log_endpoint.router)
 application.include_router(tracardi_pro_endpoint.router)
@@ -195,6 +195,9 @@ application.include_router(delete_indices_endpoint.router)
 application.include_router(migration_endpoint.router)
 application.include_router(report_endpoint.router)
 application.include_router(live_segments_endpoint.router)
+application.include_router(javascript_endpoint.router)
+application.include_router(event_reshaping_schema_endpoint.router)
+application.include_router(event_validator_endpoint.router)
 application.include_router(console_log_endpoint.router)
 
 # GraphQL
