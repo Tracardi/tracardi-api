@@ -31,7 +31,6 @@ class TokenDb(metaclass=Singleton):
         if user:
             user = json.loads(user)
             user = User(**user)
-            user.token = token
             return user
 
         return None

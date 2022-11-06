@@ -8,7 +8,6 @@ from pydantic import BaseModel
 from typing import Optional, Union
 
 from .auth.permissions import Permissions
-from .auth.token_memory import TokenMemory
 from .domain.user_payload import UserPayload
 from ..service.user_manager import update_user
 from .auth.user_db import token2user
@@ -92,8 +91,7 @@ async def set_user_preference(key: str, preference: Union[dict, str, int, float]
     result = await storage.driver.user.update_user(user)
     await storage.driver.user.refresh()
 
-    token_memory = TokenMemory()
-    token_memory[user.token] = user.json()
+    token2user.set(user)
 
     return result
 
@@ -108,8 +106,7 @@ async def delete_user_preference(key: str, user=Depends(Permissions(["admin", "d
         user.delete_preference(key)
         result = await storage.driver.user.update_user(user)
 
-        token_memory = TokenMemory()
-        token_memory[user.token] = user.json()
+        token2user.set(user)
 
         return result
     else:
