@@ -26,5 +26,3 @@ the same code.
 ## Form
 
 * License - Copy from LiveChat system
-* Tracardi API - this is the URL to Tracardi API. When you log in to Tracardi you must provide Api URL. It can always be
-  found in the upper right corner of Tracardi GUI (Go to Inbound Traffic to see it).  

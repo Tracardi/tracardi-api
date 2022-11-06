@@ -9,7 +9,8 @@ Example:
 ```json
 {
   "data": {"first": 1, "second": 2, "fifth": 5, "third": 3},
-  "direction": "asc"
+  "direction": "asc",
+  "sort_by": "key"
 }
 ```
 
@@ -27,6 +28,7 @@ The dictionary is provided as a path to data in event. Example of such configura
 {
   "data": "event@properties.data",
   "direction": "asc",
+  "sort_by": "key"
 }
 ```
 

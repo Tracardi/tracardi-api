@@ -42,8 +42,7 @@ async def edit_user_account(payload: UserSoftEditPayload,
                         email=user.email)
         )
 
-        if tracardi.tokens_in_redis:
-            await token2user.set(user.token, new_user)
+        token2user.set(new_user)
 
         return {"inserted": saved}
     except LookupError as e:

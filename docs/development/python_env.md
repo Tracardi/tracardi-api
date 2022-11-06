@@ -208,11 +208,10 @@ INFO:uvicorn.error:Uvicorn running on http://0.0.0.0:8686 (Press CTRL+C to quit)
     If you want to auto reload the API run in terminal 
     
     ```bash
-    USER_NAME=admin PASSWORD=admin uvicorn app.main:application --reload \
-    --host 0.0.0.0 --port 8686  #(1)
+    uvicorn app.main:application --reload --host 0.0.0.0 --port 8686  #(1)
     ```
 
-    1. Sets default username: password as admin: admin and runs Tracardi API on port 8686.
+    1. Runs Tracardi API on port 8686 via uvicorn.
 
     The above command will run serveral copies (workers) of Tracardi API.
 
@@ -226,3 +225,21 @@ INFO:uvicorn.error:Uvicorn running on http://0.0.0.0:8686 (Press CTRL+C to quit)
 
     This warining may appear when you connect to elasticsearch without credentials set-up. This is not an issue when 
     you run development version of Tracardi. 
+
+
+## Wrap-up
+
+Testing API can be via `http://localhost:8686/docs`. If you need to test API with GUI console run the following docker 
+command:
+
+```bash
+docker run -p 8787:80 -e API_URL=//127.0.0.1:8787 tracardi/tracardi-gui:<version>
+```
+
+!!! Info
+
+    1. Replace `<version>` with current development version, for example: `0.7.3-dev`. If you do not know the current development version 
+       please contact us at: __office(at)tracardi.com__ or on any social media: __http://twitter.com/tracardi__, __http://www.youtube.com/@tracardi__,
+       or via __slack__ or __https://github.com/Tracardi/tracardi__
+
+GUI will be available at `http://localhost:8787`.

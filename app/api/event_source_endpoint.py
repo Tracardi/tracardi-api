@@ -140,7 +140,7 @@ async def refresh_event_sources():
 @router.get("/event-sources/entity",
             tags=["event-source"],
             include_in_schema=server.expose_gui_api)
-async def list_event_sources_names_and_ids(limit: int = 500):
+async def list_event_sources_names_and_ids(add_current: bool = False, limit: int = 500):
     """
     Returns list of event sources. This list contains only id and name.
     """
@@ -148,7 +148,11 @@ async def list_event_sources_names_and_ids(limit: int = 500):
     result, total = await storage.driver.event_source.load_all(limit=limit)
     result = [NamedEntity(**r.dict()) for r in result]
 
+    if add_current is True:
+        total += 1
+        result.append(NamedEntity(id="@current-source", name="@current-source"))
+
     return {
         "total": total,
-        "result": list(result)
+        "result": result
     }

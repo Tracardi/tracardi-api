@@ -208,15 +208,6 @@ async def get_event_debug_info(id: str):
     return None
 
 
-@router.get("/event/logs/{id}", tags=["event"], response_model=list, include_in_schema=server.expose_gui_api)
-async def get_event_logs(id: str):
-    """
-    Returns event logs for event with given ID
-    """
-    log_records = await storage.driver.console_log.load_by_event(id)
-    return [Console.decode_record(log) for log in log_records]
-
-
 # todo not used -  not in tests
 @router.get("/event/group/by_tags/profile/{profile_id}", tags=["event"],
             include_in_schema=server.expose_gui_api, response_model=dict)
@@ -301,7 +292,6 @@ async def get_for_source_grouped_by_tags_time(source_id: str, time_span: TimeSpa
             response_model=dict)
 async def get_events_for_session(session_id: str, limit: int = 20):
     result = await storage.driver.event.get_events_by_session(session_id, limit)
-    print(result)
     more_to_load = result.total > len(result)
     result = [{
         "id": doc["id"],

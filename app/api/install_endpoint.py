@@ -1,6 +1,7 @@
 import logging
 import os
 from typing import Optional
+from uuid import uuid4
 
 from fastapi import APIRouter
 from app.config import server
@@ -13,7 +14,6 @@ from tracardi.service.setup.setup_indices import create_indices, update_current_
 from tracardi.service.setup.setup_plugins import add_plugins
 from tracardi.service.storage.driver import storage
 from tracardi.service.storage.index import resources
-from tracardi.service.storage.indices_manager import get_indices_status
 from app.setup.on_start import update_api_instance
 
 router = APIRouter()
@@ -27,25 +27,17 @@ async def check_if_installation_complete():
     """
     Returns list of missing and updated indices
     """
-    # Missing indices
 
-    _indices = [item async for item in get_indices_status()]
-    missing_indices = [idx[1] for idx in _indices if idx[0] == 'missing_index']
-    existing_indices = [idx[1] for idx in _indices if idx[0] == 'existing_index']
-    missing_templates = [idx[1] for idx in _indices if idx[0] == 'missing_template']
-    missing_aliases = [idx[1] for idx in _indices if idx[0] == 'missing_alias']
-    existing_aliases = [idx[1] for idx in _indices if idx[0] == 'existing_alias']
-    # existing_templates = [idx[1] for idx in _indices if idx[0] == 'existing_template']
+    is_schema_ok, indices = await storage.driver.system.is_schema_ok()
 
     # Missing admin
-
+    existing_aliases = [idx[1] for idx in indices if idx[0] == 'existing_alias']
     index = resources.get_index('user')
     if index.get_index_alias() in existing_aliases:
         admins = await storage.driver.user.search_by_role('admin')
     else:
         admins = None
 
-    is_schema_ok = not missing_indices and not missing_aliases and not missing_aliases
     has_admin_account = admins is not None and admins.total > 0
 
     return {
@@ -81,7 +73,7 @@ async def install(credentials: Optional[Credentials]):
         if credentials.not_empty() and credentials.username_as_email():
 
             user = User(
-                id=credentials.username,
+                id=str(uuid4()),
                 password=credentials.password,
                 roles=['admin', 'maintainer'],
                 email=credentials.username,

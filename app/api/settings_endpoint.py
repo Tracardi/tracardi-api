@@ -339,14 +339,6 @@ system_settings = [
     ),
     SystemSettings(
         **{
-            "label": "TOKENS_IN_REDIS",
-            "value": tracardi.tokens_in_redis,
-            "desc": "If set to 'yes', then user auth tokens are being cached on Redis. It allows multiple sessions for "
-                    "one user and increases performance of the API. Defaults to 'yes'."
-        }
-    ),
-    SystemSettings(
-        **{
             "label": "SAVE_LOGS",
             "value": tracardi.save_logs,
             "desc": "Default: yes. When set to yes all logs will be saved n tracardi log."

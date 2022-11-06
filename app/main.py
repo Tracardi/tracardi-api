@@ -27,11 +27,10 @@ from app.api import rule_endpoint, resource_endpoint, event_endpoint, \
     import_endpoint, \
     task_endpoint, storage_endpoint, destination_endpoint, user_log_endpoint, user_account_endpoint, install_endpoint, \
     delete_indices_endpoint, migration_endpoint, report_endpoint, live_segments_endpoint, event_validator_endpoint, \
-    event_reshaping_schema_endpoint
+    event_reshaping_schema_endpoint, console_log_endpoint
 
 from app.api.graphql.profile import graphql_profiles
 from app.api.track import event_server_endpoint
-from app.api.javascript import javascript_endpoint
 from app.config import server
 from app.setup.on_start import update_api_instance, clear_dead_api_instances
 from tracardi.config import tracardi, elastic
@@ -135,18 +134,23 @@ application.mount("/tracker",
                       directory=os.path.join(_local_dir, "tracker")),
                   name="tracker")
 
-if os.path.exists("../site"):
+
+documentation = os.path.join(_local_dir, "../site")
+
+if os.path.exists(documentation):
     application.mount("/documentation",
                       StaticFiles(
                           html=True,
-                          directory=os.path.join(_local_dir, "../site")),
+                          directory=documentation),
                       name="documentation")
 
-application.mount("/manual/en/docs",
-                  StaticFiles(
-                      html=True,
-                      directory=os.path.join(_local_dir, "../docs")),
-                  name="manual")
+md_docs = os.path.join(_local_dir, "../docs")
+if os.path.exists(documentation):
+    application.mount("/manual/en/docs",
+                      StaticFiles(
+                          html=True,
+                          directory=md_docs),
+                      name="manual")
 
 application.mount("/uix",
                   StaticFiles(
@@ -194,6 +198,7 @@ application.include_router(live_segments_endpoint.router)
 application.include_router(javascript_endpoint.router)
 application.include_router(event_reshaping_schema_endpoint.router)
 application.include_router(event_validator_endpoint.router)
+application.include_router(console_log_endpoint.router)
 
 # GraphQL
 
