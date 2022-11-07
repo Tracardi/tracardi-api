@@ -1,7 +1,7 @@
 # Resources
 
 Tracardi can connect to external services to query them for data. We call them inbound/outbound resources. 
-Some resources may be used for [outbout traffic](../traffic/outbound).
+Some resources may be used for [outbound traffic](../traffic/outbound).
 
 Information about resources is stored in Tracardi and can be referenced in Workflow. Workflow actions use them to
 access external services.
