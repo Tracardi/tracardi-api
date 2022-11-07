@@ -22,7 +22,7 @@ from app.api import rule_endpoint, resource_endpoint, event_endpoint, \
     segments_endpoint, \
     tql_endpoint, health_endpoint, session_endpoint, instance_endpoint, plugins_endpoint, \
     settings_endpoint, event_source_endpoint, test_endpoint, \
-    event_tag_endpoint, consent_type_endpoint, flow_action_endpoint, flows_endpoint, info_endpoint, \
+    consent_type_endpoint, flow_action_endpoint, flows_endpoint, info_endpoint, \
     user_endpoint, debug_endpoint, log_endpoint, tracardi_pro_endpoint, \
     import_endpoint, \
     task_endpoint, storage_endpoint, destination_endpoint, user_log_endpoint, user_account_endpoint, install_endpoint, \
@@ -176,7 +176,6 @@ application.include_router(instance_endpoint.router)
 application.include_router(plugins_endpoint.router)
 application.include_router(test_endpoint.router)
 application.include_router(settings_endpoint.router)
-application.include_router(event_tag_endpoint.router)
 application.include_router(consent_type_endpoint.router)
 application.include_router(info_endpoint.router)
 application.include_router(user_endpoint.router)
