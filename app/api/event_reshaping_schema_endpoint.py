@@ -4,15 +4,12 @@ from tracardi.service.storage.driver import storage
 from fastapi import APIRouter, Depends, HTTPException
 from app.config import server
 from .auth.permissions import Permissions
-from tracardi.service.event_reshape_schema_cache import EventReshapeSchemaCache
 from tracardi.domain.event_reshaping_schema import EventReshapingSchema
 from ..service.grouping import group_records
 
 router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin", "developer"]))]
 )
-
-cache = EventReshapeSchemaCache()
 
 
 @router.put("/event-reshape-schema/flush", tags=["reshaping"], include_in_schema=server.expose_gui_api)
@@ -28,7 +25,6 @@ async def refresh_reshape_schemas():
 @router.post("/event-reshape-schema", tags=["reshaping"], include_in_schema=server.expose_gui_api, response_model=dict)
 async def add_reshape_schema(data: EventReshapingSchema):
     result = await storage.driver.event_reshaping.upsert(data)
-    cache.upsert_item(data)
     await storage.driver.event_reshaping.refresh()
     return {"saved": result.saved}
 
@@ -36,7 +32,6 @@ async def add_reshape_schema(data: EventReshapingSchema):
 @router.delete("/event-reshape-schema/{id}", tags=["reshaping"], include_in_schema=server.expose_gui_api)
 async def delete_reshape_schema(id: str):
     result = await storage.driver.event_reshaping.delete(id)
-    # cache.delete_item(id, event_type)
     await storage.driver.event_reshaping.refresh()
     return result
 

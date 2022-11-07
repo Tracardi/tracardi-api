@@ -2,16 +2,12 @@ from tracardi.service.storage.driver import storage
 from fastapi import APIRouter, Depends, HTTPException
 from app.config import server
 from .auth.permissions import Permissions
-from tracardi.service.event_validation_schema_cache import EventValidationSchemaCache
 from tracardi.domain.event_validator import EventValidator
 from ..service.grouping import group_records
 
 router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin", "developer"]))]
 )
-
-
-cache = EventValidationSchemaCache()
 
 
 @router.put("/event-validator/flush", tags=["validation"], include_in_schema=server.expose_gui_api)
@@ -27,7 +23,6 @@ async def refresh_validators():
 @router.post("/event-validator", tags=["validation"], include_in_schema=server.expose_gui_api)
 async def add_validator(data: EventValidator):
     result = await storage.driver.event_validation.upsert(data)
-    cache.upsert_item(data)
     await storage.driver.event_validation.refresh()
     return {"saved": result.saved}
 
@@ -35,7 +30,6 @@ async def add_validator(data: EventValidator):
 @router.delete("/event-validator/{id}", tags=["validation"], include_in_schema=server.expose_gui_api)
 async def delete_validator(id: str):
     result = await storage.driver.event_validation.delete(id)
-    # cache.delete_item(id, event_type)
     await storage.driver.event_validation.refresh()
     return result
 
