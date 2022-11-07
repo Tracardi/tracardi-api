@@ -100,37 +100,39 @@ nav:
           - profiles/profile_merging.md
           - profiles/profile_segmentation.md
       - Resources:
-          - resources/elastic_email_resource.md
-          - resources/matomo_resource.md
-          - resources/novu_resource.md
-          - resources/redis_resource.md
-          - resources/activecampaign_resource.md
-          - resources/airtable_resource.md
-          - resources/amplitude_resource.md
-          - resources/aws_resource.md
-          - resources/civi_resource.md
-          - resources/fullcontact_resource.md
-          - resources/hubspot_resource.md
-          - resources/mailchimp_resource.md
-          - resources/mautic_resource.md
-          - resources/meaningcloud_resource.md
-          - resources/microservice_resource.md
-          - resources/mongo_resource.md
-          - resources/mysql_resource.md
-          - resources/postgresql_resource.md
-          - resources/pushover_resource.md
-          - resources/rabbitmq_resource.md
-          - resources/scheduler_resource.md
-          - resources/sendgrid_resource.md
-          - resources/influxdb_resource.md
-          - resources/mixpanel_resource.md
-          - resources/mqtt_resource.md
-          - resources/salesforce_resource.md
-          - resources/zapier_resource.md
-          - resources/chatwoot_resource.md
-          - resources/elasticsearch_resource.md
-          - resources/sms77_resource.md
-          - resources/twitter_resource.md
+          - resources/index.md
+          - Documentation:
+              - resources/elastic_email_resource.md
+              - resources/matomo_resource.md
+              - resources/novu_resource.md
+              - resources/redis_resource.md
+              - resources/activecampaign_resource.md
+              - resources/airtable_resource.md
+              - resources/amplitude_resource.md
+              - resources/aws_resource.md
+              - resources/civi_resource.md
+              - resources/fullcontact_resource.md
+              - resources/hubspot_resource.md
+              - resources/mailchimp_resource.md
+              - resources/mautic_resource.md
+              - resources/meaningcloud_resource.md
+              - resources/microservice_resource.md
+              - resources/mongo_resource.md
+              - resources/mysql_resource.md
+              - resources/postgresql_resource.md
+              - resources/pushover_resource.md
+              - resources/rabbitmq_resource.md
+              - resources/scheduler_resource.md
+              - resources/sendgrid_resource.md
+              - resources/influxdb_resource.md
+              - resources/mixpanel_resource.md
+              - resources/mqtt_resource.md
+              - resources/salesforce_resource.md
+              - resources/zapier_resource.md
+              - resources/chatwoot_resource.md
+              - resources/elasticsearch_resource.md
+              - resources/sms77_resource.md
+              - resources/twitter_resource.md
 
 
 

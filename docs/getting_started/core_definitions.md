@@ -15,7 +15,7 @@ The second type of traffic is outgoing traffic. These are external systems to wh
     In the system, we call incoming traffic - event sources.
     In the system, we call outgoing traffic - resources.
 
-### Event source
+### Event source -inbound traffic
 
 In order to kick-start your new project with Tracardi, you must create a new event source. That source will give you an
 identifier which when attached to your track calls will start collecting data about your users.
@@ -99,12 +99,17 @@ e-mail, age, total purchases. Public data is data e.g. on the segment to which t
 visits, etc.
 
 The profile is updated by the workflow, and more precisely by the actions performed within the workflow. Data from
-profiles can be used for marketing campaigns, etc.
+profiles can be used for marketing campaigns, etc, later.
 
 ## Segment
 
 The segment is the result of the segmentation of customer profiles. A segment can be described by a simple logical rule
-or by more complex AI models. The segment is part of the profile. A segment defined in the Tracardi system can be used
-in the segmentation workflow. The segment is represented by a simple sentence such as "Customers with high volume of
-purchases". 
+or by more complex AI models. The segment becomes a part of the profile. A segment defined in the Tracardi system can be used
+in the segmentation workflow. The segment is represented by a simple key 'high-volume-customers' and described by
+a description e.g. "Customers with high volume of purchases". 
   
+## Destination - Outbound traffic
+
+Destination is an external system where the profile data will be sent when if changed. Destination require some 
+resource, e.g. a API endpoint, queue service, etc. Not all resources are available as destinations, please see 
+[outbound traffic](../traffic/outbound/index.md) for more information.

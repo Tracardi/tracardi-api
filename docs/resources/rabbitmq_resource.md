@@ -16,3 +16,7 @@ amqp://test:test@1.1.1.1:5672/dev_
 2. Type the port Number.
 3. Type the Virtual Host Name(if any)
 4. Type the Connection Timeout limit.
+
+## Info
+
+This resource can be used as destination.

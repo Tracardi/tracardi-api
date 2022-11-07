@@ -24,7 +24,8 @@ creates a token that, when attached to the event data, will allow it to be sent 
 !!! Tips
 
     Event sources can be found in Tracardi GUI under Traffic. We have inbound traffic that comes to Tracardi - 
-    we call it `event sources`. And there is outboud traffic which are the request to external systems.
+    we call it `event sources`. And there is outboud traffic sometimes called the destination. This is the external
+    system that the profile data can be sent when profile changes.
 
 ## Event collection
 
