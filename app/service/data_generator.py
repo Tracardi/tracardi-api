@@ -30,7 +30,7 @@ def generate_events_for_profile(profiles, sessions, sources):
                 source=random.choice(sources),
                 properties={
                     "name": profile.pii.name,
-                    "last_name": profile.pii.last_name,
+                    "surname": profile.pii.surname,
                 }
             )
 
@@ -44,7 +44,7 @@ def generate_profile():
         traits=ProfileTraits(private={}, public={}),
         pii=PII(
             name=names.get_first_name(),
-            last_name=names.get_last_name(),
+            surname=names.get_last_name(),
             email="test@test.com"
         ),
         segments=[random.choice(['frequent-user', 'customer', 'first-timer', 'vip'])],

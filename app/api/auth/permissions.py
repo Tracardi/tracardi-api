@@ -33,49 +33,39 @@ class Permissions:
                 detail="Access forbidden",
             )
 
-        try:
+        user = token2user.get(token)
 
-            user = token2user.get(token)
+        # Not authenticated if no user or insufficient roles
 
-            # Not authenticated if no user or insufficient roles
-
-            if not user:
-                logger.warning(f"Unauthorized access. User not available for {token}")
-                raise HTTPException(
-                    status_code=status.HTTP_401_UNAUTHORIZED,
-                    detail="Invalid authentication credentials",
-                    headers={"WWW-Authenticate": "Bearer"},
-                )
-
-            refreshed_token = token2user.refresh(user)
-
-            if refreshed_token != token:
-
-                token2user.delete(token)
-                token2user.delete(refreshed_token)
-
-                logger.warning(f"Unauthorized access. User token mismatch {token} != {refreshed_token}")
-                raise HTTPException(
-                    status_code=status.HTTP_401_UNAUTHORIZED,
-                    detail="Invalid authentication credentials",
-                    headers={"WWW-Authenticate": "Bearer"},
-                )
-
-            if not user.has_roles(self.roles):
-                logger.warning(f"User {user.email}. Unauthorized access to {request.url}. Required roles {self.roles}, "
-                               f"granted {user.roles} ")
-
-                raise HTTPException(
-                    status_code=status.HTTP_401_UNAUTHORIZED,
-                    detail="Invalid authentication credentials",
-                    headers={"WWW-Authenticate": "Bearer"},
-                )
-
-            return user
-
-        except Exception as e:
-            logger.error(repr(e))
+        if not user:
+            logger.warning(f"Unauthorized access. User not available for {token}")
             raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail="Access forbidden",
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid authentication credentials",
+                headers={"WWW-Authenticate": "Bearer"},
             )
+
+        refreshed_token = token2user.refresh(user)
+
+        if refreshed_token != token:
+            token2user.delete(token)
+            token2user.delete(refreshed_token)
+
+            logger.warning(f"Unauthorized access. User token mismatch {token} != {refreshed_token}")
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid authentication credentials",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
+
+        if not user.has_roles(self.roles):
+            logger.warning(f"User {user.email}. Unauthorized access to {request.url}. Required roles {self.roles}, "
+                           f"granted {user.roles} ")
+
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid authentication credentials",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
+
+        return user

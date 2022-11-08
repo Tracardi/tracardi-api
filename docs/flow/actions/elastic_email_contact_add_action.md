@@ -19,7 +19,7 @@ occurs.
 - Elastic Email Client Public Account ID
 - Email address - please type in the path to the email address of your new contact.
 - Additional fields - you can add optional mapping for your contact, for example **lastname:
-  profile@traits.public.last_name**. Remember to use field aliases from Elastic Email. https://elasticemail.com/developers/api-documentation/web-api-v2#Contact_Add
+  profile@traits.public.surname**. Remember to use field aliases from Elastic Email. https://elasticemail.com/developers/api-documentation/web-api-v2#Contact_Add
 
 #### JSON configuration
 

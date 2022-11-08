@@ -31,7 +31,7 @@ class ProfileMeta:
 @strawberry.type
 class ProfilePII:
     name: typing.Optional[str]
-    last_name: typing.Optional[str]
+    surname: typing.Optional[str]
     birth_date: typing.Optional[str]
     marital_status: typing.Optional[str]
     email: typing.Optional[str]
