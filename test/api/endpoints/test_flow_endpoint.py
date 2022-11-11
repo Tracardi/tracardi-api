@@ -49,7 +49,7 @@ def test_should_refresh_flow():
 
 
 def test_should_not_fail_on_rearrange():
-    data = Flow(id=str(uuid4()), name="test")
+    data = Flow(id=str(uuid4()), name="test", type='collection')
     assert endpoint.post(f'/flow/draft/nodes/rearrange', data=json.loads(data.json())).status_code == 200
 
 

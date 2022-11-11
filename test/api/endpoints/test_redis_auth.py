@@ -9,66 +9,50 @@ def test_should_handle_multiple_sessions():
 
     start_token = endpoint.token
 
-    # Check settings to find out if the test can be run.
-    response = endpoint.get("/settings")
-    assert response.status_code == 200
-    available_settings = response.json()
-    tokens_in_redis = [setting['value'] for setting in available_settings if setting['label'] == 'TOKENS_IN_REDIS']
+    try:
 
-    if len(tokens_in_redis) != 1:
-        raise ValueError("Could not find TOKENS_IN_REDIS setting.")
+        data = {
+            "password": user_pass,
+            "full_name": "full name",
+            "email": user_email,
+            "roles": ["admin", "marketer", "developer"],
+            "disabled": False
+        }
+        response = endpoint.post("/user", data)
+        assert response.status_code == 200
+        result = response.json()
+        user_id = result['ids'][0]
 
-    tokens_in_redis = tokens_in_redis[0]
+        assert result["saved"] == 1
 
-    if tokens_in_redis is True:
+        token1 = endpoint.auth(user_email, user_pass)
+        token2 = endpoint.auth(user_email, user_pass)
 
-        try:
+        # todo this fails because auth returns the same token
+        # todo it must be fixed
+        assert token1 != token2
 
-            response = endpoint.delete(f"/user/{user_email}")
+        endpoint.set_token(token1)
+        response = endpoint.get("/settings")
+        assert response.status_code == 200
 
-            assert response.status_code in [404, 200]
+        endpoint.set_token(token2)
+        response = endpoint.get("/settings")
+        assert response.status_code == 200
 
-            data = {
-                "password": user_pass,
-                "full_name": "full name",
-                "email": user_email,
-                "roles": ["admin", "marketer", "developer"],
-                "disabled": False
-            }
-            response = endpoint.post("/user", data)
-            assert response.status_code == 200
-            result = response.json()
+        endpoint.set_token(token1)
+        endpoint.post("/user/logout")
+        response = endpoint.get("/settings")
+        assert response.status_code == 401
 
-            assert result["inserted"] == 1
+        endpoint.set_token(token2)
+        response = endpoint.get("/settings")
+        assert response.status_code == 200
+        endpoint.post("/user/logout")
+        response = endpoint.get("/settings")
+        assert response.status_code == 401
 
-            token1 = endpoint.auth(user_email, user_pass)
-            token2 = endpoint.auth(user_email, user_pass)
-
-            assert token1 != token2
-
-            endpoint.set_token(token1)
-            response = endpoint.get("/settings")
-            assert response.status_code == 200
-
-            endpoint.set_token(token2)
-            response = endpoint.get("/settings")
-            assert response.status_code == 200
-
-            endpoint.set_token(token1)
-            endpoint.post("/user/logout")
-            response = endpoint.get("/settings")
-            assert response.status_code == 401
-
-            endpoint.set_token(token2)
-            response = endpoint.get("/settings")
-            assert response.status_code == 200
-            endpoint.post("/user/logout")
-            response = endpoint.get("/settings")
-            assert response.status_code == 401
-
-        finally:
-            endpoint.auth(user_email, user_pass)
-            endpoint.delete(f"/user/{user_email}")
-            endpoint.set_token(start_token)
-    else:
-        print("Token in redis tests skipped. TOKENS_IN_REDIS does not equal True.")
+    finally:
+        endpoint.auth(user_email, user_pass)
+        endpoint.delete(f"/user/{user_id}")
+        endpoint.set_token(start_token)

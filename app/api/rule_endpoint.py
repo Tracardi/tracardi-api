@@ -2,8 +2,9 @@ import asyncio
 from typing import List, Optional
 
 from fastapi import APIRouter, Response, HTTPException, Depends
+
+from tracardi.domain.flow_meta_data import FlowMetaData
 from tracardi.service.storage.driver import storage
-from tracardi.domain.named_entity import NamedEntity
 from tracardi.domain.rule import Rule
 from .auth.permissions import Permissions
 from ..config import server
@@ -43,7 +44,7 @@ async def upsert_rule(rule: Rule):
     flow_record = await storage.driver.flow.load_record(rule.flow.id)
     add_flow_task = None
     if flow_record is None:
-        new_flow = NamedEntity(id=rule.flow.id, name=rule.flow.name)
+        new_flow = FlowMetaData(id=rule.flow.id, name=rule.flow.name, description="", type='collection')
         add_flow_task = asyncio.create_task(storage.driver.flow.save(new_flow))
 
     add_rule_task = asyncio.create_task(storage.driver.rule.save(rule))

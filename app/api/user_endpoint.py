@@ -148,7 +148,6 @@ async def add_user(user_payload: UserPayload):
     """
 
     user_exists = await storage.driver.user.check_if_exists(user_payload.email)
-
     if not user_exists:
         expiration_timestamp = user_payload.get_expiration_date()
         result = await storage.driver.user.add_user(
@@ -160,7 +159,7 @@ async def add_user(user_payload: UserPayload):
         )
         await storage.driver.user.refresh()
 
-        return {"inserted": result.saved}
+        return result
     else:
         raise HTTPException(status_code=409, detail=f"User with email '{user_payload.email}' already exists.")
 
@@ -174,6 +173,7 @@ async def delete_user(id: str, user=Depends(Permissions(["admin"]))):
     if id == user.id:
         raise HTTPException(status_code=403, detail="You cannot delete your own account")
     result = await storage.driver.user.delete_user(id)
+
     if result is None:
         raise HTTPException(status_code=404, detail=f"User '{id}' not found")
     await storage.driver.user.refresh()

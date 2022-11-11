@@ -1,3 +1,4 @@
+from time import sleep
 from uuid import uuid4
 
 from .test_event_source_endpoint import _create_event_source
@@ -242,13 +243,14 @@ def test_should_return_events_by_tag():
     response, _, event_id1, profile_id1 = _make_event(event_type, session_id=session_id, source_id=source_id)
 
     data = {
-        "type": event_type,
+        "id": str(uuid4()),
+        "name": "test",
+        "event_type": event_type,
         "tags": [event_tag]
     }
-    response = endpoint.post("/event-tag", data)
+    response = endpoint.post("/event-type/management", data)
     assert response.status_code == 200
-    response = endpoint.get("/event-tags/refresh")
-    assert response.status_code == 200
+    sleep(1)
     response = endpoint.get("/events/refresh")
     assert response.status_code == 200
 
@@ -380,7 +382,9 @@ def test_should_return_event_console_log():
         response = endpoint.get(f'/event/logs/{event_id}')
         assert response.status_code == 200
         result = response.json()
-        assert isinstance(result, list)
+        assert isinstance(result, dict)
+        assert 'result' in result
+        assert 'total' in result
     finally:
         assert endpoint.delete(f'/event-source/{source_id}').status_code == 200
         assert endpoint.delete(f'/event/{event_id}').status_code == 200

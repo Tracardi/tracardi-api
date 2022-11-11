@@ -1,3 +1,4 @@
+from time import sleep
 from uuid import uuid4
 
 from test.utils import Endpoint
@@ -12,20 +13,7 @@ def _add_event_management_data(event_type, data=None):
             "name": event_type,
             "description": "test-description",
             "enabled": True,
-            "tags": ["tag1", "tag2", "tag3"],
-            "validation": {
-                "json_schema": {
-                    "event@...": {
-                        "type": "object"
-                    }
-                }
-            },
-            "reshaping": {
-                "condition": "event@properties.x EXISTS",
-                "template": {
-                    "key": "event@properties.value"
-                }
-            }
+            "tags": ["tag1", "tag2", "tag3"]
         }
 
     response = endpoint.post("/event-type/management", data)
@@ -43,7 +31,8 @@ def test_should_post_get_and_delete_validation_schema():
         response = _add_event_management_data(event_type)
         result = response.json()
 
-        assert "added" in result
+        assert "saved" in result
+        assert result['saved'] == 1
 
         result = endpoint.get(f"/event-type/management/{event_type}")
 
@@ -62,11 +51,18 @@ def test_should_post_get_and_delete_validation_schema():
 def test_get_validation_schemas():
     event_type = str(uuid4())
     try:
-        _add_event_management_data(event_type)
-        response = endpoint.get("/event-type/management")
+        response = _add_event_management_data(event_type)
+        result = response.json()
+        assert result['ids'][0] == event_type
+        sleep(1)
+        response = endpoint.get(f"/event-type/management/{event_type}")
         assert response.status_code == 200
         result = response.json()
-        assert result[0]['id'] == event_type
+        assert result['id'] == event_type
+
+        response = endpoint.get(f"/event-type/management")
+        assert response.status_code == 200
+
     finally:
         response = endpoint.delete(f"/event-type/management/{event_type}")
         assert response.status_code == 200
