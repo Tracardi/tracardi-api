@@ -12,8 +12,23 @@ The order of throttle keys is important, because this is the way the limiter ide
 # Side effects
 
 The limiters placed in different workflows share the same information if they have he same key. That means if we send emails in many workflow and throttle/limit the number executions based on email - execution in one workflow will add up to the limit on the other workflow as well. This is a very powerful feature that can protect resources across all workflows if set properly.
-If you want the limiter to work only for one workflow and not across all workflows add workflow id to a limiter key, e.g. workflow.id + email.
+If you want the limiter to work only for one workflow and not across all workflows add workflow id (or custom key) to a limiter key, e.g. workflow.id + email.
 
+# Advanced JSON configuration
 
+Example
+
+```json
+{
+  "keys": ["workflow@id", "profile@pii.email", "custom-key"],
+  "limit": 10
+  "time": 60
+}
+```
+
+# Outputs
+
+* __pass__ - Triggers this port if not limited. Returns input payload.
+* __block__ - Triggers this port if executions are limited. Returns input payload.
 
 
