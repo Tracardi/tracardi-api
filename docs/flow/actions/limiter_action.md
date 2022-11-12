@@ -22,9 +22,13 @@ Example
 {
   "keys": ["workflow@id", "profile@pii.email", "custom-key"],
   "limit": 10
-  "time": 60
+  "ttl": 60
 }
 ```
+
+* __keys__ - keys that identify the throttle. It may reference data from workflow or be a custome keys
+* __limit__ - the number of allowed passes within defined time
+* __ttl__ - time to live for a throttle. The time period that must pass for the __limit__ to be reset to 0.
 
 # Outputs
 
