@@ -1290,12 +1290,12 @@ async def test_should_set_up_plugin_previous_event_getter():
 async def test_should_set_up_plugin_find_previous_session_action():
     
     module = import_package("tracardi.process_engine.action.v1.internal.get_prev_session.plugin")
-    plugin_class = load_callable(module, "FindPreviousSessionAction")
+    plugin_class = load_callable(module, "PreviousSessionAction")
     plugin = plugin_class()
     plugin.node = Node(id="node-id", 
                        name="test-node", 
                        module="tracardi.process_engine.action.v1.internal.get_prev_session.plugin", 
-                       className="FindPreviousSessionAction")
+                       className="PreviousSessionAction")
     await plugin.set_up({'offset': -1})
 
 
