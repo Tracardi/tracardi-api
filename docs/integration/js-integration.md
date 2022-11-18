@@ -1,4 +1,4 @@
-# Web page JS integrations
+# Web page Javascript integrations
 
 ## Connecting and configuring the script
 
@@ -188,6 +188,10 @@ window.tracker.track("page-view",{});
 
 Events consist of an event type. Event type is any string that describes what happened. In our example we have 3
 events: "purchase-order", "interest", "page-view".
+
+!!! Caution
+
+  The code with events must be placed after the configuration code. Otherwise, it will now work.
 
 ### Events data, properties
 
