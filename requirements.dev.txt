@@ -1,0 +1,9 @@
+grpcio==1.48.2
+grpcio-tools==1.48.2
+wheel
+pytest
+pytest-mock
+pytest-asyncio
+trio
+
+pipdeptree

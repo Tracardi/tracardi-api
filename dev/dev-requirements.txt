@@ -1,6 +1,0 @@
-pytest
-pytest-mock
-pytest-asyncio
-trio
-
-pipdeptree
