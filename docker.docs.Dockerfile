@@ -12,6 +12,7 @@ COPY docs docs/
 COPY mkdocs.yml /
 
 ## Install dependencies
+RUN pip install wheel
 RUN pip --default-timeout=180 install -r docs/requirements.txt
 WORKDIR /
 RUN mkdocs build
