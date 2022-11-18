@@ -156,6 +156,7 @@ async def upsert_flow(flow: Flow):
     if flow_record is None or old_flow_record is None:
         raise HTTPException(status_code=406, detail="Can not deploy missing draft workflow")
     flow_record.backup = old_flow_record.production
+    flow_record.deployed = True
     return await StorageFor(flow_record).index().save()
 
 
