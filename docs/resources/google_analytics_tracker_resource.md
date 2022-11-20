@@ -5,16 +5,18 @@ platform inside the Google Marketing Platform brand.
 
 Google Analytics has 2 versions. The latest one is Google Analytics 4.
 
-## Google Analytics 4 ID
+## Google Analytics 4 Resources
 
-To find your Google Analytics 4 Measurement ID:
+To find your Google Analytics 4 Measurement ID and API Key:
 
 1. Open Google Analytics
 2. Click the ‘Admin’ tab, left-hand side menu, at the bottom.
 3. In the left-hand column, click Data Streams
 4. Select a data stream from the list
 5. Your code will appear in the top right-hand corner of the page. For GA4 users, the codes start with “G.”
-6. Copy the code and paste to the Tracardi Resource Form.
+6. For API Key in the same data stream window, scroll down to find Measurement Protocol API secrets and open it.
+7. Click 'Create' to generate new API Key and give it a nickname.
+8. Copy the __API KEY__ and __Measurement ID__ and paste to the Tracardi Resource Form.
 
 ## Google Universal Analytics ID
 
