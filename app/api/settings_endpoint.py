@@ -223,7 +223,7 @@ system_settings = [
     SystemSettings(
         **{
             "label": "ELASTIC_HTTP_AUTH_USERNAME",
-            "value": elastic.http_auth_username,
+            "value": elastic.has('http_auth_username'),
             "desc": "Default: None. Elastic search username. Search for elastic authentication "
                     "for more information on how to configure connection to elastic."
         }
@@ -231,7 +231,7 @@ system_settings = [
     SystemSettings(
         **{
             "label": "ELASTIC_HTTP_AUTH_PASSWORD",
-            "value": "Set" if elastic.http_auth_password is not None else "Unset",
+            "value": elastic.has('http_auth_password'),
             "desc": "Default: None. Elastic search password. Search for elastic authentication "
                     "for more information on how to configure connection to elastic."
         }
