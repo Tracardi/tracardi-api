@@ -3,7 +3,7 @@ import os
 from typing import Optional
 from uuid import uuid4
 
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 from app.config import server
 
 from tracardi.config import tracardi, elastic
@@ -53,6 +53,16 @@ async def install_plugins():
 
 @router.post("/install", tags=["installation"], include_in_schema=server.expose_gui_api, response_model=dict)
 async def install(credentials: Optional[Credentials]):
+
+    if tracardi.installation_hash and tracardi.installation_hash != credentials.hash:
+        raise HTTPException(status_code=403, detail="Installation forbidden. Invalid installation hash.")
+
+    if credentials.needs_admin:
+        if credentials.empty() or not credentials.username_as_email():
+            raise HTTPException(status_code=403, detail="Installation forbidden. Invalid admin account "
+                                                        "login or password. Login must be a valid email and password "
+                                                        "can not be empty.")
+
     info = await storage.driver.raw.health()
 
     if 'number_of_data_nodes' in info and int(info['number_of_data_nodes']) == 1:
@@ -69,22 +79,21 @@ async def install(credentials: Optional[Credentials]):
     # Add admin
     admins = await storage.driver.user.search_by_role('admin')
 
-    if admins.total == 0:
-        if credentials.not_empty() and credentials.username_as_email():
+    if credentials.needs_admin and admins.total == 0:
+        user = User(
+            id=str(uuid4()),
+            password=credentials.password,
+            roles=['admin', 'maintainer'],
+            email=credentials.username,
+            full_name="Default Admin"
+        )
 
-            user = User(
-                id=str(uuid4()),
-                password=credentials.password,
-                roles=['admin', 'maintainer'],
-                email=credentials.username,
-                full_name="Default Admin"
-            )
+        if not await storage.driver.user.check_if_exists(credentials.username):
+            await storage.driver.user.add_user(user)
+            logger.info("Default admin account created.")
 
-            if not await storage.driver.user.check_if_exists(credentials.username):
-                await storage.driver.user.add_user(user)
-                logger.info("Default admin account created.")
+        result['admin'] = True
 
-            result['admin'] = True
     else:
         logger.warning("There is at least one admin account. New admin account not created.")
         result['admin'] = True
