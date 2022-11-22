@@ -54,7 +54,7 @@ async def install_plugins():
 @router.post("/install", tags=["installation"], include_in_schema=server.expose_gui_api, response_model=dict)
 async def install(credentials: Optional[Credentials]):
 
-    if tracardi.installation_hash and tracardi.installation_hash != credentials.hash:
+    if tracardi.installation_token and tracardi.installation_token != credentials.token:
         raise HTTPException(status_code=403, detail="Installation forbidden. Invalid installation hash.")
 
     if credentials.needs_admin:

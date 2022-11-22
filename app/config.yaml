@@ -1,0 +1,11 @@
+event:
+  profile:
+    traits:
+      name: profile@pii.name
+      surname: profile@pii.surname
+      email: profile@pii.email
+  context: off
+session:
+  matadata: off
+profile:
+  pii: off
