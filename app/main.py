@@ -27,7 +27,7 @@ from app.api import rule_endpoint, resource_endpoint, event_endpoint, \
     import_endpoint, \
     task_endpoint, storage_endpoint, destination_endpoint, user_log_endpoint, user_account_endpoint, install_endpoint, \
     delete_indices_endpoint, migration_endpoint, report_endpoint, live_segments_endpoint, event_validator_endpoint, \
-    event_reshaping_schema_endpoint, console_log_endpoint, event_type_management, event_source_redirects
+    event_reshaping_schema_endpoint, console_log_endpoint, event_type_management, event_source_redirects, last_flow_ws
 
 from app.api.graphql.profile import graphql_profiles
 from app.api.track import event_server_endpoint
@@ -199,6 +199,7 @@ application.include_router(event_validator_endpoint.router)
 application.include_router(console_log_endpoint.router)
 application.include_router(event_type_management.router)
 application.include_router(event_source_redirects.router)
+application.include_router(last_flow_ws.router)
 
 # GraphQL
 
