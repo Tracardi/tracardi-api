@@ -1,10 +1,6 @@
 Google Analytics is a web analytics service offered by Google that tracks and reports website traffic, currently as a
 platform inside the Google Marketing Platform brand.
 
-# Resource configuration and set-up
-
-Google Analytics has 2 versions. The latest one is Google Analytics 4.
-
 ## Google Analytics 4 ID
 
 To find your Google Analytics 4 Measurement ID:
@@ -14,17 +10,9 @@ To find your Google Analytics 4 Measurement ID:
 3. In the left-hand column, click Data Streams
 4. Select a data stream from the list
 5. Your code will appear in the top right-hand corner of the page. For GA4 users, the codes start with “G.”
-6. Copy the code and paste to the Tracardi Resource Form.
-
-## Google Universal Analytics ID
-
-If you are a Universal Analytics user:
-
-1. Open Google Analytics
-2. Click the ‘Admin’ tab
-3. In the left-hand column, click Tracking Info
-4. Click ‘Tracking Code’ 
-5. Your code will be available here. For Universal Analytics users, the codes start with “UA.”
-6. Copy the code and paste to the Tracardi Resource Form.
-
-
+6. Copy the code and paste to the Tracardi Resource Form into __measurement_id__.
+7. Find on the page Secret API Keys in Events section and click on it.
+8. If you do not see the key click __create__ in the upper right corner.
+9. Give a key a name
+10. Save it.
+11. Now you should see the API KEY, copy it into API Key (__api_key__) field in the Tracardi Resource Form
