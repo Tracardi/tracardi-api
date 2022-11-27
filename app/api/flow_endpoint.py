@@ -7,7 +7,7 @@ from tracardi.exceptions.exception import StorageException
 from tracardi.domain.console import Console
 from tracardi.service.secrets import encrypt
 from tracardi.service.storage.driver import storage
-from tracardi.service.storage.factory import StorageFor
+from tracardi.service.storage.factory import storage_manager
 from tracardi.service.utils.getters import get_entity_id
 from tracardi.service.wf.domain.flow_history import FlowHistory
 from tracardi.service.wf.domain.work_flow import WorkFlow
@@ -19,7 +19,6 @@ from tracardi.domain.flow import Flow
 from tracardi.service.wf.domain.flow import Flow as GraphFlow
 from tracardi.domain.flow import FlowRecord
 from tracardi.domain.profile import Profile
-from tracardi.domain.rule import Rule
 from tracardi.domain.session import Session, SessionMetadata
 from tracardi.domain.resource import Resource
 from tracardi.domain.value_object.bulk_insert_result import BulkInsertResult
@@ -29,6 +28,14 @@ from ..config import server
 router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin", "developer"]))]
 )
+
+
+async def _load_record(id: str) -> Optional[FlowRecord]:
+    return FlowRecord.create(await storage.driver.flow.load_by_id(id))
+
+
+async def _store_record(data: Entity):
+    return await storage.driver.flow.save(data)
 
 
 @router.get("/flows/refresh", tags=["flow"], include_in_schema=server.expose_gui_api)
@@ -157,7 +164,7 @@ async def upsert_flow(flow: Flow):
         raise HTTPException(status_code=406, detail="Can not deploy missing draft workflow")
     flow_record.backup = old_flow_record.production
     flow_record.deployed = True
-    return await StorageFor(flow_record).index().save()
+    return await _store_record(flow_record)
 
 
 @router.get("/flow/metadata/{id}", tags=["flow"], response_model=FlowRecord, include_in_schema=server.expose_gui_api)
@@ -165,9 +172,7 @@ async def get_flow_details(id: str):
     """
     Returns flow metadata of flow with given ID (str)
     """
-    entity = Entity(id=id)
-    flow_record = await StorageFor(entity).index("flow").load(FlowRecord)  # type: FlowRecord
-
+    flow_record = await _load_record(id)
 
     if flow_record is None:
         raise HTTPException(status_code=404, detail="Missing flow record {}".format(id))
@@ -181,8 +186,7 @@ async def upsert_flow_details(flow_metadata: FlowMetaData):
     """
     Adds new flow metadata for flow with given id (str)
     """
-    entity = Entity(id=flow_metadata.id)
-    flow_record = await StorageFor(entity).index("flow").load(FlowRecord)  # type: FlowRecord
+    flow_record = await _load_record(flow_metadata.id)
     if flow_record is None:
 
         # create new
@@ -214,7 +218,7 @@ async def upsert_flow_details(flow_metadata: FlowMetaData):
         flow_record.projects = flow_metadata.projects
         flow_record.type = flow_metadata.type
 
-    return await StorageFor(flow_record).index().save()
+    return await _store_record(flow_record)
 
 
 @router.post("/flow/draft/metadata", tags=["flow"], response_model=BulkInsertResult,
@@ -223,8 +227,8 @@ async def upsert_flow_details(flow_metadata: FlowMetaData):
     """
     Adds new draft metadata to flow with defined ID (str)
     """
-    entity = Entity(id=flow_metadata.id)
-    flow_record = await StorageFor(entity).index("flow").load(FlowRecord)  # type: FlowRecord
+
+    flow_record = await _load_record(flow_metadata.id)
 
     if flow_record is None:
         raise HTTPException(status_code=404, detail="Flow `{}` does not exist.".format(flow_metadata.id))
@@ -244,7 +248,7 @@ async def upsert_flow_details(flow_metadata: FlowMetaData):
 
         flow_record.draft = encrypt(draft_workflow.dict())
 
-    result = await StorageFor(flow_record).index().save()
+    result = await _store_record(flow_record)
     await storage.driver.flow.refresh()
     return result
 
@@ -253,14 +257,14 @@ async def upsert_flow_details(flow_metadata: FlowMetaData):
             response_model=BulkInsertResult,
             include_in_schema=server.expose_gui_api)
 async def update_flow_lock(id: str, lock: str):
-    entity = Entity(id=id)
-    flow_record = await StorageFor(entity).index("flow").load(FlowRecord)  # type: FlowRecord
+
+    flow_record = await _load_record(id)
 
     if flow_record is None:
         raise HTTPException(status_code=406, detail="Flow `{}` does not exist.".format(id))
 
     flow_record.set_lock(True if lock.lower() == 'yes' else False)
-    return await StorageFor(flow_record).index().save()
+    return await _store_record(flow_record)
 
 
 @router.post("/flow/debug", tags=["flow"],
@@ -316,7 +320,7 @@ async def debug_flow(flow: GraphFlow):
             console_log.append(console)
 
         if flow_invoke_result.profile.operation.needs_update():
-            profile_save_result = await StorageFor(flow_invoke_result.profile).index().save()
+            profile_save_result = await _store_record(flow_invoke_result.profile)
 
     except StorageException as e:
         console = Console(
@@ -343,12 +347,9 @@ async def delete_flow(id: str, response: Response):
     """
     Deletes flow with given id (str)
     """
-    # delete rule before flow
-    crud = StorageFor.crud('rule', Rule)
-    rule_delete_result = await crud.delete_by('flow.id.keyword', id)
-
-    flow = Entity(id=id)
-    flow_delete_result = await StorageFor(flow).index("flow").delete()
+    # Delete rule before flow
+    rule_delete_result = await storage.driver.rule.delete_by_id(id)
+    flow_delete_result = await storage.driver.flow.delete_by_id(id)
 
     if flow_delete_result is None:
         response.status_code = 404

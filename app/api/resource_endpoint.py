@@ -8,11 +8,9 @@ from tracardi.domain.enum.type_enum import TypeEnum
 from tracardi.exceptions.log_handler import log_handler
 from tracardi.service.setup.setup_resources import get_type_of_resources
 from tracardi.service.storage.driver import storage
-from tracardi.service.storage.factory import StorageFor, storage_manager
 from tracardi.service.wf.domain.named_entity import NamedEntity
 from app.service.grouper import search
 from tracardi.domain.resource import Resource, ResourceRecord
-from tracardi.domain.entity import Entity
 from tracardi.domain.value_object.bulk_insert_result import BulkInsertResult
 from .auth.permissions import Permissions
 from ..config import server
@@ -24,6 +22,14 @@ logger.addHandler(log_handler)
 router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin", "developer"]))]
 )
+
+
+async def _load_record(id: str) -> Optional[ResourceRecord]:
+    return ResourceRecord.create(await storage.driver.resource.load_by_id(id))
+
+
+async def _store_record(data: ResourceRecord):
+    return await storage.driver.resource.save(data)
 
 
 @router.get("/resources/type/{type}",
@@ -154,17 +160,17 @@ async def list_resources(query: str = None):
             response_model=dict,
             include_in_schema=server.expose_gui_api)
 async def set_resource_property_on(id: str):
-    entity = Entity(id=id)
+    record = await _load_record(id)
+    if record:
+        resource = record.decode()
+        resource_data = resource.dict()
+        resource_data['enabled'] = True
+        resource = Resource.construct(_fields_set=resource.__fields_set__, **resource_data)
+        record = ResourceRecord.encode(resource)
 
-    record = await StorageFor(entity).index("resource").load(ResourceRecord)  # type: ResourceRecord
+        return await _store_record(record)
 
-    resource = record.decode()
-    resource_data = resource.dict()
-    resource_data['enabled'] = True
-    resource = Resource.construct(_fields_set=resource.__fields_set__, **resource_data)
-    record = ResourceRecord.encode(resource)
-
-    return await StorageFor(record).index().save()
+    return None
 
 
 @router.get("/resource/{id}/enabled/off",
@@ -172,18 +178,16 @@ async def set_resource_property_on(id: str):
             response_model=dict,
             include_in_schema=server.expose_gui_api)
 async def set_resource_property_off(id: str):
-    entity = Entity(id=id)
+    record = await _load_record(id)
 
-    record = await StorageFor(entity).index("resource").load(ResourceRecord)  # type: ResourceRecord
+    if record:
+        resource = record.decode()
+        resource_data = resource.dict()
+        resource_data['enabled'] = False
+        resource = Resource.construct(_fields_set=resource.__fields_set__, **resource_data)
+        record = ResourceRecord.encode(resource)
 
-    resource = record.decode()
-    resource_data = resource.dict()
-    resource_data['enabled'] = False
-    resource = Resource.construct(_fields_set=resource.__fields_set__, **resource_data)
-    record = ResourceRecord.encode(resource)
-
-    return await StorageFor(record).index().save()
-    # return await record.storage().save()
+        return await _store_record(record)
 
 
 @router.get("/resource/{id}",
@@ -195,8 +199,7 @@ async def get_resource_by_id(id: str, response: Response) -> Optional[Resource]:
     Returns source data with given id.
     """
 
-    entity = Entity(id=id)
-    record = await StorageFor(entity).index("resource").load(ResourceRecord)  # type: ResourceRecord
+    record = await _load_record(id)
 
     if record is not None:
         return record.decode()
@@ -210,8 +213,8 @@ async def get_resource_by_id(id: str, response: Response) -> Optional[Resource]:
              include_in_schema=server.expose_gui_api)
 async def upsert_resource(resource: Resource):
     record = ResourceRecord.encode(resource)
-    result = await StorageFor(record).index().save()
-    await storage_manager("resource").refresh()
+    result = await _store_record(record)
+    await storage.driver.resource.refresh()
     return result
 
 
@@ -219,7 +222,7 @@ async def upsert_resource(resource: Resource):
                response_model=Optional[dict],
                include_in_schema=server.expose_gui_api)
 async def delete_resource(id: str, response: Response):
-    result = await StorageFor(Entity(id=id)).index("resource").delete()
+    result = await storage.driver.resource.delete(id)
 
     if result is None:
         response.status_code = 404

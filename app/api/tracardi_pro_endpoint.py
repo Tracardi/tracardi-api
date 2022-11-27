@@ -7,11 +7,10 @@ from fastapi import APIRouter, Depends, HTTPException
 from pydantic import ValidationError
 
 from app.api.auth.permissions import Permissions
+from tracardi.domain.entity import Entity
 from tracardi.domain.pro_service_form_data import TProMicroserviceCredentials, ProService, ProMicroService
 from tracardi.service.plugin.domain.register import Plugin
 from tracardi.service.plugin.plugin_install import install_remote_plugin
-from tracardi.service.storage.factory import StorageFor
-
 from app.api.domain.credentials import Credentials
 from tracardi.config import tracardi
 from tracardi.domain.resource import Resource, ResourceRecord
@@ -34,6 +33,10 @@ router = APIRouter(
 tracardi_pro_client = TracardiProClient(host=tracardi.tracardi_pro_host,
                                         port=tracardi.tracardi_pro_port,
                                         secure=False)
+
+
+async def _store_resource_record(data: Entity):
+    return await storage.driver.resource.save(data)
 
 
 @router.get("/tpro/validate", tags=["tpro"], include_in_schema=server.expose_gui_api)
@@ -162,7 +165,7 @@ async def save_tracardi_pro_resource(pro: ProService):
         resource.credentials.test = _remove_redundant_data(resource.credentials.test)
 
         record = ResourceRecord.encode(resource)
-        result['resource'] = await StorageFor(record).index().save()
+        result['resource'] = await _store_resource_record(record)
         await storage.driver.resource.refresh()
 
     # Add plugins
@@ -196,7 +199,7 @@ async def save_tracardi_pro_microservice(pro: ProMicroService):
     production_credentials = TProMicroserviceCredentials(**resource.credentials.production)
 
     record = ResourceRecord.encode(resource)
-    result = await StorageFor(record).index().save()
+    result = await _store_resource_record(record)
     await storage.driver.resource.refresh()
 
     # Create plugin

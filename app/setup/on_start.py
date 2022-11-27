@@ -5,7 +5,6 @@ from tracardi.config import tracardi
 from tracardi.exceptions.exception import StorageException
 from tracardi.domain.api_instance import ApiInstance
 from tracardi.exceptions.log_handler import log_handler
-from tracardi.service.storage.factory import StorageFor
 from tracardi.service.storage.driver import storage
 
 __local_dir = os.path.dirname(__file__)
@@ -21,7 +20,7 @@ async def update_api_instance():
     try:
         if await storage.driver.api_instance.exists():
 
-            result = await StorageFor(instance).index().save()
+            result = await storage.driver.api_instance.save(instance)
             if result.saved == 1:
                 logger.info(f"HEARTBEAT. API instance id `{instance.id}` was UPDATED.")
             return result

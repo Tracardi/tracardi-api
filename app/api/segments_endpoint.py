@@ -1,11 +1,11 @@
 from collections import defaultdict
+from typing import Optional
+
 from fastapi import APIRouter
 from fastapi import Depends
 
 from tracardi.service.storage.driver import storage
-from tracardi.service.storage.factory import StorageFor
 from app.service.grouper import search
-from tracardi.domain.entity import Entity
 from tracardi.domain.segment import Segment
 from tracardi.domain.value_object.bulk_insert_result import BulkInsertResult
 from .auth.permissions import Permissions
@@ -16,6 +16,10 @@ router = APIRouter(
 )
 
 
+async def _load_record(id: str) -> Optional[Segment]:
+    return Segment.create(await storage.driver.segment.load_by_id(id))
+
+
 @router.get("/segment/{id}",
             tags=["segment"],
             include_in_schema=server.expose_gui_api)
@@ -23,8 +27,7 @@ async def get_segment(id: str):
     """
     Returns segment with given ID (str)
     """
-    entity = Entity(id=id)
-    return await StorageFor(entity).index('segment').load(Segment)  # type: Segment
+    return await _load_record(id)
 
 
 @router.delete("/segment/{id}",
@@ -34,8 +37,8 @@ async def delete_segment(id: str):
     """
     Deletes segment with given ID (str)
     """
-    entity = Entity(id=id)
-    result = await StorageFor(entity).index('segment').delete()
+
+    result = await storage.driver.segment.delete_by_id(id)
 
     await storage.driver.segment.refresh()
     return result

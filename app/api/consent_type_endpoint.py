@@ -5,7 +5,6 @@ from app.service.grouping import group_records
 
 from tracardi.domain.consent_type import ConsentType
 from tracardi.service.storage.driver import storage
-from tracardi.service.storage.factory import StorageForBulk
 
 router = APIRouter()
 
@@ -96,7 +95,7 @@ async def get_consent_ids(query: str = None, limit: int = 1000):
     """
     Returns list of all enabled consent ids
     """
-    result = await StorageForBulk().index('consent-type').storage.query({
+    result = await storage.driver.consent_type.query({
         "query": {
             "term": {
                 "enabled": True
@@ -112,6 +111,7 @@ async def get_consent_ids(query: str = None, limit: int = 1000):
                 }
             }
     })
+
     return {
         "total": result.total,
         "result": [consent["key"] for consent in result.aggregations("uniq").buckets()]

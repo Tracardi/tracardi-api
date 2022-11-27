@@ -13,7 +13,9 @@ def test_should_check_if_system_installed():
 def test_should_install_system():
     response = endpoint.post("/install", data={
         "username": 'a@a.pl',
-        "password": "a"
+        "password": "a",
+        "token": "",
+        "needs_admin": True
     })
     result = response.json()
     assert 'created' in result

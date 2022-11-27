@@ -6,6 +6,30 @@ from tracardi.service.module_loader import load_callable, import_package
 from tracardi.service.wf.domain.node import Node
 
 
+async def test_should_set_up_plugin_last_visit_action():
+    
+    module = import_package("tracardi.process_engine.action.v1.time.last_profile_visit.plugin")
+    plugin_class = load_callable(module, "LastVisitAction")
+    plugin = plugin_class()
+    plugin.node = Node(id="node-id", 
+                       name="test-node", 
+                       module="tracardi.process_engine.action.v1.time.last_profile_visit.plugin", 
+                       className="LastVisitAction")
+    await plugin.set_up(None)
+
+
+async def test_should_set_up_plugin_limiter_action():
+    
+    module = import_package("tracardi.process_engine.action.v1.internal.limiter.plugin")
+    plugin_class = load_callable(module, "LimiterAction")
+    plugin = plugin_class()
+    plugin.node = Node(id="node-id", 
+                       name="test-node", 
+                       module="tracardi.process_engine.action.v1.internal.limiter.plugin", 
+                       className="LimiterAction")
+    await plugin.set_up({'keys': [], 'limit': 10, 'ttl': 60})
+
+
 async def test_should_set_up_plugin_google_analytics_event_tracker_action(mocker):
     
     mocker.patch(
@@ -29,6 +53,31 @@ async def test_should_set_up_plugin_google_analytics_event_tracker_action(mocker
                        module="tracardi.process_engine.action.v1.connectors.google.analytics.plugin", 
                        className="GoogleAnalyticsEventTrackerAction")
     await plugin.set_up({'source': {'id': 'id', 'name': 'name'}, 'category': 'category', 'action': 'action', 'label': 'label', 'value': 'value'})
+
+
+async def test_should_set_up_plugin_google_analytics_v4_event_tracker_action(mocker):
+    
+    mocker.patch(
+        # api_call is from slow.py but imported to main.py
+        'tracardi.service.storage.driver.storage.driver.resource.load',
+        return_value=Resource(
+            id="test-resource",
+            type="test",
+            credentials=ResourceCredentials(
+                production={'api_key': 'api_key', 'measurement_id': 'measurement_id'},
+                test={'api_key': 'api_key', 'measurement_id': 'measurement_id'}
+            )
+        )
+    )
+
+    module = import_package("tracardi.process_engine.action.v1.connectors.google.analytics_v4.plugin")
+    plugin_class = load_callable(module, "GoogleAnalyticsV4EventTrackerAction")
+    plugin = plugin_class()
+    plugin.node = Node(id="node-id", 
+                       name="test-node", 
+                       module="tracardi.process_engine.action.v1.connectors.google.analytics_v4.plugin", 
+                       className="GoogleAnalyticsV4EventTrackerAction")
+    await plugin.set_up({'source': {'id': 'id', 'name': 'name'}, 'name': 'event_name', 'params': 'payload@id'})
 
 
 async def test_should_set_up_plugin_whois_action():
@@ -76,7 +125,7 @@ async def test_should_set_up_plugin_google_translate_action():
                        name="test-node", 
                        module="tracardi.process_engine.action.v1.connectors.google.translate.plugin", 
                        className="GoogleTranslateAction")
-    await plugin.set_up({'text_to_translate': 'Hello', 'source_language': 'en'})
+    await plugin.set_up({'text_to_translate': 'Hello', 'source_language': 'en', 'destination_language': 'en'})
 
 
 async def test_should_set_up_plugin_payload_memory_collector():
@@ -125,6 +174,18 @@ async def test_should_set_up_plugin_start_action():
                        module="tracardi.process_engine.action.v1.flow.start.start_action", 
                        className="StartAction")
     await plugin.set_up({'debug': False, 'event_id': None, 'event_type': {'id': '', 'name': ''}, 'event_types': [], 'profile_less': False, 'properties': '{}', 'session_less': False})
+
+
+async def test_should_set_up_plugin_start_segmentation_action():
+    
+    module = import_package("tracardi.process_engine.action.v1.flow.start_segmentation.plugin")
+    plugin_class = load_callable(module, "StartSegmentationAction")
+    plugin = plugin_class()
+    plugin.node = Node(id="node-id", 
+                       name="test-node", 
+                       module="tracardi.process_engine.action.v1.flow.start_segmentation.plugin", 
+                       className="StartSegmentationAction")
+    await plugin.set_up({'profile_id': 'id'})
 
 
 async def test_should_set_up_plugin_property_exists_action():
@@ -930,7 +991,7 @@ async def test_should_set_up_plugin_smtp_dispatcher_action(mocker):
                        name="test-node", 
                        module="tracardi.process_engine.action.v1.connectors.smtp_call.plugin", 
                        className="SmtpDispatcherAction")
-    await plugin.set_up({'message': {'message': 'message', 'reply_to': 'mail@mail.co', 'send_from': 'mail@mail.co', 'send_to': 'mail@mail.co', 'title': 'title'}, 'source': {'id': '', 'name': ''}})
+    await plugin.set_up({'mail': {'message': {'content': 'ss', 'type': 'text/html'}, 'reply_to': 'mail@mail.co', 'send_from': 'mail@mail.co', 'send_to': 'mail@mail.co', 'title': 'title'}, 'resource': {'id': '', 'name': ''}})
 
 
 async def test_should_set_up_plugin_segment_profile_action():
@@ -1287,7 +1348,7 @@ async def test_should_set_up_plugin_previous_event_getter():
     await plugin.set_up({'event_type': {'id': '@current', 'name': '@current'}, 'offset': -1})
 
 
-async def test_should_set_up_plugin_find_previous_session_action():
+async def test_should_set_up_plugin_previous_session_action():
     
     module = import_package("tracardi.process_engine.action.v1.internal.get_prev_session.plugin")
     plugin_class = load_callable(module, "PreviousSessionAction")
@@ -1502,6 +1563,56 @@ async def test_should_set_up_plugin_sort_array_action():
                        module="tracardi.process_engine.action.v1.sort_array_action", 
                        className="SortArrayAction")
     await plugin.set_up({'data': 'event@properties.list_of_something', 'direction': 'asc'})
+
+
+async def test_should_set_up_plugin_git_hub_list_issues_action(mocker):
+    
+    mocker.patch(
+        # api_call is from slow.py but imported to main.py
+        'tracardi.service.storage.driver.storage.driver.resource.load',
+        return_value=Resource(
+            id="test-resource",
+            type="test",
+            credentials=ResourceCredentials(
+                production={'api_url': 'https://api.github.com', 'personal_access_token': '<your-PAT-here>'},
+                test={'api_url': 'https://api.github.com', 'personal_access_token': '<your-PAT-here>'}
+            )
+        )
+    )
+
+    module = import_package("tracardi.process_engine.action.v1.connectors.github.issues.list.plugin")
+    plugin_class = load_callable(module, "GitHubListIssuesAction")
+    plugin = plugin_class()
+    plugin.node = Node(id="node-id", 
+                       name="test-node", 
+                       module="tracardi.process_engine.action.v1.connectors.github.issues.list.plugin", 
+                       className="GitHubListIssuesAction")
+    await plugin.set_up({'resource': {'id': '', 'name': ''}, 'timeout': 10, 'owner': 'tracardi', 'repo': 'tracardi'})
+
+
+async def test_should_set_up_plugin_git_hub_get_issue_action(mocker):
+    
+    mocker.patch(
+        # api_call is from slow.py but imported to main.py
+        'tracardi.service.storage.driver.storage.driver.resource.load',
+        return_value=Resource(
+            id="test-resource",
+            type="test",
+            credentials=ResourceCredentials(
+                production={'api_url': 'https://api.github.com', 'personal_access_token': '<your-PAT-here>'},
+                test={'api_url': 'https://api.github.com', 'personal_access_token': '<your-PAT-here>'}
+            )
+        )
+    )
+
+    module = import_package("tracardi.process_engine.action.v1.connectors.github.issues.get.plugin")
+    plugin_class = load_callable(module, "GitHubGetIssueAction")
+    plugin = plugin_class()
+    plugin.node = Node(id="node-id", 
+                       name="test-node", 
+                       module="tracardi.process_engine.action.v1.connectors.github.issues.get.plugin", 
+                       className="GitHubGetIssueAction")
+    await plugin.set_up({'resource': {'id': '', 'name': ''}, 'timeout': 10, 'owner': 'tracardi', 'repo': 'tracardi', 'issue_id': '1'})
 
 
 async def test_should_set_up_plugin_elastic_search_fetcher(mocker):
@@ -2763,7 +2874,7 @@ async def test_should_set_up_plugin_transactional_mail_sender(mocker):
                        name="test-node", 
                        module="tracardi.process_engine.action.v1.connectors.mailchimp.transactional_email.plugin", 
                        className="TransactionalMailSender")
-    await plugin.set_up({'message': {'content': {'content': 'None', 'type': 'text/html'}, 'recipient': 'None', 'subject': 'None'}, 'sender_email': 'None', 'source': {'id': '1', 'name': 'Some value'}})
+    await plugin.set_up({'message': {'content': {'content': 'None', 'type': 'text/html'}, 'recipient': 'test@test.com', 'subject': 'None'}, 'sender_email': 'test@test.com', 'source': {'id': '1', 'name': 'Some value'}})
 
 
 async def test_should_set_up_plugin_mail_chimp_audience_adder(mocker):
