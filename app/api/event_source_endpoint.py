@@ -117,7 +117,7 @@ async def delete_event_source(id: str, response: Response):
     """
     Deletes event source with given ID (str)
     """
-    result = await storage.driver.event_source.delete(id)
+    result = await storage.driver.event_source.delete_by_id(id)
 
     if result is None:
         response.status_code = 404

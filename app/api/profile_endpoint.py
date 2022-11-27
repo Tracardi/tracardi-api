@@ -73,7 +73,7 @@ async def delete_profile(id: str, response: Response):
     """
     # Delete from all indices
     index = resources.get_index_constant("profile")
-    result = await storage.driver.profile.delete(id, index=index.get_multi_storage_alias())
+    result = await storage.driver.profile.delete_by_id(id, index=index.get_multi_storage_alias())
 
     if result['deleted'] == 0:
         response.status_code = 404

@@ -38,7 +38,7 @@ async def delete_reshape_schema(id: str):
 
 @router.get("/event-reshape-schema/{id}", tags=["reshaping"], include_in_schema=server.expose_gui_api, response_model=dict)
 async def get_reshape_schema(id: str):
-    result = await storage.driver.event_reshaping.load(id)
+    result = await storage.driver.event_reshaping.load_by_id(id)
     if not result:
         raise HTTPException(status_code=404, detail=f"No event reshaping with ID {id} found.")
 
