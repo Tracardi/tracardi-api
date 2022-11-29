@@ -53,4 +53,4 @@ RUN mv docs app
 WORKDIR /app
 ENV VARIABLE_NAME="application"
 
-CMD ["uvicorn", "app.main:application", "--proxy-headers", "--host", "0.0.0.0",  "--port", "80"]
+CMD ["uvicorn", "app.main:application", "--proxy-headers", "--host", "0.0.0.0",  "--port", "80", "--log-level", "warning"]
