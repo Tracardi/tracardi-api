@@ -2,7 +2,7 @@ import logging
 from fastapi import APIRouter, Request, status, HTTPException
 from app.api.track.service.ip_address import get_ip_address
 from tracardi.domain.api_instance import ApiInstance
-from tracardi.service.tracker import synchronized_event_tracking
+from tracardi.service.tracker import track_event
 from tracardi.config import tracardi
 from tracardi.domain.payload.tracker_payload import TrackerPayload
 from tracardi.exceptions.exception import TracardiException, UnauthorizedException, FieldTypeConflictException, \
@@ -27,7 +27,7 @@ def get_headers(request: Request):
 
 async def _track(tracker_payload: TrackerPayload, host: str, profile_less: bool = False):
     try:
-        return await synchronized_event_tracking(tracker_payload, host, profile_less, allowed_bridges=['rest'])
+        return await track_event(tracker_payload, host, profile_less, allowed_bridges=['rest'])
     except UnauthorizedException as e:
         message = str(e)
         logger.error(message)

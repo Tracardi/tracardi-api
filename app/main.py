@@ -40,7 +40,7 @@ from tracardi.service.storage.elastic_client import ElasticClient
 from tracardi.domain.entity import Entity
 from tracardi.domain.payload.event_payload import EventPayload
 from tracardi.domain.payload.tracker_payload import TrackerPayload
-from tracardi.service.tracker import synchronized_event_tracking
+from tracardi.service.tracker import track_event
 
 logging.basicConfig(level=logging.ERROR)
 logger = logging.getLogger(__name__)
@@ -311,9 +311,9 @@ async def add_process_time_header(request: Request, call_next):
                 )
 
                 asyncio.create_task(
-                    synchronized_event_tracking(
+                    track_event(
                         tracker_payload,
-                        host='0.0.0.0',
+                        ip='0.0.0.0',
                         profile_less=True,
                         allowed_bridges=['monitor'],
                         internal_source=EventSource(
