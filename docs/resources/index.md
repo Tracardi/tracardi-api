@@ -18,4 +18,4 @@ and stored inside Tracardi.
 ### Credentials caching
 
 Credentials are subject to caching. That means that after they are changed you will not see the change immediately but
-after a certain number of seconds. Usually 60 seconds. Search for `SOURCE_TTL` for more information on cache settings.
+after a certain number of seconds. Usually 60 seconds. Search for `SOURCE_CACHE_TTL` for more information on cache settings.

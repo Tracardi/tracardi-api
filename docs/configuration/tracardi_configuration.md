@@ -57,7 +57,7 @@ of all the environment variable names below.
 * `REDIS_HOST` - Default: redis://localhost:6379. This setting is used only when `SYNC_PROFILE_TRACKS` is equal to yes.
   This is the host URI of Redis instance that is required to synchronize profile tracks. Available only in commercial
   version of Tracardi.
-* `SOURCE_TTL` - Default: 60. Each resource read is cached for given seconds. That means that when you change any
+* `SOURCE_CACHE_TTL` - Default: 60. Each resource read is cached for given seconds. That means that when you change any
   resource data, e.g. credentials it wil be available with max 60 seconds.
 * `CACHE_PROFILE` - Default: no. Profiles can be cached, but it is not recommended as this option is experimental.
 

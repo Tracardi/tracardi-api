@@ -107,15 +107,15 @@ system_settings = [
     ),
     SystemSettings(
         **{
-            "label": "CACHE_SESSION",
-            "value": tracardi.cache_session,
+            "label": "SESSION_CACHE_TTL",
+            "value": memory_cache.session_cache_ttl,
             "desc": "Default: 0. Set session caching time. Set 0 for no caching."
         }
     ),
     SystemSettings(
         **{
-            "label": "CACHE_EVENT_VALIDATION",
-            "value": tracardi.cache_event_validation,
+            "label": "EVENT_VALIDATION_CACHE_TTL",
+            "value": memory_cache.event_validation_cache_ttl,
             "desc": "Default: 0. Set event validation schema caching time. Set 0 for no caching."
         }
     ),
@@ -175,7 +175,7 @@ system_settings = [
     ),
     SystemSettings(
         **{
-            "label": "SOURCE_TTL",
+            "label": "SOURCE_CACHE_TTL",
             "value": memory_cache.source_ttl,
             "desc": "Default: 60. Each resource read is cached for given seconds. That means that when you change any "
                     "resource data, e.g. credentials it wil be available with max 60 seconds."
@@ -334,21 +334,6 @@ system_settings = [
             "label": "REDIS_PASSWORD",
             "value": "Set" if redis_config.redis_password is not None else "Unset",
             "desc": "Default: None. This is Redis password."
-        }
-    ),
-    SystemSettings(
-        **{
-            "label": "TAGS_TTL",
-            "value": memory_cache.tags_ttl,
-            "desc": "Time of availability of event tags in memory cache, expressed in seconds, defaults to 60 seconds."
-        }
-    ),
-    SystemSettings(
-        **{
-            "label": "EVENT_VALIDATOR_TTL",
-            "value": memory_cache.event_validator_ttl,
-            "desc": "How many seconds it takes to reload event validation schema. Validation JSON SCHEMA is cached for "
-                    "performance reasons, defaults to 180 seconds."
         }
     ),
     SystemSettings(
