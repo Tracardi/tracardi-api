@@ -2,7 +2,7 @@ version: "3.7"
 services:
 
   tracardi-api:
-    image: tracardi/tracardi-api:0.7.2
+    image: tracardi/tracardi-api:0.7.3
     environment:
       ELASTIC_HOST: http://elasticsearch:9200
       REDIS_HOST: redis://redis:6379
@@ -14,7 +14,7 @@ services:
       - elasticsearch
 
   tracardi-gui:
-    image: tracardi/tracardi-gui:0.7.2
+    image: tracardi/tracardi-gui:0.7.3
     environment:
       API_URL: http://tracardi-api:8686
     ports:
@@ -30,11 +30,6 @@ services:
       discovery.type: single-node
       xpack.security.enabled: "false"
       cluster.name: contextElasticSearch
-    ports: # Expose Elasticsearch ports
-      - 9300:9300
-      - 9200:9200
 
   redis:
     image: redis
-    ports:
-      - 6379:6379
