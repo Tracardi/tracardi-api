@@ -107,6 +107,20 @@ system_settings = [
     ),
     SystemSettings(
         **{
+            "label": "CACHE_SESSION",
+            "value": tracardi.cache_session,
+            "desc": "Default: 0. Set session caching time. Set 0 for no caching."
+        }
+    ),
+    SystemSettings(
+        **{
+            "label": "CACHE_EVENT_VALIDATION",
+            "value": tracardi.cache_event_validation,
+            "desc": "Default: 0. Set event validation schema caching time. Set 0 for no caching."
+        }
+    ),
+    SystemSettings(
+        **{
             "label": "SYNC_PROFILE_TRACKS",
             "value": tracardi.sync_profile_tracks,
             "desc": "Variable sets Tracardi to synchronize profile tracks or not, defaults to False. By default "
