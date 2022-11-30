@@ -55,7 +55,8 @@ async def install_plugins():
 async def install(credentials: Optional[Credentials]):
 
     if tracardi.installation_token and tracardi.installation_token != credentials.token:
-        raise HTTPException(status_code=403, detail="Installation forbidden. Invalid installation hash.")
+        print(tracardi.installation_token)
+        raise HTTPException(status_code=403, detail="Installation forbidden. Invalid installation token.")
 
     if credentials.needs_admin:
         if credentials.empty() or not credentials.username_as_email():
