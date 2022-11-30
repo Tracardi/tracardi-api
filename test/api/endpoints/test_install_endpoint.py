@@ -10,11 +10,25 @@ def test_should_check_if_system_installed():
     assert 'admin_ok' in result
 
 
-def test_should_install_system():
+def test_should_not_install_system():
     response = endpoint.post("/install", data={
         "username": 'a@a.pl',
         "password": "a",
         "token": "",
+        "needs_admin": True
+    })
+    assert response.status_code == 403
+    result = response.json()
+    assert 'created' not in result
+    assert 'plugins' not in result
+    assert 'admin' not in result
+
+
+def test_should_install_system():
+    response = endpoint.post("/install", data={
+        "username": 'a@a.pl',
+        "password": "a",
+        "token": "tracardi",
         "needs_admin": True
     })
     result = response.json()
@@ -25,10 +39,6 @@ def test_should_install_system():
     assert 'plugins' in result
     assert 'admin' in result
     assert isinstance(result['admin'], bool)
-
-    from .test_test_endpoint import _check_if_has_installed_indices
-    _check_if_has_installed_indices()
-
 
 def test_should_install_system_plugins():
     response = endpoint.get("/install/plugins")

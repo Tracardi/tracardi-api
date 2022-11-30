@@ -25,8 +25,14 @@ async def get_data_bridges():
     Returns list of available data bridges
     """
     result = await storage.driver.bridge.load_all()
+
     result = [
-        {"id": bridge['id'], "name": bridge['name']} for bridge in result
+        {
+            "id": bridge['id'],
+            "name": bridge['name'],
+            "type": bridge['type'],
+            "manual": bridge['manual'] if 'manual' in bridge else None
+        } for bridge in result
     ]
     return {
         "total": len(result),

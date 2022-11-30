@@ -5,12 +5,12 @@ endpoint = Endpoint()
 
 def test_should_return_page():
 
-    response = endpoint.get("/logs/page/1")
+    response = endpoint.get("/logs/page/0")
     result = response.json()
 
     assert response.status_code == 200
-    assert result["total"]
-    assert result["result"]
+    assert isinstance(result["total"], int)
+    assert isinstance(result["result"], list)
 
 
 def test_should_return_logs():
@@ -19,5 +19,5 @@ def test_should_return_logs():
     result = response.json()
 
     assert response.status_code == 200
-    assert result["total"]
-    assert result["result"]
+    assert isinstance(result["total"], int)
+    assert isinstance(result["result"], list)

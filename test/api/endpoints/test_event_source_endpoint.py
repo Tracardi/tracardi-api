@@ -1,6 +1,7 @@
 from uuid import uuid4
 
 from test.utils import Endpoint
+from tracardi.domain.named_entity import NamedEntity
 
 endpoint = Endpoint()
 
@@ -11,6 +12,7 @@ def _create_event_source(id, type, config=None):
 
     event_source = dict(
         id=id,
+        bridge=NamedEntity(id="1", name="Api").dict(),
         type=type,
         name=id,
         timestamp="2022-01-07T16:18:09.278Z",

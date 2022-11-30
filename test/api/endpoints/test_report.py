@@ -11,6 +11,7 @@ def test_should_work():
 
     event_source = dict(
         id="@test-source",
+        bridge={"id": 1, "name": "API"},
         type="rest",
         name="Test",
         timestamp="2022-01-07T16:18:09.278Z",

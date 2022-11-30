@@ -30,7 +30,10 @@ async def list_event_sources(query: str = None):
     """
     Lists all event sources that match given query (str) parameter
     """
-    result, total = await storage.driver.event_source.load_all(limit=1000)
+    result = await storage.driver.event_source.load_all(limit=1000)
+
+    total = result.total
+    result = [EventSource(**r) for r in result]
 
     # Filtering
     if query is not None and len(query) > 0:
@@ -140,13 +143,24 @@ async def refresh_event_sources():
 @router.get("/event-sources/entity",
             tags=["event-source"],
             include_in_schema=server.expose_gui_api)
-async def list_event_sources_names_and_ids(add_current: bool = False, limit: int = 500):
+async def list_event_sources_names_and_ids(add_current: bool = False, type: Optional[str] = None, limit: int = 500):
     """
     Returns list of event sources. This list contains only id and name.
     """
 
-    result, total = await storage.driver.event_source.load_all(limit=limit)
-    result = [NamedEntity(**r.dict()) for r in result]
+    if type:
+        result = await storage.driver.event_source.load_by(field="type", value=type)
+    else:
+        result = await storage.driver.event_source.load_all(limit=limit)
+
+    if result is None:
+        return {
+            "total": 0,
+            "result": []
+        }
+    total = result.total
+
+    result = [NamedEntity(**r) for r in result]
 
     if add_current is True:
         total += 1
