@@ -10,7 +10,7 @@ from tracardi.config import tracardi, elastic
 from tracardi.domain.credentials import Credentials
 from tracardi.domain.user import User
 from tracardi.exceptions.log_handler import log_handler
-from tracardi.service.setup.setup_indices import create_indices, update_current_version
+from tracardi.service.setup.setup_indices import create_indices, update_current_version, install_default_data
 from tracardi.service.setup.setup_plugins import add_plugins
 from tracardi.service.storage.driver import storage
 from tracardi.service.storage.index import resources
@@ -72,6 +72,10 @@ async def install(credentials: Optional[Credentials]):
         logger.warning("Elasticsearch replicas decreased to 0 due to only one data node in the cluster.")
 
     result = {"created": await create_indices(), 'admin': False}
+
+    # Install defaults
+
+    await install_default_data()
 
     # Update install history
 
