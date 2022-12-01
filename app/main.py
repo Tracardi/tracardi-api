@@ -235,6 +235,7 @@ async def app_starts():
             for key, value in health.items():
                 key = key.replace("_", " ")
                 logger.info(f"Elasticsearch {key}: {value}")
+            logger.info(f"Elasticsearch query timeout: {elastic.query_timeout}s")
             success = True
             break
 
