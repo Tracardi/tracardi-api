@@ -121,6 +121,27 @@ system_settings = [
     ),
     SystemSettings(
         **{
+            "label": "EVENT_TAG_CACHE_TTL",
+            "value": memory_cache.event_tag_cache_ttl,
+            "desc": "Default: 0. Set cache time for event tag configuration. Set 0 for no caching."
+        }
+    ),
+    SystemSettings(
+        **{
+            "label": "ELASTIC_SAVE_POOL",
+            "value": elastic.save_pool,
+            "desc": "Default: 0. Pool of records to be collected before saving to elastic. Default 0 means no polling."
+        }
+    ),
+    SystemSettings(
+        **{
+            "label": "ELASTIC_SAVE_POOL_TTL",
+            "value": elastic.save_pool_ttl,
+            "desc": "Default: 5. How many seconds pool waits before being purged."
+        }
+    ),
+    SystemSettings(
+        **{
             "label": "SYNC_PROFILE_TRACKS",
             "value": tracardi.sync_profile_tracks,
             "desc": "Variable sets Tracardi to synchronize profile tracks or not, defaults to False. By default "
