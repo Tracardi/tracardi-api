@@ -290,6 +290,13 @@ system_settings = [
     ),
     SystemSettings(
         **{
+            "label": "ELASTIC_QUERY_TIMEOUT",
+            "value": elastic.query_timeout,
+            "desc": "Default: 12. Defines max connection timeout."
+        }
+    ),
+    SystemSettings(
+        **{
             "label": "ELASTIC_HTTP_COMPRESS",
             "value": elastic.http_compress,
             "desc": "default value: None. Set compression on data when the client calls the server."
