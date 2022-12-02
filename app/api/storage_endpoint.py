@@ -14,7 +14,7 @@ router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin", "maintainer"]))]
 )
 
-memory_cache = MemoryCache()
+memory_cache = MemoryCache("index-mapping")
 
 
 @router.get("/storage/mapping/check", tags=["storage"], include_in_schema=server.expose_gui_api,
@@ -25,7 +25,7 @@ async def check_indices_mapping_consistency():
 
 @router.get("/storage/mapping/{index}/metadata", tags=["storage"], include_in_schema=server.expose_gui_api,
             response_model=dict)
-async def get_index_mapping(index: str):
+async def get_index_mapping_metadata(index: str):
     """
     Returns metadata of given index (str)
     """
