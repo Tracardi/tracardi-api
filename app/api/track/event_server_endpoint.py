@@ -25,9 +25,12 @@ def get_headers(request: Request):
     return headers
 
 
-async def _track(tracker_payload: TrackerPayload, host: str, profile_less: bool = False):
+async def _track(tracker_payload: TrackerPayload, host: str):
     try:
-        return await track_event(tracker_payload, host, profile_less, allowed_bridges=['rest'])
+        return await track_event(
+            tracker_payload,
+            host,
+            allowed_bridges=['rest'])
     except UnauthorizedException as e:
         message = str(e)
         logger.error(message)
@@ -56,4 +59,5 @@ async def _track(tracker_payload: TrackerPayload, host: str, profile_less: bool 
 @router.post("/track", tags=['collector'])
 async def track(tracker_payload: TrackerPayload, request: Request, profile_less: bool = False):
     tracker_payload.request['headers'] = get_headers(request)
-    return await _track(tracker_payload, get_ip_address(request), profile_less)
+    tracker_payload.profile_less = profile_less
+    return await _track(tracker_payload, get_ip_address(request))

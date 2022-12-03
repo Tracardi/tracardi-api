@@ -317,7 +317,6 @@ async def add_process_time_header(request: Request, call_next):
                     track_event(
                         tracker_payload,
                         ip='0.0.0.0',
-                        profile_less=True,
                         allowed_bridges=['monitor'],
                         internal_source=EventSource(
                             id=source_id,
