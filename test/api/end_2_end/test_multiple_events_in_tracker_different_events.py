@@ -106,7 +106,7 @@ def test_source_rule_and_flow():
                     {"type": str(uuid4())},
                     {"type": event_type},
                 ],
-                "options": {"profile": True}
+                "options": {}
             }
 
         response = endpoint.post("/track", data=payload)
@@ -117,9 +117,13 @@ def test_source_rule_and_flow():
         assert response.status_code == 200
         result = response.json()
         profile_id = result['profile']['id']
-        assert endpoint.delete(f'/profile/{profile_id}').status_code in [200, 404]
 
-        assert result['profile']['stats']['views'] == 1
+        response = endpoint.get(f'/profile/{profile_id}')
+        assert response.status_code == 200
+        result = response.json()
+        assert result['stats']['views'] == 1
+
+        assert endpoint.delete(f'/profile/{profile_id}').status_code in [200, 404]
 
     finally:
         # Delete

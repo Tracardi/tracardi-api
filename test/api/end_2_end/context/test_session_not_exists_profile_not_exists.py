@@ -32,14 +32,14 @@ def test_session_not_exists_profile_not_exists():
         })
         result = response.json()
 
-        if 'debugging' not in result:
+        if 'event' not in result:
             raise ValueError(
                 'Could not perform test due to bad server configuration. No debugging allowed. '
                 'Start Tracardi with TRACK_DEBUG=yes.')
 
-        assert result['debugging']['session']['saved'] == 1
-        assert result['debugging']['events']['saved'] == 1
-        assert result['debugging']['profile']['saved'] == 1
+        assert result['session']['saved'] == 1
+        assert result['event']['saved'] == 1
+        assert result['profile']['saved'] == 1
 
         # IMPORTANT: when there is no profile in storage it must be recreated.
         # this is very important security feature.
@@ -47,7 +47,7 @@ def test_session_not_exists_profile_not_exists():
         new_profile_id = result['profile']['id']
         assert new_profile_id != profile_id
 
-        assert result['debugging']['session']['ids'][0] == session_id
+        assert result['session']['id'] == session_id
 
         assert endpoint.get(f'/profiles/refresh').status_code == 200
         assert endpoint.get(f'/sessions/refresh').status_code == 200

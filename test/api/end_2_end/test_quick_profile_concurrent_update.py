@@ -98,13 +98,15 @@ def test_source_rule_and_flow():
                         },
                         "options": {"save": True}
                     }],
-                    "options": {"profile": True}
+                    "options": {}
                 }
 
                 response = endpoint.post("/track", data=payload)
                 assert response.status_code == 200
                 result = response.json()
-                print(f"{result['profile']['id']}, {result['profile']['stats']['views']}")
+
+                assert endpoint.get(f'/profiles/refresh').status_code == 200
+
                 return result
 
             # create profile_id
@@ -137,8 +139,13 @@ def test_source_rule_and_flow():
             assert endpoint.get('/profiles/refresh').status_code == 200
             assert endpoint.get('/sessions/refresh').status_code == 200
 
-            assert result['profile']['stats']['views'] == max_concurrent_threads+2
-            print(time() - start)
+            # Read profile
+            profile_id = result['profile']['id']
+            response = endpoint.get(f'/profile/{profile_id}')
+            assert response.status_code == 200
+            result = response.json()
+
+            assert result['stats']['views'] == max_concurrent_threads+2
 
         finally:
             assert endpoint.get(f'/profiles/refresh').status_code == 200

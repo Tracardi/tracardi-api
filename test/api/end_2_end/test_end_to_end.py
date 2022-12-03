@@ -110,7 +110,7 @@ def test_source_rule_and_flow():
                 "id": session_id
             },
             "events": [{"type": event_type, "options": {"save": True}}],
-            "options": {"profile": True}
+            "options": {}
         }
 
         response = endpoint.post("/track", data=payload)

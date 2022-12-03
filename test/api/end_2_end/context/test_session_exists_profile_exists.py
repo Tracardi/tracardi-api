@@ -40,14 +40,14 @@ def test_session_exists_profile_exists():
         assert endpoint.get(f'/profiles/refresh').status_code == 200
         assert endpoint.get(f'/sessions/refresh').status_code == 200
 
-        if 'debugging' not in result:
+        if 'event' not in result:
             raise ValueError(
                 'Could not perform test due to bad server configuration. No debugging allowed. '
                 'Start Tracardi with TRACK_DEBUG=yes.')
 
-        assert result['debugging']['session']['saved'] == 0  # session is not saved because it did not change
-        assert result['debugging']['events']['saved'] == 1
-        assert result['debugging']['profile']['saved'] == 0  # profile is not saved because it exists
+        assert result['session']['saved'] == 0  # session is not saved because it did not change
+        assert result['event']['saved'] == 1
+        assert result['profile']['saved'] == 0  # profile is not saved because it exists
 
         # IMPORTANT: Everything is ok session and profile exists.
 

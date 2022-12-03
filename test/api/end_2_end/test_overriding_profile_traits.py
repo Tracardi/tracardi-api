@@ -142,18 +142,27 @@ def test_source_rule_and_flow():
                 },
                 "options": {"save": True}
             }],
-            "options": {"profile": True}
+            "options": {}
         }
 
         response = endpoint.post("/track", data=payload)
         assert response.status_code == 200
         result = response.json()
-        assert result['profile']['stats']['visits'] == 1
-        assert result['profile']['stats']['views'] == 2
-        assert result['profile']['traits']['public']['a'] in [1, 2]
-        assert len(set(result['profile']['traits']['public']['b']).difference({1, 2})) == 0
+        assert endpoint.get(f'/profiles/refresh').status_code == 200
 
+        # New profile id is returned
         profile_id = result['profile']['id']
+
+        response = endpoint.get(f'/profile/{profile_id}')
+        assert response.status_code == 200
+        result = response.json()
+
+        assert result['stats']['visits'] == 1
+        assert result['stats']['views'] == 2
+        assert result['traits']['public']['a'] in [1, 2]
+        assert len(set(result['traits']['public']['b']).difference({1, 2})) == 0
+
+        profile_id = result['id']
 
     finally:
         assert endpoint.get(f'/profiles/refresh').status_code == 200

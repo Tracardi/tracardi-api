@@ -31,14 +31,12 @@ def test_track_payload():
         assert response.status_code == 200
 
         result = response.json()
-        if 'debugging' not in result:
+        if 'event' not in result:
             raise ValueError(
                 'Could not perform test due to bad server configuration. No debugging allowed. '
                 'Start Tracardi with TRACK_DEBUG=yes.')
 
-        assert result['debugging']['events']['saved'] == 1
-        assert len(result['debugging']['events']['errors']) == 0
-        assert len(result['debugging']['events']['ids']) == 1
+        assert len(result['event']['ids']) == 1
 
         assert 'id' in result['profile']
 

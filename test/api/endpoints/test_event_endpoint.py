@@ -1,6 +1,7 @@
 from time import sleep
 from uuid import uuid4
 
+from tracardi.config import tracardi
 from .test_event_source_endpoint import _create_event_source
 from test.utils import Endpoint
 
@@ -31,7 +32,7 @@ def _make_event(type, properties=None, session_id=None, source_id=None):
                 "context": {"test": 1}
             }
         ],
-        "options": {}
+        "options": {"debugger": True}
     }
 
     response = endpoint.post("/track", data=payload)
@@ -41,13 +42,9 @@ def _make_event(type, properties=None, session_id=None, source_id=None):
     assert endpoint.get('/profiles/refresh').status_code == 200
 
     result = response.json()
-    assert result['debugging']['events']['saved'] == 1
-    event_id = result['debugging']['events']['ids'][0]
-    if session_id is None:
-        assert result['debugging']['profile']['saved'] == 1
-        profile_id = result['debugging']['profile']['ids'][0]
-    else:
-        profile_id = result['profile']['id']
+
+    event_id = result['event']['ids'][0]
+    profile_id = result['profile']['id']
 
     return response, payload, event_id, profile_id
 
@@ -163,11 +160,12 @@ def test_should_return_events_by_type_for_profile():
     event_type = str(uuid4())
     session_id = str(uuid4())
     source_id = str(uuid4())
-    response, _, event_id, profile_id = _make_event(event_type, session_id=session_id, source_id=source_id)
-    response, _, event_id1, profile_id1 = _make_event(event_type, session_id=session_id, source_id=source_id)
+    response1, _, event_id, profile_id = _make_event(event_type, session_id=session_id, source_id=source_id)
+    response2, _, event_id1, profile_id1 = _make_event(event_type, session_id=session_id, source_id=source_id)
 
     try:
-        assert profile_id1 == profile_id
+        # 2nd profile is not saved
+        assert profile_id1 == profile_id1
 
         response = endpoint.get(f'/events/by_type/profile/{profile_id}')
         assert response.status_code == 200
@@ -456,8 +454,10 @@ def test_should_get_one_event():
         response = endpoint.get(f'/event/{event_id}')
         assert response.status_code == 200
         result = response.json()
-        assert result['event']['id'] == event_id
-        assert result['event']['profile']['id'] == profile_id
+
+        if tracardi.track_debug:
+            assert result['event']['id'] == event_id
+            assert result['event']['profile']['id'] == profile_id
         assert result['event']['properties'] == payload['events'][0]['properties']
         assert result['event']['type'] == payload['events'][0]['type']
     finally:

@@ -16,7 +16,7 @@ endpoint = Endpoint()
 def test_should_correctly_update_profile_on_concurrent_events():
 
     """
-    Will fail is there is not redis
+    Will fail is there is no redis
     """
 
     response = endpoint.get("/settings")
@@ -78,45 +78,65 @@ def test_should_correctly_update_profile_on_concurrent_events():
             assert endpoint.get('/flows/refresh').status_code == 200
 
             # Send event
-            start = time()
+            payload = {
+                "source": {
+                    "id": source_id
+                },
+                "session": {
+                    "id": session_id
+                },
+                "events": [{
+                    "type": event_type,
+                    "properties": {
+                        "a": 1,
+                        "b": 2
+                    },
+                    "options": {"save": True}
+                }],
+                "options": {}
+            }
+            response = endpoint.post("/track", data=payload)
+            assert response.status_code == 200
+            result = response.json()
+            assert endpoint.get('/profiles/refresh').status_code == 200
+            assert endpoint.get('/sessions/refresh').status_code == 200
+
+            # created profile_id
+            profile_id = result['profile']['id']
+
+            payload = {
+                "source": {
+                    "id": source_id
+                },
+                "session": {
+                    "id": session_id
+                },
+                "profile": {
+                    "id": profile_id
+                },
+                "events": [{
+                    "type": event_type,
+                    "properties": {
+                        "a": 1,
+                        "b": 2
+                    },
+                    "options": {}
+                }],
+                "options": {"debugger": True}
+            }
+
             for x in range(0, 10):
-
-                payload = {
-                    "source": {
-                        "id": source_id
-                    },
-                    "session": {
-                        "id": session_id
-                    },
-                    "profile": {
-                        "id": profile_id
-                    },
-                    "events": [{
-                        "type": event_type,
-                        "properties": {
-                            "a": 1,
-                            "b": 2
-                        },
-                        "options": {"save": True}
-                    }],
-                    "options": {"profile": True}
-                }
-
                 response = endpoint.post("/track", data=payload)
                 assert response.status_code == 200
-                result = response.json()
-                profile_id = result['profile']['id']
-                print(profile_id, result['profile']['stats']['views'])
-
-            response = endpoint.post("/track", data=payload)
+                print(response.json())
 
             assert endpoint.get('/profiles/refresh').status_code == 200
             assert endpoint.get('/sessions/refresh').status_code == 200
 
+            response = endpoint.get(f'/profile/{profile_id}')
             assert response.status_code == 200
             result = response.json()
-            assert result['profile']['stats']['views'] == 11
-            print(time() - start)
+            assert result['stats']['views'] == 11
 
         finally:
             assert endpoint.get(f'/profiles/refresh').status_code == 200

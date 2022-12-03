@@ -35,15 +35,15 @@ def test_session_exists_profile_not_exists():
         })
         result = response.json()
 
-        if 'debugging' not in result:
+        if 'event' not in result:
             raise ValueError(
                 'Could not perform test due to bad server configuration. No debugging allowed. '
                 'Start Tracardi with TRACK_DEBUG=yes.')
 
-        assert result['debugging']['session']['saved'] == 1  # session is saved again because
+        assert result['session']['saved'] == 1  # session is saved again because
         # new profile is created and session has to be updated. Previous session had no profile.id
-        assert result['debugging']['events']['saved'] == 0
-        assert result['debugging']['profile']['saved'] == 1
+        assert result['event']['saved'] == 1
+        assert result['profile']['saved'] == 1
 
         assert endpoint.get(f'/profiles/refresh').status_code == 200
         assert endpoint.get(f'/sessions/refresh').status_code == 200
@@ -57,7 +57,6 @@ def test_session_exists_profile_not_exists():
         # assert endpoint.delete(f'/profile/{new_profile_id}').status_code == 200
 
     finally:
-        pass
-    #     assert endpoint.delete(f'/profile/{profile_id}').status_code in [200, 404]
-    #     assert endpoint.delete(f'/event-source/{source_id}').status_code in [200, 404]
-    #     assert endpoint.delete(f'/session/{session_id}').status_code in [200, 404]
+        assert endpoint.delete(f'/profile/{profile_id}').status_code in [200, 404]
+        assert endpoint.delete(f'/event-source/{source_id}').status_code in [200, 404]
+        assert endpoint.delete(f'/session/{session_id}').status_code in [200, 404]

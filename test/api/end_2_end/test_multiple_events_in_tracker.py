@@ -120,7 +120,7 @@ def test_should_count_multiple_page_views_from_one_api_call():
                     {"type": event_type},
                     {"type": event_type},
                 ],
-                "options": {"profile": True}
+                "options": {}
             }
 
         response = endpoint.post("/track", data=payload)
@@ -132,7 +132,10 @@ def test_should_count_multiple_page_views_from_one_api_call():
         result = response.json()
         profile_id = result['profile']['id']
 
-        assert result['profile']['stats']['views'] == 30
+        response = endpoint.get(f'/profile/{profile_id}')
+        assert response.status_code == 200
+        result = response.json()
+        assert result['stats']['views'] == 30
 
     finally:
         assert endpoint.get(f'/profiles/refresh').status_code == 200

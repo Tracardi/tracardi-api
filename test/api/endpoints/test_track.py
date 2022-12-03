@@ -31,7 +31,7 @@ def test_should_register_correct_event():
                     "context": {"test": 2}
                 }
             ],
-            "options": {"profile": True, "debugger": True}
+            "options": {"debugger": True}
         }
 
         response = endpoint.post("/track", data=payload)
@@ -40,54 +40,48 @@ def test_should_register_correct_event():
 
         assert 'profile' in result
         assert 'id' in result['profile']
-        assert 'traits' in result['profile']
         profile_id = result['profile']['id']
 
-        if 'debugging' in result:
+        assert 'event' in result
+        assert 'ids' in result['event']
 
-            assert 'events' in result['debugging']
-            assert 'ids' in result['debugging']['events']
+        assert len(result['event']['ids']) == 2
+        event_1, event_2 = result['event']['ids']
+        session_id = result['session']['id']
+        try:
+            endpoint.get(f'/events/refresh')
 
-            assert len(result['debugging']['events']['ids']) == 2
+            # Event 1
 
-            event_1, event_2 = result['debugging']['events']['ids']
-            session_id, = result['debugging']['session']['ids']
+            response = endpoint.get(f'/event/{event_1}')
+            result = response.json()
+            assert result['event']['id'] == event_1
+            assert result['event']['context']['test'] == 1
 
-            try:
+            # Event 2
 
-                endpoint.get(f'/events/refresh')
+            response = endpoint.get(f'/event/{event_2}')
+            result = response.json()
+            assert result['event']['id'] == event_2
+            assert result['event']['context']['test'] == 2
 
-                # Event 1
+            endpoint.get(f'/sessions/refresh')
+            response = endpoint.get(f'/session/{session_id}')
+            result = response.json()
+            assert 'id' in result
+            assert result['id'] == session_id
 
-                response = endpoint.get(f'/event/{event_1}')
-                result = response.json()
-                assert result['event']['id'] == event_1
-                assert result['event']['context']['test'] == 1
+            endpoint.get(f'/profiles/refresh')
+            response = endpoint.get(f'/profile/{profile_id}')
+            result = response.json()
+            assert 'id' in result
+            assert result['id'] == profile_id
 
-                # Event 2
-
-                response = endpoint.get(f'/event/{event_2}')
-                result = response.json()
-                assert result['event']['id'] == event_2
-                assert result['event']['context']['test'] == 2
-
-                endpoint.get(f'/sessions/refresh')
-                response = endpoint.get(f'/session/{session_id}')
-                result = response.json()
-                assert 'id' in result
-                assert result['id'] == session_id
-
-                endpoint.get(f'/profiles/refresh')
-                response = endpoint.get(f'/profile/{profile_id}')
-                result = response.json()
-                assert 'id' in result
-                assert result['id'] == profile_id
-
-            finally:
-                assert endpoint.delete(f'/session/{session_id}').status_code in [200, 404]
-                assert endpoint.delete(f'/event/{event_1}').status_code in [200, 404]
-                assert endpoint.delete(f'/event/{event_2}').status_code in [200, 404]
-                assert endpoint.delete(f'/profile/{profile_id}').status_code in [200, 404]
+        finally:
+            assert endpoint.delete(f'/session/{session_id}').status_code in [200, 404]
+            assert endpoint.delete(f'/event/{event_1}').status_code in [200, 404]
+            assert endpoint.delete(f'/event/{event_2}').status_code in [200, 404]
+            assert endpoint.delete(f'/profile/{profile_id}').status_code in [200, 404]
 
     finally:
         assert endpoint.delete(f'/event-source/{source_id}').status_code in [200, 404]
