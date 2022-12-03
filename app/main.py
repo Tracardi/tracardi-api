@@ -312,7 +312,7 @@ async def add_process_time_header(request: Request, call_next):
                         "saveSession": False
                     }
                 )
-
+                # TODO this did not work well
                 asyncio.create_task(
                     track_event(
                         tracker_payload,

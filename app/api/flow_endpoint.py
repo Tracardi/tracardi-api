@@ -5,6 +5,7 @@ from tracardi.domain.enum.production_draft import ProductionDraft
 from tracardi.domain.event_metadata import EventMetadata, EventTime
 from tracardi.exceptions.exception import StorageException
 from tracardi.domain.console import Console
+from tracardi.service.console_log import ConsoleLog
 from tracardi.service.secrets import encrypt
 from tracardi.service.storage.driver import storage
 from tracardi.service.storage.factory import storage_manager
@@ -300,11 +301,11 @@ async def debug_flow(flow: GraphFlow):
 
     flow_invoke_result = await workflow.invoke(flow, event, profile, session, ux, debug=True)
 
-    console_log = []  # type: List[Console]
+    console_log = ConsoleLog()
     profile_save_result = None
     try:
         # Store logs in one console log
-        for log in flow_invoke_result.log_list:  # type: Log
+        for log in flow_invoke_result.log_list:
             console = Console(
                 origin="node",
                 event_id=get_entity_id(flow_invoke_result.event),
