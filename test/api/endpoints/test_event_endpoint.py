@@ -31,7 +31,7 @@ def _make_event(type, properties=None, session_id=None, source_id=None):
                 "context": {"test": 1}
             }
         ],
-        "options": {"profile": True, "debugger": True}
+        "options": {}
     }
 
     response = endpoint.post("/track", data=payload)
