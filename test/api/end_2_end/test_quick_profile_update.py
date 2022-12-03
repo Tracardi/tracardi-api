@@ -1,4 +1,4 @@
-from time import time
+from time import time, sleep
 from uuid import uuid4
 
 from tracardi.process_engine.action.v1.flow.start.start_action import StartAction
@@ -128,7 +128,7 @@ def test_should_correctly_update_profile_on_concurrent_events():
             for x in range(0, 10):
                 response = endpoint.post("/track", data=payload)
                 assert response.status_code == 200
-                print(response.json())
+                print(response.json()['profile']['id'])
 
             assert endpoint.get('/profiles/refresh').status_code == 200
             assert endpoint.get('/sessions/refresh').status_code == 200
