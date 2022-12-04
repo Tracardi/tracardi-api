@@ -138,7 +138,7 @@ def should_correctly_update_profile_on_concurrent_events():
             for x in range(0, 10):
                 print("Thread", x)
                 if x in [2, 3, 8]:
-                    if x in [2,8]:
+                    if x in [2, 8]:
                         pid = '282828282'
                     else:
                         pid = '3333333'
