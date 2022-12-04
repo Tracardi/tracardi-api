@@ -132,13 +132,43 @@ def should_correctly_update_profile_on_concurrent_events():
             def post_request(payload, x):
                 response = endpoint.post("/track", data=payload)
                 assert response.status_code == 200
-                print('response {} `{}`'.format(response.status_code, response.json()))
+                print('response {} `{}`'.format(x, response.json()))
 
             threads = {}
             for x in range(0, 10):
                 print("Thread", x)
-                threads[x] = threading.Thread(target=post_request, args=(payload, x), daemon=True)
-                threads[x].start()
+                if x in [2, 3, 8]:
+                    if x in [2,8]:
+                        pid = '282828282'
+                    else:
+                        pid = '3333333'
+
+                    payload_new = {
+                        "source": {
+                            "id": source_id
+                        },
+                        "session": {
+                            "id": pid
+                        },
+                        "profile": {
+                            "id": pid
+                        },
+                        "events": [{
+                            "type": event_type,
+                            "properties": {
+                                "a": 1,
+                                "b": 2
+                            },
+                            "options": {}
+                        }],
+                        "options": {"debugger": True}
+                    }
+                    print("random", pid)
+                    threads[x] = threading.Thread(target=post_request, args=(payload_new, x), daemon=True)
+                    threads[x].start()
+                else:
+                    threads[x] = threading.Thread(target=post_request, args=(payload, x), daemon=True)
+                    threads[x].start()
 
             for _, t in threads.items():
                 t.join()
@@ -153,17 +183,18 @@ def should_correctly_update_profile_on_concurrent_events():
             # == 11
 
         finally:
-            assert endpoint.get(f'/profiles/refresh').status_code == 200
-            assert endpoint.get(f'/sessions/refresh').status_code == 200
-            assert endpoint.get(f'/rules/refresh').status_code == 200
-            assert endpoint.get(f'/flows/refresh').status_code == 200
-            assert endpoint.get(f'/event-sources/refresh').status_code == 200
-
-            assert endpoint.delete(f'/profile/{profile_id}').status_code in [200, 404]
-            assert endpoint.delete(f'/flow/{flow_id}').status_code in [200, 404]
-            assert endpoint.delete(f'/rule/{rule_id}').status_code in [200, 404]
-            assert endpoint.delete(f'/session/{session_id}').status_code in [200, 404, 500]
-            assert endpoint.delete(f'/event-source/{source_id}').status_code in [200, 404]
+            pass
+            # assert endpoint.get(f'/profiles/refresh').status_code == 200
+            # assert endpoint.get(f'/sessions/refresh').status_code == 200
+            # assert endpoint.get(f'/rules/refresh').status_code == 200
+            # assert endpoint.get(f'/flows/refresh').status_code == 200
+            # assert endpoint.get(f'/event-sources/refresh').status_code == 200
+            #
+            # assert endpoint.delete(f'/profile/{profile_id}').status_code in [200, 404]
+            # assert endpoint.delete(f'/flow/{flow_id}').status_code in [200, 404]
+            # assert endpoint.delete(f'/rule/{rule_id}').status_code in [200, 404]
+            # assert endpoint.delete(f'/session/{session_id}').status_code in [200, 404, 500]
+            # assert endpoint.delete(f'/event-source/{source_id}').status_code in [200, 404]
     else:
         print("Quick update of profile skipped. SYNC_PROFILE_TRACKS not configured.")
 
