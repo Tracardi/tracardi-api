@@ -9,6 +9,7 @@ from time import time
 
 from app.api.auth.permissions import Permissions
 from tracardi.domain.event_source import EventSource
+from tracardi.service.elastic.connection import wait_for_connection
 
 _local_dir = os.path.dirname(__file__)
 sys.path.append(f"{_local_dir}/api/proto/stubs")
@@ -213,55 +214,10 @@ application.include_router(graphql_profiles,
                            tags=["graphql"])
 
 
-def is_elastic_on_localhost():
-    local_hosts = {'127.0.0.1', 'localhost'}
-    if isinstance(elastic.host, list):
-        return set(elastic.host).intersection(local_hosts)
-    return elastic.host in local_hosts
-
-
 @application.on_event("startup")
 async def app_starts():
     logger.info(f"TRACARDI version {str(tracardi.version)} set-up starts.")
-    no_of_tries = 10
-    success = False
-    while True:
-        try:
-
-            if no_of_tries < 0:
-                break
-
-            health = await storage.driver.raw.health()
-            for key, value in health.items():
-                key = key.replace("_", " ")
-                logger.info(f"Elasticsearch {key}: {value}")
-            logger.info(f"Elasticsearch query timeout: {elastic.query_timeout}s")
-            success = True
-            break
-
-        except elasticsearch.exceptions.ConnectionError as e:
-            await asyncio.sleep(5)
-            no_of_tries -= 1
-            logger.error(
-                f"Could not connect to elasticsearch at {elastic.host}. Number of tries left: {no_of_tries}. "
-                f"Waiting 5s to retry.")
-            if is_elastic_on_localhost():
-                logger.warning("You are trying to connect to 127.0.0.1. If this instance is running inside docker "
-                               "then you can not use localhost as elasticsearch is probably outside the container. Use "
-                               "external IP that docker can connect to.")
-            logger.error(f"Error details: {str(e)}")
-
-        # todo check if this is needed when we make a single thread startup.
-        except Exception as e:
-            await asyncio.sleep(1)
-            no_of_tries -= 1
-            logger.error(f"Could not save data. Number of tries left: {no_of_tries}. Waiting 1s to retry.")
-            logger.error(f"Error details: {repr(e)}")
-
-    if not success:
-        logger.error(f"Could not connect to elasticsearch")
-        exit()
-
+    await wait_for_connection(no_of_tries=10)
     report_i_am_alive()
     remove_dead_instances()
     logger.info("TRACARDI set-up finished.")
