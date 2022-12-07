@@ -1,20 +1,15 @@
-import logging
-import asyncio
 import os, sys
-from datetime import datetime
-from random import randint
-
-from starlette.responses import JSONResponse
-from time import time
-
-from app.api.auth.permissions import Permissions
-from tracardi.domain.event_source import EventSource
-from tracardi.service.elastic.connection import wait_for_connection
 
 _local_dir = os.path.dirname(__file__)
 sys.path.append(f"{_local_dir}/api/proto/stubs")
 
-import elasticsearch
+import logging
+import asyncio
+from random import randint
+from starlette.responses import JSONResponse
+from time import time
+from app.api.auth.permissions import Permissions
+from tracardi.service.elastic.connection import wait_for_connection
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI, Request, Depends
 from starlette.staticfiles import StaticFiles
@@ -35,14 +30,9 @@ from app.api.graphql.profile import graphql_profiles
 from app.api.track import event_server_endpoint
 from app.config import server
 from app.setup.on_start import update_api_instance, clear_dead_api_instances
-from tracardi.config import tracardi, elastic
+from tracardi.config import tracardi
 from tracardi.exceptions.log_handler import log_handler
-from tracardi.service.storage.driver import storage
 from tracardi.service.storage.elastic_client import ElasticClient
-from tracardi.domain.entity import Entity
-from tracardi.domain.payload.event_payload import EventPayload
-from tracardi.domain.payload.tracker_payload import TrackerPayload
-from tracardi.service.tracker import track_event
 
 logging.basicConfig(level=logging.ERROR)
 logger = logging.getLogger(__name__)
@@ -239,7 +229,6 @@ async def add_process_time_header(request: Request, call_next):
         return response
 
     except Exception as e:
-        logger.error("Endpoint exception", exc_info=True)
         return JSONResponse(
             status_code=500,
             headers={
@@ -248,55 +237,6 @@ async def add_process_time_header(request: Request, call_next):
             },
             content={"detail": str(e)}
         )
-
-    finally:
-        try:
-            if tracardi.monitor_logs_event_type is not None:
-                source_id = "@monitoring"
-
-                tracker_payload = TrackerPayload(
-                    source=Entity(id=source_id),
-                    events=[
-                        EventPayload(
-                            type=tracardi.monitor_logs_event_type,
-                            properties=log
-                        ) for log in log_handler.collection if 'level' in log and log['level'].lower() == "error"
-                    ],
-                    options={
-                        "saveEvents": False,
-                        "saveProfile": False,
-                        "saveSession": False
-                    }
-                )
-                # TODO this did not work well
-                asyncio.create_task(
-                    track_event(
-                        tracker_payload,
-                        ip='0.0.0.0',
-                        allowed_bridges=['monitor'],
-                        internal_source=EventSource(
-                            id=source_id,
-                            timestamp=datetime.utcnow(),
-                            type="monitor",
-                            tags=["monitor"],
-                            name="Internal source",
-                            transitional=True
-                        )
-                    )
-                )
-
-            if tracardi.save_logs:
-                if await storage.driver.log.exists():
-                    if log_handler.has_logs():
-                        # do not await
-                        asyncio.create_task(storage.driver.log.save(log_handler.collection))
-                        # asyncio.create_task(storage.driver.raw.collection('log', log_handler.collection).save())
-                        log_handler.reset()
-                else:
-                    logger.warning("Log index still not created. Saving logs postponed.")
-
-        except Exception:
-            logger.error("Can process error log", exc_info=True)
 
 
 @application.on_event("shutdown")
