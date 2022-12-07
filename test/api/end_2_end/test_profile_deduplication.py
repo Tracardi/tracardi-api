@@ -29,7 +29,7 @@ async def _save(index, records):
 
 async def _create_track(source_id, session_index, session_id, profile_index, profile_id, event_index, event_props):
     session = await _save(session_index, records=[{
-        "_id": session_id,
+        '_id': session_id,
         "id": session_id,
         "metadata": {
             "time": {
@@ -53,7 +53,7 @@ async def _create_track(source_id, session_index, session_id, profile_index, pro
     session = session.ids[0]
 
     profile = await _save(profile_index, records=[{
-        "_id": profile_id,
+        '_id': profile_id,
         "id": profile_id,
         "metadata": {
             "time": {
@@ -80,7 +80,7 @@ async def _create_track(source_id, session_index, session_id, profile_index, pro
     for prop in event_props:
         event_id = str(uuid4())
         event = await _save(event_index, records=[{
-            "_id": event_id,
+            '_id': event_id,
             "id": event_id,
             "metadata": {
                 "time": {
