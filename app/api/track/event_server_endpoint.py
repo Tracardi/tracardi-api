@@ -16,15 +16,6 @@ logger.addHandler(log_handler)
 router = APIRouter()
 
 
-def get_headers(request: Request):
-    headers = dict(request.headers)
-    if 'authorization' in headers:
-        del headers['authorization']
-    if 'cookie' in headers:
-        del headers['cookie']
-    return headers
-
-
 async def _track(tracker_payload: TrackerPayload, host: str):
     try:
         return await track_event(
@@ -58,6 +49,6 @@ async def _track(tracker_payload: TrackerPayload, host: str):
 
 @router.post("/track", tags=['collector'])
 async def track(tracker_payload: TrackerPayload, request: Request, profile_less: bool = False):
-    tracker_payload.request['headers'] = get_headers(request)
+    tracker_payload.set_headers(dict(request.headers))
     tracker_payload.profile_less = profile_less
     return await _track(tracker_payload, get_ip_address(request))
