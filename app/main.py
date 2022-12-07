@@ -306,12 +306,15 @@ async def app_shutdown():
 
 
 def report_i_am_alive():
-    async def heartbeat():
-        while True:
-            await update_api_instance()
-            await asyncio.sleep(server.heartbeat_every)
+    try:
+        async def heartbeat():
+            while True:
+                await update_api_instance()
+                await asyncio.sleep(server.heartbeat_every)
 
-    asyncio.create_task(heartbeat())
+        asyncio.create_task(heartbeat())
+    except Exception:
+        logger.error("Report I_AM_ALIVE could not be saved in storage.", exc_info=True)
 
 
 def remove_dead_instances():
