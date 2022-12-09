@@ -121,9 +121,9 @@ system_settings = [
     ),
     SystemSettings(
         **{
-            "label": "EVENT_TAG_CACHE_TTL",
-            "value": memory_cache.event_tag_cache_ttl,
-            "desc": "Default: 0. Set cache time for event tag configuration. Set 0 for no caching."
+            "label": "EVENT_METADATA_CACHE_TTL",
+            "value": memory_cache.event_metadata_cache_ttl,
+            "desc": "Default: 0. Set cache time for event tagging, indexing, etc. configuration. Set 0 for no caching."
         }
     ),
     SystemSettings(

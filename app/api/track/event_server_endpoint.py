@@ -9,7 +9,7 @@ from tracardi.exceptions.exception import TracardiException, UnauthorizedExcepti
     EventValidationException
 from tracardi.exceptions.log_handler import log_handler
 
-logger = logging.getLogger('tracardi.api.event_server')
+logger = logging.getLogger(__name__)
 logger.setLevel(tracardi.logging_level)
 logger.addHandler(log_handler)
 

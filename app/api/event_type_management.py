@@ -34,7 +34,7 @@ async def add_event_type_metadata(event_type_metadata: EventTypeMetadata):
     """
 
     # Save tags
-    result = await storage.driver.event_management.add_event_type_metadata(event_type_metadata)
+    result = await storage.driver.event_management.save(event_type_metadata)
     await storage.driver.event_management.refresh()
 
     if result.errors:
