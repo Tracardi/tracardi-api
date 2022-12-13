@@ -55,7 +55,7 @@ async def install_plugins():
 async def install(credentials: Optional[Credentials]):
 
     if tracardi.installation_token and tracardi.installation_token != credentials.token:
-        print(tracardi.installation_token)
+
         raise HTTPException(status_code=403, detail="Installation forbidden. Invalid installation token.")
 
     if credentials.needs_admin:
@@ -71,7 +71,7 @@ async def install(credentials: Optional[Credentials]):
         elastic.replicas = "0"
         logger.warning("Elasticsearch replicas decreased to 0 due to only one data node in the cluster.")
 
-    result = {"created": await create_indices(), 'admin': False}
+    result = {"created": await create_indices(), "admin": False}
 
     # Install defaults
 
