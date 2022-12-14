@@ -51,6 +51,10 @@ services:
       discovery.type: single-node
       xpack.security.enabled: "false"
       cluster.name: contextElasticSearch
+    ports:
+      - 9200:9200
 
   redis:
     image: redis
+    ports:
+      - 6379:6379
