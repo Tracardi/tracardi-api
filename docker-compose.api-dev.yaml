@@ -2,7 +2,7 @@ version: "3.7"
 services:
 
   tracardi-gui:
-    image: tracardi/tracardi-gui:0.7.4-dev
+    image: tracardi/tracardi-gui:0.7.4
     environment:
       API_URL: http://<laptop-ip>:8686
     ports:
