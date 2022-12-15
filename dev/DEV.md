@@ -28,6 +28,11 @@ docker run -p 8686:80 -e ELASTIC_HOST=http://192.168.1.103:9200 -e RESET_PLUGINS
 # Run local redis
 docker run -p 6379:6379 redis
 
+# Rabbit mq
+
+docker run -p 15672:15672 -p 5672:5672 --hostname my-rabbit-2 --name some-rabbit-2 rabbitmq:3-management
+
+
 # Run local jupyter notebook
 docker run -p 8888:8888 jupyter/minimal-notebook
 
@@ -35,8 +40,6 @@ docker run -p 8888:8888 jupyter/minimal-notebook
 docker run -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=test -p 3306:3306 mysql
 mysql -h localhost -P 3306 --protocol=tcp -u root -p root test
 mysql -h localhost -P 3306 --protocol=tcp -u root -p 
-
-
 
 # Run local mongo
 docker run -p 27017:27017 mongo
