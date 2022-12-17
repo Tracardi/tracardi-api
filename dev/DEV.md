@@ -88,5 +88,5 @@ docker run -p 8080:8080 \
 
 # Kafka
 
-curl -sSL https://raw.githubusercontent.com/bitnami/containers/main/bitnami/kafka/docker-compose.yml > docker-compose.yml
-docker-compose up -d
+docker run --rm --net=host landoop/fast-data-dev
+
