@@ -76,3 +76,17 @@ docker run docker.elastic.co/beats/metricbeat:7.13.4 setup -E setup.kibana.host=
 celery -A worker.celery_worker worker --loglevel=info -E
 docker run -e REDIS_HOST=redis://redis-0.redis.redis.svc.cluster.local tracardi/worker
 docker run -e REDIS_HOST=redis://192.168.1.101 tracardi/worker
+
+
+# Kafka UI
+
+docker run -p 8080:8080 \
+	-e KAFKA_CLUSTERS_0_NAME=local \
+	-e KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9092 \
+	-d provectuslabs/kafka-ui:latest
+
+
+# Kafka
+
+curl -sSL https://raw.githubusercontent.com/bitnami/containers/main/bitnami/kafka/docker-compose.yml > docker-compose.yml
+docker-compose up -d
