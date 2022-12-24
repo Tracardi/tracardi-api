@@ -13,6 +13,9 @@ docker run -p 5601:5601 -m 4g -e ELASTICSEARCH_HOSTS=http://192.168.1.101:9200 d
 docker run -p 9200:9200 -p 9300:9300 -m 8g -e "discovery.type=single-node" -v "/opt/esdata:/usr/share/elasticsearch/data" docker.elastic.co/elasticsearch/elasticsearch:7.13.2
 docker run -p 9200:9200 -p 9300:9300 -m 6g -e "discovery.type=single-node" docker.elastic.co/elasticsearch/elasticsearch:7.13.2
 
+# Run local redis
+docker run -p 6379:6379 redis
+
 # Run local Tracardi GUI
 docker run -p 8787:80 -e API_URL=//127.0.0.1:8686 -e TRACK_DEBUG="yes" tracardi/tracardi-gui
 
@@ -24,9 +27,6 @@ docker run -p 9200:9200 -p 9600:9600 -e "discovery.type=single-node" amazon/open
 
 # Run local API
 docker run -p 8686:80 -e ELASTIC_HOST=http://192.168.1.103:9200 -e RESET_PLUGINS=yes -e MAX_WORKERS=3 -e LOGGING_LEVEL=info tracardi/tracardi-api
-
-# Run local redis
-docker run -p 6379:6379 redis
 
 # Rabbit mq
 
