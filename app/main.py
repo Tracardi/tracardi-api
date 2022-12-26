@@ -36,9 +36,6 @@ from tracardi.config import tracardi
 from tracardi.exceptions.log_handler import log_handler
 from tracardi.service.storage.elastic_client import ElasticClient
 
-if License.has_license():
-    from app.api import scheduler_endpoint
-
 logging.basicConfig(level=logging.ERROR)
 logger = logging.getLogger(__name__)
 logger.setLevel(tracardi.logging_level)
@@ -57,6 +54,9 @@ print(f"""
 {str(tracardi.version)}""")
 if License.has_license():
     license = License.check()
+
+    from app.api import scheduler_endpoint
+
     print(
         f"Commercial Licensed issued for: {license.owner}, expires: {datetime.fromtimestamp(license.expires) if license.expires > 0 else 'Perpetual'} ")
 else:
