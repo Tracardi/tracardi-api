@@ -7,9 +7,6 @@ ENV VIRTUAL_ENV=/opt/venv
 RUN python3 -m venv $VIRTUAL_ENV
 ENV PATH="$VIRTUAL_ENV/bin:/app:$PATH"
 
-RUN apt-get update
-RUN apt-get install -y git
-
 # update pip
 RUN /usr/local/bin/python3 -m pip install --upgrade pip
 

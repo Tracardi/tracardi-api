@@ -1,7 +1,7 @@
 import os, sys
 from datetime import datetime
 
-from tracardi.service.license import License
+from tracardi.service.license import License, SCHEDULER
 
 _local_dir = os.path.dirname(__file__)
 sys.path.append(f"{_local_dir}/api/proto/stubs")
@@ -36,6 +36,11 @@ from tracardi.config import tracardi
 from tracardi.exceptions.log_handler import log_handler
 from tracardi.service.storage.elastic_client import ElasticClient
 
+# Licensed software
+if License.has_service(SCHEDULER):
+    from app.api import scheduler_endpoint
+
+
 logging.basicConfig(level=logging.ERROR)
 logger = logging.getLogger(__name__)
 logger.setLevel(tracardi.logging_level)
@@ -55,10 +60,10 @@ print(f"""
 if License.has_license():
     license = License.check()
 
-    from app.api import scheduler_endpoint
-
     print(
         f"Commercial Licensed issued for: {license.owner}, expires: {datetime.fromtimestamp(license.expires) if license.expires > 0 else 'Perpetual'} ")
+
+    print(f"Services {list(license.get_service_ids())}")
 else:
     print(f"License: MIT + “Commons Clause” License Condition v1.0")
 
@@ -214,7 +219,7 @@ application.include_router(event_type_management.router)
 application.include_router(event_source_redirects.router)
 application.include_router(last_flow_ws.router)
 application.include_router(bridge_endpoint.router)
-if License.has_license():
+if License.has_service(SCHEDULER):
     application.include_router(scheduler_endpoint.router)
 
 # GraphQL
