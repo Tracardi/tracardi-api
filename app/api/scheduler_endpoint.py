@@ -8,6 +8,8 @@ from fastapi import APIRouter, Depends, Request, HTTPException, status
 from com_tracardi.scheduler.tracker import schedule_track
 from tracardi.config import tracardi
 from tracardi.domain.payload.tracker_payload import TrackerPayload
+from tracardi.exceptions.exception import UnauthorizedException, FieldTypeConflictException, EventValidationException, \
+    TracardiException
 from tracardi.exceptions.log_handler import log_handler
 from .auth.permissions import Permissions
 from .track.service.ip_address import get_ip_address
@@ -36,40 +38,35 @@ async def get_scheduled_jobs():
 async def schedule_job(time: Union[str, datetime],
                        tracker_payload: TrackerPayload,
                        request: Request):
-    if isinstance(time, str):
-        if time.isnumeric():
-            time = timedelta(seconds=int(time))
 
-    schedule = RQClient()
-    job = schedule.schedule(time, schedule_track, tracker_payload.dict(), get_ip_address(request))
-    return job.id
+    try:
 
-    # try:
-    #     tracker_payload.set_headers(dict(request.headers))
-    #
-    #     schedule = RQClient()
-    #     job = schedule.schedule(time, schedule_track, tracker_payload, get_ip_address(request))
-    #
-    #     return job.id
-    #
-    # except UnauthorizedException as e:
-    #     message = str(e)
-    #     logger.error(message)
-    #     raise HTTPException(detail=message,
-    #                         status_code=status.HTTP_401_UNAUTHORIZED)
-    # except FieldTypeConflictException as e:
-    #     message = "FieldTypeConflictException: {} - {}".format(str(e), e.explain())
-    #     logger.error(message)
-    #     raise HTTPException(detail=message,
-    #                         status_code=status.HTTP_422_UNPROCESSABLE_ENTITY)
-    # except EventValidationException as e:
-    #     message = "Validation failed with error: {}".format(str(e))
-    #     logger.error(message)
-    #     raise HTTPException(detail=message,
-    #                         status_code=status.HTTP_406_NOT_ACCEPTABLE)
-    # except TracardiException as e:
-    #     message = str(e)
-    #     logger.error(message)
-    #     raise HTTPException(detail=message,
-    #                         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        if isinstance(time, str):
+            if time.isnumeric():
+                time = timedelta(seconds=int(time))
+
+        schedule = RQClient()
+        job = schedule.schedule(time, schedule_track, tracker_payload.dict(), get_ip_address(request))
+        return job.id
+
+    except UnauthorizedException as e:
+        message = str(e)
+        logger.error(message)
+        raise HTTPException(detail=message,
+                            status_code=status.HTTP_401_UNAUTHORIZED)
+    except FieldTypeConflictException as e:
+        message = "FieldTypeConflictException: {} - {}".format(str(e), e.explain())
+        logger.error(message)
+        raise HTTPException(detail=message,
+                            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY)
+    except EventValidationException as e:
+        message = "Validation failed with error: {}".format(str(e))
+        logger.error(message)
+        raise HTTPException(detail=message,
+                            status_code=status.HTTP_406_NOT_ACCEPTABLE)
+    except TracardiException as e:
+        message = str(e)
+        logger.error(message)
+        raise HTTPException(detail=message,
+                            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
