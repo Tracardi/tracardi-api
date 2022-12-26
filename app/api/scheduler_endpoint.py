@@ -41,7 +41,7 @@ async def schedule_job(time: Union[str, datetime],
             time = timedelta(seconds=int(time))
 
     schedule = RQClient()
-    job = schedule.schedule(time, schedule_track, tracker_payload, get_ip_address(request))
+    job = schedule.schedule(time, schedule_track, tracker_payload.dict(), get_ip_address(request))
     return job.id
 
     # try:
