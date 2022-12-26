@@ -1,4 +1,7 @@
 import os, sys
+from datetime import datetime
+
+from tracardi.service.license import License
 
 _local_dir = os.path.dirname(__file__)
 sys.path.append(f"{_local_dir}/api/proto/stubs")
@@ -8,6 +11,7 @@ import asyncio
 from random import randint
 from starlette.responses import JSONResponse
 from time import time
+from app.config import server
 from app.api.auth.permissions import Permissions
 from tracardi.service.elastic.connection import wait_for_connection
 from fastapi.middleware.cors import CORSMiddleware
@@ -24,22 +28,39 @@ from app.api import rule_endpoint, resource_endpoint, event_endpoint, \
     task_endpoint, storage_endpoint, destination_endpoint, user_log_endpoint, user_account_endpoint, install_endpoint, \
     delete_indices_endpoint, migration_endpoint, report_endpoint, live_segments_endpoint, event_validator_endpoint, \
     event_reshaping_schema_endpoint, console_log_endpoint, event_type_management, event_source_redirects, last_flow_ws, \
-    bridge_endpoint, scheduler_endpoint
-
+    bridge_endpoint
 from app.api.graphql.profile import graphql_profiles
 from app.api.track import event_server_endpoint
-from app.config import server
 from app.setup.on_start import update_api_instance, clear_dead_api_instances
 from tracardi.config import tracardi
 from tracardi.exceptions.log_handler import log_handler
 from tracardi.service.storage.elastic_client import ElasticClient
+
+if License.has_license():
+    from app.api import scheduler_endpoint
 
 logging.basicConfig(level=logging.ERROR)
 logger = logging.getLogger(__name__)
 logger.setLevel(tracardi.logging_level)
 logger.addHandler(log_handler)
 
-print(f"TRACARDI version {str(tracardi.version)}")
+print(f"""
+88888888888 8888888b.         d8888  .d8888b.         d8888 8888888b.  8888888b. 8888888 
+    888     888   Y88b       d88888 d88P  Y88b       d88888 888   Y88b 888   Y88b  888   
+    888     888    888      d88P888 888    888      d88P888 888    888 888    888  888   
+    888     888   d88P     d88P 888 888            d88P 888 888   d88P 888    888  888   
+    888     8888888P"     d88P  888 888           d88P  888 8888888P"  888    888  888   
+    888     888 T88b     d88P   888 888    888   d88P   888 888 T88b   888    888  888   
+    888     888  T88b   d8888888888 Y88b  d88P  d8888888888 888  T88b  888   d88P  888   
+    888     888   T88b d88P     888  "Y8888P"  d88P     888 888   T88b 8888888P" 8888888
+    
+{str(tracardi.version)}""")
+if License.has_license():
+    license = License.check()
+    print(
+        f"Commercial Licensed issued for: {license.owner}, expires: {datetime.fromtimestamp(license.expires) if license.expires > 0 else 'Perpetual'} ")
+else:
+    print(f"License: MIT + “Commons Clause” License Condition v1.0")
 
 tags_metadata = [
     {
@@ -126,7 +147,6 @@ application.mount("/tracker",
                       directory=os.path.join(_local_dir, "tracker")),
                   name="tracker")
 
-
 documentation = os.path.join(_local_dir, "../site")
 
 if os.path.exists(documentation):
@@ -194,7 +214,8 @@ application.include_router(event_type_management.router)
 application.include_router(event_source_redirects.router)
 application.include_router(last_flow_ws.router)
 application.include_router(bridge_endpoint.router)
-application.include_router(scheduler_endpoint.router)
+if License.has_license():
+    application.include_router(scheduler_endpoint.router)
 
 # GraphQL
 

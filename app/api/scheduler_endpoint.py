@@ -1,6 +1,6 @@
+from com_tracardi.scheduler.rq_clinet import RQClient
 from fastapi import APIRouter, Depends
 
-from com_tracardi.scheduler.rq_clinet import RQClient
 from .auth.permissions import Permissions
 from ..config import server
 
