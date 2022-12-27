@@ -2,6 +2,8 @@ import logging
 from datetime import datetime, timedelta
 from typing import Union
 
+import rq
+
 from com_tracardi.scheduler.rq_clinet import RQClient
 from fastapi import APIRouter, Depends, Request, HTTPException, status
 
@@ -46,8 +48,12 @@ async def schedule_job(time: Union[str, datetime],
                 time = timedelta(seconds=int(time))
 
         schedule = RQClient()
-        job = schedule.schedule(time, schedule_track, tracker_payload.dict(), get_ip_address(request))
-        return job.id
+        job = schedule.schedule(time, schedule_track, tracker_payload.dict(), get_ip_address(request))  # type: rq.job.Job
+        return {
+            "id": job.id,
+            "description": job.description,
+            "origin": job.origin
+        }
 
     except UnauthorizedException as e:
         message = str(e)

@@ -740,18 +740,6 @@ async def test_should_set_up_plugin_event_discarder():
     await plugin.set_up({})
 
 
-async def test_should_set_up_plugin_schema_validator():
-    
-    module = import_package("tracardi.process_engine.action.v1.json_schema_validation_action")
-    plugin_class = load_callable(module, "SchemaValidator")
-    plugin = plugin_class()
-    plugin.node = Node(id="node-id", 
-                       name="test-node", 
-                       module="tracardi.process_engine.action.v1.json_schema_validation_action", 
-                       className="SchemaValidator")
-    await plugin.set_up({'validation_schema': {}})
-
-
 async def test_should_set_up_plugin_string_properties_actions():
     
     module = import_package("tracardi.process_engine.action.v1.strings.string_operations.plugin")
