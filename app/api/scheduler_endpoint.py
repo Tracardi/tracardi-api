@@ -31,16 +31,21 @@ router = APIRouter(
             include_in_schema=server.expose_gui_api)
 async def get_scheduled_jobs():
     schedule = RQClient()
-    return [{"time": scheduled_time, "job_id": job.id} for job, scheduled_time in schedule.list()]
+    return [{
+        "time": scheduled_time,
+        "job_id": job.id,
+        "meta": job.meta
+    } for job, scheduled_time in schedule.list()]
 
 
 @router.post("/scheduler/job",
              tags=["scheduler"],
              include_in_schema=server.expose_gui_api)
-async def schedule_job(time: Union[str, datetime],
-                       tracker_payload: TrackerPayload,
-                       request: Request):
-
+async def schedule_job(
+        name: str,
+        time: Union[datetime, str],
+        tracker_payload: TrackerPayload,
+        request: Request):
     try:
 
         if isinstance(time, str):
@@ -48,7 +53,8 @@ async def schedule_job(time: Union[str, datetime],
                 time = timedelta(seconds=int(time))
 
         schedule = RQClient()
-        job = schedule.schedule(time, schedule_track, tracker_payload.dict(), get_ip_address(request))  # type: rq.job.Job
+        job = schedule.schedule(name, time, schedule_track, tracker_payload.dict(),
+                                get_ip_address(request))  # type: rq.job.Job
         return {
             "id": job.id,
             "description": job.description,
@@ -75,4 +81,3 @@ async def schedule_job(time: Union[str, datetime],
         logger.error(message)
         raise HTTPException(detail=message,
                             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
