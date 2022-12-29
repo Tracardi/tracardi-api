@@ -15,6 +15,7 @@ from tracardi.exceptions.exception import UnauthorizedException, FieldTypeConfli
     TracardiException
 from tracardi.exceptions.log_handler import log_handler
 from .auth.permissions import Permissions
+from .domain.schedule import Job
 from .track.service.ip_address import get_ip_address
 from ..config import server
 from ..service.grouping import group_records
@@ -33,15 +34,18 @@ router = APIRouter(
             include_in_schema=server.expose_gui_api)
 async def get_scheduled_jobs(query: Optional[str] = None):
     schedule = RQClient()
-    records = [{"_id": job.id, "_index": "scheduler", "_source": {
-        "time": scheduled_time,
-        "job_id": job.id,
-        "meta": job.meta,
-        "name": job.meta['name'],
-        "description": job.description,
-        "tags": ["General", job.origin]
-    }
-                } for job, scheduled_time in schedule.list()]
+    records = [{
+        "_id": job.id,
+        "_index": "scheduler",
+        "_source": {
+            "time": scheduled_time,
+            "job_id": job.id,
+            "meta": job.meta,
+            "name": job.meta.get("name", "n/a"),
+            "description": job.meta.get("description", ""),
+            "tags": ["General", job.origin]
+        }
+    } for job, scheduled_time in schedule.list()]
 
     sr = StorageRecords()
     sr.set_data(records, total=len(records))
@@ -74,18 +78,16 @@ async def schedule_job(job_id: str):
              tags=["scheduler"],
              include_in_schema=server.expose_gui_api)
 async def schedule_job(
-        name: str,
-        time: Union[datetime, str],
-        tracker_payload: TrackerPayload,
+        job: Job,
         request: Request):
     try:
 
-        if isinstance(time, str):
-            if time.isnumeric():
-                time = timedelta(seconds=int(time))
+        if isinstance(job.time, str):
+            if job.time.isnumeric():
+                time = timedelta(seconds=int(job.time))
 
         schedule = RQClient()
-        job = schedule.schedule(name, time, schedule_track, tracker_payload.dict(),
+        job = schedule.schedule(job.name, job.description, job.time, schedule_track, job.tracker_payload.dict(),
                                 get_ip_address(request))  # type: rq.job.Job
         return {
             "id": job.id,
