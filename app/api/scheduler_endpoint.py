@@ -1,6 +1,6 @@
 import logging
 from datetime import datetime, timedelta
-from typing import Union
+from typing import Union, Optional
 
 import rq
 
@@ -10,12 +10,14 @@ from fastapi import APIRouter, Depends, Request, HTTPException, status
 from com_tracardi.scheduler.tracker import schedule_track
 from tracardi.config import tracardi
 from tracardi.domain.payload.tracker_payload import TrackerPayload
+from tracardi.domain.storage_record import StorageRecords
 from tracardi.exceptions.exception import UnauthorizedException, FieldTypeConflictException, EventValidationException, \
     TracardiException
 from tracardi.exceptions.log_handler import log_handler
 from .auth.permissions import Permissions
 from .track.service.ip_address import get_ip_address
 from ..config import server
+from ..service.grouping import group_records
 
 logger = logging.getLogger(__name__)
 logger.setLevel(tracardi.logging_level)
@@ -29,13 +31,43 @@ router = APIRouter(
 @router.get("/scheduler/jobs",
             tags=["scheduler"],
             include_in_schema=server.expose_gui_api)
-async def get_scheduled_jobs():
+async def get_scheduled_jobs(query: Optional[str] = None):
     schedule = RQClient()
-    return [{
+    records = [{"_id": job.id, "_index": "scheduler", "_source": {
         "time": scheduled_time,
         "job_id": job.id,
-        "meta": job.meta
-    } for job, scheduled_time in schedule.list()]
+        "meta": job.meta,
+        "name": job.meta['name'],
+        "description": job.description,
+        "tags": ["General", job.origin]
+    }
+                } for job, scheduled_time in schedule.list()]
+
+    sr = StorageRecords()
+    sr.set_data(records, total=len(records))
+
+    return group_records(sr, query, group_by='tags', search_by='name', sort_by='name')
+
+
+@router.get("/scheduler/job/{job_id}",
+            tags=["scheduler"],
+            include_in_schema=server.expose_gui_api)
+async def schedule_job(job_id: str):
+    schedule = RQClient()
+    job = schedule.get_job(job_id)
+    print(job.to_dict())
+    result = job.to_dict()
+    del result['data']
+    result['meta'] = job.meta
+    return result
+
+
+@router.delete("/scheduler/job/{job_id}",
+               tags=["scheduler"],
+               include_in_schema=server.expose_gui_api)
+async def schedule_job(job_id: str):
+    schedule = RQClient()
+    schedule.cancel(job_id)
 
 
 @router.post("/scheduler/job",
