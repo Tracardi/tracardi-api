@@ -211,7 +211,7 @@ We have the following options.
 }
 ```
 
-## Profile less events
+## Profile less events and webhooks
 
 There are cases where we do not have profile data, but we do have an ID that will allow us to identify the customer as
 part of the event. An example would be a discount coupon. We have identified who received which voucher on external
