@@ -94,36 +94,6 @@ async def track_post_webhook(event_type: str, source_id: str, request: Request, 
     return await _track(tracker_payload, get_ip_address(request))
 
 
-@router.post("/collect/{event_type}/{source_id}", tags=['context-server'])
-async def track_post_webhook(event_type: str, source_id: str, request: Request):
-    """
-    Collects data from request POST and adds event type. It stays profile-less.
-    """
-
-    try:
-        properties = await request.json()
-    except JSONDecodeError:
-        properties = {}
-
-    tracker_payload = TrackerPayload(
-        source=Entity(id=source_id),
-        session=None,
-        metadata=EventPayloadMetadata(time=Time()),
-        profile=None,
-        context={},
-        request={
-            "headers": get_headers(request)  # it will be an event request value
-        },
-        properties={},
-        events=[
-            EventPayload(type=event_type, properties=properties)
-        ],
-        options={"saveSession": False}
-    )
-    tracker_payload.profile_less = False
-    return await _track(tracker_payload, get_ip_address(request))
-
-
 @router.get("/collect/{event_type}/{source_id}/{session_id}", tags=['context-server'])
 async def track_get_webhook(event_type: str, source_id: str, request: Request, session_id: Optional[str] = None):
     """
@@ -178,5 +148,35 @@ async def track_get_webhook(event_type: str, source_id: str, request: Request):
         ],
         options={"saveSession": False}
     )
-    tracker_payload.profile_less = False
+    tracker_payload.profile_less = True
+    return await _track(tracker_payload, get_ip_address(request))
+
+
+@router.post("/collect/{event_type}/{source_id}", tags=['context-server'])
+async def track_post_webhook(event_type: str, source_id: str, request: Request):
+    """
+    Collects data from request POST and adds event type. It stays profile-less.
+    """
+
+    try:
+        properties = await request.json()
+    except JSONDecodeError:
+        properties = {}
+
+    tracker_payload = TrackerPayload(
+        source=Entity(id=source_id),
+        session=None,
+        metadata=EventPayloadMetadata(time=Time()),
+        profile=None,
+        context={},
+        request={
+            "headers": get_headers(request)  # it will be an event request value
+        },
+        properties={},
+        events=[
+            EventPayload(type=event_type, properties=properties)
+        ],
+        options={"saveSession": False}
+    )
+    tracker_payload.profile_less = True
     return await _track(tracker_payload, get_ip_address(request))
