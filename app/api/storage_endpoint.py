@@ -1,20 +1,16 @@
 from typing import Optional
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 
 from app.api.auth.permissions import Permissions
-from tracardi.event_server.utils.memory_cache import MemoryCache, CacheItem
 from app.config import server
 from tracardi.service.storage.driver import storage
-from tracardi.service.storage.factory import storage_manager
 from tracardi.service.storage.elastic_client import ElasticClient
 from tracardi.service.storage.indices_manager import check_indices_mappings_consistency
 
 router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin", "maintainer"]))]
 )
-
-memory_cache = MemoryCache("index-mapping")
 
 
 @router.get("/storage/mapping/check", tags=["storage"], include_in_schema=server.expose_gui_api,
@@ -29,12 +25,8 @@ async def get_index_mapping_metadata(index: str):
     """
     Returns metadata of given index (str)
     """
-    memory_key = f"{index}-mapping-cache"
-    if memory_key not in memory_cache:
-        mapping = await storage_manager(index).get_mapping()
-        fields = mapping.get_field_names()
-        memory_cache[memory_key] = CacheItem(data=fields, ttl=5)  # result is cached for 5 seconds
-    return {"result": memory_cache[memory_key].data, "total": len(memory_cache[memory_key].data)}
+    result = await storage.driver.raw.get_mapping_fields(index)
+    return {"result": result, "total": len(result)}
 
 
 @router.get("/storage/mapping/{index}", tags=["storage"], include_in_schema=server.expose_gui_api, response_model=list)
