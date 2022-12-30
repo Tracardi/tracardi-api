@@ -3,7 +3,6 @@ from json import JSONDecodeError
 from typing import Optional
 
 from fastapi import APIRouter, Request, status, HTTPException
-from app.api.track.service.ip_address import get_ip_address
 from tracardi.domain.api_instance import ApiInstance
 from tracardi.domain.entity import Entity
 from tracardi.domain.event_metadata import EventPayloadMetadata
@@ -15,6 +14,8 @@ from tracardi.domain.payload.tracker_payload import TrackerPayload
 from tracardi.exceptions.exception import TracardiException, UnauthorizedException, FieldTypeConflictException, \
     EventValidationException
 from tracardi.exceptions.log_handler import log_handler
+from app.api.track.service.ip_address import get_ip_address
+from tracardi.service.url_constructor import url_query_params_to_dict
 
 logger = logging.getLogger(__name__)
 logger.setLevel(tracardi.logging_level)
