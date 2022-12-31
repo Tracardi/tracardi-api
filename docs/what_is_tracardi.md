@@ -46,13 +46,9 @@ systems.
 
 # Why we create Tracardi
 
-More and more companies realize that customer experience and engagement matter. A large part of Tracardi's customers are
-in the retail industry. Companies are using Tracardi to understand better how and why customers engage with their
-products and services. With tracardi they can deliver a better customer experience and act proactively in solving
-customers problems.
+Tracardi was created to help companies better understand and engage with their customers. As companies increasingly recognize the importance of customer experience and engagement, Tracardi provides a range of tools and features that enable them to track and analyze customer behavior, and deliver personalized and seamless experiences across a variety of channels.
 
-For retailers, this means gaining a competitive advantage, for example through personalization, cross-channel
-integration and omnichannel services.
+A large part of Tracardi's customer base is in the retail industry, and these companies have found Tracardi to be a valuable resource in their efforts to understand how and why customers engage with their products and services. By using Tracardi, retailers can gain a competitive advantage in their industry, and deliver a better customer experience that drives engagement and loyalty. This can be achieved through the use of personalization, cross-channel integration, and omnichannel services, among other strategies.
 
 Tracardi can help retailers to:
 
