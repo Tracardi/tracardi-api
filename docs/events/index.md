@@ -34,12 +34,19 @@ Events can take the following states:
 
 | State         | Description                |
 |---------------|----------------------------|
-| `received`    | Event loaded               |
-| `validated`   | Event was validated        |
+| `collected`   | Event was collected        |
 | `processed`   | Event was processed        |
 | `warning`     | Workflow logged warnings   |
 | `error`       | Workflow returned errors   |
 | `ok`          | Event wsa processed without errors |
 
+# Event routing
+
+Event routing is the process of directing events to specific workflows or processes based on the type and source of the event. This allows businesses to handle different types of events in different ways, and to route events to the most appropriate workflow based on their characteristics.
+
+For example, an e-commerce platform might route events related to product purchases to a workflow that handles order processing and fulfillment, while routing events related to customer login attempts to a workflow that handles authentication and security. By routing events to the appropriate workflow, businesses can more effectively manage and process the data associated with the event.
+
 # Events synchronization
+
+In Tracardi, event synchronization is the process of managing the order in which events are processed. This includes ensuring that events for a specific profile are processed in a specific order. Essentially, this means that events for one profile are processed sequentially, while events for other profiles are processed sequentially but in parallel to each other.
 
