@@ -13,7 +13,7 @@ The second type of traffic is outgoing traffic. These are external systems to wh
 !!! Tip
 
     In the system, we call incoming traffic - event sources.
-    In the system, we call outgoing traffic - resources.
+    In the system, we call outgoing traffic - destinations.
 
 ### Bridge
 
