@@ -1,10 +1,12 @@
 # Data flow
 
-Przepływ danych w trakardi przechodzi przez następujące stadia:
+The data flow in Tracardi goes through the following stages:
 
 | Stage            | Description                                                                   |
 |------------------|-------------------------------------------------------------------------------|
 | `Source validation`| Tracardi must have event source defined and enabled in the system.            |
+|  Event data validation | Tracardi can validate the event daa schema.                                |
+|  Event reshaping | Tracardi can change the event schema if needed.                               |
 | `Event collection` | Tracardi saves the event.                                                     |
 | `Event routing`    | Tracardi reads a rule that defines which workflow must precess event.         |
 | `Processing`       | Tracardi runs a workflow that processed event data, enhances the data,routes  |
@@ -26,8 +28,16 @@ creates a token that, when attached to the event data, will allow it to be sent 
     Event sources can be found in Tracardi GUI under Traffic. We have inbound traffic that comes to Tracardi - 
     we call it `event sources`. And there is outboud traffic sometimes called the destination. This is the external
     system that the profile data can be sent when profile changes.
+    
+## Event data validation
+
+Event data validation is the process of checking the accuracy, completeness, and consistency of data associated with an event. This may involve verifying that the data meets certain standards or requirements, such as being in the correct format, or containing required fields.
+
+Event data validation is an important part of ensuring the quality and reliability of data used for analysis and decision-making. By ensuring that the data is accurate and complete, businesses can trust that the insights they derive from the data are reliable and actionable.
 
 ## Event collection
+
+Event collection refers to the process of gathering data about events within Tracardi. 
 
 !!! Note "Example of an event"
 
