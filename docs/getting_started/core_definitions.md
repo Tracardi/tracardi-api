@@ -15,15 +15,22 @@ The second type of traffic is outgoing traffic. These are external systems to wh
     In the system, we call incoming traffic - event sources.
     In the system, we call outgoing traffic - resources.
 
-### Event source -inbound traffic
+### Bridge
 
-In order to kick-start your new project with Tracardi, you must create a new event source. That source will give you an
-identifier which when attached to your track calls will start collecting data about your users.
+A bridge is a piece of software that connects two separate systems or applications, allowing them to communicate and exchange data. In Trcardi a bridge collects data from a particular source, such as a queue, email, or social media, and transfer it through event source. For example, Tracardi come with an open source API bridge that allows it to collect data from an API `/track` endpoint and transfer it to the system. Commercial versions of Tracardi may come with other types of bridges, such as a Kafka bridge, which allows it to collect data from a Kafka message broker. 
+
+When a new event source is created, the appropriate bridge must be selected to facilitate the collection and transfer of data.
+
+
+### Event source - inbound traffic
+
+In order to kick-start your new project with Tracardi, you must create a new event source. That source will give you an identifier which when attached to your track calls will start collecting data about your users. Event source need a bridge that will transfer data to the system.
 
 !!! Warning
 
     Some sources may require user consent to collect data from this source. A web page requires consent from the user to
     collect and store their data.
+   
 
 ### Resource
 
@@ -67,49 +74,55 @@ Events can be stored inside Tracardi or just passed to workflow to be processed 
     Tracardi has 2 types of event. Event with profile and without profile. Read about event 
     in [Event's Core Definitions](../events/index.md)
 
-## Rule
+## Routing rule
 
-Rules define which workflow is to be executed when an event arrives in the system. Rules consist of a condition and
-workflow name. If a condition is met then the flow starts to run. The condition has two elements: event type and
-source. If the event is of a certain type and comes from a given source then the defined workflow is executed. 
+In the Tracardi system, rules are used to determine which workflow should be executed when an event arrives. A rule consists of a condition and the name of a workflow. When an event is received, the system checks the condition of the rule to see if it is met. If the condition is met, the associated workflow is executed.
 
-The rules link events to the workflow.
+The condition of a rule has two elements: the event type and the source. If the event is of a certain type and comes from a specific source, the rule's condition is considered to be met, and the associated workflow is executed.
+
+The rules in the Tracardi system provide a link between events and the workflows that should be executed in response to those events. By defining appropriate rules, it is possible to automate the execution of workflows based on the arrival of specific events in the system.
 
 ## Workflows
 
-Workflow is a graph of actions that will run when an event is matched with workflow. Actions may run one after another or in
-parallel. Workflow is represented as a graph of nodes and connections between them. Actions are assigned to nodes. Data
-flow from action to action is represented by connections between nodes. Actions may perform different tasks such as
-copying data from the event to profile, save profile, query for additional data, send to another system or emit another
-event.
+A workflow is a series of actions that are executed in response to an event. When an event is matched with a workflow, the actions in the workflow are executed according to the defined graph of nodes and connections.
+
+In Tracardi a workflow is represented as a graph of nodes, with actions being assigned to individual nodes. The connections between nodes represent the flow of data from one action to another. Actions may perform a variety of tasks, such as copying data from the event to a user profile, saving the profile, querying for additional data, sending data to another system, or emitting a new event.
+
+Actions in a workflow may be executed one after another, or they may be run in parallel. This allows for a high degree of flexibility in defining the sequence and execution of actions within a workflow. By constructing the appropriate graph of nodes and connections, it is possible to create complex, multi-step workflows that perform a wide range of tasks in response to events.
 
 ## Actions
 
-Action is a single task in the workflow. Actions consist of input and output ports. Input ports are used to receive
-data. On the other hand, output ports send data via connection to another action. Action is basically a code in the
-system. Input ports are mapped to input parameters of a function in code when output ports are mapped to the return
-values. Tracardi can be extended by programmers who write code and map it with action, which later on is visible in the
-workflow editor as nodes. [More on actions](../flow/actions/index.md)
+In the Tracardi system, an action is a single task that is performed as part of a workflow. An action consists of input and output ports, which are used to receive and send data, respectively. The input ports of an action are used to receive data from other actions or from external sources, while the output ports are used to send data to other actions or external systems.
+
+An action is essentially a piece of code that performs a specific task within the Tracardi system. The input ports of an action are mapped to the input parameters of a function in the code, while the output ports are mapped to the return values of the function. This allows actions to be chained together in a workflow, with the output of one action being passed as the input to the next.
+
+Tracardi can be extended by programmers who write custom code and map it to an action, which is then visible as a node in the workflow editor. An action may also be referred to as a node or an action plugin within Tracardi.
+
+For more information about actions, see the [More on actions](../flow/actions/index.md) documentation.
 
 ## Profile
 
-A profile is a set of data that represents user data. Profiles are updated based on incoming events and data from
-external systems. The profile has public and private data. Private data is usually sensitive data such as name, surname,
-e-mail, age, total purchases. Public data is data e.g. on the segment to which the user belongs, last visit, number of
-visits, etc.
+A profile is a detailed record or representation of an individual or entity, typically including information about their characteristics, interests, and activities. A profile can be used to summarize and organize data about a customer in a way that is easy to understand and access.
 
-The profile is updated by the workflow, and more precisely by the actions performed within the workflow. Data from
-profiles can be used for marketing campaigns, etc, later.
+A profile in the Tracardi system is a set of data that represents information about a customer. Profiles can be updated based on incoming events and data from external systems, and they can contain both public and private data.
+
+Private data in a profile is typically sensitive information, such as a user's name, email address, age, and total purchases. Public data in a profile may include information such as the segment to which a user belongs, the last time they visited a website, or the number of visits they have made.
+
+The profile is updated by the workflow, specifically by the actions that are performed within the workflow. The data in a profile can be used for a variety of purposes, such as marketing campaigns and other types of analysis. By updating the profile based on incoming events and data from external systems, it is possible to maintain an up-to-date, comprehensive view of a customer.
 
 ## Segment
 
-The segment is the result of the segmentation of customer profiles. A segment can be described by a simple logical rule
-or by more complex AI models. The segment becomes a part of the profile. A segment defined in the Tracardi system can be used
-in the segmentation workflow. The segment is represented by a simple key 'high-volume-customers' and described by
-a description e.g. "Customers with high volume of purchases". 
+In the Tracardi system, a segment is a group of customer profiles that have been identified and grouped together based on shared characteristics or behavior. A segment can be defined using a simple logical rule or by more complex artificial intelligence (AI) models.
+
+Once a segment has been defined, it becomes a part of the customer's profile. A segment defined in the Tracardi system can be used in the segmentation workflow, which allows for targeted marketing and other types of personalized experiences or services.
+
+A segment is typically represented by a simple key, such as "high-volume-customers," and is described by a brief summary or description, such as "Customers with a high volume of purchases." This allows for easy identification and understanding of the characteristics or behavior that define a particular segment.
   
 ## Destination - Outbound traffic
 
-Destination is an external system where the profile data will be sent when if changed. Destination require some 
-resource, e.g. a API endpoint, queue service, etc. Not all resources are available as destinations, please see 
-[outbound traffic](../traffic/outbound/index.md) for more information.
+In the Tracardi, a destination is an external system where profile data will be sent if it is changed. A destination requires a specific resource, such as an API endpoint or a queue service, in order to receive and process the data.
+
+Not all resources are available as destinations in the Tracardi system. For more information about outbound traffic and the available destinations, see the [outbound traffic](../traffic/outbound/index.md) documentation.
+
+In general, a destination is a place or system to which data is sent or forwarded for further processing or storage. It can be used to transfer data from one system or application to another, allowing for the integration and exchange of information between different platforms or services.
+
