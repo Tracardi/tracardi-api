@@ -1,30 +1,29 @@
 # Event tracking
 
+## Core definition
+
+### Tracaker payload
+
+A tracker payload is an object that contains all the data associated with an event. This includes event properties, context, profile id, and session id. It is a comprehensive representation of the event that includes all the necessary data to understand the event. Tracker payload is sent to the system collector which collects data.
+
 ## Introduction - keeping track of events
 
-Sending events is a way to track customer behavior. Thanks to events, we can react to the customer actions and help
-them, e.g. in the purchasing process.
+Sending events is a way of tracking customer behavior in order to better understand and respond to their actions. By capturing and analyzing events, we can gain insights into how customers interact with our systems and products. This information can be used to identify trends, patterns, or opportunities for improvement, and can help us to more effectively support and assist customers, such as during the purchasing process. 
 
 ## Event example
 
-Events consist of:
+Events consist of three main components:
 
-* the event name,
-* event properties, and
-* context.
+1. The event type: This is a label that identifies the type of event that has occurred. For example, an event type might be "product purchase" or "login attempt".
 
-`The name` is a simple string of characters that identifies the event. An example event may be, for example,
-a `purchase of a product`, `a page scrolled to the end`, `sing-in`, etc.
+2. Event properties: These are the characteristics or attributes of the event that describe the specifics of the event itself. For example, an event that represents a user clicking a button might have properties such as the type of button, the location of the button, and the time at which the event occurred.
 
-`Event properties` are additional information on the event. For example, when signing-in, we can send the user's login.
-When registering `purchase order` we can send product name and price.
+3. Context: This refers to data that provides additional context or background information about the event. This data may not be directly related to the event itself, but it can provide valuable insights into the circumstances surrounding the event. For example, if an event represents a customer making a purchase at a store, the event context might include information about the weather conditions at the time of the purchase.
 
-`Context` is additional data not necessarily related to the event, e.g. type of browser used, phone screen size, weather
-conditions, etc.
 
 ## Event registration
 
-To register an event, connect to the /track endpoint on the server where Tracardi is installed.
+To register an event with Tracardi, you will need to send a POST request to the `/track` endpoint on the server where Tracardi is installed. 
 
 You need to write a code that will connect to the POST method to the url e.g.
 http://tracardi.page.com/track and send the data about event plus additional information on the source and session.
