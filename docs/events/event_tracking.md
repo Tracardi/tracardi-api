@@ -210,14 +210,13 @@ We have the following options.
 }
 ```
 
-## Profile less events and webhooks
+## Profile-less events and webhooks
 
-There are cases where we do not have profile data, but we do have an ID that will allow us to identify the customer as
-part of the event. An example would be a discount coupon. We have identified who received which voucher on external
-systems, but we are not able to obtain this information at the time of purchase. Therefore, we can send Tracardi **less
-profile** requests. It will not have a profile ID, and it will not be created either. Remember that, in principle, for
-each event, if we don't send an id profile, it will be created and returned for the client (program) to store and send
-it on each subsequent event.
+There are situations in which we may not have access to profile data, but we do have an identifier that allows us to identify a customer. An example of this might be a discount coupon, where we know who received a particular voucher on external systems, but we do not have access to that information at the time of the event (which only includes the voucher ID). In these cases, we can send profile data as profile-less evnet. The system will not have a profile ID or create a new profile.
+
+However, it is possible to retrieve data about the customer from external systems and attach the appropriate profile at the time of event processing. This allows for the tracking and analysis of customer data even when profile information is not available at the time of the event.
+
+## How to send profile-less event
 
 There are two ways to send profile less events.
 
@@ -227,7 +226,7 @@ First, by adding the profile_less parameter to the POST / track query. In this w
 POST /track?profile_less=true
 ```
 
-Such an event will not create a profile, but will create a session. There must be a session id in the data sent to the
+Such event will not create a profile, but will create a session. There must be a session id in the data sent to the
 server. It can be an existing session or a new one generated on the client-side. Remember that a profile_less event will
 not have a profile when it goes to workflow. The profile will be empty.
 
