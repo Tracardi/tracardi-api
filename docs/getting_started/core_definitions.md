@@ -17,14 +17,21 @@ The second type of traffic is outgoing traffic. These are external systems to wh
 
 ### Bridge
 
-A bridge is a piece of software that connects two separate systems or applications, allowing them to communicate and exchange data. In Trcardi a bridge collects data from a particular source, such as a queue, email, or social media, and transfer it through event source. For example, Tracardi come with an open source API bridge that allows it to collect data from an API `/track` endpoint and transfer it to the system. Commercial versions of Tracardi may come with other types of bridges, such as a Kafka bridge, which allows it to collect data from a Kafka message broker. 
+A bridge is a piece of software that connects two separate systems or applications, allowing them to communicate and exchange data. In Tracardi **a bridge collects data from a particular source**, such as a queue, email, or social media, and transfer it through event source. For example, Tracardi come with an open source API bridge that allows it to collect data from an API `/track` endpoint and transfer it to the system. Commercial versions of Tracardi may come with other types of bridges, such as a Kafka bridge, which allows it to collect data from a Kafka message broker. 
 
 When a new event source is created, the appropriate bridge must be selected to facilitate the collection and transfer of data.
 
 
 ### Event source - inbound traffic
 
-In order to kick-start your new project with Tracardi, you must create a new event source. That source will give you an identifier which when attached to your track calls will start collecting data about your users. Event source need a bridge that will transfer data to the system.
+In order to kick-start your new project with Tracardi, you must create a new event source. That source will give you an identifier which when attached to your track calls will start collecting data about your users. Event source needs a bridge that will transfer data to the system.
+
+!!! Note
+
+    An event source may set to be ephemeral, meaning that the data that is received through this type of event
+    source is not saved in the system, but is only processed by the workflow. Ephemeral event sources do not 
+    store data permanently, and the data is typically only used for the duration of the workflow. This allows 
+    for the processing and analysis of data in real-time, without the need for long-term storage.
 
 !!! Warning
 
@@ -34,12 +41,11 @@ In order to kick-start your new project with Tracardi, you must create a new eve
 
 ### Resource
 
-Resources are data sets or services that we query for data. They often require authentication and therefore during their
-creation we will be asked for passwords or tokens. Additionally, by creating resources we will be asked to provide 
-access to test and production resources.
+A service resource is a type of resource that refers to a service or application that is accessed over a network or the Internet. Service resources can provide a wide range of functions and capabilities, including data storage, communication, computation, and more.
 
-Tracardi allows you to [test your internal processes](../flow/index.md). Therefore, a workflow in test mode must connect 
-with test resources, so it does not to make changes, that could cause problems in production environment.
+In Tracardi, resources are data sets or services that can be queried for data. They often require authentication, such as passwords or tokens, in order to access their data. When creating a resource in Tracardi, you may be asked to provide access to both test and production resources.
+
+Tracardi allows you to [test your internal processes](../flow/index.md) by running workflows in test mode. In test mode, a workflow must connect with test resources in order to avoid making changes that could potentially cause problems in the production environment.
 
 !!! Info
 
@@ -47,32 +53,33 @@ with test resources, so it does not to make changes, that could cause problems i
 
 ## Session
 
-A session is a data often associated with a visit. As long as the session remains unchanged, the visit lasts. The session id is
-set when sending data to Tracardi. It is under the control of the client program. The session often contains data about the 
-context in which the event was launched, it can be, among others, the type of device, operating system, etc.
+In the Tracardi, a session is a type of data that is often associated with a visit to a website or application. As long as the session remains unchanged, the visit is considered to be ongoing. The session id is set when data is sent to Tracardi, and it is typically under the control of the client program.
+
+The session often contains data about the context in which an event was launched, such as the type of device, operating system, or other characteristics of the user's environment. This data can be used to understand the context in which events are occurring, and to tailor the response or actions taken in response to those events.
+
+In general, a session is a period of time during which a user is actively interacting with a system or application. Sessions are often used to track the actions and behavior of users over a period of time, and to provide personalized experiences or services based on that data.
 
 !!! Note
     
-    A characteristic feature of the session is that the data assigned to it are usually temporary, volatile.
+    One key characteristic of a session is that the data associated with it is usually temporary and volatile.
+    This means that the data is typically only stored for the duration of the session, and is not persisted beyond
+    that point. As a result, the data in a session is often considered to be ephemeral, and is not relied upon for 
+    long-term storage or analysis.
 
 
 ## Event
 
-Events represent something that is happening at a given time. They can be used to track
-visitor behaviour. Examples of events may include a click on a link on a web page, a login, a form submission, a page
-view or any other action that needs to be tracked, e.g. purchase order. Events can pass additional data such as
-username, purchased item, viewed page, etc.
+In the Tracardi, events are representations of something that is happening at a particular time. **Events can be used to track visitor behavior** on a website or application, and they can capture a wide range of actions and interactions. Examples of events may include clicks on links, logins, form submissions, page views, or any other action that needs to be tracked, such as a purchase order. Events can pass additional data, such as a username, a purchased item, or a viewed page, depending on the type of event and the data that is being tracked.
 
-Site events are triggered when JavaScript is executed on the selected page or an API query to `/track` endpoint is
-made. Since the tracking code is on every page, it can emit events. The events and their types are configurable by you.
-Additionally, you configure what data is to be sent for each event.
+Web site events in Tracardi are typically triggered when JavaScript is executed on a selected page, or when an API query is made to the `/track` endpoint. Since the tracking code is present on every page, it can emit events as users interact with the site. The events and their types are configurable, and it is possible to configure the data that is sent for each event.
 
-Events can be stored inside Tracardi or just passed to workflow to be processed outside Tracardi.
+Events can be stored inside Tracardi, or they can be passed to a workflow to be processed outside the system. This allows for a wide range of flexibility in terms of how events are tracked and used within the Tracardi system.
 
 !!! Note 
 
     Tracardi has 2 types of event. Event with profile and without profile. Read about event 
     in [Event's Core Definitions](../events/index.md)
+    
 
 ## Routing rule
 
