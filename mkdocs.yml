@@ -1,6 +1,6 @@
 site_name: Tracardi Documentation
 site_description: Open-source Data Platform
-site_url: https://www.tracardi.com
+site_url: https://docs.tracardi.com
 dev_addr: "0.0.0.0:8585"
 markdown_extensions:
   - admonition
