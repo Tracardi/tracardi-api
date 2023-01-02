@@ -34,7 +34,7 @@ async def get_index_mapping(index: str):
     """
     Returns mapping of given index (str)
     """
-    mapping = await storage.driver.raw.mapping(index)
+    mapping = await storage.driver.raw.get_mapping(index)
     return mapping.get_field_names()
 
 
