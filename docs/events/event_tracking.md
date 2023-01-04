@@ -25,6 +25,7 @@ Events consist of three main components:
 
 To register an event with Tracardi, you will need to send a POST request to the `/track` endpoint on the server where Tracardi is installed. 
 
+
 You need to write a code that will connect to the POST method to the url e.g.
 http://tracardi.page.com/track and send the data about event plus additional information on the source and session.
 
@@ -59,7 +60,9 @@ http://tracardi.page.com/track and send the data about event plus additional inf
 } 
 ```
 
-Not all data is required. Below you can find only required data.
+This POST request to the specified URL with the event data and additional information about the source and session. If the request is successful (i.e., the server returns a status code of 200), the code will print a message indicating that the event was registered successfully. If there was an error, it will print the error message returned by the server.
+
+Note that not all data is required. Below you can find example with only required data.
 
 ```json title="Only required payload data"
 {
