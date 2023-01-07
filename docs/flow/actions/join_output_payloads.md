@@ -17,7 +17,7 @@ will be:
 If the connections are not named then data form incoming connection will be copied available under the connection id
 key. 
 
-# Merged data output reshaping
+# Output reshaping
 
 Joint data can be reshaped. 
 

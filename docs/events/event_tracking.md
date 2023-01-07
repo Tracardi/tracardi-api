@@ -25,6 +25,7 @@ Events consist of three main components:
 
 To register an event with Tracardi, you will need to send a POST request to the `/track` endpoint on the server where Tracardi is installed. 
 
+
 You need to write a code that will connect to the POST method to the url e.g.
 http://tracardi.page.com/track and send the data about event plus additional information on the source and session.
 
@@ -59,7 +60,9 @@ http://tracardi.page.com/track and send the data about event plus additional inf
 } 
 ```
 
-Not all data is required. Below you can find only required data.
+This POST request to the specified URL with the event data and additional information about the source and session. If the request is successful (i.e., the server returns a status code of 200), the code will print a message indicating that the event was registered successfully. If there was an error, it will print the error message returned by the server.
+
+Note that not all data is required. Below you can find example with only required data.
 
 ```json title="Only required payload data"
 {
@@ -173,9 +176,9 @@ We have the following options.
 * `saveSession` - True / False value - whether tracardi should save the session data.
 * `saveEvents` - True / False value - whether tracardi should save the event or just process it
 
-### Example od debugger data
+### Example of debugger data
 
-```json title="Example od debugger data"
+```json title="Example of debugger data"
 {
   "debugging": {
     "session": {
@@ -210,15 +213,21 @@ We have the following options.
 }
 ```
 
-## Profile-less events and webhooks
+## Tracking events with webhook
 
-There are situations in which we may not have access to profile data, but we do have an identifier that allows us to identify a customer. An example of this might be a discount coupon, where we know who received a particular voucher on external systems, but we do not have access to that information at the time of the event (which only includes the voucher ID). In these cases, we can send profile data as profile-less evnet. The system will not have a profile ID or create a new profile.
+A webhook is a way for an application to provide other applications with real-time information. It allows one application to send a message or information to another application when a specific event or trigger occurs. 
 
-However, it is possible to retrieve data about the customer from external systems and attach the appropriate profile at the time of event processing. This allows for the tracking and analysis of customer data even when profile information is not available at the time of the event.
+Webhooks are typically used to send data from one application to another over the internet. They can be used to connect a wide variety of applications and services, such as social media platforms, payment gateways, and customer relationship management systems.
+
+### Profile-less events and webhooks
+
+In some cases, we may not have access to a customer's profile data but we do have an identifier that allows us to identify the customer. An example of this scenario might be when we have a discount coupon and we know which customer received the coupon on external systems, but we do not have access to that information at the time of the event (which only includes the voucher ID). In these situations, we can send profile data as a profile-less event. This means that the system will not have a profile ID or create a new profile.
+
+However, it is possible to retrieve customer data from external systems and attach the appropriate profile at the time of event processing. This enables us to track and analyze customer data even when profile information is not available at the time of the event.
 
 ## How to send profile-less event
 
-There are two ways to send profile less events.
+There are two ways to send profile-less events.
 
 First, by adding the profile_less parameter to the POST / track query. In this way
 
@@ -226,11 +235,9 @@ First, by adding the profile_less parameter to the POST / track query. In this w
 POST /track?profile_less=true
 ```
 
-Such event will not create a profile, but will create a session. There must be a session id in the data sent to the
-server. It can be an existing session or a new one generated on the client-side. Remember that a profile_less event will
-not have a profile when it goes to workflow. The profile will be empty.
+A profile-less event will not create a profile, but it will create a session. The data sent to the server must include a session ID, which can be either an existing session or a new one generated on the client-side. It is important to note that a profile-less event will not have a profile when it enters the workflow. The profile field will be empty.
 
-Another way to send a less event profile is to post it to the endpoint:
+Another way to send a profile-less event is to post it to the endpoint:
 
 ```
 POST /collect/EVENT-TYPE/SOURCE-ID
@@ -246,9 +253,8 @@ event.
 
 !!! note
 
-    The event sent in this way will not create a session. Of course, it is possible to add a 
-    profile and a session while processing the event. In this way, we could connect the profile 
-    to the event dynamically in the workflow.
+    Please note that sending an event in this manner will not create a session. However, it is possible to add a profile and a 
+    session during event processing. This allows for the dynamic linking of the profile to the event within the workflow.
 
 # Response
 
