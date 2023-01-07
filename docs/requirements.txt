@@ -2,3 +2,4 @@ mkdocs-material
 mkdocs-git-revision-date-plugin
 mkdocs-video
 mkdocs-material-extensions
+mkdocs-git-revision-date-localized-plugin

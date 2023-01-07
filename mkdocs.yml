@@ -18,7 +18,12 @@ markdown_extensions:
   - pymdownx.emoji:
       emoji_index: !!python/name:materialx.emoji.twemoji
       emoji_generator: !!python/name:materialx.emoji.to_svg
-
+      options:
+        custom_icons:
+          - overrides/.icons
+plugins:
+  - git-revision-date-localized:
+      enable_creation_date: true
 theme:
   name: material
   features:
@@ -26,8 +31,10 @@ theme:
     - navigation.top
     - content.code.annotate
     - content.tabs.link
+    - content.action.edit
+#    - navigation.tabs
   palette:
-    - scheme: default
+    - primary: blue
       toggle:
         icon: material/lightbulb-outline
         name: Switch to dark mode
@@ -46,7 +53,7 @@ extra:
     - icon: fontawesome/brands/github
       link: https://github.com/Tracardi/tracardi
     - icon: fontawesome/brands/youtube
-      link: https://www.youtube.com/channel/UC0atjYqW43MdqNiSJBvN__Q
+      link: https://www.youtube.com/@tracardi
 copyright: Copyright &copy; 2020 - 2021 Tracardi
 repo_url: https://github.com/tracardi/tracardi-api
 repo_name: tracardi/tracardi-api
