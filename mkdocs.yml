@@ -21,9 +21,9 @@ markdown_extensions:
       options:
         custom_icons:
           - overrides/.icons
-plugins:
-  - git-revision-date-localized:
-      enable_creation_date: true
+#plugins:
+#  - git-revision-date-localized:
+#      enable_creation_date: true
 theme:
   name: material
   features:
