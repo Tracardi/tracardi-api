@@ -1,12 +1,8 @@
 # Upgrades
 
-Tracardi is being still developed. Though it can be used as is right now, upgrading may cause some issues. This is due
-to the way workflows are persisted. Workflow created in one version may not have all the plugins that exist in new
-version or the plugins behave a bit differently. Till Tracardi reaches version 1.0 only code is fully upgradable. We do
-not upgrade the saved workflows or freeze the plugin versions. When you upgrade to new version you have to make sure
-that the saved plugins behave the same way. So connect new version to old elastic instance and see what is not working
-and replace old plugins with the new ones. Plugins have versions, so you can have the same plugin in two versions registered
-in elastic.
+Tracardi is still in active development, and as such, upgrading to a new version may introduce some compatibility issues. This is due to the way that workflows are persisted, which may change between versions. Workflows created in one version may not work properly with all the available plugins in a newer version, or the plugins may behave differently.
+
+To ensure a smooth upgrade process, it is recommended to wait until Tracardi reaches version 1.0, at which point the code will be fully upgradeable. Until then, you should carefully check for any issues when upgrading to a new version. You can do this by connecting the new version to the old Elastic instance and reviewing any saved workflows or plugin versions for compatibility. If necessary, you can replace old plugins with newer versions to ensure that everything works as expected. Note that it is possible to have multiple versions of the same plugin registered in Elastic.
 
 To upgrade source to the latest development version pull new docker image.
 
@@ -19,20 +15,23 @@ Then you can run it the same way as written in [installation](installation/index
 
 !!! Warning
 
-    Upgrades of minor versions of Tracardi may cause data loss.
+    Upgrades of minor or development versions of Tracardi may cause data loss. Each development version is marked with `-dev` suffix.
 
 # Upgrades post version 0.7.2
 
-Tracardi version 0.7.2 introduced a feature that allows data migration between versions. Each new installation 
-creates a new emtpy Tracardi database. The data can be migrated from old version to the new one. To do this 
-please click on `maintenance/migration` find the migration script from old version, and follow the instructions.
+In Tracardi version 0.7.2, a feature was introduced that allows for data migration between versions. Each new Tracardi installation creates a new, empty database, and the data from an old version can be migrated to the new one. To perform this migration, follow these steps:
+
+* Navigate to the maintenance/migration page.
+* Locate the migration script from the old version.
+* Follow the instructions provided in the script to complete the data migration.
+
+Note that this feature is only available in Tracardi version 0.7.2 and higher. If you are using an older version, you will need to upgrade to at least 0.7.2 in order to access this functionality.
 
 !!! Warning
 
-    Please notice the when you make a lot of upgrades of Tracardi the system creates a lot of new indices indices 
-    this way you may reach the Elasticsearch limit of 1000 indices. To solve this you may increase the limit in 
-    Elasticsearch configuration or delete the indices used by old Tracardi versions. Version 0.8.0 has this feature 
-    in the GUI. Older versions have an API tha can be used to delete old indices, for example a HTTP DELETE call to 
-    `/indices/version/0.7.2` should delete the 0.7.2 version indices. 
-    Please test new installation thoroughly before deleting old data because after deletion there is no way to revert
-    system to the old version.  
+     If you perform multiple upgrades of Tracardi, the system will create a large number of new indices, which may cause you to reach the Elasticsearch
+     limit of 1000 indices. To resolve this issue, you can either increase the limit in the Elasticsearch configuration or delete the indices used by old
+     Tracardi versions. Tracardi version 0.8.0 includes a feature in the GUI to delete old indices. If you are using an older version, you can use the API
+     to delete old indices, such as issuing a HTTP DELETE call to /indices/version/0.7.2 to delete the 0.7.2 version indices. However, be cautious when 
+     deleting old data, as there is no way to revert the system to an older version once the data has been deleted. It is important to thoroughly test your 
+     new Tracardi installation before deleting any old data. 
