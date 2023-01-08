@@ -133,3 +133,14 @@ Not all resources are available as destinations in the Tracardi system. For more
 
 In general, a destination is a place or system to which data is sent or forwarded for further processing or storage. It can be used to transfer data from one system or application to another, allowing for the integration and exchange of information between different platforms or services.
 
+# Customer consent
+
+Customer consent refers to the process of obtaining permission from an individual to collect, use, or share their personal data. This can be done through a variety of means, such as a written or oral agreement, a click-through on a website, or through the use of a consent form. User consent is an important principle in data privacy laws, as it allows individuals to control their own personal information and to make informed decisions about how it is used. 
+
+Tracardi can store differnet types of user consents. It is used to automatically enforece data compliance with customer consents. 
+
+# Data compliance
+
+Data compliance refers to the practice of adhering to laws, regulations, and guidelines related to the handling, processing, and storing of data. This includes protecting the privacy and security of individuals' personal information, as well as ensuring that data is collected, used, and shared in a transparent and ethical manner. Data compliance is important because it helps to build trust and confidence in the way that organizations use data, and it helps to prevent data breaches, misuse, and abuse.
+
+Tracari can ensure data compliance on the event property level. Meaning you can set a rule that will erase data if user did not allow you to store certain data in Tracardi. 
