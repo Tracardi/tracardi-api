@@ -17,11 +17,12 @@ def group_records(
     if query is not None and len(query) > 0:
         query = query.lower()
         if query:
-            result = [r for r in result if query in r[search_by].lower() or search(query, r[group_by])]
+            result = [r for r in result if query in r[search_by].lower() or (group_by is not None and search(query, r[group_by]))]
 
     # Grouping
     groups = defaultdict(list)
     for record in result:
+        print(record)
         if group_by is not None and group_by in record:
             if isinstance(record[group_by], list):
                 if len(record[group_by]) > 0:
