@@ -22,7 +22,6 @@ def group_records(
     # Grouping
     groups = defaultdict(list)
     for record in result:
-        print(record)
         if group_by is not None and group_by in record:
             if isinstance(record[group_by], list):
                 if len(record[group_by]) > 0:

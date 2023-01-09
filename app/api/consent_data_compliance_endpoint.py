@@ -16,7 +16,6 @@ router = APIRouter(
 @router.get("/consent/compliance/fields", tags=["compliance"], include_in_schema=server.expose_gui_api)
 async def get_field_compliance_with_customer_consent(query: Optional[str] = None, start: int = 0, limit: int = 100):
     result = await storage.driver.data_compliance.load_all(start=start, limit=limit)
-    print(result)
     return group_records(result, query, group_by=None, search_by='name', sort_by='name')
 
 
