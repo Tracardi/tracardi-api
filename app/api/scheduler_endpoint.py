@@ -59,8 +59,13 @@ async def get_scheduled_jobs(query: Optional[str] = None):
 async def schedule_job(job_id: str):
     schedule = RQClient()
     job = schedule.get_job(job_id)
-    result = job.to_dict()
-    del result['data']
+    result = job.to_dict(include_meta=False)
+
+    if 'data' in result:
+        del result['data']
+    if 'result' in result:
+        del result['result']
+
     result['meta'] = job.meta
     return result
 
