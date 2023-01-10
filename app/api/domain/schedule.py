@@ -37,7 +37,8 @@ class Job(BaseModel):
 
     @validator("time")
     def time_must_not_be_emtpy(cls, value):
-        value = value.strip()
-        if CronValidator.parse(value) is None:
-            raise ValueError("Cron time is invalid.")
+        if isinstance(value, str):
+            value = value.strip()
+            if CronValidator.parse(value) is None:
+                raise ValueError("Cron time is invalid.")
         return value
