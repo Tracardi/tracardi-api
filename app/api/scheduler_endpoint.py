@@ -59,7 +59,6 @@ async def get_scheduled_jobs(query: Optional[str] = None):
 async def schedule_job(job_id: str):
     schedule = RQClient()
     job = schedule.get_job(job_id)
-    print(job.to_dict())
     result = job.to_dict()
     del result['data']
     result['meta'] = job.meta
@@ -84,10 +83,13 @@ async def schedule_job(
 
         if isinstance(job.time, str):
             if job.time.isnumeric():
-                time = timedelta(seconds=int(job.time))
+                job.time = timedelta(seconds=int(job.time))
 
         schedule = RQClient()
-        job = schedule.schedule(job.name, job.description, job.time, schedule_track, job.tracker_payload.dict(),
+        job = schedule.schedule(job.name,
+                                job.description,
+                                job.time,
+                                schedule_track, job.tracker_payload.dict(exclude={"metadata": ..., "operation": ...}),
                                 get_ip_address(request))  # type: rq.job.Job
         return {
             "id": job.id,
