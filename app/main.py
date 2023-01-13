@@ -56,16 +56,16 @@ print(f"""
     888     888  T88b   d8888888888 Y88b  d88P  d8888888888 888  T88b  888   d88P  888   
     888     888   T88b d88P     888  "Y8888P"  d88P     888 888   T88b 8888888P" 8888888
     
-{str(tracardi.version)}""")
+{str(tracardi.version)}""", flush=True)
 if License.has_license():
     license = License.check()
 
     print(
-        f"Commercial Licensed issued for: {license.owner}, expires: {datetime.fromtimestamp(license.expires) if license.expires > 0 else 'Perpetual'} ")
+        f"Commercial Licensed issued for: {license.owner}, expires: {datetime.fromtimestamp(license.expires) if license.expires > 0 else 'Perpetual'} ", flush=True)
 
-    print(f"Services {list(license.get_service_ids())}")
+    print(f"Services {list(license.get_service_ids())}", flush=True)
 else:
-    print(f"License: MIT + “Commons Clause” License Condition v1.0")
+    print(f"License: MIT + “Commons Clause” License Condition v1.0", flush=True)
 
 tags_metadata = [
     {
