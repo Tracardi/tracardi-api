@@ -123,9 +123,9 @@ tags_metadata = [
 ]
 
 application = FastAPI(
-    title="Tracardi Customer Data Platform Project",
-    description="TRACARDI open-source customer data platform offers you excellent control over your customer data with "
-                "its broad set of features",
+    title="Tracardi Customer Data Platform",
+    description="The TRACARDI open-source customer data platform provides exceptional control over customer "
+                "data through its comprehensive set of features.",
     version=str(tracardi.version),
     openapi_tags=tags_metadata if server.expose_gui_api else None,
     docs_url='/docs' if server.api_docs else None,

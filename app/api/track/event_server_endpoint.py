@@ -64,7 +64,7 @@ async def track(tracker_payload: TrackerPayload, request: Request, profile_less:
     return await _track(tracker_payload, get_ip_address(request))
 
 
-@router.post("/collect/{event_type}/{source_id}/{session_id}", tags=['context-server'])
+@router.post("/collect/{event_type}/{source_id}/{session_id}", tags=['collector'])
 async def track_post_webhook(event_type: str, source_id: str, request: Request, session_id: Optional[str] = None):
     """
     Collects data from request POST and adds event type. It stays profile-less if no session provided.
@@ -94,7 +94,7 @@ async def track_post_webhook(event_type: str, source_id: str, request: Request, 
     return await _track(tracker_payload, get_ip_address(request))
 
 
-@router.get("/collect/{event_type}/{source_id}/{session_id}", tags=['context-server'])
+@router.get("/collect/{event_type}/{source_id}/{session_id}", tags=['collector'])
 async def track_get_webhook(event_type: str, source_id: str, request: Request, session_id: Optional[str] = None):
     """
     Collects data from request GET and adds event type. It stays profile-less if no session provided.
@@ -123,7 +123,7 @@ async def track_get_webhook(event_type: str, source_id: str, request: Request, s
     return await _track(tracker_payload, get_ip_address(request))
 
 
-@router.get("/collect/{event_type}/{source_id}", tags=['context-server'])
+@router.get("/collect/{event_type}/{source_id}", tags=['collector'])
 async def track_get_webhook(event_type: str, source_id: str, request: Request):
     """
     Collects data from request GET and adds event type. It stays profile-less if no session provided.
@@ -152,7 +152,7 @@ async def track_get_webhook(event_type: str, source_id: str, request: Request):
     return await _track(tracker_payload, get_ip_address(request))
 
 
-@router.post("/collect/{event_type}/{source_id}", tags=['context-server'])
+@router.post("/collect/{event_type}/{source_id}", tags=['collector'])
 async def track_post_webhook(event_type: str, source_id: str, request: Request):
     """
     Collects data from request POST and adds event type. It stays profile-less.
