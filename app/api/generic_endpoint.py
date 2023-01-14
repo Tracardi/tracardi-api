@@ -1,9 +1,10 @@
 from typing import Optional
 
 from fastapi import APIRouter
-from fastapi import HTTPException, Depends
+from fastapi import Depends
 
 from tracardi.config import tracardi
+from tracardi.service.kql.autocomplete import KQLAutocomplete
 from tracardi.service.storage.driver import storage
 from tracardi.domain.enum.indexes_histogram import IndexesHistogram
 from tracardi.domain.enum.indexes_search import IndexesSearch
@@ -15,6 +16,18 @@ from ..config import server
 router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer", "maintainer"]))]
 )
+
+
+@router.get("/{index}/query/autocomplete",
+            tags=["autocomplete"],
+            include_in_schema=server.expose_gui_api)
+async def autocomplete_kql(index: IndexesSearch, query: Optional[str] = ""):
+    try:
+        ac = KQLAutocomplete(index=index.value)
+        return await ac.autocomplete(query)
+    except Exception as e:
+        print(e)
+        return []
 
 
 @router.post("/{index}/select",
