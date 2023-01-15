@@ -24,7 +24,11 @@ router = APIRouter(
 async def autocomplete_kql(index: IndexesSearch, query: Optional[str] = ""):
     try:
         ac = KQLAutocomplete(index=index.value)
-        return await ac.autocomplete(query)
+        next_values, current = await ac.autocomplete(query)
+        return {
+            "next": next_values,
+            "current": current
+        }
     except Exception as e:
         print(e)
         return []
