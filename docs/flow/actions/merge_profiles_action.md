@@ -8,9 +8,13 @@ To complete merging you will have to provide a merge key in configuration tab of
 
 ## Configuration
 
-This node needs a merge key that will be used during merging. That can be e-mail, telephone number, id, etc. 
-System will look for other profiles that have the same merge key, e.g. e-mail and will 
-merge all found profiles into one record.  
+This node needs a merge key that will be used during merging. That can be e-mail, telephone number, id, or 
+any profile trait. System will look for other profiles that have the same merge key, e.g. e-mail and will 
+merge all found profiles into one record. 
+
+Merging is done by grouping the profiles with merge key and coping all the data to one profile. Also, events are 
+reassigned to one profile. All redundant profiles will be deleted but its id will be reassigned to field ids in the
+merged profile. So no worries when you try to load the profile with old id the system will fetch new merged profile. 
 
 If two or more keys are defined Tracardi will look for records that have all defined keys. 
 For example if it is e-mail and name then record matched for merging will have both 
@@ -23,7 +27,7 @@ Dot notation in the documentation.
 
 ```json
 {
-  "mergeBy": ["event@properties.name"]
+  "mergeBy": ["profile@pii.email"]
 }
 
 ```
