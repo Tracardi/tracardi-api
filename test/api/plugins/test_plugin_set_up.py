@@ -92,18 +92,6 @@ async def test_should_set_up_plugin_whois_action():
     await plugin.set_up({'domain': 'some.com'})
 
 
-async def test_should_set_up_plugin_intercom_widget_plugin():
-    
-    module = import_package("tracardi.process_engine.action.v1.ux.intercom.plugin")
-    plugin_class = load_callable(module, "IntercomWidgetPlugin")
-    plugin = plugin_class()
-    plugin.node = Node(id="node-id", 
-                       name="test-node", 
-                       module="tracardi.process_engine.action.v1.ux.intercom.plugin", 
-                       className="IntercomWidgetPlugin")
-    await plugin.set_up({'app_id': 'some-number', 'api_url': 'http://localhost:8686'})
-
-
 async def test_should_set_up_plugin_contains_pattern_action():
     
     module = import_package("tracardi.process_engine.action.v1.operations.contains_pattern.plugin")
