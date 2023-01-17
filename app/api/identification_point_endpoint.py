@@ -18,18 +18,18 @@ async def get_identification_points(query: Optional[str] = None, start: int = 0,
     return group_records(result, query, group_by=None, search_by='name', sort_by='name')
 
 
-@router.post("identification/point", tags=["identification"], include_in_schema=server.expose_gui_api)
+@router.post("/identification/point", tags=["identification"], include_in_schema=server.expose_gui_api)
 async def save_identification_point(identification_point: IdentificationPoint):
     return await storage.driver.identification.upsert(identification_point)
 
 
-@router.get("identification/point/{id}", tags=["identification"], include_in_schema=server.expose_gui_api)
+@router.get("/identification/point/{id}", tags=["identification"], include_in_schema=server.expose_gui_api)
 async def get_identification_point(id: str):
     return await storage.driver.identification.load_by_id(id)
 
 
-@router.delete("identification/point/{id}", tags=["identification"], include_in_schema=server.expose_gui_api)
+@router.delete("/identification/point/{id}", tags=["identification"], include_in_schema=server.expose_gui_api)
 async def delete_identification_point(id: str):
     result = await storage.driver.identification.delete_by_id(id)
-    await storage.driver.data_compliance.refresh()
+    await storage.driver.identification.refresh()
     return result
