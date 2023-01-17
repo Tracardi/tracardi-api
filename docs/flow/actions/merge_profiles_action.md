@@ -1,29 +1,25 @@
 # Merge Profile Action
 
-When there is a new Personally Identifiable Information(PII) appended to a profile then the profile may 
-need merging with other profiles in the system. This is the way you maintain a consistent user profile.
+When new personal information is added to a customer's profile, it might need to be combined with other profiles in the
+system to create one consistent profile. This is done through the "merge profile" action.
 
-Once the merge profile action is used in the workflow it will mark profile to be merged at the end of workflow. 
-To complete merging you will have to provide a merge key in configuration tab of the merge profile node.
+When this action is used in the workflow, it will set the profile to be merged at the end of the process. To finish the
+merging process, you'll need to provide a merge key in the settings of the "merge profile" step.
 
 ## Configuration
 
-This node needs a merge key that will be used during merging. That can be e-mail, telephone number, id, or 
-any profile trait. System will look for other profiles that have the same merge key, e.g. e-mail and will 
-merge all found profiles into one record. 
+The merge key is an important part of the system that helps to combine different customer profiles into one. This key
+can be something unique like an email, phone number, or ID. The system will look for other profiles that have the same
+key and merge them together.
 
-Merging is done by grouping the profiles with merge key and coping all the data to one profile. Also, events are 
-reassigned to one profile. All redundant profiles will be deleted but its id will be reassigned to field ids in the
-merged profile. So no worries when you try to load the profile with old id the system will fetch new merged profile. 
+When the profiles are merged, all their information is combined into one single profile and any actions related to those
+profiles are now related to the merged one. Any extra profiles that are no longer needed will be deleted, but their ID
+will still be connected to the new merged profile. This means that if you try to look for an old profile, the system
+will show you the new merged one.
 
-If two or more keys are defined Tracardi will look for records that have all defined keys. 
-For example if it is e-mail and name then record matched for merging will have both 
-email and name equal to defined values. 
-
-Provide merge key in form of JSON array. 
-
-To access merge key data use dotted notation. Details on dotted notation can be found Notations / 
-Dot notation in the documentation.
+If you want to merge profiles using more than one key, like email and name, the system will look for profiles that have
+both those keys. The merge key should be provided in a JSON array. To access the merge key data, you should use dotted
+notation. For more information on this notation, check the Notations/Dot notation section in the documentation.
 
 ```json
 {
@@ -32,19 +28,19 @@ Dot notation in the documentation.
 
 ```
 
-## Side effects
+# A simpler way to merge profile
 
-Profile merging will concatenate data even if there is a conflict in data. 
-For example let's assume there is a user `John Doe` with email `john.does@mail.com` in storage. 
-New data also has e-mail `john.does@mail.com` and name and surname equal to `Jonathan Doe`. 
+An identification point is a feature (in commercial Tracardi) that allows the system to identify customers during their journey. When this point
+is set, the system will monitor for events that can be used to match the anonymous customer's identified profile.
 
-We are using e-mail as primary merge key.
+To give an analogy, think of an identification point like the ones at an airport or during a police check. You stay
+anonymous until there is a moment when you need to show your ID. This is an identification point. At this point, you are
+no longer anonymous. The same goes for Tracardi, once you identify yourself, all your past events become part of your
+identified profile. If identification happens multiple times on different communication channels, all the anonymous
+actions will become not anonymous anymore.
 
-That means the record will be merged as: 
+For example, if a customer's profile in the system has an email address that matches the email delivered in a new event,
+then the system can match anonymous customer data with the existing profile and merge all previous interactions/events.
 
-```yaml
-name: [John, Jothatan] 
-surname: [Doe]   
-```
-
-Conflicting name will have both values `[John, Jothatan]`.
+In simpler terms, identification point is a way for the system to identify customers and keep their information
+consistent throughout their journey.

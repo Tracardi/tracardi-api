@@ -144,3 +144,15 @@ Tracardi can store differnet types of user consents. It is used to automatically
 Data compliance refers to the practice of adhering to laws, regulations, and guidelines related to the handling, processing, and storing of data. This includes protecting the privacy and security of individuals' personal information, as well as ensuring that data is collected, used, and shared in a transparent and ethical manner. Data compliance is important because it helps to build trust and confidence in the way that organizations use data, and it helps to prevent data breaches, misuse, and abuse.
 
 Tracari can ensure data compliance on the event property level. Meaning you can set a rule that will erase data if user did not allow you to store certain data in Tracardi. 
+
+
+# Identification point
+
+An identification point is a feature that allows the system to identify customers during their journey. When this point is set, the system will monitor for events that can be used to match the anonymous customer's identified profile.
+
+To give an analogy, think of an identification point like the ones at an airport or during a police check. You stay anonymous until there is a moment when you need to show your ID. This is an identification point. At this point, you are no longer anonymous. The same goes for Tracardi, once you identify yourself, all your past events become part of your identified profile. If identification happens multiple times on different communication channels, all the anonymous actions will become not anonymous anymore.
+
+For example, if a customer's profile in the system has an email address that matches the email delivered in a new event, then the system can match anonymous customer data with the existing profile and merge all previous interactions/events.
+
+In simpler terms, identification point is a way for the system to identify customers and keep their information consistent throughout their journey.
+
