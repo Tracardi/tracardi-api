@@ -20,7 +20,9 @@ async def get_identification_points(query: Optional[str] = None, start: int = 0,
 
 @router.post("/identification/point", tags=["identification"], include_in_schema=server.expose_gui_api)
 async def save_identification_point(identification_point: IdentificationPoint):
-    return await storage.driver.identification.upsert(identification_point)
+    result = await storage.driver.identification.upsert(identification_point)
+    await storage.driver.identification.refresh()
+    return result
 
 
 @router.get("/identification/point/{id}", tags=["identification"], include_in_schema=server.expose_gui_api)
