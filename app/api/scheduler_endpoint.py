@@ -1,24 +1,23 @@
 import logging
-from datetime import datetime, timedelta
-from typing import Union, Optional
-
+from datetime import timedelta
+from typing import Optional
 import rq
-
-from com_tracardi.scheduler.rq_clinet import RQClient
 from fastapi import APIRouter, Depends, Request, HTTPException, status
-
-from com_tracardi.scheduler.tracker import schedule_track
 from tracardi.config import tracardi
-from tracardi.domain.payload.tracker_payload import TrackerPayload
 from tracardi.domain.storage_record import StorageRecords
 from tracardi.exceptions.exception import UnauthorizedException, FieldTypeConflictException, EventValidationException, \
     TracardiException
 from tracardi.exceptions.log_handler import log_handler
+from tracardi.service.license import License, SCHEDULER
 from .auth.permissions import Permissions
 from .domain.schedule import Job
 from .track.service.ip_address import get_ip_address
 from ..config import server
 from ..service.grouping import group_records
+
+if License.has_service(SCHEDULER):
+    from com_tracardi.scheduler.rq_clinet import RQClient
+    from com_tracardi.scheduler.tracker import schedule_track
 
 logger = logging.getLogger(__name__)
 logger.setLevel(tracardi.logging_level)

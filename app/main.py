@@ -134,8 +134,7 @@ application = FastAPI(
         "name": "Risto Kowaczewski",
         "url": "http://github.com/tracardi/tracardi",
         "email": "office@tracardi.com",
-    },
-
+    }
 )
 
 application.add_middleware(
@@ -275,6 +274,18 @@ async def app_shutdown():
     elastic = ElasticClient.instance()
     await elastic.close()
 
+
+# @application.exception_handler(Exception)
+# async def debug_exception_handler(request: Request, exc: Exception):
+#     import traceback
+#
+#     return Response(
+#         content="".join(
+#             traceback.format_exception(
+#                 etype=type(exc), value=exc, tb=exc.__traceback__
+#             )
+#         )
+#     )
 
 def report_i_am_alive():
     try:
