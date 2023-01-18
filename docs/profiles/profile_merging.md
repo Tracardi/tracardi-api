@@ -6,7 +6,11 @@ Profile merging is the process of combining multiple customer profiles that belo
 
 !!! Example
 
-    For example, if a customer uses their laptop with Firefox browser, they may have one profile with an ID of 1. But when they use the same device but using Google Chrome, they may have another profile with ID of 2. And when they use a mobile phone, they may have a third profile with ID of 3. Even though they are the same person, they have 3 different profiles. Profile ID 1 may have data about their purchases but not their name and surname, while their first and last name may be saved in profile ID 2. Profile merging is needed to aggregate all the fragmented data set into one profile to have a complete understanding of the customer.
+    For example, if a customer uses their laptop with Firefox browser, they may have one profile with an ID of 1. But when they use 
+    the same device but using Google Chrome, they may have another profile with ID of 2. And when they use a mobile phone, they may 
+    have a third profile with ID of 3. Even though they are the same person, they have 3 different profiles. Profile ID 1 may have 
+    data about their purchases but not their name and surname, while their first and last name may be saved in profile ID 2. 
+    Profile merging is needed to aggregate all the fragmented data set into one profile to have a complete understanding of the customer.
 
 ## Identity resolution
 
