@@ -1,4 +1,5 @@
 import os, sys
+import traceback
 from datetime import datetime
 
 from tracardi.service.license import License, SCHEDULER
@@ -259,6 +260,7 @@ async def add_process_time_header(request: Request, call_next):
         return response
 
     except Exception as e:
+        traceback.print_exc(e)
         return JSONResponse(
             status_code=500,
             headers={
@@ -274,18 +276,6 @@ async def app_shutdown():
     elastic = ElasticClient.instance()
     await elastic.close()
 
-
-# @application.exception_handler(Exception)
-# async def debug_exception_handler(request: Request, exc: Exception):
-#     import traceback
-#
-#     return Response(
-#         content="".join(
-#             traceback.format_exception(
-#                 etype=type(exc), value=exc, tb=exc.__traceback__
-#             )
-#         )
-#     )
 
 def report_i_am_alive():
     try:
