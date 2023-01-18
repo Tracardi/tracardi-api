@@ -6,6 +6,7 @@ The data flow in Tracardi goes through the following stages:
 |------------------|-------------------------------------------------------------------------------|
 | `Source validation`| Tracardi must have event source defined and enabled in the system.            |
 | `Event data validation` | Tracardi can validate the event daa schema.                                |
+| `Identity resolution` | If an event is an idification point then this step is performed. |
 | `Event reshaping` | Tracardi can change the event schema if needed.                               |
 | `Event collection` | Tracardi saves the event.                                                     |
 | `Event routing`    | Tracardi reads a rule that defines which workflow must precess event.         |

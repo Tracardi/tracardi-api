@@ -2,18 +2,15 @@
 
 ## Introduction
 
-The segment is the result of the segmentation of customer profiles. A segment can be described by a simple logical rule
-or by more complex AI models. The segment is part of the profile. A segment defined in the Tracardi system can be used
-in the segmentation workflow. The segment is represented by a simple sentence such as "Customers with high volume of
-purchases".
+A segment is a group of customer profiles that have been identified as having similar characteristics or behaviors. It is the result of segmenting customer profiles. Segmentation is the process of dividing a customer base into smaller groups with similar characteristics. These segments can be described by a simple logical rule or by more complex AI models.
+
+In the Tracardi system, a segment is a part of the customer profile, and it can be used in the segmentation workflow. A segment is typically represented by a simple sentence that describes the group, for example "Customers with a high volume of purchases". This group of customers, who have a high volume of purchases, can be targeted with specific marketing campaigns or other customer-centric actions based on their behavior and characteristics.
 
 ## How to segment
 
-The segmentation process is started after each update of profile data or if the segmentation has been forced within the
-workflow by placing the action "Segment profile".
+The segmentation process is started automatically after each update of profile data, or it can be initiated manually within a workflow by placing the action "Segment profile".
 
-The criteria for segmentation are defined in the segmentation tab. When we define segmentation, we don't have to change
-anything in the workflow. If segmentation is enabled, it will be run after each workflow is completed.
+In the Tracardi, the criteria for segmentation are defined in the segmentation tab. This means that when a segmentation is defined, it can be used in multiple workflows without the need to change anything in the workflows themselves. If segmentation is enabled, it will be run automatically after each workflow is completed.
 
 ## Segmentation
 
