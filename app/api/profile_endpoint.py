@@ -4,6 +4,7 @@ from fastapi import APIRouter
 from fastapi import Depends
 from fastapi.responses import Response
 
+from tracardi.exceptions.exception import DuplicatedRecordException
 from tracardi.service.storage.driver import storage
 from tracardi.domain.profile import Profile
 from tracardi.service.storage.index import resources

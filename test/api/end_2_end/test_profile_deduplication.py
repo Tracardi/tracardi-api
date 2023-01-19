@@ -1,3 +1,4 @@
+from asyncio import sleep
 from datetime import datetime, timedelta
 from uuid import uuid4
 
@@ -8,6 +9,7 @@ from test.utils import Endpoint
 from tracardi.exceptions.exception import DuplicatedRecordException
 from tracardi.service.storage.driver import storage
 from tracardi.service.storage.elastic_client import ElasticClient
+from tracardi.service.storage.factory import storage_manager
 from tracardi.service.storage.index import resources
 
 endpoint = Endpoint()
@@ -34,10 +36,6 @@ async def _create_track(source_id, session_index, session_id, profile_index, pro
         "metadata": {
             "time": {
                 "insert": f"{year}-{month:02d}-03T14:35:15.838328",
-                "visit": {
-                    "current": f"{year}-{month:02d}-03T14:35:15.838328",
-                    "count": 1
-                }
             }
         },
         "profile": {
@@ -55,6 +53,7 @@ async def _create_track(source_id, session_index, session_id, profile_index, pro
     profile = await _save(profile_index, records=[{
         '_id': profile_id,
         "id": profile_id,
+        "ids": [profile_id],
         "metadata": {
             "time": {
                 "insert": f"{year}-{month:02d}-03T14:35:15.838328",
@@ -64,9 +63,10 @@ async def _create_track(source_id, session_index, session_id, profile_index, pro
                 }
             }
         },
+        'active': True,
         'traits': {
             'private': {
-                "value1": 1,
+                "value": str(uuid4()),
             },
             'public': {
 
@@ -157,14 +157,14 @@ async def test_should_not_duplicate_events():
 
     finally:
         assert endpoint.delete(f'/event-source/{source_id}').status_code in [200, 404]
-        # assert endpoint.delete(f'/session/{session_id}').status_code in [200, 404]
-        # assert endpoint.delete(f'/profile/{profile_id}').status_code in [200, 404]
-        # for event_id in events:
-        #     await storage.driver.event.delete_by_id(event_id)
-        #
-        # await storage.driver.profile.refresh()
-        # await storage.driver.session.refresh()
-        # await storage.driver.event.refresh()
+        assert endpoint.delete(f'/session/{session_id}').status_code in [200, 404]
+        assert endpoint.delete(f'/profile/{profile_id}').status_code in [200, 404]
+        for event_id in events:
+            await storage.driver.event.delete_by_id(event_id)
+
+        await storage.driver.profile.refresh()
+        await storage.driver.session.refresh()
+        await storage.driver.event.refresh()
 
 
 async def test_should_deduplicate_profile():
@@ -174,14 +174,26 @@ async def test_should_deduplicate_profile():
 
     assert _create_event_source(source_id, "rest").status_code == 200
 
-    profile1, session1, events1 = await _create_track(source_id, prev_session_index, session_id, prev_profile_index,
-                                                      profile_id, prev_event_index,
+    print(prev_session_index)
+    print(curr_session_index)
+    print(profile_id)
+
+    profile1, session1, events1 = await _create_track(source_id,
+                                                      prev_session_index,
+                                                      session_id,
+                                                      prev_profile_index,
+                                                      profile_id,
+                                                      prev_event_index,
                                                       event_props=[
                                                           {"prop1": 1}, {"prop2": 2}
                                                       ])
 
-    profile2, session2, events2 = await _create_track(source_id, curr_session_index, session_id, curr_profile_index,
-                                                      profile_id, curr_event_index,
+    profile2, session2, events2 = await _create_track(source_id,
+                                                      curr_session_index,
+                                                      session_id,
+                                                      curr_profile_index,
+                                                      profile_id,
+                                                      curr_event_index,
                                                       event_props=[
                                                           {"prop3": 3}, {"prop4": 4}
                                                       ])
@@ -193,7 +205,7 @@ async def test_should_deduplicate_profile():
         await storage.driver.session.load_by_id(session_id)
 
     with pytest.raises(DuplicatedRecordException):
-        await storage.driver.profile.load_by_id(profile_id)
+        print(await storage.driver.profile.load_by_id(profile_id))
 
     # Now track the duplicated profile. It should de duplicate the session and profile
 
@@ -209,18 +221,29 @@ async def test_should_deduplicate_profile():
             "profile": {
                 "id": profile_id
             },
-            "events": [{"type": "page-view1"}, {"type": "page-view2", "options": {"save": False}}],
+            "events": [
+                {"type": "dedup-1"},
+                {"type": "dedup-2", "options": {"save": False}},
+                {"type": "dedup-3"}
+            ],
             "options": {
                 "debugger": True
             }
         }
 
         response = endpoint.post("/track", data=payload)
+
+        print(response.json())
         assert response.status_code == 200
 
         await storage.driver.profile.refresh()
         await storage.driver.session.refresh()
         await storage.driver.event.refresh()
+
+        print(events1)
+        print(events2)
+
+        await sleep(2)
 
         await storage.driver.profile.load_by_id(profile_id)
         await storage.driver.session.load_by_id(session_id)
