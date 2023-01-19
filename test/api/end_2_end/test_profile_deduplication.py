@@ -6,8 +6,10 @@ import pytest
 
 from test.api.endpoints.test_event_source_endpoint import _create_event_source
 from test.utils import Endpoint
+from tracardi.domain.profile import Profile
 from tracardi.exceptions.exception import DuplicatedRecordException
 from tracardi.service.storage.driver import storage
+from tracardi.service.storage.drivers.elastic.profile import deduplicate_profile
 from tracardi.service.storage.elastic_client import ElasticClient
 from tracardi.service.storage.factory import storage_manager
 from tracardi.service.storage.index import resources
@@ -166,17 +168,12 @@ async def test_should_not_duplicate_events():
         await storage.driver.session.refresh()
         await storage.driver.event.refresh()
 
-
 async def test_should_deduplicate_profile():
     profile_id = str(uuid4())
     source_id = str(uuid4())
     session_id = str(uuid4())
-
-    assert _create_event_source(source_id, "rest").status_code == 200
-
-    print(prev_session_index)
-    print(curr_session_index)
     print(profile_id)
+    assert _create_event_source(source_id, "rest").status_code == 200
 
     profile1, session1, events1 = await _create_track(source_id,
                                                       prev_session_index,
@@ -202,10 +199,69 @@ async def test_should_deduplicate_profile():
     assert session1 == session2
 
     with pytest.raises(DuplicatedRecordException):
+        # Trows error duplicate record
+        await storage.driver.profile.load_by_id(profile_id)
+
+    # When record is duplicated also session gets duplicated
+    with pytest.raises(DuplicatedRecordException):
         await storage.driver.session.load_by_id(session_id)
 
+    profile_records = await storage_manager('profile').load_by("ids", profile_id, limit=10)
+
+    assert profile_records.total == 2
+    profiles = profile_records.to_domain_objects(Profile)
+
+    indices = [profile.get_meta_data().index for profile in profiles if profile.has_meta_data()]
+
+    # Assert that profile is in 2 indices
+    assert len(set(indices)) == 2
+
+    profile = await deduplicate_profile(profile1)
+    assert profile.id == profile1 == profile_id
+
+    await storage.driver.profile.refresh()
+
+    record = await storage.driver.profile.load_by_id(profile_id)
+    assert record is not None
+    assert record.get_meta_data() is not None
+
+
+async def test_should_deduplicate_profile_on_server():
+    profile_id = str(uuid4())
+    source_id = str(uuid4())
+    session_id = str(uuid4())
+
+    assert _create_event_source(source_id, "rest").status_code == 200
+
+    profile1, session1, events1 = await _create_track(source_id,
+                                                      prev_session_index,
+                                                      session_id,
+                                                      prev_profile_index,
+                                                      profile_id,
+                                                      prev_event_index,
+                                                      event_props=[
+                                                          {"prop1": 1}, {"prop2": 2}
+                                                      ])
+
+    profile2, session2, events2 = await _create_track(source_id,
+                                                      curr_session_index,
+                                                      session_id,
+                                                      curr_profile_index,
+                                                      profile_id,
+                                                      curr_event_index,
+                                                      event_props=[
+                                                          {"prop3": 3}, {"prop4": 4}
+                                                      ])
+
+    assert profile1 == profile2
+    assert session1 == session2
+
     with pytest.raises(DuplicatedRecordException):
-        print(await storage.driver.profile.load_by_id(profile_id))
+        await storage.driver.profile.load_by_id(profile_id)
+
+    # When record is duplicated also session gets duplicated
+    with pytest.raises(DuplicatedRecordException):
+        await storage.driver.session.load_by_id(session_id)
 
     # Now track the duplicated profile. It should de duplicate the session and profile
 
@@ -233,18 +289,13 @@ async def test_should_deduplicate_profile():
 
         response = endpoint.post("/track", data=payload)
 
-        print(response.json())
         assert response.status_code == 200
 
         await storage.driver.profile.refresh()
         await storage.driver.session.refresh()
         await storage.driver.event.refresh()
 
-        print(events1)
-        print(events2)
-
-        await sleep(2)
-
+        # Should be no errors
         await storage.driver.profile.load_by_id(profile_id)
         await storage.driver.session.load_by_id(session_id)
 
