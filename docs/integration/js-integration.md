@@ -18,14 +18,14 @@ in your web page header. This is the example of the snippet:
                     api: 'http://192.168.1.103:8686'
                 },
                 source: {
-                    id: "<your-resource-id-HERE>" // (2)
+                    id: "<your-event-source-id-HERE>" // (2)
                 }
             }
         }
 </script>
 ```
 1. Compiled javascript code must be the first line in the script.
-2. You `event source id` should be copied here.
+2. You `event source id` should be copied here. Event source can be found in Inbound traffic in Tracardi GUI.
 
 If you refresh your page with the above javascript code you will notice that the response from tracardi will be like
 this:
