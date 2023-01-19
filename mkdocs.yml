@@ -140,20 +140,15 @@ nav:
               - resources/elasticsearch_resource.md
               - resources/sms77_resource.md
               - resources/twitter_resource.md
-
-
+              - resources/discord_resource.md
+              - resources/ga4_tracker_resource.md
+              - resources/github_resource.md
+              - resources/ua3_tracker_resource.md
 
       - Workflows:
           - flow/index.md
           - Actions:
               - flow/actions/index.md
-              - Operations:
-                  - flow/actions/update_profile_action.md
-                  - flow/actions/merge_profiles_action.md
-                  - flow/actions/segment_profiles_action.md
-                  - flow/actions/new_profile_action.md
-                  - flow/actions/update_event_action.md
-                  - flow/actions/update_session_action.md
               - flow/actions/if_action.md
               - flow/actions/elastic_email_contact_action.md
               - flow/actions/elastic_email_transactional_action.md
@@ -183,7 +178,23 @@ nav:
               - flow/actions/twitter_tweet_action.md
               - flow/actions/geo/geo_ip_locator.md
               - flow/actions/sms77/sms77_send_sms_plugin.md
-
+              - flow/actions/calculator_action.md
+              - flow/actions/random_element_action.md
+              - flow/actions/assign_condition_result_action.md
+              - flow/actions/reduce_array_action.md
+              - flow/actions/password_generator_action.md
+              - flow/actions/contains_pattern_action.md
+              - flow/actions/google_translate_action.md
+              - flow/actions/join_output_payloads.md
+              - flow/actions/limiter_action.md
+              - flow/actions/marge_data_action.md
+              - Operations:
+                  - flow/actions/update_profile_action.md
+                  - flow/actions/merge_profiles_action.md
+                  - flow/actions/segment_profiles_action.md
+                  - flow/actions/new_profile_action.md
+                  - flow/actions/update_event_action.md
+                  - flow/actions/update_session_action.md
               - Stats:
                   - flow/actions/increment_action.md
                   - flow/actions/decrement_action.md
@@ -195,15 +206,10 @@ nav:
                   - flow/actions/smtp_connector_action.md
                   - flow/actions/remote_call_action.md
                   - flow/actions/fullcontact_webhook_action.md
-                  - flow/actions/send_pushover_msg_action.md
                   - flow/actions/rabbit_publisher_action.md
-                  - flow/actions/discord_webhook_action.md
+                  - flow/actions/send_pushover_msg_action.md
                   - flow/actions/weather_action.md
-                  - flow/actions/mongo_query_action.md
-                  - flow/actions/mysql_connector_action.md
                   - flow/actions/oauth2_token_action.md
-                  - flow/actions/send_to_slack_channel_action.md
-                  - flow/actions/send_to_airtable_action.md
                   - flow/actions/send_to_influx_db_action.md
                   - flow/actions/rabbitmq_action.md
                   - flow/actions/fetch_from_airtable_action.md
@@ -214,6 +220,14 @@ nav:
                   - flow/actions/ends_with_action.md
                   - flow/actions/starts_with_action.md
                   - flow/actions/weekdays_checker_action.md
+                  - Databases:
+                      - flow/actions/mongo_query_action.md
+                      - flow/actions/mysql_connector_action.md
+                      - flow/actions/send_to_airtable_action.md
+                  - Messagers:
+                      - flow/actions/send_to_slack_channel_action.md
+                      - flow/actions/discord_webhook_action.md
+                      - flow/actions/telegram/telegram_post_plugin.md
                   - Novu:
                       - flow/actions/novu_plugin_action.md
                   - Elastic mail:
@@ -254,6 +268,9 @@ nav:
                       - flow/actions/sendgrid_add_contact_to_list.md
                       - flow/actions/sendgrid_add_to_global_suppression.md
                       - flow/actions/sendgrid_send_email.md
+                  - Google:
+                      - flow/actions/google_event_tracker_action.md
+                      - flow/actions/google_v4_event_tracker_action.md
 
               - Regex:
                   - flow/actions/regex/regex_validator_action.md
@@ -275,7 +292,6 @@ nav:
                   - flow/actions/string_properties_action.md
                   - flow/actions/profile_segment.md
                   - flow/actions/mapping_action.md
-
 
               - Validators:
                   - flow/actions/validate_with_json_schema_action.md
@@ -315,14 +331,6 @@ nav:
                 - flow/actions/log_message_action.md
                 - flow/actions/throw_error_action.md
 
-              - flow/actions/calculator_action.md
-              - flow/actions/random_element_action.md
-              - flow/actions/assign_condition_result_action.md
-              - flow/actions/reduce_array_action.md
-              - flow/actions/password_generator_action.md
-              - flow/actions/contains_pattern_action.md
-              - flow/actions/google_translate_action.md
-              - flow/actions/join_output_payloads.md
 
 
       - Filtering:
