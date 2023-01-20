@@ -20,10 +20,20 @@ router = APIRouter(
 
 @router.get("/migration/check/from/{version}", tags=["migration"])
 async def check_migration_consistency(prefix: str):
+
+    """
+    Compares the mappings and indices of the local settings to those in a database, and lists any errors found.
+    It also compares the number of records between the current version of tracardi and a previous version (see: prefix),
+    and if there are any discrepancies, it checks if they are acceptable differences. If they are, it logs the
+    difference as an "INFO", otherwise it logs it as a "WARNING". It then returns a dictionary
+    containing the errors found in both the mappings and the indices.
+    """
+
     # If there are differences in local mapping settings and database mappings then this
     # function will list all the errors
     mapping_errors = await check_indices_mappings_consistency()
 
+    # list of acceptable differences
     acceptable_differences = {
         'api-instance': "There maybe more or less api instances in new installation",
         'action': 'The reason could be that new version adds some data like in a case of plugins that are added with every new version.',
@@ -32,13 +42,14 @@ async def check_migration_consistency(prefix: str):
         'user': "There is at least one more user in the current version that was created during installation. Please review you user list. "
     }
 
+    # Find differences in index counts between versions
     current_version = {index: count async for index, count in storage.driver.raw.count_all_indices_by_alias()}
     prev_version = {index: count async for index, count in storage.driver.raw.count_all_indices_by_alias(prefix)}
 
-    errors = defaultdict(list)
+    count_errors = defaultdict(list)
     for index, count in current_version.items():
         if index not in prev_version:
-            errors[index].append(f"Can't find index {index} in previous version")
+            count_errors[index].append(f"Can't find index {index} in previous version")
 
         if prev_version[index] != current_version[index]:
             if index in acceptable_differences:
@@ -49,7 +60,7 @@ async def check_migration_consistency(prefix: str):
                 type = "WARNING"
                 reason = "The maybe some slight differences in indices that collect data."
 
-            errors[index].append({
+            count_errors[index].append({
                 "message": f"The number of records in current {index} is not equal to previous version count. "
                            f"Expected: {prev_version[index]} records to be migrated found "
                            f"{current_version[index]} in current version",
@@ -59,7 +70,10 @@ async def check_migration_consistency(prefix: str):
             }
             )
 
-    return errors
+    return {
+        "counts": count_errors,
+        "mappings": mapping_errors
+    }
 
 
 @router.post("/migration", tags=["migration"], include_in_schema=server.expose_gui_api)
