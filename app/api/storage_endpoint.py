@@ -16,6 +16,17 @@ router = APIRouter(
 @router.get("/storage/mapping/check", tags=["storage"], include_in_schema=server.expose_gui_api,
             response_model=dict)
 async def check_indices_mapping_consistency():
+    """
+    Checks indices mapping consistency. Returns errors if any.
+    This code is checking the mapping of an Elasticsearch
+    index against a system mapping file. It loops through
+    a dictionary of resources and for each resource, it
+    retrieves the system mapping file and loads it into memory.
+    It then compares this system mapping to the mapping of an
+    Elasticsearch index that is being written to. If there are
+    any differences between the two mappings, it saves these
+    differences in a dictionary. And, it returns the result dictionary at the end.
+    """
     return await check_indices_mappings_consistency()
 
 
