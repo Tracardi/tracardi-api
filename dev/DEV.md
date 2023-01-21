@@ -1,5 +1,6 @@
 # Run local server
- 
+
+uvicorn app.main:application --reload --host 0.0.0.0 --port 8686 --workers 25 --log-level warning
 PYTHONPATH=/home/risto/PycharmProjects/tracardi LOGGING_LEVEL=warning POSTPONE_DESTINATION_SYNC=6 uvicorn app.main:application --reload --host 0.0.0.0 --port 8686 --workers 25 --log-level warning
 gunicorn -b 0.0.0.0:8686 -k uvicorn.workers.UvicornWorker app.main:application
 

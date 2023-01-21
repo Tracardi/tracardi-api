@@ -320,9 +320,6 @@ async def debug_flow(flow: GraphFlow):
             )
             console_log.append(console)
 
-        if flow_invoke_result.profile.operation.needs_update():
-            profile_save_result = await _store_record(flow_invoke_result.profile)
-
     except StorageException as e:
         console = Console(
             origin="profile",
