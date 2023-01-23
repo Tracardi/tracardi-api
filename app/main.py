@@ -1,8 +1,7 @@
 import os, sys
 import traceback
 from datetime import datetime
-
-from tracardi.service.license import License, SCHEDULER
+from tracardi.service.license import License, SCHEDULER, IDENTIFICATION, COMPLIANCE, RESHAPING, REDIRECTS, VALIDATOR
 
 _local_dir = os.path.dirname(__file__)
 sys.path.append(f"{_local_dir}/api/proto/stubs")
@@ -27,19 +26,47 @@ from app.api import rule_endpoint, resource_endpoint, event_endpoint, \
     user_endpoint, debug_endpoint, log_endpoint, tracardi_pro_endpoint, \
     import_endpoint, \
     task_endpoint, storage_endpoint, destination_endpoint, user_log_endpoint, user_account_endpoint, install_endpoint, \
-    delete_indices_endpoint, migration_endpoint, report_endpoint, live_segments_endpoint, event_validator_endpoint, \
-    event_reshaping_schema_endpoint, console_log_endpoint, event_type_management, event_source_redirects, last_flow_ws, \
-    bridge_endpoint, entity_endpoint, consent_data_compliance_endpoint, identification_point_endpoint
+    delete_indices_endpoint, migration_endpoint, report_endpoint, live_segments_endpoint, \
+    console_log_endpoint, event_type_management, last_flow_ws, \
+    bridge_endpoint, entity_endpoint
 from app.api.graphql.profile import graphql_profiles
 from app.api.track import event_server_endpoint
 from app.setup.on_start import update_api_instance, clear_dead_api_instances
 from tracardi.config import tracardi
 from tracardi.exceptions.log_handler import log_handler
 from tracardi.service.storage.elastic_client import ElasticClient
+from app.api.licensed_endpoint import get_router
 
 # Licensed software
 if License.has_service(SCHEDULER):
-    from app.api import scheduler_endpoint
+    from com_tracardi.endpoint import scheduler_endpoint
+else:
+    scheduler_endpoint = get_router(prefix="/scheduler")
+
+if License.has_service(IDENTIFICATION):
+    from com_tracardi.endpoint import identification_point_endpoint
+else:
+    identification_point_endpoint = get_router(prefix="/identification")
+
+if License.has_service(COMPLIANCE):
+    from com_tracardi.endpoint import consent_data_compliance_endpoint
+else:
+    consent_data_compliance_endpoint = get_router(prefix="/consent/compliance")
+
+if License.has_service(RESHAPING):
+    from com_tracardi.endpoint import event_reshaping_schema_endpoint
+else:
+    event_reshaping_schema_endpoint = get_router(prefix="/event-reshape-schema")
+
+if License.has_service(REDIRECTS):
+    from com_tracardi.endpoint import event_source_redirects
+else:
+    event_source_redirects = get_router(prefix="/event-redirect")
+
+if License.has_service(VALIDATOR):
+    from com_tracardi.endpoint import event_validator_endpoint
+else:
+    event_validator_endpoint = get_router(prefix="/event-validator")
 
 
 logging.basicConfig(level=logging.ERROR)
@@ -62,7 +89,8 @@ if License.has_license():
     license = License.check()
 
     print(
-        f"Commercial Licensed issued for: {license.owner}, expires: {datetime.fromtimestamp(license.expires) if license.expires > 0 else 'Perpetual'} ", flush=True)
+        f"Commercial Licensed issued for: {license.owner}, expires: {datetime.fromtimestamp(license.expires) if license.expires > 0 else 'Perpetual'} ",
+        flush=True)
 
     print(f"Services {list(license.get_service_ids())}", flush=True)
 else:
@@ -222,9 +250,7 @@ application.include_router(bridge_endpoint.router)
 application.include_router(entity_endpoint.router)
 application.include_router(consent_data_compliance_endpoint.router)
 application.include_router(identification_point_endpoint.router)
-
-if License.has_service(SCHEDULER):
-    application.include_router(scheduler_endpoint.router)
+application.include_router(scheduler_endpoint.router)
 
 # GraphQL
 
