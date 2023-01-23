@@ -7,7 +7,7 @@ from fastapi import APIRouter, Request, status, HTTPException
 from app.api.track.service.http import get_headers
 from tracardi.domain.api_instance import ApiInstance
 from tracardi.domain.entity import Entity
-from tracardi.domain.event_metadata import EventPayloadMetadata
+from tracardi.domain.time import EventPayloadMetadata
 from tracardi.domain.payload.event_payload import EventPayload
 from tracardi.domain.time import Time
 from tracardi.service.tracker import track_event

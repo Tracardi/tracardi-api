@@ -3,7 +3,8 @@ from datetime import timedelta, datetime
 from random import randint
 from uuid import uuid4
 
-from tracardi.domain.event_metadata import EventMetadata, EventTime
+from tracardi.domain.event_metadata import EventMetadata
+from tracardi.domain.time import EventTime
 
 from tracardi.domain.event import Event
 from tracardi.domain.entity import Entity

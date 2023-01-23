@@ -2,7 +2,8 @@ from typing import List, Optional
 
 from fastapi import APIRouter, HTTPException, Depends, Response
 from tracardi.domain.enum.production_draft import ProductionDraft
-from tracardi.domain.event_metadata import EventMetadata, EventTime
+from tracardi.domain.event_metadata import EventMetadata
+from tracardi.domain.time import EventTime
 from tracardi.exceptions.exception import StorageException
 from tracardi.domain.console import Console
 from tracardi.service.console_log import ConsoleLog
