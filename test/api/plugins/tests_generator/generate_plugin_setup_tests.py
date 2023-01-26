@@ -23,7 +23,7 @@ from tracardi.service.wf.domain.node import Node
 for module_name, class_name, test_template in _yield_module_class():
     print(module_name, class_name)
 
-    if test_template.resource is not None:
+    if test_template.test.resource is not None:
         mocker = \
             f"""
     mocker.patch(
@@ -33,8 +33,8 @@ for module_name, class_name, test_template in _yield_module_class():
             id="test-resource",
             type="test",
             credentials=ResourceCredentials(
-                production={test_template.resource},
-                test={test_template.resource}
+                production={test_template.test.resource},
+                test={test_template.test.resource}
             )
         )
     )
@@ -42,7 +42,7 @@ for module_name, class_name, test_template in _yield_module_class():
     else:
         mocker = ""
 
-    def_code = f"""async def test_should_set_up_plugin_{camel_to_snake(class_name)}({'mocker' if test_template.resource is not None else ''}):
+    def_code = f"""async def test_should_set_up_plugin_{camel_to_snake(class_name)}({'mocker' if test_template.test.resource is not None else ''}):
     {mocker}
     module = import_package(\"{module_name}\")
     plugin_class = load_callable(module, \"{class_name}\")
@@ -51,7 +51,7 @@ for module_name, class_name, test_template in _yield_module_class():
                        name="test-node", 
                        module=\"{module_name}\", 
                        className=\"{class_name}\")
-    await plugin.set_up({test_template.init})
+    await plugin.set_up({test_template.test.init})
 """
     code = f"{code}\n\n{def_code}"
 

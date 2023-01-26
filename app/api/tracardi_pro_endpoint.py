@@ -10,7 +10,7 @@ from app.api.auth.permissions import Permissions
 from tracardi.domain.entity import Entity
 from tracardi.domain.pro_service_form_data import TProMicroserviceCredentials, ProService, ProMicroService
 from tracardi.service.plugin.domain.register import Plugin
-from tracardi.service.plugin.plugin_install import install_remote_plugin
+from tracardi.service.plugin.plugin_install import install_remote_plugin, install_plugin
 from app.api.domain.credentials import Credentials
 from tracardi.config import tracardi
 from tracardi.domain.resource import Resource, ResourceRecord
@@ -174,7 +174,10 @@ async def save_tracardi_pro_resource(pro: ProService):
         result['plugin'] = []
         for plugin in pro.plugins:
             plugin = Plugin(**plugin)
-            result['plugin'].append(await storage.driver.action.save_plugin(plugin))
+            print(plugin.spec.module)
+            response = await install_plugin(plugin.spec.module)
+            result['plugin'].append(response)
+            # result['plugin'].append(await storage.driver.action.save_plugin(plugin))
         await storage.driver.action.refresh()
 
     return result
