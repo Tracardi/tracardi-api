@@ -25,7 +25,12 @@ def generate_events_for_profile(profiles, sessions, sources):
             yield Event(
                 id=str(uuid4()),
                 type=random.choice(['page-view', 'identify', 'purchase-order', 'log-in']),
-                metadata=EventMetadata(time=EventTime(insert=generate_random_date(), process_time=randint(0, 10)/100)),
+                metadata=EventMetadata(
+                    time=EventTime(
+                        insert=generate_random_date(),
+                        process_time=randint(0, 10)/100
+                    )
+                ),
                 profile=Entity(id=profile.id),
                 session=random.choice(sessions),
                 source=random.choice(sources),

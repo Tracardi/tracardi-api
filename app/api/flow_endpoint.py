@@ -1,9 +1,11 @@
+from datetime import datetime
 from typing import List, Optional
 
 from fastapi import APIRouter, HTTPException, Depends, Response
 from tracardi.domain.enum.production_draft import ProductionDraft
 from tracardi.domain.event_metadata import EventMetadata
-from tracardi.domain.time import EventTime
+from tracardi.domain.metadata import ProfileMetadata
+from tracardi.domain.time import EventTime, ProfileTime
 from tracardi.exceptions.exception import StorageException
 from tracardi.domain.console import Console
 from tracardi.service.console_log import ConsoleLog
@@ -21,7 +23,7 @@ from tracardi.domain.flow import Flow
 from tracardi.service.wf.domain.flow import Flow as GraphFlow
 from tracardi.domain.flow import FlowRecord
 from tracardi.domain.profile import Profile
-from tracardi.domain.session import Session, SessionMetadata
+from tracardi.domain.session import Session, SessionMetadata, SessionTime
 from tracardi.domain.resource import Resource
 from tracardi.domain.value_object.bulk_insert_result import BulkInsertResult
 from .auth.permissions import Permissions
@@ -88,7 +90,6 @@ async def upsert_flow_draft(draft: Flow, rearrange_nodes: Optional[bool] = False
 
 @router.get("/flow/draft/{id}", tags=["flow"], response_model=Optional[Flow], include_in_schema=server.expose_gui_api)
 async def load_flow_draft(id: str, response: Response):
-
     """
     Loads draft version of flow with given ID (str)
     """
@@ -110,7 +111,8 @@ async def load_flow_draft(id: str, response: Response):
     return flow_record.get_empty_workflow(id)
 
 
-@router.get("/flow/production/{id}", tags=["flow"], response_model=Optional[Flow], include_in_schema=server.expose_gui_api)
+@router.get("/flow/production/{id}", tags=["flow"], response_model=Optional[Flow],
+            include_in_schema=server.expose_gui_api)
 async def get_flow(id: str, response: Response):
     """
     Returns production version of flow with given ID (str)
@@ -184,7 +186,6 @@ async def get_flow_details(id: str):
 
 @router.post("/flow/metadata", tags=["flow"], response_model=BulkInsertResult, include_in_schema=server.expose_gui_api)
 async def upsert_flow_details(flow_metadata: FlowMetaData):
-
     """
     Adds new flow metadata for flow with given id (str)
     """
@@ -259,7 +260,6 @@ async def upsert_flow_details(flow_metadata: FlowMetaData):
             response_model=BulkInsertResult,
             include_in_schema=server.expose_gui_api)
 async def update_flow_lock(id: str, lock: str):
-
     flow_record = await _load_record(id)
 
     if flow_record is None:
@@ -275,8 +275,19 @@ async def debug_flow(flow: GraphFlow):
     """
         Debugs flow sent in request body
     """
-    profile = Profile(id="@debug-profile-id")
-    session = Session(id="@debug-session-id", metadata=SessionMetadata())
+    profile = Profile(id="@debug-profile-id",
+                      metadata=ProfileMetadata(
+                          time=ProfileTime(
+                              insert=datetime.utcnow()
+                          )
+                      ))
+    session = Session(id="@debug-session-id",
+                      metadata=SessionMetadata(
+                          time=SessionTime(
+                              insert=datetime.utcnow(),
+                              timestamp=datetime.timestamp(datetime.utcnow())
+                          )
+                      ))
     event_session = EventSession(
         id=session.id,
         start=session.metadata.time.insert,
@@ -285,7 +296,7 @@ async def debug_flow(flow: GraphFlow):
     session.operation.new = True
 
     event = Event(
-        metadata=EventMetadata(time=EventTime()),
+        metadata=EventMetadata(time=EventTime(insert=datetime.utcnow())),
         id='@debug-event-id',
         type="@debug-event-type",
         source=Resource(id="@debug-source-id", type="web-page"),
