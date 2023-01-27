@@ -10,7 +10,7 @@ from tracardi.config import tracardi, elastic
 from tracardi.domain.credentials import Credentials
 from tracardi.domain.user import User
 from tracardi.exceptions.log_handler import log_handler
-from tracardi.service.plugin.plugin_install import add_plugins
+from tracardi.service.plugin.plugin_install import install_default_plugins
 from tracardi.service.setup.setup_indices import create_indices, update_current_version, install_default_data
 from tracardi.service.storage.driver import storage
 from tracardi.service.storage.index import resources
@@ -48,7 +48,7 @@ async def check_if_installation_complete():
 
 @router.get("/install/plugins", tags=["installation"], include_in_schema=server.expose_gui_api, response_model=dict)
 async def install_plugins():
-    return await add_plugins()
+    return await install_default_plugins()
 
 
 @router.post("/install", tags=["installation"], include_in_schema=server.expose_gui_api, response_model=dict)
@@ -106,7 +106,7 @@ async def install(credentials: Optional[Credentials]):
     if result['admin'] is True and server.update_plugins_on_start_up is not False:
         logger.info(
             f"Updating plugins on startup due to: UPDATE_PLUGINS_ON_STARTUP={server.update_plugins_on_start_up}")
-        result['plugins'] = await add_plugins()
+        result['plugins'] = await install_default_plugins()
 
     # add current instance to be visible
     await update_api_instance()
