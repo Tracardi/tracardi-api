@@ -188,9 +188,8 @@ like this:
 === "/tracardi/service/setup/setup_plugins.py"
 
     ```python
-    "tracardi.process_engine.action.v1.my_plugin_folder.my_plugin": PluginTestTemplate(  # (1)
-        init=None,
-        resource=None
+    "tracardi.process_engine.action.v1.my_plugin_folder.my_plugin": PluginMetadata(  # (1)
+        test=PluginTest(init=None, resource=None)
     ),
     ```
 

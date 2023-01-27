@@ -174,10 +174,8 @@ async def save_tracardi_pro_resource(pro: ProService):
         result['plugin'] = []
         for plugin in pro.plugins:
             plugin = Plugin(**plugin)
-            print(plugin.spec.module)
             response = await install_plugin(plugin.spec.module)
             result['plugin'].append(response)
-            # result['plugin'].append(await storage.driver.action.save_plugin(plugin))
         await storage.driver.action.refresh()
 
     return result

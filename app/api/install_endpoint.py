@@ -10,8 +10,8 @@ from tracardi.config import tracardi, elastic
 from tracardi.domain.credentials import Credentials
 from tracardi.domain.user import User
 from tracardi.exceptions.log_handler import log_handler
+from tracardi.service.plugin.plugin_install import add_plugins
 from tracardi.service.setup.setup_indices import create_indices, update_current_version, install_default_data
-from tracardi.service.setup.setup_plugins import add_plugins
 from tracardi.service.storage.driver import storage
 from tracardi.service.storage.index import resources
 from app.setup.on_start import update_api_instance
