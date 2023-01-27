@@ -159,8 +159,7 @@ async def list_event_sources_names_and_ids(add_current: bool = False, type: Opti
             "result": []
         }
     total = result.total
-
-    result = [NamedEntity(**r) for r in result]
+    result = [NamedEntity(id=r['id'], name=f"{r['name']} ({r['type']}) ") for r in result]
 
     if add_current is True:
         total += 1
