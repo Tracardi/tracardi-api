@@ -8,7 +8,7 @@ from tracardi.service.value_threshold_manager import ValueThresholdManager
 async def _should_save_and_load_value_threshold():
     vtm = ValueThresholdManager(node_id=1, profile_id=2, name="test_threshold", ttl=0, debug=True)
     result = await vtm.save_current_value(current_value=1)
-    assert result.saved == 1
+    assert result is True
 
     record = await vtm.load_last_value()
     assert record is not None
@@ -21,8 +21,8 @@ async def _should_save_and_load_value_threshold():
 
 async def _should_pass_threshold_once():
     vtm = ValueThresholdManager(node_id=1, profile_id=2, name="test_threshold", ttl=0, debug=True)
-    await vtm.delete()
-    assert await vtm.load_last_value() is None
+    last_value = await vtm.load_last_value()
+    assert last_value is None
     results = [await vtm.pass_threshold(x) for x in [1, 1, 1, 1]]
     assert results == [True, False, False, False]
     await vtm.delete()
