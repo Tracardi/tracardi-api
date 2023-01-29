@@ -5,6 +5,7 @@ There are basically 3 ways to install Tracardi:
 * [From docker image](docker/index.md)
 * [From source](source/index.md)
 * [Production installation](production/index.md)
+* [Staging server](staging/index.md)
 
 
 !!! Tip
