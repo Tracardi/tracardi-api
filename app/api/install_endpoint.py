@@ -53,16 +53,15 @@ async def install_plugins():
 
 @router.post("/install", tags=["installation"], include_in_schema=server.expose_gui_api, response_model=dict)
 async def install(credentials: Optional[Credentials]):
-
     if tracardi.installation_token and tracardi.installation_token != credentials.token:
-
         raise HTTPException(status_code=403, detail="Installation forbidden. Invalid installation token.")
 
     if credentials.needs_admin:
         if credentials.empty() or not credentials.username_as_email():
-            raise HTTPException(status_code=403, detail="Installation forbidden. Invalid admin account "
-                                                        "login or password. Login must be a valid email and password "
-                                                        "can not be empty.")
+            raise HTTPException(status_code=403,
+                                detail="Installation forbidden. Invalid admin account "
+                                       "login or password. Login must be a valid email and password "
+                                       "can not be empty.")
 
     info = await storage.driver.raw.health()
 
