@@ -13,7 +13,7 @@ from tracardi.domain.time import Time
 from tracardi.service.tracker import track_event
 from tracardi.config import tracardi
 from tracardi.domain.payload.tracker_payload import TrackerPayload
-from tracardi.exceptions.exception import TracardiException, UnauthorizedException, FieldTypeConflictException, \
+from tracardi.exceptions.exception import UnauthorizedException, FieldTypeConflictException, \
     EventValidationException
 from tracardi.exceptions.log_handler import log_handler
 from app.api.track.service.ip_address import get_ip_address
@@ -47,7 +47,7 @@ async def _track(tracker_payload: TrackerPayload, host: str):
         logger.error(message)
         raise HTTPException(detail=message,
                             status_code=status.HTTP_406_NOT_ACCEPTABLE)
-    except TracardiException as e:
+    except Exception as e:
         message = str(e)
         logger.error(message)
         raise HTTPException(detail=message,
