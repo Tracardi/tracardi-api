@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import List, Optional
+from typing import Optional
 
 from fastapi import APIRouter, HTTPException, Depends, Response
 from tracardi.domain.enum.production_draft import ProductionDraft
@@ -11,11 +11,9 @@ from tracardi.domain.console import Console
 from tracardi.service.console_log import ConsoleLog
 from tracardi.service.secrets import encrypt
 from tracardi.service.storage.driver import storage
-from tracardi.service.storage.factory import storage_manager
 from tracardi.service.utils.getters import get_entity_id
 from tracardi.service.wf.domain.flow_history import FlowHistory
 from tracardi.service.wf.domain.work_flow import WorkFlow
-from tracardi.service.plugin.domain.console import Log
 from tracardi.domain.flow_meta_data import FlowMetaData
 from tracardi.domain.entity import Entity
 from tracardi.domain.event import Event, EventSession

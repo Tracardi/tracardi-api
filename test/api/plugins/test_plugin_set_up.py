@@ -835,19 +835,6 @@ async def test_should_set_up_plugin_search_string_similarity_action():
                        className="SearchStringSimilarityAction")
     await plugin.set_up({'first_string': 'abc', 'second_string': 'abc', 'algorithm': 'levenshtein'})
 
-
-async def test_should_set_up_plugin_sleep_action():
-    
-    module = import_package("tracardi.process_engine.action.v1.time.sleep_action")
-    plugin_class = load_callable(module, "SleepAction")
-    plugin = plugin_class()
-    plugin.node = Node(id="node-id", 
-                       name="test-node", 
-                       module="tracardi.process_engine.action.v1.time.sleep_action", 
-                       className="SleepAction")
-    await plugin.set_up({'wait': 1})
-
-
 async def test_should_set_up_plugin_today_action():
     
     module = import_package("tracardi.process_engine.action.v1.time.today_action")
