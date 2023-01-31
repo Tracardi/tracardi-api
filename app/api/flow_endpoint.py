@@ -3,9 +3,11 @@ from typing import Optional
 
 from fastapi import APIRouter, HTTPException, Depends, Response
 from tracardi.domain.enum.production_draft import ProductionDraft
-from tracardi.domain.event_metadata import EventMetadata
+from tracardi.domain.event_metadata import EventMetadata, EventPayloadMetadata
 from tracardi.domain.metadata import ProfileMetadata
-from tracardi.domain.time import EventTime, ProfileTime
+from tracardi.domain.payload.event_payload import EventPayload
+from tracardi.domain.payload.tracker_payload import TrackerPayload
+from tracardi.domain.time import EventTime, ProfileTime, Time
 from tracardi.exceptions.exception import StorageException
 from tracardi.domain.console import Console
 from tracardi.service.console_log import ConsoleLog
@@ -292,19 +294,35 @@ async def debug_flow(flow: GraphFlow):
         duration=session.metadata.time.duration
     )
     session.operation.new = True
+    source = Entity(id="@debug-source-id")
 
     event = Event(
         metadata=EventMetadata(time=EventTime(insert=datetime.utcnow())),
         id='@debug-event-id',
         type="@debug-event-type",
-        source=Resource(id="@debug-source-id", type="web-page"),
+        source=source,
         session=event_session,
         profile=profile,
         context={}
     )
 
+    tracker_payload = TrackerPayload(
+            source=source,
+            session=event_session,
+            metadata=EventPayloadMetadata(time=Time(insert=datetime.utcnow())),
+            profile=profile,
+            context={},
+            request={},
+            properties={},
+            events=[EventPayload(type=event.type, properties=event.properties)],
+            # options={"scheduledFlowId": "c186d8b4-5b66-426b-89bb-a546931e083b", "scheduledNodeId": "e61e6a7e-a847-4754-99e7-74fb7446a748"}
+        )
+
+    tracker_payload.set_ephemeral(True)
+
     workflow = WorkFlow(
-        FlowHistory(history=[])
+        FlowHistory(history=[]),
+        tracker_payload=tracker_payload
     )
 
     ux = []
