@@ -1,4 +1,5 @@
-from fastapi import APIRouter, Depends
+from elasticsearch.exceptions import NotFoundError
+from fastapi import APIRouter, Depends, HTTPException
 
 from tracardi.domain.entity_index_mapping import EntityIndexMapping
 from tracardi.service.storage.driver import storage
@@ -18,5 +19,8 @@ async def create_entity_index(index: str, mapping: EntityIndexMapping):
 
 @router.get("/entity/{index}/mapping", tags=["entity"], include_in_schema=server.expose_gui_api)
 async def get_entity_index_mapping(index: str):
-    index = f"entity-{index}"
-    return await storage.driver.raw.get_mapping(index)
+    try:
+        index = f"entity-{index}"
+        return await storage.driver.raw.get_mapping(index)
+    except NotFoundError as e:
+        return HTTPException(status_code=404, detail=str(e))

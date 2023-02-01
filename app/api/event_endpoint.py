@@ -2,7 +2,6 @@ from datetime import datetime
 from typing import List
 
 from fastapi import APIRouter, Depends, Response
-from tracardi.domain.console import Console
 from tracardi.domain.enum.time_span import TimeSpan
 
 from tracardi.service.storage.driver import storage
