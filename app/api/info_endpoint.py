@@ -28,9 +28,13 @@ async def get_current_backend_version():
 
     result = await storage.driver.version.load()
     version = dict(result)
-    license = License.check()
-    version['owner'] = license.owner
-    version['expires'] = datetime.fromtimestamp(license.expires)
-    version['licenses'] = list(license.get_service_ids())
-
+    if License.has_license():
+        license = License.check()
+        version['owner'] = license.owner
+        version['expires'] = datetime.fromtimestamp(license.expires)
+        version['licenses'] = list(license.get_service_ids())
+    else:
+        version['owner'] = "Tracardi"
+        version['expires'] = "Never"
+        version['licenses'] = ["MIT + Common Clause"]
     return version
