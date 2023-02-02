@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException, Depends
 from tracardi.service.storage.driver import storage
-from worker.celery_worker import celery
+from tracardi.worker.celery_worker import celery
 from .auth.permissions import Permissions
 from ..config import server
 from tracardi.domain.import_config import ImportConfig
