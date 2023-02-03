@@ -149,9 +149,10 @@ class ProfileQuery:
         return Profile(
             id=profile.id,
             metadata=ProfileMeta(time=profile.metadata.time.insert,
-                                 visit=ProfileVisit(last=profile.metadata.time.visit.last,
-                                                    current=profile.metadata.time.visit.current),
-                                 merged_with=profile.metadata.merged_with),
+                                 visit=ProfileVisit(
+                                     last=profile.metadata.time.visit.last,
+                                     current=profile.metadata.time.visit.current)
+                                 ),
             stats=ProfileStats(visits=profile.stats.visits, views=profile.stats.views, counters=profile.stats.counters),
             traits=ProfileTraits(**profile.traits.dict()),
             pii=ProfilePII(**profile.pii.dict()),
