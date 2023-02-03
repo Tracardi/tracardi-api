@@ -1,6 +1,6 @@
 import json
 
-from tracardi.domain.destination import DestinationConfig
+from tracardi.domain.destination import DestinationConfig, Destination
 from tracardi.domain.resource import Resource
 from test.utils import Endpoint
 
@@ -21,12 +21,24 @@ def _add_destination(destination_id):
                 "a": 1
             }
         },
+        "event_type": {
+            "name": "test",
+            "id": "test"
+        },
+        "source": {
+            "name": "",
+            "id": ""
+        },
+        'on_profile_change_only': True,
         "enabled": True,
         "resource": {
             "id": "abc"
         },
         "tags": ["tag1", "tag2"]
     }
+
+    Destination(**data)
+
     response = endpoint.post('/destination', data=data)
     assert response.status_code == 200
     return response, data

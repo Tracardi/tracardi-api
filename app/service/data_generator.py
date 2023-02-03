@@ -26,9 +26,9 @@ def generate_events_for_profile(profiles, sessions, sources):
                 id=str(uuid4()),
                 type=random.choice(['page-view', 'identify', 'purchase-order', 'log-in']),
                 metadata=EventMetadata(
-                    aux={"process_time": randint(0, 10) / 100},
                     time=EventTime(
-                        insert=generate_random_date()
+                        insert=generate_random_date(),
+                        process_time=randint(0, 10) / 100
                     )
                 ),
                 profile=Entity(id=profile.id),
