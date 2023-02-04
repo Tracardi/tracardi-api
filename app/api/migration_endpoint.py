@@ -18,7 +18,7 @@ router = APIRouter(
 )
 
 
-@router.get("/migration/check/from/{version}", tags=["migration"])
+@router.get("/migration/check/from/{version}", tags=["migration"], include_in_schema=server.expose_gui_api)
 async def check_migration_consistency(prefix: str):
 
     """

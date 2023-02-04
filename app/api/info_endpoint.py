@@ -26,7 +26,11 @@ async def get_current_backend_version():
     """
 
     result = await storage.driver.version.load()
-    version = dict(result)
+    if result:
+        version = dict(result)
+    else:
+        version = {}
+
     if License.has_license():
         license = License.check()
         version['owner'] = license.owner
