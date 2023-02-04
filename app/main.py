@@ -277,8 +277,8 @@ async def add_process_time_header(request: Request, call_next):
     try:
 
         start_time = time()
-        if server.make_slower_responses > 0:
-            await asyncio.sleep(server.make_slower_responses)
+
+        # Todo Here throttler
 
         response = await call_next(request)
         process_time = time() - start_time

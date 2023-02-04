@@ -1,4 +1,7 @@
 import logging
+
+from elasticsearch.exceptions import NotFoundError
+
 from tracardi.config import tracardi
 from tracardi.exceptions.log_handler import log_handler
 from ..auth.user_db import token2user
@@ -21,10 +24,13 @@ class Authentication:
     async def _authorize(username, password) -> User:  # username exists
         logger.info(f"Authorizing {username}...")
 
-        user = await storage.driver.user.get_by_credentials(
-            email=username,
-            password=password
-        )  # type: User
+        try:
+            user = await storage.driver.user.get_by_credentials(
+                email=username,
+                password=password
+            )  # type: User
+        except Exception as e:
+            raise LoginException(f"System not installed. Got error {str(e)}")
 
         if user is None:
             await storage.driver.user_log.add_log(email=username, successful=False)
