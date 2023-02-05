@@ -142,17 +142,6 @@ system_settings = [
     ),
     SystemSettings(
         **{
-            "label": "SYNC_PROFILE_TRACKS",
-            "value": tracardi.sync_profile_tracks,
-            "desc": "Variable sets Tracardi to synchronize profile tracks or not, defaults to False. By default "
-                    "Tracardi runs profile updates in parallel. This may lead to profile changes that are not up to "
-                    "date if the changes to profile are very quick. To sync profile changes set this variable "
-                    "to 'yes'. This features requires "
-                    "REDIS."
-        }
-    ),
-    SystemSettings(
-        **{
             "label": "SYNC_PROFILE_TRACKS_MAX_REPEATS",
             "value": tracardi.sync_profile_tracks_max_repeats,
             "desc": "Maximum number of repeated requests the must be synchronized. If this number is crossed then "
