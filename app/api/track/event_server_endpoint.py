@@ -26,12 +26,12 @@ logger.addHandler(log_handler)
 router = APIRouter()
 
 
-async def _track(tracker_payload: TrackerPayload, host: str):
+async def _track(tracker_payload: TrackerPayload, host: str, allowed_bridges):
     try:
         return await track_event(
             tracker_payload,
             host,
-            allowed_bridges=['rest'])
+            allowed_bridges=allowed_bridges)
     except UnauthorizedException as e:
         message = str(e)
         logger.error(message)
@@ -61,7 +61,9 @@ async def _track(tracker_payload: TrackerPayload, host: str):
 async def track(tracker_payload: TrackerPayload, request: Request, profile_less: bool = False):
     tracker_payload.set_headers(dict(request.headers))
     tracker_payload.profile_less = profile_less
-    return await _track(tracker_payload, get_ip_address(request))
+    return await _track(tracker_payload,
+                        get_ip_address(request),
+                        allowed_bridges=['rest'])
 
 
 @router.post("/collect/{event_type}/{source_id}/{session_id}", tags=['collector'])
@@ -91,7 +93,9 @@ async def track_post_webhook(event_type: str, source_id: str, request: Request, 
         options={"saveSession": session_id is not None}
     )
     tracker_payload.profile_less = False
-    return await _track(tracker_payload, get_ip_address(request))
+    return await _track(tracker_payload,
+                        get_ip_address(request),
+                        allowed_bridges=['webhook'])
 
 
 @router.get("/collect/{event_type}/{source_id}/{session_id}", tags=['collector'])
@@ -120,7 +124,9 @@ async def track_get_webhook(event_type: str, source_id: str, request: Request, s
         options={"saveSession": session_id is not None}
     )
     tracker_payload.profile_less = False
-    return await _track(tracker_payload, get_ip_address(request))
+    return await _track(tracker_payload,
+                        get_ip_address(request),
+                        allowed_bridges=['webhook'])
 
 
 @router.get("/collect/{event_type}/{source_id}", tags=['collector'])
@@ -149,7 +155,9 @@ async def track_get_webhook(event_type: str, source_id: str, request: Request):
         options={"saveSession": False}
     )
     tracker_payload.profile_less = True
-    return await _track(tracker_payload, get_ip_address(request))
+    return await _track(tracker_payload,
+                        get_ip_address(request),
+                        allowed_bridges=['webhook'])
 
 
 @router.post("/collect/{event_type}/{source_id}", tags=['collector'])
@@ -179,4 +187,6 @@ async def track_post_webhook(event_type: str, source_id: str, request: Request):
         options={"saveSession": False}
     )
     tracker_payload.profile_less = True
-    return await _track(tracker_payload, get_ip_address(request))
+    return await _track(tracker_payload,
+                        get_ip_address(request),
+                        allowed_bridges=['webhook'])
