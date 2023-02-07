@@ -12,7 +12,7 @@ def _check_if_has_installed_indices():
 
     installed_indices = result.keys()
     for name, resource in resources.resources.items():
-        assert resource.get_version_write_index() in installed_indices
+        assert resource.get_write_index() in installed_indices
 
 
 def test_es_indices():
