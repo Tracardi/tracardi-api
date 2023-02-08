@@ -1,6 +1,8 @@
 import os, sys
 import traceback
 from datetime import datetime
+
+from app.middleware.context import CustomRequestMiddleware
 from tracardi.service.license import License, SCHEDULER, IDENTIFICATION, COMPLIANCE, RESHAPING, REDIRECTS, VALIDATOR
 
 _local_dir = os.path.dirname(__file__)
@@ -260,6 +262,8 @@ application.include_router(graphql_profiles,
                            include_in_schema=server.expose_gui_api,
                            dependencies=[Depends(Permissions(roles=["admin"]))],
                            tags=["graphql"])
+
+application.add_middleware(CustomRequestMiddleware)
 
 
 @application.on_event("startup")
