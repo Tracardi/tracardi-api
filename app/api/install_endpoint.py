@@ -4,9 +4,11 @@ from typing import Optional
 from uuid import uuid4
 
 from fastapi import APIRouter, HTTPException
+
 from app.config import server
 
 from tracardi.config import tracardi, elastic
+from tracardi.context import ServerContext, Context, fake_admin
 from tracardi.domain.credentials import Credentials
 from tracardi.domain.user import User
 from tracardi.exceptions.log_handler import log_handler
@@ -51,17 +53,10 @@ async def install_plugins():
     return await install_default_plugins()
 
 
-@router.post("/install", tags=["installation"], include_in_schema=server.expose_gui_api, response_model=dict)
+@router.post("/install", tags=["installation"], include_in_schema=server.expose_gui_api)
 async def install(credentials: Optional[Credentials]):
     if tracardi.installation_token and tracardi.installation_token != credentials.token:
         raise HTTPException(status_code=403, detail="Installation forbidden. Invalid installation token.")
-
-    if credentials.needs_admin:
-        if credentials.empty() or not credentials.username_as_email():
-            raise HTTPException(status_code=403,
-                                detail="Installation forbidden. Invalid admin account "
-                                       "login or password. Login must be a valid email and password "
-                                       "can not be empty.")
 
     info = await storage.driver.raw.health()
 
@@ -70,44 +65,64 @@ async def install(credentials: Optional[Credentials]):
         elastic.replicas = "0"
         logger.warning("Elasticsearch replicas decreased to 0 due to only one data node in the cluster.")
 
-    result = {"created": await create_indices(), "admin": False}
+    if credentials.needs_admin:
+        if credentials.empty() or not credentials.username_as_email():
+            raise HTTPException(status_code=403,
+                                detail="Installation forbidden. Invalid admin account "
+                                       "login or password. Login must be a valid email and password "
+                                       "can not be empty.")
 
     # Install defaults
 
-    await install_default_data()
+    async def _install():
+        result = {"created": await create_indices(), "admin": False}
 
-    # Update install history
+        await install_default_data()
 
-    await update_current_version()
+        # Update install history
 
-    # Add admin
-    admins = await storage.driver.user.search_by_role('admin')
+        await update_current_version()
 
-    if credentials.needs_admin and admins.total == 0:
-        user = User(
-            id=str(uuid4()),
-            password=credentials.password,
-            roles=['admin', 'maintainer'],
-            email=credentials.username,
-            full_name="Default Admin"
-        )
+        # add current instance to be visible
+        await update_api_instance()
 
-        if not await storage.driver.user.check_if_exists(credentials.username):
-            await storage.driver.user.add_user(user)
-            logger.info("Default admin account created.")
+        return result
 
-        result['admin'] = True
+    # Install staging
+    with ServerContext(Context(production=False)):
+        staging_install_result = await _install()
 
-    else:
-        logger.warning("There is at least one admin account. New admin account not created.")
-        result['admin'] = True
+        # Add admin
+        admins = await storage.driver.user.search_by_role('admin')
 
-    if result['admin'] is True and server.update_plugins_on_start_up is not False:
-        logger.info(
-            f"Updating plugins on startup due to: UPDATE_PLUGINS_ON_STARTUP={server.update_plugins_on_start_up}")
-        result['plugins'] = await install_default_plugins()
+        if credentials.needs_admin and admins.total == 0:
+            user = User(
+                id=str(uuid4()),
+                password=credentials.password,
+                roles=['admin', 'maintainer'],
+                email=credentials.username,
+                full_name="Default Admin"
+            )
 
-    # add current instance to be visible
-    await update_api_instance()
+            if not await storage.driver.user.check_if_exists(credentials.username):
+                await storage.driver.user.add_user(user)
+                logger.info("Default admin account created.")
 
-    return result
+            staging_install_result['admin'] = True
+
+        else:
+            logger.warning("There is at least one admin account. New admin account not created.")
+            staging_install_result['admin'] = True
+
+        if staging_install_result['admin'] is True and server.update_plugins_on_start_up is not False:
+            logger.info(
+                f"Updating plugins on startup due to: UPDATE_PLUGINS_ON_STARTUP={server.update_plugins_on_start_up}")
+            staging_install_result['plugins'] = await install_default_plugins()
+
+
+
+    # Install production in context of fake admin
+    with ServerContext(Context(production=True, user=fake_admin)):
+        production_install_result = await _install()
+
+    return staging_install_result, production_install_result

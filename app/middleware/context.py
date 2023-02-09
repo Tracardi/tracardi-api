@@ -1,11 +1,11 @@
-from tracardi.context import ctx_id, Context, ContextManager, ServerContext
-from uuid import uuid4
+from tracardi.config import tracardi
+from tracardi.context import Context, ServerContext
 from starlette.types import ASGIApp, Receive, Scope, Send
 from app.api.auth.user_db import token2user
 
 
 def _get_context_object(scope) -> Context:
-    context = 'staging'
+    production = tracardi.version.production
     token = ''
     headers = scope.get('headers', None)
 
@@ -13,10 +13,13 @@ def _get_context_object(scope) -> Context:
         for header, value in headers:
             if header.decode() == "x-context":
                 context = value.decode()
+                # if has some value
+                if context and context in ['production', 'staging']:
+                    production = context.lower() == 'production'
             elif header.decode() == 'authorization':
                 token = value.decode()
 
-    ctx = Context(production=context.lower() == 'production')
+    ctx = Context(production=production)
     if scope.get('method', None) != "options":
         if token:
             _, token = token.split()
@@ -40,16 +43,3 @@ class CustomRequestMiddleware:
         context_object = _get_context_object(scope)
         with ServerContext(context_object):
             await self.app(scope, receive, send)
-
-        # context_handler = ctx_id.set(str(uuid4()))
-        # cm = ContextManager()
-        #
-        # try:
-        #     context_object = _get_context_object(scope)
-        #     cm.set("request-context", context_object)
-        #
-        #     await self.app(scope, receive, send)
-        #
-        # finally:
-        #     cm.reset()
-        #     ctx_id.reset(context_handler)
