@@ -119,8 +119,6 @@ async def install(credentials: Optional[Credentials]):
                 f"Updating plugins on startup due to: UPDATE_PLUGINS_ON_STARTUP={server.update_plugins_on_start_up}")
             staging_install_result['plugins'] = await install_default_plugins()
 
-
-
     # Install production in context of fake admin
     with ServerContext(Context(production=True, user=fake_admin)):
         production_install_result = await _install()
