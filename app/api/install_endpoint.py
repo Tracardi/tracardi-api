@@ -8,7 +8,7 @@ from fastapi import APIRouter, HTTPException
 from app.config import server
 
 from tracardi.config import tracardi, elastic
-from tracardi.context import ServerContext, Context, fake_admin
+from tracardi.context import ServerContext, Context
 from tracardi.domain.credentials import Credentials
 from tracardi.domain.user import User
 from tracardi.exceptions.log_handler import log_handler
@@ -119,8 +119,8 @@ async def install(credentials: Optional[Credentials]):
                 f"Updating plugins on startup due to: UPDATE_PLUGINS_ON_STARTUP={server.update_plugins_on_start_up}")
             staging_install_result['plugins'] = await install_default_plugins()
 
-    # Install production in context of fake admin
-    with ServerContext(Context(production=True, user=fake_admin)):
+    # Install production
+    with ServerContext(Context(production=True)):
         production_install_result = await _install()
 
     return staging_install_result, production_install_result
