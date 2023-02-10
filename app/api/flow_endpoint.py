@@ -2,6 +2,8 @@ from datetime import datetime
 from typing import Optional
 
 from fastapi import APIRouter, HTTPException, Depends, Response
+
+from tracardi.context import get_context
 from tracardi.domain.enum.production_draft import ProductionDraft
 from tracardi.domain.event_metadata import EventMetadata, EventPayloadMetadata
 from tracardi.domain.metadata import ProfileMetadata
@@ -24,7 +26,6 @@ from tracardi.service.wf.domain.flow import Flow as GraphFlow
 from tracardi.domain.flow import FlowRecord
 from tracardi.domain.profile import Profile
 from tracardi.domain.session import Session, SessionMetadata, SessionTime
-from tracardi.domain.resource import Resource
 from tracardi.domain.value_object.bulk_insert_result import BulkInsertResult
 from .auth.permissions import Permissions
 from ..config import server
@@ -40,6 +41,47 @@ async def _load_record(id: str) -> Optional[FlowRecord]:
 
 async def _store_record(data: Entity):
     return await storage.driver.flow.save(data)
+
+
+async def _deploy_production_flow(flow: Flow, flow_record: Optional[FlowRecord] = None):
+
+    if flow_record is None:
+        old_flow_record = await storage.driver.flow.load_record(flow.id)
+    else:
+        old_flow_record = flow_record
+
+    flow_record = flow.get_production_workflow_record()
+    if flow_record is None or old_flow_record is None:
+        raise HTTPException(status_code=406, detail="Can not deploy missing draft workflow")
+    flow_record.backup = old_flow_record.production
+    flow_record.deployed = True
+    return await _store_record(flow_record)
+
+
+async def _upsert_flow_draft(draft: Flow, rearrange_nodes: Optional[bool] = False):
+    """
+    Creates draft of workflow. If there is production version of the workflow it stays intact.
+    """
+    # Frontend edge-id is long. Save space and md5 it.
+
+    if draft.flowGraph is not None:
+        draft.flowGraph.shorten_edge_ids()
+
+    if rearrange_nodes is True:
+        draft.arrange_nodes()
+
+        # Check if origin flow exists
+
+    flow_record = await storage.driver.flow.load_record(draft.id)  # type: FlowRecord
+
+    if flow_record is None:
+        flow_record = draft.get_empty_workflow_record(draft.type)
+
+    flow_record.draft = encrypt(draft.dict())
+
+    result = await storage.driver.flow.save_record(flow_record)
+
+    return result, flow_record
 
 
 @router.get("/flows/refresh", tags=["flow"], include_in_schema=server.expose_gui_api)
@@ -65,27 +107,12 @@ async def rearrange_flow(flow: Flow):
 
 @router.post("/flow/draft", tags=["flow"], response_model=BulkInsertResult, include_in_schema=server.expose_gui_api)
 async def upsert_flow_draft(draft: Flow, rearrange_nodes: Optional[bool] = False):
-    """
-    Creates draft of workflow. If there is production version of the workflow it stays intact.
-    """
-    # Frontend edge-id is long. Save space and md5 it.
+    result, flow_record = await _upsert_flow_draft(draft, rearrange_nodes)
 
-    if draft.flowGraph is not None:
-        draft.flowGraph.shorten_edge_ids()
+    if not get_context().is_production():
+        await _deploy_production_flow(draft, flow_record)
 
-    if rearrange_nodes is True:
-        draft.arrange_nodes()
-
-        # Check if origin flow exists
-
-    flow_record = await storage.driver.flow.load_record(draft.id)  # type: FlowRecord
-
-    if flow_record is None:
-        flow_record = draft.get_empty_workflow_record(draft.type)
-
-    flow_record.draft = encrypt(draft.dict())
-
-    return await storage.driver.flow.save_record(flow_record)
+    return result
 
 
 @router.get("/flow/draft/{id}", tags=["flow"], response_model=Optional[Flow], include_in_schema=server.expose_gui_api)
@@ -157,18 +184,12 @@ async def restore_production_flow_backup(id: str, production_draft: ProductionDr
 
 @router.post("/flow/production", tags=["flow"], response_model=BulkInsertResult,
              include_in_schema=server.expose_gui_api)
-async def upsert_flow(flow: Flow):
+async def deploy_production_flow(flow: Flow):
     """
         Creates production version of workflow. If there is a draft version of the workflow it is overwritten
         by the production version. This may be the subject to change.
     """
-    old_flow_record = await storage.driver.flow.load_record(flow.id)
-    flow_record = flow.get_production_workflow_record()
-    if flow_record is None or old_flow_record is None:
-        raise HTTPException(status_code=406, detail="Can not deploy missing draft workflow")
-    flow_record.backup = old_flow_record.production
-    flow_record.deployed = True
-    return await _store_record(flow_record)
+    return await _deploy_production_flow(flow)
 
 
 @router.get("/flow/metadata/{id}", tags=["flow"], response_model=FlowRecord, include_in_schema=server.expose_gui_api)
@@ -307,16 +328,16 @@ async def debug_flow(flow: GraphFlow):
     )
 
     tracker_payload = TrackerPayload(
-            source=source,
-            session=event_session,
-            metadata=EventPayloadMetadata(time=Time(insert=datetime.utcnow())),
-            profile=profile,
-            context={},
-            request={},
-            properties={},
-            events=[EventPayload(type=event.type, properties=event.properties)],
-            # options={"scheduledFlowId": "c186d8b4-5b66-426b-89bb-a546931e083b", "scheduledNodeId": "e61e6a7e-a847-4754-99e7-74fb7446a748"}
-        )
+        source=source,
+        session=event_session,
+        metadata=EventPayloadMetadata(time=Time(insert=datetime.utcnow())),
+        profile=profile,
+        context={},
+        request={},
+        properties={},
+        events=[EventPayload(type=event.type, properties=event.properties)],
+        # options={"scheduledFlowId": "c186d8b4-5b66-426b-89bb-a546931e083b", "scheduledNodeId": "e61e6a7e-a847-4754-99e7-74fb7446a748"}
+    )
 
     tracker_payload.set_ephemeral(True)
 
