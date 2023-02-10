@@ -5,10 +5,12 @@ from app.api.auth.user_db import token2user
 
 
 def _get_context_object(scope) -> Context:
+    # Default context comes from evn variable PRODUCTION
     production = tracardi.version.production
     token = ''
     headers = scope.get('headers', None)
 
+    # Context can be overridden by x-context header.
     if headers:
         for header, value in headers:
             if header.decode() == "x-context":
@@ -28,7 +30,7 @@ def _get_context_object(scope) -> Context:
     return ctx
 
 
-class CustomRequestMiddleware:
+class ContextRequestMiddleware:
     def __init__(
             self,
             app: ASGIApp,
