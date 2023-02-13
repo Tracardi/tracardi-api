@@ -7,19 +7,27 @@ from app.api.auth.user_db import token2user
 def _get_context_object(scope) -> Context:
     # Default context comes from evn variable PRODUCTION
     production = tracardi.version.production
-    token = ''
-    headers = scope.get('headers', None)
 
-    # Context can be overridden by x-context header.
-    if headers:
-        for header, value in headers:
-            if header.decode() == "x-context":
-                context = value.decode()
-                # if has some value
-                if context and context in ['production', 'staging']:
-                    production = context.lower() == 'production'
-            elif header.decode() == 'authorization':
-                token = value.decode()
+    token = ''
+
+    # If env variable set to PRODUCTION=yes there is no way to change it.
+    # Production means production. Otherwise the context can be changed
+    # form outside.
+
+    if not production:  # Staging as default
+
+        headers = scope.get('headers', None)
+
+        # Context can be overridden by x-context header.
+        if headers:
+            for header, value in headers:
+                if header.decode() == "x-context":
+                    context = value.decode()
+                    # if has some value
+                    if context and context in ['production', 'staging']:
+                        production = context.lower() == 'production'
+                elif header.decode() == 'authorization':
+                    token = value.decode()
 
     ctx = Context(production=production)
     if scope.get('method', None) != "options":
