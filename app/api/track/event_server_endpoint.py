@@ -1,8 +1,12 @@
+import asyncio
 import logging
 from json import JSONDecodeError
 from typing import Optional
 
 from fastapi import APIRouter, Request, status, HTTPException
+from fastapi.responses import RedirectResponse
+from tracardi.service.notation.dict_traverser import DictTraverser
+from tracardi.service.notation.dot_accessor import DotAccessor
 
 from app.api.track.service.http import get_headers
 from tracardi.domain.api_instance import ApiInstance
@@ -10,6 +14,7 @@ from tracardi.domain.entity import Entity
 from tracardi.domain.event_metadata import EventPayloadMetadata
 from tracardi.domain.payload.event_payload import EventPayload
 from tracardi.domain.time import Time
+from tracardi.service.storage.driver import storage
 from tracardi.service.tracker import track_event
 from tracardi.config import tracardi
 from tracardi.domain.payload.tracker_payload import TrackerPayload
@@ -190,3 +195,81 @@ async def track_post_webhook(event_type: str, source_id: str, request: Request):
     return await _track(tracker_payload,
                         get_ip_address(request),
                         allowed_bridges=['webhook'])
+
+
+@router.put("/redirect/{redirect_id}/{session_id}", tags=["collector"])
+@router.delete("/redirect/{redirect_id}/{session_id}", tags=["collector"])
+@router.get("/redirect/{redirect_id}/{session_id}", tags=["collector"])
+@router.post("/redirect/{redirect_id}/{session_id}", tags=["collector"])
+@router.put("/redirect/{redirect_id}", tags=["collector"])
+@router.delete("/redirect/{redirect_id}", tags=["collector"])
+@router.get("/redirect/{redirect_id}", tags=["collector"])
+@router.post("/redirect/{redirect_id}", tags=["collector"])
+async def request_redirect(request: Request, redirect_id: str, session_id: Optional[str] = None):
+    """
+       Redirects events http://localhost:8686/redirect/cce47c05-d7c3-46f8-bac9-0694d3227d9b
+    """
+
+    if session_id:
+        session_id = session_id.strip()
+    redirect_id = redirect_id.strip()
+    redirect_config = await storage.driver.event_redirect.load_by_id(redirect_id)
+
+    if not redirect_config:
+        raise HTTPException(status_code=404)
+
+    body = {}
+    if request.method in ['POST', 'PUT', 'DELETE']:
+        body = await request.body()
+        content_type = request.headers.get('content-type', 'xform')
+        if content_type == 'application/json':
+            try:
+                body = await request.json()
+            except Exception:
+                body = {}
+
+    # try to load session from cookie
+    if not session_id:
+        key = 'tracardi-session-id'
+        if request.cookies and key in request.cookies:
+            session_id = request.cookies[key]
+
+    session = None
+    if session_id:
+        session = await storage.driver.session.load_by_id(session_id)
+
+    dot = DotAccessor(
+        payload={
+            "params": dict(request.query_params),
+            "body": body
+        },
+        session=session.dict() if session else None
+    )
+    converter = DictTraverser(dot)
+
+    properties = converter.reshape(redirect_config.props)
+    tracker_payload = TrackerPayload(
+        source=Entity(id=redirect_config.source.id),
+        session=session,
+        metadata=EventPayloadMetadata(time=Time()),
+        context={},
+        request={
+            "headers": dict(request.headers)
+        },
+        properties={},
+        events=[
+            EventPayload(type=redirect_config.event_type, properties=properties)
+        ],
+        options={"saveSession": False}
+    )
+
+    tracker_payload.set_headers(dict(request.headers))
+    tracker_payload.profile_less = True if not session else False
+    asyncio.create_task(
+        _track(
+            tracker_payload,
+            get_ip_address(request),
+            allowed_bridges=['redirect']
+        ))
+
+    return RedirectResponse(redirect_config.url)
