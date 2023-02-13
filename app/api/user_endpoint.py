@@ -1,6 +1,8 @@
 from uuid import uuid4
 
 from fastapi import APIRouter, Depends, HTTPException, Header, Response
+
+from tracardi.context import ServerContext, Context
 from tracardi.domain.user import User
 from app.config import server
 from tracardi.service.storage.driver import storage
@@ -35,17 +37,21 @@ async def get_token(login_form_data: OAuth2PasswordRequestForm = Depends(),
     Returns OAuth2 token for login purposes
     """
 
-    if not server.expose_gui_api:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Access forbidden")
+    # Always log in the context of staging
 
-    try:
-        token = await auth.login(login_form_data.username, login_form_data.password)
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+    with ServerContext(Context(production=False)):
 
-    return token
+        if not server.expose_gui_api:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Access forbidden")
+
+        try:
+            token = await auth.login(login_form_data.username, login_form_data.password)
+        except Exception as e:
+            raise HTTPException(status_code=400, detail=str(e))
+
+        return token
 
 
 @auth_router.post("/user/logout", tags=["user", "authorization"], include_in_schema=server.expose_gui_api)
