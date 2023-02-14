@@ -1,6 +1,7 @@
 # Data check action
 
-This plugin check if data exists.
+This plugin check if data exists and is not null or empty.
+
 Type the path to property to be checked.
 
 Example:
