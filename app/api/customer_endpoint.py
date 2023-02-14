@@ -1,7 +1,10 @@
+from datetime import datetime, timedelta
 from typing import Optional
 
 from fastapi import APIRouter, HTTPException
+from pytimeparse.timeparse import timeparse
 
+from tracardi.domain.consent_type import ConsentType
 from tracardi.domain.payload.customer_consent import CustomerConsent
 from tracardi.domain.profile import Profile, ConsentRevoke
 from tracardi.service.storage.driver import storage
@@ -24,8 +27,21 @@ async def add_consent_type(data: CustomerConsent, all: Optional[bool] = False):
     profile = profile.to_entity(Profile)
     if all:
         for consent in await storage.driver.consent_type.load_all():
-            profile.consents[consent['id']] = ConsentRevoke()
+            consent_type = ConsentType(**consent)
 
+            if consent_type.auto_revoke:
+                try:
+                    seconds = timeparse(consent_type.auto_revoke)
+                    now = datetime.utcnow()
+                    revoke = now + timedelta(seconds=seconds)
+                    revoke = ConsentRevoke(revoke=revoke)
+                except Exception:
+                    revoke = ConsentRevoke()
+
+            else:
+                revoke = ConsentRevoke()
+
+            profile.consents[consent['id']] = revoke
     else:
         for consent, flag in data.consents.items():
             if flag:
