@@ -2,7 +2,7 @@
 
 ## Core definition
 
-### Tracaker payload
+### Tracker payload
 
 A tracker payload is an object that contains all the data associated with an event. This includes event properties, context, profile id, and session id. It is a comprehensive representation of the event that includes all the necessary data to understand the event. Tracker payload is sent to the system collector which collects data.
 

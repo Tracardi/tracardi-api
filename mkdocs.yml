@@ -99,6 +99,7 @@ nav:
           - traffic/outbound/index.md
       - Events:
           - events/index.md
+          - getting_started/tracking.md
           - events/event_tracking.md
           - events/event_validation.md
           - events/synchronization.md

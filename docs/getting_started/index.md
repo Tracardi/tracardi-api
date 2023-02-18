@@ -13,8 +13,9 @@ If you are a user please read the following first:
 * [System architecture](architecture.md)
 * [System data flow](data_flow.md)
 * [Core definitions](core_definitions.md)
-* [Event tracking](../events/event_tracking.md)
-* [Profile merging](../profiles/profile_merging.md)
+* [Tracking and Identity resolution](tracking.md)
+  * [Event tracking](../events/event_tracking.md)
+  * [Profile merging](../profiles/profile_merging.md)
 * [Profile segmentation](../profiles/profile_segmentation.md)
 
 
