@@ -41,3 +41,16 @@ https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-reindex.htm
 
 Reindexing data is nothing more than copying it from one index to another.
 
+# Summary
+
+This documentation answers the following questions:
+
+* How can I upgrade Tracardi?
+* What is data migration?
+* How to migrate Tracardi to new version?
+* What's the minimum version required for automated system updates in Tracardi?
+* What was the limitation with system data updates in versions before 0.7.0?
+* How does Tracardi handle indexes when upgrading to a new version?
+* Why is it important to install dockers with a tagged version during system updates?
+* Do you need to manually migrate data when upgrading from a version before 0.7.0 to version 0.7.0?
+* How can you check your indexes in Elasticsearch when transferring data?
