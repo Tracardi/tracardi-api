@@ -16,3 +16,13 @@ Mark-up  `{{profile@pii.name}}` will be replaced by the data from profile.
 * [Dot notation](dot_notation.md)
 * [Logic notation](logic_notation.md)
 * [Make payload plugin](../flow/actions/reshape_payload_action.md)
+
+
+# Summary
+
+This documenation answers the following questions:
+
+* How to reference data in text tempaltes?
+* What is the markup for data placeholders?
+* How to use dot notation in text templates?
+* What {{ }} does?
