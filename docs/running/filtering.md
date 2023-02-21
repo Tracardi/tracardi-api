@@ -1,3 +1,5 @@
+# Data searching
+
 Filtering is used in Tracardi to limit the number of event, profiles, etc. on the page. It uses a query parser that
 allows to define the rules of filtering.
 
@@ -187,4 +189,15 @@ the previous query could be rewritten as:
 ((quick AND fox) OR (brown AND fox) OR fox) AND NOT news
 ```
 
+
+# Summary 
+
+This documentation answer the following questions:
+
+* How to search profile, session, and events in Tracardi GUI
+* What is filtering used for in Tracardi?
+* How does Tracardi's query parser work for filtering?
+* What is the filtering syntax in Tracardi?
+* What are wildcard searches, and how can they be used in Tracardi filtering?
+* What are some other types of searches and operators that can be used for filtering in Tracardi, such as regular expressions and boolean operators?
 
