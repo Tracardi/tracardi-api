@@ -286,21 +286,6 @@ async def get_for_source_grouped_by_tags_time(source_id: str, time_span: TimeSpa
     """
     return await storage.driver.event.aggregate_source_by_tags(source_id, time_span)
 
-# Todo remove after 01-02-2023
-# @router.get("/events/session/{session_id}", tags=["event"], include_in_schema=server.expose_gui_api,
-#             response_model=dict)
-# async def get_events_for_session(session_id: str, limit: int = 20):
-#     result = await storage.driver.event.get_events_by_session(session_id, limit)
-#     more_to_load = result.total > len(result)
-#     result = [{
-#         "id": doc["id"],
-#         "metadata": doc["metadata"],
-#         "status": doc["metadata"].get("status", "n/a"),
-#         "type": doc["type"]
-#     } for doc in result]
-#
-#     return {"result": result, "more_to_load": more_to_load}
-
 
 @router.get("/events/session/{session_id}/profile/{profile_id}", tags=["event"],
             include_in_schema=server.expose_gui_api,
@@ -319,3 +304,18 @@ async def get_events_for_session(session_id: str, profile_id: str, limit: int = 
     } for doc in result]
 
     return {"result": result, "more_to_load": more_to_load}
+
+
+@router.get("/events/profile/{profile_id}", tags=["event"],
+            include_in_schema=server.expose_gui_api,
+            response_model=dict)
+async def get_events_for_profile(profile_id: str, limit: int = 30):
+
+    """ Load events for profile id """
+
+    result = await storage.driver.event.get_events_by_profile(
+        profile_id,
+        limit)
+    return result.dict()
+
+
