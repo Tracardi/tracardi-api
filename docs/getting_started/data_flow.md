@@ -112,3 +112,20 @@ records for various reasons. Tracardi runs profile merging after the workflow en
     In order to combine data into one record, it is necessary to indicate the field containing
     the value by which the customer data could be combined. This process will start automatically if the workflow has a merge
     profile action. 
+
+# Summary
+
+Questions that this documentation answers:
+
+* What stages does data flow through in Tracardi?
+* How does Tracardi route events to the appropriate workflow?
+* What is the role of segmentation in Tracardi?
+* How does Tracardi handle profile merging?
+* What is event reshaping in Tracardi?
+* How does Tracardi determine which workflow to use when processing an event?
+* How does segmentation in Tracardi differ from traditional market segmentation techniques?
+* Can Tracardi be used to send data to multiple external systems simultaneously? If so, how?
+* How does Tracardi validate event data?
+* What are some examples of tasks that can be performed by actions in Tracardi workflows?
+* How does Tracardi segment profiles?
+* How to merge profiles from different channels?
