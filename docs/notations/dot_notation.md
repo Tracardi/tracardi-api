@@ -93,6 +93,8 @@ Notations that use dot notation:
 
 # Summary
 
+This documentation answers the following questions:
+
 * What is dot notation?
 * What is the purpose of dot notation in Tracardi?
 * What are the available sources for dot notation in Tracardi?
