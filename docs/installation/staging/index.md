@@ -42,6 +42,7 @@ No need to worry about separate licenses for staging and production servers, all
 
 This documenation answers the following questions:
 
+* How to test workflows?
 * What is a staging server?
 * What is the process of staging in Tracardi?
 * How does Tracardi ensure the security of its staging server?
