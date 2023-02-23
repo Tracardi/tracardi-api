@@ -87,3 +87,14 @@ will be:
 * [Make payload plugin](../flow/actions/reshape_payload_action.md)
 
 
+# Summary
+
+This documentation answers the following questions:
+
+* What is an object template?
+* When should you use an object template?
+* Can you reshape data into any object you want using an object template?
+* What is an example of an object template?
+* How do you reference data in an object template using dot notation?
+* What happens when you reference data in an object template using dot notation?
+* Can you provide an example of using an object template with sample data from profile and event?

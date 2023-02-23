@@ -249,3 +249,14 @@ python3.8 -m venv venv
 # Test access to documentation
 
 Visit http://0.0.0.0:8686/docs
+
+# Summary
+
+This documentation answers the following questions:
+
+* How to install Tracardi from source?
+* What are the software prerequisites for installation from source?
+* What are the two options for launching Elasticsearch on Ubuntu?
+* How do you install Elasticsearch as a service?
+* How do you configure Elasticsearch?
+* How do you install Elasticsearch as a docker container?
