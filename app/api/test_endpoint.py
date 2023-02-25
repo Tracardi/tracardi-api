@@ -24,7 +24,7 @@ async def create_test_data():
     """
     resource = EventSource(
         id="@test-resource",
-        type="web-page",
+        type=["web-page"],
         name="Test resource",
         description="This resource is created for test purposes.",
         tags=['test']

@@ -81,21 +81,21 @@ def generate_fake_data(profiles=20):
     sources = [
             EventSource(
                 id="@test-resource",
-                type="web-page",
+                type=["web-page"],
                 name="Test event source",
                 description="This source is created for test purposes.",
                 tags=['test']
             ),
             EventSource(
                 id="@test-resource-1",
-                type="web-page",
+                type=["web-page"],
                 name="Test event source 1",
                 description="This source is created for test purposes.",
                 tags=['test']
             ),
             EventSource(
                 id="@test-resource-2",
-                type="web-page",
+                type=["web-page"],
                 name="Test event source 1",
                 description="This source is created for test purposes.",
                 tags=['test']
