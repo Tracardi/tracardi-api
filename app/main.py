@@ -31,7 +31,7 @@ from app.api import rule_endpoint, resource_endpoint, event_endpoint, \
     task_endpoint, storage_endpoint, destination_endpoint, user_log_endpoint, user_account_endpoint, install_endpoint, \
     delete_indices_endpoint, migration_endpoint, report_endpoint, live_segments_endpoint, \
     console_log_endpoint, event_type_management, last_flow_ws, \
-    bridge_endpoint, entity_endpoint, staging_endpoint, customer_endpoint
+    bridge_endpoint, entity_endpoint, staging_endpoint, customer_endpoint, event_to_profile
 from app.api.graphql.profile import graphql_profiles
 from app.api.track import event_server_endpoint
 from app.setup.on_start import update_api_instance, clear_dead_api_instances
@@ -256,7 +256,7 @@ application.include_router(identification_point_endpoint.router)
 application.include_router(scheduler_endpoint.router)
 application.include_router(staging_endpoint.router)
 application.include_router(customer_endpoint.router)
-
+application.include_router(event_to_profile.router)
 
 # GraphQL
 
@@ -265,8 +265,6 @@ application.include_router(graphql_profiles,
                            include_in_schema=server.expose_gui_api,
                            dependencies=[Depends(Permissions(roles=["admin"]))],
                            tags=["graphql"])
-
-
 
 
 @application.on_event("startup")

@@ -107,23 +107,38 @@ system_settings = [
     ),
     SystemSettings(
         **{
+            "label": "EVENT_TO_PROFILE_COPY_CACHE_TTL",
+            "value": memory_cache.event_to_profile_coping_ttl,
+            "desc": "Default: 2. Set caching time for the event to profile schema. Set 0 for no caching."
+        }
+    ),
+    SystemSettings(
+        **{
+            "label": "SOURCE_CACHE_TTL",
+            "value": memory_cache.source_ttl,
+            "desc": "Default: 2. Each resource read is cached for given seconds. That means that when you change any "
+                    "resource data, e.g. credentials it wil be available with max 2 seconds."
+        }
+    ),
+    SystemSettings(
+        **{
             "label": "SESSION_CACHE_TTL",
             "value": memory_cache.session_cache_ttl,
-            "desc": "Default: 0. Set session caching time. Set 0 for no caching."
+            "desc": "Default: 2. Set session caching time. Set 0 for no caching."
         }
     ),
     SystemSettings(
         **{
             "label": "EVENT_VALIDATION_CACHE_TTL",
             "value": memory_cache.event_validation_cache_ttl,
-            "desc": "Default: 0. Set event validation schema caching time. Set 0 for no caching."
+            "desc": "Default: 2. Set event validation schema caching time. Set 0 for no caching."
         }
     ),
     SystemSettings(
         **{
             "label": "EVENT_METADATA_CACHE_TTL",
             "value": memory_cache.event_metadata_cache_ttl,
-            "desc": "Default: 0. Set cache time for event tagging, indexing, etc. configuration. Set 0 for no caching."
+            "desc": "Default: 2. Set cache time for event tagging, indexing, etc. configuration. Set 0 for no caching."
         }
     ),
     SystemSettings(
@@ -181,14 +196,6 @@ system_settings = [
             "label": "LOGGING_LEVEL",
             "value": tracardi.logging_level,
             "desc": "The logging level. Defaults to logging.WARNING."
-        }
-    ),
-    SystemSettings(
-        **{
-            "label": "SOURCE_CACHE_TTL",
-            "value": memory_cache.source_ttl,
-            "desc": "Default: 60. Each resource read is cached for given seconds. That means that when you change any "
-                    "resource data, e.g. credentials it wil be available with max 60 seconds."
         }
     ),
     SystemSettings(
