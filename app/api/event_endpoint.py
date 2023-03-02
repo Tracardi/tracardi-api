@@ -25,6 +25,26 @@ def __format_time_buckets(row):
         }
 
 
+@router.get("/events/by-type/by-source", tags=["event"], include_in_schema=server.expose_gui_api)
+async def get_event_types():
+    """
+    Returns event types along with the event sources ids.
+    """
+
+    def _get_data(result):
+        for by_type in result.aggregations('by_type').buckets():
+            row = {'type': by_type['key'], 'source': []}
+            for bucket in by_type['by_source']['buckets']:
+                row['source'].append({
+                    "id": bucket['key'],
+                    "count": bucket['doc_count']
+                })
+            yield row
+
+    result = await storage.driver.event.aggregate_events_by_type_and_source()
+    return list(_get_data(result))
+
+
 @router.get("/events/refresh", tags=["event"], include_in_schema=server.expose_gui_api)
 async def events_refresh_index():
     """
