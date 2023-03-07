@@ -51,7 +51,7 @@ async def refresh_profile():
 @router.get("/profile/{id}", tags=["profile"],
             dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer"]))],
             include_in_schema=server.expose_gui_api)
-async def get_profile_by_id(id: str, response: Response) -> Optional[Profile]:
+async def get_profile_by_id(id: str, response: Response) -> Optional[dict]:
     """
     Returns profile with given ID (str)
     """
@@ -61,7 +61,9 @@ async def get_profile_by_id(id: str, response: Response) -> Optional[Profile]:
         response.status_code = 404
         return None
 
-    return record.to_entity(Profile)
+    result = dict(record)
+    result['_meta'] = record.get_meta_data()
+    return result
 
 
 @router.delete("/profile/{id}", tags=["profile"],
