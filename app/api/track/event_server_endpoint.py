@@ -31,6 +31,18 @@ logger.addHandler(log_handler)
 router = APIRouter()
 
 
+async def parse_properties(request: Request):
+    if request.headers['Content-Type'] == 'application/json':
+        try:
+            return await request.json()
+        except JSONDecodeError:
+            return {}
+    elif request.headers['Content-Type'] in ['multipart/form-data', 'application/x-www-form-urlencoded']:
+        return await request.form()
+    else:
+        return await request.body()
+
+
 async def _track(tracker_payload: TrackerPayload, host: str, allowed_bridges):
     try:
         return await track_event(
@@ -171,10 +183,7 @@ async def track_post_webhook(event_type: str, source_id: str, request: Request):
     Collects data from request POST and adds event type. It stays profile-less.
     """
 
-    try:
-        properties = await request.json()
-    except JSONDecodeError:
-        properties = {}
+    properties = await parse_properties(request)
 
     tracker_payload = TrackerPayload(
         source=Entity(id=source_id),
