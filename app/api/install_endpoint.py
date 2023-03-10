@@ -75,7 +75,7 @@ async def install(credentials: Optional[Credentials]):
     # Install defaults
 
     async def _install():
-        result = {"created": await create_indices(), "admin": False}
+        result = {"created": await create_indices(credentials.update_mapping), "admin": False}
 
         await install_default_data()
 
