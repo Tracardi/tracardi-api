@@ -7,7 +7,6 @@ from tracardi.domain.event_to_profile import EventToProfile
 from tracardi.service.storage.driver import storage
 from typing import Optional
 
-
 router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin", "developer"]))]
 )
@@ -25,7 +24,6 @@ async def refresh_event_to_profile():
 @router.post("/event-to-profile", tags=["event-to-profile"], include_in_schema=server.expose_gui_api,
              response_model=dict)
 async def add_event_to_profile(event_to_profile: EventToProfile):
-
     """
     Creates new event to profile record in database
     """
@@ -39,7 +37,7 @@ async def add_event_to_profile(event_to_profile: EventToProfile):
     return result
 
 
-@router.get("/event-to-profile/{event_type}",
+@router.get("/event-to-profiles/type/{event_type}",
             tags=["event-type"],
             include_in_schema=server.expose_gui_api,
             response_model=dict)
@@ -52,6 +50,22 @@ async def get_event_to_profile(event_type: str):
     if records.total == 0:
         raise HTTPException(status_code=404, detail=f"Event to profile coping schema for {event_type} not found.")
     return records.dict()
+
+
+@router.get("/event-to-profile/{event_id}",
+            tags=["event-type"],
+            include_in_schema=server.expose_gui_api,
+            response_model=dict)
+async def get_event_to_profile(event_id: str):
+    """
+    Returns event to profile schema for given event id
+    """
+
+    record = await storage.driver.event_to_profile.load_by_id(event_id)
+    if record is None:
+        raise HTTPException(status_code=404,
+                            detail=f"Event to profile coping schema for event id {event_id} not found.")
+    return record
 
 
 @router.delete("/event-to-profile/{event_type}", tags=["event-type"], include_in_schema=server.expose_gui_api,
@@ -85,4 +99,3 @@ async def list_events_to_profiles_by_tag(query: str = None, start: Optional[int]
     """
     result = await storage.driver.event_to_profile.load_events_to_profiles(start, limit)
     return group_records(result, query, group_by='tags', search_by='name', sort_by='name')
-
