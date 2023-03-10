@@ -47,10 +47,11 @@ async def get_event_to_profile(event_type: str):
     """
     Returns event to profile schema for given event type
     """
-    record = await storage.driver.event_to_profile.get_event_to_profile(event_type)
-    if record is None:
+
+    records = await storage.driver.event_to_profile.get_event_to_profile(event_type)
+    if records.total == 0:
         raise HTTPException(status_code=404, detail=f"Event to profile coping schema for {event_type} not found.")
-    return record
+    return records.dict()
 
 
 @router.delete("/event-to-profile/{event_type}", tags=["event-type"], include_in_schema=server.expose_gui_api,
