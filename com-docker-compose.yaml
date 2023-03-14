@@ -7,7 +7,7 @@ services:
       ELASTIC_HOST: http://elasticsearch:9200
       REDIS_HOST: redis://redis:6379
       LOGGING_LEVEL: info
-      LICENSE: <license>
+      LICENSE: ${API_LICENSE}
       PRODUCTION: "no"
     ports:
       - 8686:80
@@ -21,7 +21,7 @@ services:
       ELASTIC_HOST: http://elasticsearch:9200
       REDIS_HOST: redis://redis:6379
       LOGGING_LEVEL: info
-      LICENSE: <license>
+      LICENSE: ${API_LICENSE}
       PRODUCTION: "yes"
     ports:
       - 8585:80
@@ -33,10 +33,10 @@ services:
     image: tracardi/com-tracardi-scheduler-worker:0.8.0.7
     environment:
       ELASTIC_HOST: http://elasticsearch:9200
-      REDIS_HOST: redis://redis:6379
+      REDIS_HOST: redis
       LOGGING_LEVEL: info
       PRODUCTION: "yes"
-      LICENSE: <license>
+      LICENSE: ${API_LICENSE}
     depends_on:
       - redis
       - elasticsearch
@@ -45,9 +45,9 @@ services:
     image: tracardi/com-tracardi-scheduler:0.8.0.7
     environment:
       ELASTIC_HOST: http://elasticsearch:9200
-      REDIS_HOST: redis://redis:6379
+      REDIS_HOST: redis
       LOGGING_LEVEL: info
-      LICENSE: <license>
+      LICENSE: ${API_LICENSE}
     depends_on:
       - redis
       - elasticsearch

@@ -110,3 +110,4 @@ venv.bak/
 /app/tracker/revision.txt
 
 .run/
+/.env-docker
