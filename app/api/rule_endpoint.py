@@ -41,6 +41,12 @@ async def upsert_rule(rule: Rule):
     if event_source is None:
         raise HTTPException(status_code=422, detail='Incorrect source id: `{}`'.format(rule.source.id))
 
+    if not rule.name:
+        rule.name = f"Route to {rule.flow.name}"
+
+    if not rule.description:
+        rule.description = f"Routing for event type: {rule.event.type} to workflow: {rule.flow.name} from source: {rule.source.name}"
+
     flow_record = await storage.driver.flow.load_record(rule.flow.id)
     add_flow_task = None
     if flow_record is None:
