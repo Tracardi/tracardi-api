@@ -9,6 +9,7 @@ services:
       LOGGING_LEVEL: info
       LICENSE: ${API_LICENSE}
       PRODUCTION: "no"
+      TRACK_DEBUG: "yes"
     ports:
       - 8686:80
     depends_on:
