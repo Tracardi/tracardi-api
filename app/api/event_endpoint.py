@@ -1,6 +1,6 @@
 import asyncio
 from datetime import datetime
-from typing import List
+from typing import List, Optional
 from fastapi import APIRouter, Depends, Response, status, HTTPException
 from tracardi.domain.enum.time_span import TimeSpan
 from tracardi.service.storage.driver import storage
@@ -69,6 +69,26 @@ async def copy_events_data_to_profiles(settings: EventToProfileCopySettings):
                             status_code=status.HTTP_406_NOT_ACCEPTABLE)
 
     asyncio.create_task(copy_events_to_profiles(settings))
+
+
+@router.get("/events/count_by_query", tags=["event"], include_in_schema=server.expose_gui_api)
+async def copy_events_data_to_profiles(query: Optional[str] = None):
+    if not query:
+        query = {
+            "query": {
+                "match_all": {}
+            }
+        }
+    else:
+        query = {
+            "query": {
+                "query_string": {
+                    "query": query
+                }
+            }
+        }
+    result = await storage.driver.event.count(query)
+    return result['count']
 
 
 @router.get("/event/count", tags=["event"], include_in_schema=server.expose_gui_api)
@@ -340,12 +360,9 @@ async def get_events_for_session(session_id: str, profile_id: str, limit: int = 
             include_in_schema=server.expose_gui_api,
             response_model=dict)
 async def get_events_for_profile(profile_id: str, limit: int = 24):
-
     """ Load events for profile id """
 
     result = await storage.driver.event.get_events_by_profile(
         profile_id,
         limit)
     return result.dict()
-
-
