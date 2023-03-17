@@ -1,13 +1,14 @@
+import asyncio
 from datetime import datetime
 from typing import List
-
-from fastapi import APIRouter, Depends, Response
+from fastapi import APIRouter, Depends, Response, status, HTTPException
 from tracardi.domain.enum.time_span import TimeSpan
-
 from tracardi.service.storage.driver import storage
 from tracardi.domain.record.event_debug_record import EventDebugRecord
+from tracardi.service.storage.drivers.elastic.operations.copy_events_to_profiles import copy_events_to_profiles
 from tracardi.service.wf.domain.debug_info import DebugInfo
 from .auth.permissions import Permissions
+from tracardi.domain.storage.event_to_profile_copy_settings import EventToProfileCopySettings
 from ..config import server
 
 router = APIRouter(
@@ -59,6 +60,15 @@ async def events_refresh_index():
     Flushes event index.
     """
     return await storage.driver.event.flush()
+
+
+@router.post("/events/copy", tags=["event"], include_in_schema=server.expose_gui_api)
+async def copy_events_data_to_profiles(settings: EventToProfileCopySettings):
+    if settings.is_empty():
+        raise HTTPException(detail="No mapping is set.",
+                            status_code=status.HTTP_406_NOT_ACCEPTABLE)
+
+    asyncio.create_task(copy_events_to_profiles(settings))
 
 
 @router.get("/event/count", tags=["event"], include_in_schema=server.expose_gui_api)
@@ -247,9 +257,9 @@ async def get_grouped_by_tags_profile(profile_id: str):
         }
     }
     result = await storage.driver.event.aggregate_profile_events(
-            profile_id=profile_id,
-            aggregate_query=aggregate_query
-        )
+        profile_id=profile_id,
+        aggregate_query=aggregate_query
+    )
     del result.aggregations["for_tags"][0]["other"]
     result.aggregations["for_tags"][0]["no_tag"] = result.aggregations["for_missing_tags"][0]["found"]
     agg_results = {**result.aggregations["for_tags"][0]}
@@ -278,10 +288,10 @@ async def get_grouped_by_tags_time(time_from: datetime, time_to: datetime):
         }
     }
     result = await storage.driver.event.aggregate_timespan_events(
-            time_from=time_from,
-            time_to=time_to,
-            aggregate_query=aggregate_query
-        )
+        time_from=time_from,
+        time_to=time_to,
+        aggregate_query=aggregate_query
+    )
     del result.aggregations["for_tags"][0]["other"]
     result.aggregations["for_tags"][0]["no_tag"] = result.aggregations["for_missing_tags"][0]["found"]
     agg_results = {**result.aggregations["for_tags"][0]}
