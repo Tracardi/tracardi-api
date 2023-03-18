@@ -68,7 +68,7 @@ async def copy_events_data_to_profiles(settings: EventToProfileCopySettings):
         raise HTTPException(detail="No mapping is set.",
                             status_code=status.HTTP_406_NOT_ACCEPTABLE)
 
-    asyncio.create_task(copy_events_to_profiles(settings))
+    await copy_events_to_profiles(settings)
 
 
 @router.get("/events/count_by_query", tags=["event"], include_in_schema=server.expose_gui_api)
