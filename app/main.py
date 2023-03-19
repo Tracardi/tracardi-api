@@ -4,7 +4,8 @@ from datetime import datetime
 
 from app.middleware.context import ContextRequestMiddleware
 from tracardi.context import get_context
-from tracardi.service.license import License, SCHEDULER, IDENTIFICATION, COMPLIANCE, RESHAPING, REDIRECTS, VALIDATOR
+from tracardi.service.license import License, SCHEDULER, IDENTIFICATION, COMPLIANCE, RESHAPING, REDIRECTS, VALIDATOR, \
+    LICENSE
 
 _local_dir = os.path.dirname(__file__)
 sys.path.append(f"{_local_dir}/api/proto/stubs")
@@ -70,6 +71,11 @@ if License.has_service(VALIDATOR):
     from com_tracardi.endpoint import event_validator_endpoint
 else:
     event_validator_endpoint = get_router(prefix="/event-validator")
+
+if License.has_service(LICENSE):
+    from com_tracardi.endpoint import event_to_profile_copy
+else:
+    event_to_profile_copy = get_router(prefix="/events/copy")
 
 
 logging.basicConfig(level=logging.ERROR)
@@ -257,6 +263,7 @@ application.include_router(scheduler_endpoint.router)
 application.include_router(staging_endpoint.router)
 application.include_router(customer_endpoint.router)
 application.include_router(event_to_profile.router)
+application.include_router(event_to_profile_copy.router)
 
 # GraphQL
 

@@ -1,14 +1,12 @@
-import asyncio
 from datetime import datetime
-from typing import List, Optional
-from fastapi import APIRouter, Depends, Response, status, HTTPException
+from typing import List
+from fastapi import APIRouter, Depends, Response
 from tracardi.domain.enum.time_span import TimeSpan
 from tracardi.service.storage.driver import storage
 from tracardi.domain.record.event_debug_record import EventDebugRecord
-from tracardi.service.storage.drivers.elastic.operations.copy_events_to_profiles import copy_events_to_profiles
 from tracardi.service.wf.domain.debug_info import DebugInfo
 from .auth.permissions import Permissions
-from tracardi.domain.storage.event_to_profile_copy_settings import EventToProfileCopySettings
+
 from ..config import server
 
 router = APIRouter(
@@ -60,35 +58,6 @@ async def events_refresh_index():
     Flushes event index.
     """
     return await storage.driver.event.flush()
-
-
-@router.post("/events/copy", tags=["event"], include_in_schema=server.expose_gui_api)
-async def copy_events_data_to_profiles(settings: EventToProfileCopySettings):
-    if settings.is_empty():
-        raise HTTPException(detail="No mapping is set.",
-                            status_code=status.HTTP_406_NOT_ACCEPTABLE)
-
-    await copy_events_to_profiles(settings)
-
-
-@router.get("/events/count_by_query", tags=["event"], include_in_schema=server.expose_gui_api)
-async def copy_events_data_to_profiles(query: Optional[str] = None):
-    if not query:
-        query = {
-            "query": {
-                "match_all": {}
-            }
-        }
-    else:
-        query = {
-            "query": {
-                "query_string": {
-                    "query": query
-                }
-            }
-        }
-    result = await storage.driver.event.count(query)
-    return result['count']
 
 
 @router.get("/event/count", tags=["event"], include_in_schema=server.expose_gui_api)
