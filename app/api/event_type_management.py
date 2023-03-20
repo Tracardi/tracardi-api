@@ -79,7 +79,7 @@ async def del_event_type_metadata(event_type: str):
 
 @router.get("/management", tags=["event-type"], include_in_schema=server.expose_gui_api,
             response_model=list)
-async def list_event_type_metadatas(start: Optional[int] = 0, limit: Optional[int] = 10):
+async def list_event_type_metadatas(start: Optional[int] = 0, limit: Optional[int] = 200):
     """
     List of event type metatata.
     """
@@ -90,7 +90,7 @@ async def list_event_type_metadatas(start: Optional[int] = 0, limit: Optional[in
 
 @router.get("/management/search/by_tag", tags=["event-type"], include_in_schema=server.expose_gui_api,
             response_model=dict)
-async def list_event_type_metadatas_by_tag(query: str = None, start: Optional[int] = 0, limit: Optional[int] = 10):
+async def list_event_type_metadatas_by_tag(query: str = None, start: Optional[int] = 0, limit: Optional[int] = 200):
     """
     Lists event type metadata by tag, according to given start (int), limit (int) and query (str)
     """
