@@ -81,7 +81,7 @@ async def del_event_type_metadata(event_type: str):
             response_model=list)
 async def list_event_type_metadatas(start: Optional[int] = 0, limit: Optional[int] = 200):
     """
-    List of event type metatata.
+    List of event type metadata.
     """
 
     result = await storage.driver.event_management.load_events_type_metadata(start, limit)
