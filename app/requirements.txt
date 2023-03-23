@@ -14,4 +14,4 @@ cron-validator==1.0.6
 python-multipart
 
 
-git+https://github.com/Tracardi/tracardi.git@0.8.0  # Change to 0.8.1-dev
+git+https://github.com/Tracardi/tracardi.git@0.8.1-dev  # Change to 0.8.1-dev
