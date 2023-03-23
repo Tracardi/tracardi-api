@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from fastapi import APIRouter
+
 from tracardi.service.license import License
 
 from app.config import server
@@ -25,11 +26,7 @@ async def get_current_backend_version():
     Returns current backend version with previous versions.
     """
 
-    result = await storage.driver.version.load()
-    if result:
-        version = dict(result)
-    else:
-        version = {}
+    version = tracardi.version.dict()
 
     if License.has_license():
         license = License.check()
