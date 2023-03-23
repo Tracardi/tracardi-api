@@ -61,8 +61,27 @@ profile@... #(1)
 
 1. Return the whole profile object
 
+If you would like to retrieve a sub-object form some bigger object. For example everything below __key__. (see below).
+
+```json
+{
+   "key": {
+        "data": "value"
+   }
+}
+```
+
+Then you need to use the following dot notation:
+
+```bash
+profile@key #(1)
+```
+
+1. Return everything below __key__. The result will be ```{"data": "value"}```
+
 ## Path to array items
 
+## Arrays
 
 Items in array can be accessed like this. For the payload data:
 
@@ -82,6 +101,28 @@ payload@data.0
 
     Also objects embeded inside arrays can be retrieved the same way.
 
+
+## Object with spaces in the keys
+
+There are rare cases when you have an object with the keys that contain spaces.
+
+```json title="Example"
+{
+   "key": {
+        "My key with spaces": "value"
+   }
+}
+```
+
+To access this data you will need to use the following dot notation:
+
+```bash
+profile@key["My key with spaces"]
+```
+
+!!! Tip
+
+    Also objects embeded inside arrays can be retrieved the same way. For exampel ``` profile@key.0["My key with spaces"] ```
 
 # Read also about:
 

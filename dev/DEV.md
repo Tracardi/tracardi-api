@@ -48,6 +48,10 @@ docker run -p 27017:27017 mongo
 # Run local PG
 docker run -e POSTGRES_PASSWORD=root -p 5432:5432 postgres
 
+# Run clickhouse
+docker run -d -p 18123:8123 -p19000:9000 --ulimit nofile=262144:262144 clickhouse/clickhouse-server
+
+
 # Run tracardi api with SSL
 
 docker run -v /home/risto/PycharmProjects/tracardi-api/ssl:/ssl -p 8686:443 -e USER_NAME=admin -e PASSWORD=admin -e WORKERS=2 -e ELASTIC_HOST=http://192.168.1.103:9200 -e GUNICORN_CMD_ARGS="--keyfile=/ssl/key.pem --certfile=/ssl/cert.pem" tracardi/tracardi-api-ssl
@@ -63,6 +67,9 @@ docker run --rm -it -p 8000:8000 -v ${PWD}:/docs squidfunk/mkdocs-material
 
 
 docker run -p 8686:80 -e ELASTIC_HOST=http://192.168.1.103:9200 -e USER_NAME=admin -e PASSWORD=admin -e POSTPONE_DESTINATION_SYNC=6 -e LOGGING_LEVEL=info -e REDIS_HOST=redis://192.168.1.103:6379 tracardi/tracardi-api
+
+# minio
+docker run -p 9000:9000 -p 9001:9001 -e "MINIO_ROOT_USER=admin" -e "MINIO_ROOT_PASSWORD=admin" minio/minio server /data --console-address :9001
 
 
 # Generate certificate

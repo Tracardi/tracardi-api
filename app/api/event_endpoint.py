@@ -1,13 +1,12 @@
 from datetime import datetime
 from typing import List
-
 from fastapi import APIRouter, Depends, Response
 from tracardi.domain.enum.time_span import TimeSpan
-
 from tracardi.service.storage.driver import storage
 from tracardi.domain.record.event_debug_record import EventDebugRecord
 from tracardi.service.wf.domain.debug_info import DebugInfo
 from .auth.permissions import Permissions
+
 from ..config import server
 
 router = APIRouter(
@@ -23,6 +22,26 @@ def __format_time_buckets(row):
             "date": "{}".format(timestamp.strftime("%Y/%m/%d")),
             "count": value
         }
+
+
+@router.get("/events/by-type/by-source", tags=["event"], include_in_schema=server.expose_gui_api)
+async def get_event_types():
+    """
+    Returns event types along with the event sources ids.
+    """
+
+    def _get_data(result):
+        for by_type in result.aggregations('by_type').buckets():
+            row = {'type': by_type['key'], 'source': []}
+            for bucket in by_type['by_source']['buckets']:
+                row['source'].append({
+                    "id": bucket['key'],
+                    "count": bucket['doc_count']
+                })
+            yield row
+
+    result = await storage.driver.event.aggregate_events_by_type_and_source()
+    return list(_get_data(result))
 
 
 @router.get("/events/refresh", tags=["event"], include_in_schema=server.expose_gui_api)
@@ -227,9 +246,9 @@ async def get_grouped_by_tags_profile(profile_id: str):
         }
     }
     result = await storage.driver.event.aggregate_profile_events(
-            profile_id=profile_id,
-            aggregate_query=aggregate_query
-        )
+        profile_id=profile_id,
+        aggregate_query=aggregate_query
+    )
     del result.aggregations["for_tags"][0]["other"]
     result.aggregations["for_tags"][0]["no_tag"] = result.aggregations["for_missing_tags"][0]["found"]
     agg_results = {**result.aggregations["for_tags"][0]}
@@ -258,10 +277,10 @@ async def get_grouped_by_tags_time(time_from: datetime, time_to: datetime):
         }
     }
     result = await storage.driver.event.aggregate_timespan_events(
-            time_from=time_from,
-            time_to=time_to,
-            aggregate_query=aggregate_query
-        )
+        time_from=time_from,
+        time_to=time_to,
+        aggregate_query=aggregate_query
+    )
     del result.aggregations["for_tags"][0]["other"]
     result.aggregations["for_tags"][0]["no_tag"] = result.aggregations["for_missing_tags"][0]["found"]
     agg_results = {**result.aggregations["for_tags"][0]}
@@ -310,12 +329,9 @@ async def get_events_for_session(session_id: str, profile_id: str, limit: int = 
             include_in_schema=server.expose_gui_api,
             response_model=dict)
 async def get_events_for_profile(profile_id: str, limit: int = 24):
-
     """ Load events for profile id """
 
     result = await storage.driver.event.get_events_by_profile(
         profile_id,
         limit)
     return result.dict()
-
-

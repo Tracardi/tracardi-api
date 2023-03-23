@@ -41,6 +41,12 @@ async def upsert_rule(rule: Rule):
     if event_source is None:
         raise HTTPException(status_code=422, detail='Incorrect source id: `{}`'.format(rule.source.id))
 
+    if not rule.name:
+        rule.name = f"Route to {rule.flow.name}"
+
+    if not rule.description:
+        rule.description = f"Routing for event type: {rule.event.type} to workflow: {rule.flow.name} from source: {rule.source.name}"
+
     flow_record = await storage.driver.flow.load_record(rule.flow.id)
     add_flow_task = None
     if flow_record is None:
@@ -107,10 +113,10 @@ async def get_rules_by_tag(query: str = None, start: int = 0, limit: int = 100) 
     return group_records(result, query, group_by='tags', search_by='name', sort_by='name')
 
 
-@router.get("/rules/by_event_type", tags=["rules"], response_model=dict, include_in_schema=server.expose_gui_api)
-async def get_rules_by_tag() -> dict:
+@router.get("/rules/by_event_type/{event_type}", tags=["rules"], response_model=dict, include_in_schema=server.expose_gui_api)
+async def get_rules_by_tag(event_type: str) -> dict:
     """
     Lists rules by event types
     """
-    result = await storage.driver.rule.load_by_event_type()
+    result = await storage.driver.rule.load_by_event_type(event_type)
     return result.dict()

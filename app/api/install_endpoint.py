@@ -13,10 +13,10 @@ from tracardi.domain.credentials import Credentials
 from tracardi.domain.user import User
 from tracardi.exceptions.log_handler import log_handler
 from tracardi.service.plugin.plugin_install import install_default_plugins
-from tracardi.service.setup.setup_indices import create_indices, update_current_version, install_default_data
+from tracardi.service.setup.setup_indices import create_schema, install_default_data, \
+    run_on_start
 from tracardi.service.storage.driver import storage
 from tracardi.service.storage.index import resources
-from app.setup.on_start import update_api_instance
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
@@ -75,18 +75,16 @@ async def install(credentials: Optional[Credentials]):
     # Install defaults
 
     async def _install():
-        result = {"created": await create_indices(), "admin": False}
+        schema_result = await create_schema(resources.get_index_mappings(), credentials.update_mapping)
+
+        await run_on_start()
 
         await install_default_data()
 
-        # Update install history
-
-        await update_current_version()
-
-        # add current instance to be visible
-        await update_api_instance()
-
-        return result
+        return {
+            "created": schema_result,
+            "admin": False
+        }
 
     # Install staging
     with ServerContext(Context(production=False)):

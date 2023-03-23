@@ -1,8 +1,7 @@
 # Logic notation
 
-Logic notation is the way in which logical concepts and their interpretations 
-are expressed in natural languages. Tracardi uses logic notation in segment configuration, IF plugin action,or other 
-conditional statements.
+Logic notation is the way in which logical concepts and their interpretations are expressed in natural languages.
+Tracardi uses logic notation in segment configuration, IF plugin action,or other conditional statements.
 
 ## Syntax
 
@@ -14,7 +13,7 @@ expr:
   | expr AND (expr OR expr)
 ```
 
-that means that expressions with similar operators e.g. OR must be in brackets. 
+that means that expressions with similar operators e.g. OR must be in brackets.
 
 !!! Warning "Remember..."
 
@@ -40,27 +39,30 @@ that means that expressions with similar operators e.g. OR must be in brackets.
 
 ## Condition resolution
 
-Each condition consist of a __field, operator, and value__. An operator is used to 
-manipulate individual data items and return a result. 
-Operators are represented by special characters or by keywords. List of operators is 
-available below.
+Each condition consist of a __field, operator, and value__. An operator is used to manipulate individual data items and
+return a result. Operators are represented by special characters or by keywords. List of operators is available below.
 
 ``` title="Example"
 payload@numberOfPurchases == 1
 ```
 
-This example will return __true__ if *numberOfPurchases* in payload equals 1.
-Fields are in a [dot notation](dot_notation.md).
+This example will return __true__ if *numberOfPurchases* in payload equals 1. The data within our system is organized
+into fields that are accessed using [dot notation](dot_notation.md). 
 
-Operations can be joined by AND/OR. 
+!!! Tip
+
+    Possible ways to access
+    data: ```payload@numberOfPurchases, payload@..., payload@numberOfPurchases.0, payload@numberOfPurchases["some key"]```
+    For detailed instructions on how to access data using this notation, please refer to the 
+    [dot notation](dot_notation.md) documentation.
+
+Operations can be joined by AND/OR.
 
 ``` title="Example"
 payload@numberOfPurchases == 1 AND payload@title == "Title"
 ```
 
-This example will return True if *numberOfPurchases* in payload equals 1 and *title* in payload 
-equals "Title".
-
+This example will return True if *numberOfPurchases* in payload equals 1 and *title* in payload equals "Title".
 
 ## Operator order
 
@@ -70,15 +72,15 @@ If there is a data missing. For example:
 profile@missing.data == 1
 ```
 
-then you will see an error: Missing Value. To prevent it you will need to check if the data exists or is not empty.
-To do so type:
+then you will see an error: Missing Value. To prevent it you will need to check if the data exists or is not empty. To
+do so type:
 
 ```
 profile@missing.data NOT EMPTY AND profile@missing.data == 1
 ```
 
 This way when data does not exist or is empty then the rest of the condition will not be checked and the result will be
-FALSE. Otherwise, when the `profile@missing.data` exists and is equal 1 then the result is TRUE. 
+FALSE. Otherwise, when the `profile@missing.data` exists and is equal 1 then the result is TRUE.
 
 The order in the condition does mather.
 
@@ -105,7 +107,6 @@ There are other operators possible like:
 payload@path.to.data NOT EMPTY
 ```
 
-
 ## Value types
 
 In the example:
@@ -114,8 +115,8 @@ In the example:
 payload@numberOfPurchases == 1 AND payload@title == "Title"
 ```
 
-Field *payload@numberOfPurchases* is considered an integer number while 
-*payload@title* is considered a string. 
+Field *payload@numberOfPurchases* is considered an integer number while
+*payload@title* is considered a string.
 
 !!! Warning
 
@@ -130,17 +131,14 @@ Functions can be used to convert value, for example to certain types.
 * datetime(*field_name*) - returns *field_name* field content as date and time
 * now(*time_zone*) - returns current date and time with given *timezone* info
 * now.offset(*offset*) - returns current date and time with given offset (e.g. -15m)
-* now.timezone.offset(*timezone*, *offset*) - returns current date and time with given 
+* now.timezone.offset(*timezone*, *offset*) - returns current date and time with given
   *timezone* info with applied *offset*
-* datetime.offset(*field_name*, *offset*) - returns *field_name* field content as 
-  date and time with applied *offset*
-* datetime.timezone(*field_name*, *timezone*) - returns *field_name* field content
-  as date and time with *timezone* info
+* datetime.offset(*field_name*, *offset*) - returns *field_name* field content as date and time with applied *offset*
+* datetime.timezone(*field_name*, *timezone*) - returns *field_name* field content as date and time with *timezone* info
 * now.timezone(*timezone*) - returns current date and time with given *timezone* info
 * lowercase(*field_name*) - returns lowercased text value of *field_name*
 * uppercase(*field_name*) - returns upper-cased text value of *field_name*
-* datetime.from_timestamp(*field_name*) - returns date and time created from timestamp
-  content of field *field_name*
+* datetime.from_timestamp(*field_name*) - returns date and time created from timestamp content of field *field_name*
 
 ### Example of function use
 

@@ -16,7 +16,6 @@ def test_should_work():
         name="Test",
         timestamp="2022-01-07T16:18:09.278Z",
         enabled=True,
-        returns_profile=True,
         config={}
     )
 

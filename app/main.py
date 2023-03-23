@@ -4,7 +4,8 @@ from datetime import datetime
 
 from app.middleware.context import ContextRequestMiddleware
 from tracardi.context import get_context
-from tracardi.service.license import License, SCHEDULER, IDENTIFICATION, COMPLIANCE, RESHAPING, REDIRECTS, VALIDATOR
+from tracardi.service.license import License, SCHEDULER, IDENTIFICATION, COMPLIANCE, RESHAPING, REDIRECTS, VALIDATOR, \
+    LICENSE
 
 _local_dir = os.path.dirname(__file__)
 sys.path.append(f"{_local_dir}/api/proto/stubs")
@@ -31,7 +32,7 @@ from app.api import rule_endpoint, resource_endpoint, event_endpoint, \
     task_endpoint, storage_endpoint, destination_endpoint, user_log_endpoint, user_account_endpoint, install_endpoint, \
     delete_indices_endpoint, migration_endpoint, report_endpoint, live_segments_endpoint, \
     console_log_endpoint, event_type_management, last_flow_ws, \
-    bridge_endpoint, entity_endpoint, staging_endpoint, customer_endpoint
+    bridge_endpoint, entity_endpoint, staging_endpoint, customer_endpoint, event_to_profile
 from app.api.graphql.profile import graphql_profiles
 from app.api.track import event_server_endpoint
 from app.setup.on_start import update_api_instance, clear_dead_api_instances
@@ -70,6 +71,11 @@ if License.has_service(VALIDATOR):
     from com_tracardi.endpoint import event_validator_endpoint
 else:
     event_validator_endpoint = get_router(prefix="/event-validator")
+
+if License.has_service(LICENSE):
+    from com_tracardi.endpoint import event_to_profile_copy
+else:
+    event_to_profile_copy = get_router(prefix="/events/copy")
 
 
 logging.basicConfig(level=logging.ERROR)
@@ -256,7 +262,8 @@ application.include_router(identification_point_endpoint.router)
 application.include_router(scheduler_endpoint.router)
 application.include_router(staging_endpoint.router)
 application.include_router(customer_endpoint.router)
-
+application.include_router(event_to_profile.router)
+application.include_router(event_to_profile_copy.router)
 
 # GraphQL
 
@@ -265,8 +272,6 @@ application.include_router(graphql_profiles,
                            include_in_schema=server.expose_gui_api,
                            dependencies=[Depends(Permissions(roles=["admin"]))],
                            tags=["graphql"])
-
-
 
 
 @application.on_event("startup")

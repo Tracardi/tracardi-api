@@ -7,6 +7,7 @@ from fastapi.responses import Response
 from tracardi.exceptions.exception import DuplicatedRecordException
 from tracardi.service.storage.driver import storage
 from tracardi.domain.profile import Profile
+from tracardi.service.storage.drivers.elastic.profile import deduplicate_profile
 from tracardi.service.storage.index import resources
 from .auth.permissions import Permissions
 from ..config import server
@@ -51,17 +52,22 @@ async def refresh_profile():
 @router.get("/profile/{id}", tags=["profile"],
             dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer"]))],
             include_in_schema=server.expose_gui_api)
-async def get_profile_by_id(id: str, response: Response) -> Optional[Profile]:
+async def get_profile_by_id(id: str, response: Response) -> Optional[dict]:
     """
     Returns profile with given ID (str)
     """
-    record = await storage.driver.profile.load_by_id(id)
+    try:
+        record = await storage.driver.profile.load_by_id(id)
+        if record is None:
+            response.status_code = 404
+            return None
 
-    if record is None:
-        response.status_code = 404
-        return None
-
-    return record.to_entity(Profile)
+        result = dict(record)
+        result['_meta'] = record.get_meta_data()
+        return result
+    except DuplicatedRecordException as e:
+        await deduplicate_profile(id)
+        raise e
 
 
 @router.delete("/profile/{id}", tags=["profile"],
@@ -81,4 +87,3 @@ async def delete_profile(id: str, response: Response):
         return None
 
     return result
-
