@@ -103,5 +103,5 @@ docker run --rm --net=host landoop/fast-data-dev
 
 # Matomo
 
-helm install matomo --set service.ports.http=9080,service.ports.https=9443,matomoUsername=risto,matomoPassword=ri100,externalDatabase.host=192.168.1.190,externalDatabase.user=root,externalDatabase.password=root bitnami/matomo
+helm upgrade matomo --set service.ports.http=9080,service.ports.https=9443,externalDatabase.host=192.168.1.190,externalDatabase.user=root,externalDatabase.password=root bitnami/matomo
 
