@@ -2,6 +2,7 @@ from datetime import datetime
 from typing import List
 from fastapi import APIRouter, Depends, Response
 from tracardi.domain.enum.time_span import TimeSpan
+from tracardi.service import events
 from tracardi.service.storage.driver import storage
 from tracardi.domain.record.event_debug_record import EventDebugRecord
 from tracardi.service.wf.domain.debug_info import DebugInfo
@@ -114,11 +115,7 @@ async def event_types(query: str = None, limit: int = 1000):
     """
     Returns event types
     """
-    result = await storage.driver.event.unique_field_value(query, limit)
-    return {
-        "total": result.total,
-        "result": list(result)
-    }
+    return await events.get_event_types(query, limit)
 
 
 @router.get("/events/by_type/profile/{profile_id}", tags=["event"], include_in_schema=server.expose_gui_api)
