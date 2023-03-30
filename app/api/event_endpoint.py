@@ -3,6 +3,7 @@ from typing import List
 from fastapi import APIRouter, Depends, Response
 from tracardi.domain.enum.time_span import TimeSpan
 from tracardi.service import events
+from tracardi.service.events import get_default_event_type_schema
 from tracardi.service.storage.driver import storage
 from tracardi.domain.record.event_debug_record import EventDebugRecord
 from tracardi.service.wf.domain.debug_info import DebugInfo
@@ -332,3 +333,12 @@ async def get_events_for_profile(profile_id: str, limit: int = 24):
         profile_id,
         limit)
     return result.dict()
+
+
+@router.get("/event/type/{event_type}/schema", tags=["event"],
+            include_in_schema=server.expose_gui_api)
+async def get_event_type_data_schema(event_type: str):
+    """Gets pre-defined event type data schema"""
+
+    return get_default_event_type_schema(event_type)
+
