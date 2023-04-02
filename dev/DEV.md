@@ -15,7 +15,8 @@ docker run -p 9200:9200 -p 9300:9300 -m 8g -e "discovery.type=single-node" -v "/
 docker run -p 9200:9200 -p 9300:9300 -m 6g -e "discovery.type=single-node" docker.elastic.co/elasticsearch/elasticsearch:7.13.2
 
 # Run local redis
-docker run -p 6379:6379 redis
+docker run -p 6379:6379 redis redis-server --notify-keyspace-events Ex
+
 
 # Run local Tracardi GUI
 docker run -p 8787:80 -e API_URL=//127.0.0.1:8686 -e TRACK_DEBUG="yes" tracardi/tracardi-gui

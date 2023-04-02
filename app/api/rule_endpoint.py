@@ -45,7 +45,7 @@ async def upsert_rule(rule: Rule):
         rule.name = f"Route to {rule.flow.name}"
 
     if not rule.description:
-        rule.description = f"Routing for event type: {rule.event.type} to workflow: {rule.flow.name} from source: {rule.source.name}"
+        rule.description = f"Routing for event type: {rule.event_type.name} to workflow: {rule.flow.name} from source: {rule.source.name}"
 
     flow_record = await storage.driver.flow.load_record(rule.flow.id)
     add_flow_task = None
