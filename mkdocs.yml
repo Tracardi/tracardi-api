@@ -381,6 +381,13 @@ nav:
           - notations/logic_notation.md
           - notations/templates.md
           - notations/object_template.md
+
+      - Q&A:
+          - qa/how_to_copy_data_from_event_to_profile.md
+          - qa/how_to_replace_a_profile_in_workflow.md
+          - qa/how_to_use_own_profile_id.md
+          - qa/how_to_use_workflow_editor.md
+          - qa/utms.md
   - api/index.md
   - Developers:
       - Development environmet set-up:

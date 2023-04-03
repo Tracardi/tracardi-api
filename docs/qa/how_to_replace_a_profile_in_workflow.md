@@ -1,4 +1,4 @@
-# How to Replace a Profile in Workflow:
+# How to Replace a Profile in Workflow?
 
 Sometimes, it may be necessary to replace a profile with a different profile based on certain data from the event
 properties. This documentation will walk through how to do this using a workflow and looking for a profile based on a
