@@ -1,26 +1,24 @@
 # Staging server
 
 A staging server is a type of server environment that is used to test and debug new code changes before they are
-deployed to a production server. This allows developers to test and refine new features or bug fixes in a safe and
-controlled environment, without impacting the performance or functionality of the live production website or
-application. It also allows QA Team to test the application before it goes to the production. This helps ensure that the
-code is stable and functioning properly before it is made available to end users. Overall, using a staging server helps
-to minimize the risk of errors or disruptions in a live production environment, and helps to ensure the quality and
-stability of the final product.
+deployed to a production server. Tracardi has a clear separation of a test and production data. This allows developers
+to test and refine new features or bug fixes in a safe and controlled environment, without impacting the performance or
+functionality of the live production website or application. It also allows QA Team to test the application before it
+goes to the production. This helps ensure that the code is stable and functioning properly before it is made available
+to end users. Overall, using a staging server helps to minimize the risk of errors or disruptions in a live production
+environment, and helps to ensure the quality and stability of the final product.
 
 ## Tracardi staging server deployment
 
-The process of staging in Tracardi involves creating a separate copy of the system that is specifically designated as a
-staging server. This is done by installing another copy of the system and setting the environment variable "PRODUCTION"
-to "yes". This creates another set of indices in Elasticsearch that are prefixed with "prod-".
+To deploy Tracardi on a staging server, a separate copy of the system must be installed and designated as such. This
+involves setting the "PRODUCTION" environment variable to "no," which creates a new set of Elasticsearch indices.
+Additionally, the staging server should be exposed on a different port than the production server and ideally not
+accessible from the internet.
 
-The production server should not be edited directly. Instead, all changes should be made on the staging server and
-thoroughly tested before being deployed to the production system. This helps to minimize the risk of errors or
-disruptions in the live production environment.
+## Tracardi production server deployment
 
-Once changes have been tested on the staging server, they can then be deployed to the production system. This is done by
-copying the data from the staging server to the production server. However, certain data such as events, profiles, or
-error logs will not be copied over during this process to ensure that the production server data remains intact.
+To deploy Tracardi on a production server, another copy of the system must be installed and configured with the "
+PRODUCTION" environment variable set to "yes." This creates a new set of Elasticsearch indices prefixed with "prod-".
 
 ## Staging server security and networking
 
@@ -34,7 +32,16 @@ changes to the server configuration. The best practice is to have a single admin
 that can view data but not change any settings. This helps to prevent unauthorized access or changes that could
 potentially disrupt the production environment.
 
-## Licensing commercial version of Tracardi 
+## Licensing commercial version of Tracardi
 
 No need to worry about separate licenses for staging and production servers, all commercial licenses cover both.
 
+!!! Tip
+
+    When working with Tracardi the production server should not be edited directly. Instead, all changes should be made on the staging server and
+    thoroughly tested before being deployed to the production system. This helps to minimize the risk of errors or
+    disruptions in the live production environment.
+
+    Once changes have been tested on the staging server, they can then be deployed to the production system. This is done by
+    copying the data from the staging server to the production server. However, certain data such as events, profiles, or
+    error logs will not be copied over during this process to ensure that the production server data remains intact.

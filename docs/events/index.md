@@ -5,7 +5,7 @@
 
 Event properties refer to the characteristics or attributes of an event that can be recorded and analyzed. These properties can provide valuable information about the event, such as the time it occurred, the location, the participants, and any relevant details or context. In the context of event reshaping, event properties may be separated out from the rest of the data in order to facilitate their analysis and interpretation. Event properties can be used to better understand the event, and can be useful in identifying trends, patterns, or relationships within the data.
 
-# Event traits
+## Event traits
 
 Event traits are characteristics of an event that are indexed in the system for the purpose of analysis and aggregation. Traits differ from event properties in that they are structured in a way that allows them to be searched, analyzed, and aggregated more effectively.
 
@@ -22,7 +22,7 @@ An example of a profile-less event might be an event that describes an error in 
 
 Profile-less events can still be useful for understanding the use journey, but they may not provide as much context or insight as events that are tied to specific profiles.
 
-# Event context
+## Event context
 
 Event context refers to data that is not directly connected to the properties or traits of an event, but may provide additional context or background information that is relevant to understanding the event.
 
@@ -40,13 +40,13 @@ Events can take the following states:
 | `error`       | Workflow returned errors   |
 | `ok`          | Event wsa processed without errors |
 
-# Event routing
+## Event routing
 
 Event routing is the process of directing events to specific workflows or processes based on the type and source of the event. This allows businesses to handle different types of events in different ways, and to route events to the most appropriate workflow based on their characteristics.
 
 For example, an e-commerce platform might route events related to product purchases to a workflow that handles order processing and fulfillment, while routing events related to customer login attempts to a workflow that handles authentication and security. By routing events to the appropriate workflow, businesses can more effectively manage and process the data associated with the event.
 
-# Events synchronization
+## Events synchronization
 
 In Tracardi, event synchronization is the process of managing the order in which events are processed. This includes ensuring that events for a specific profile are processed in a specific order. Essentially, this means that events for one profile are processed sequentially, while events for other profiles are processed sequentially but in parallel to each other.
 
