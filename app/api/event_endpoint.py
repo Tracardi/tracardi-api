@@ -119,14 +119,6 @@ async def event_types(query: str = None, limit: int = 1000):
     return await events.get_event_types(query, limit)
 
 
-@router.get("/events/by_type/profile/{profile_id}", tags=["event"], include_in_schema=server.expose_gui_api)
-async def event_types(profile_id: str):
-    """
-    Returns number of events grouped by type for profile with given ID
-    """
-    return await storage.driver.event.aggregate_profile_events_by_type(profile_id, bucket_name='by_type')
-
-
 @router.get("/events/by_type", tags=["event"], include_in_schema=server.expose_gui_api)
 async def aggregate_event_types():
     """

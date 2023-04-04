@@ -1,4 +1,6 @@
-Tracardi provides a set of internal events that can be used to track customer journey on your website or application.
+# Pre-build event types
+
+Tracardi 0.8.1 provides a set of internal events that can be used to track customer journey on your website or application.
 These events come with default properties that can be used to collect data without the need for manual copying.
 
 Using internal events simplifies the use of Tracardi and allows for better analytics. When an internal event is used,
