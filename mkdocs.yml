@@ -92,8 +92,17 @@ nav:
           - configuration/elasticsearch/elastic_sniffing.md
       - configuration/tracardi_ssl.md
   - Integration:
-      - integration/js-integration.md
-      - integration/api-integration.md
+      - API:
+        - integration/api/api-integration.md
+        - integration/api/mobile-integration.md
+        - integration/api/tracker-response.md
+        - integration/api/errors.md
+      - Javascript:
+        - integration/js/index.md
+        - integration/js/context.md
+        - integration/js/options.md
+        - integration/js/response.md
+        - integration/js/advanced.md
   - upgrade.md
   - trouble/index.md
   - Running:
