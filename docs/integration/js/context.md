@@ -99,7 +99,7 @@ navigation")__ will be sent as event context.
 {
   "context": {
     "performance": {
-      "name": "http://localhost:63343/analytics-js-tracardi/index.html?_ijt=ikuiff8tiah4pjpiiao2a0gblm",
+      "name": "http://localhost:63343/analytics-js-tracardi/index.html",
       "entryType": "navigation",
       "startTime": 0,
       "duration": 0,
@@ -135,6 +135,111 @@ navigation")__ will be sent as event context.
   }
 }
 ```
+
+### Append profile ID to external links (Tag A)
+
+The tracking script has the capability to include the current profile ID, session ID, and source ID in the URL parameter, 
+allowing for consistent profile ID persistence across domains that utilize the same Tracardi system. 
+
+To enable this functionality, you can add the
+following code: `trackExternalLinks: true`. This will automatically update all `A.href` links on the page with the `__tr_pid`, `__tr_src`, `__tr_sid`
+parameter, which will contain the current profile ID, source ID, session ID respectively.
+
+```javascript title="Example" linenums="1" hl_lines="10-12"
+    const options = {
+      tracker: {
+        url: {
+            script: 'http://localhost:8686/tracker',
+            api: 'http://localhost:8686'
+        },
+        source: {
+            id: "3ee63fc6-490a-4fd8-bfb3-bf0c8c8d3387"
+        },
+        settings: {
+          trackExternalLinks: true
+        }
+    }
+}
+```
+
+!!! Notice
+
+    This feature is available from version 0.8.1 up.
+
+Tracardi recognize these params and saves them in `session.context`.
+
+```json
+{
+  "context": {
+    "tracardi": {
+      "pass": {
+        "profile": "0adfd4c8-36eb-40cd-9350-5df37706286a",
+        "source": "d15aaf64-90ff-4c72-9d93-e7851c326127",
+        "session": "9cb9a69b-e657-47dc-85f6-791ebc4b4822"
+      }
+    }
+  }
+}
+```
+
+Where possible system will use this information to merge profiles between devices and browsers. 
+
+!!! Tip
+
+    The script utilizes an underlying technique that involves creating a POST payload for the tracker, with 
+    parameters such as `__tr_pid`, `__tr_src`, and `__tr_sid`. The payload contains data sent in a specific context, 
+    formatted as follows in JSON:
+    
+    ```json
+    {
+      "source": {
+        "id": "d15aaf64-90ff-4c72-9d93-e7851c326127"
+      },
+      "context": {
+        "tracardi": {
+          "pass": {
+            "profile": "0adfd4c8-36eb-40cd-9350-5df37706286a",
+            "source": "d15aaf64-90ff-4c72-9d93-e7851c326127",
+            "session": "9cb9a69b-e657-47dc-85f6-791ebc4b4822"
+          }
+        }
+      },
+      "profile": {
+        "id": "0adfd4c8-36eb-40cd-9350-5df37706286a"
+      },
+      "session": {
+        "id": "3a18978e-1d74-4382-8e50-f0b8ae3c2d55"
+      },
+      "options": {},
+      "events": [ ... ]
+    }
+    ```
+
+    This technique can be used also to reference profile ID from browser to device. 
+    However you will need a find a way to pass the refered profile ID, session ID, and source ID to your mobile 
+    device when the app is opened, and the first `/track` payload should include the refered IDs. The same 
+    will also work with other systems. 
+
+To disable params `__tr_pid`, `__tr_src`, `__tr_sid` and turn off session context, set `tracardiPass` to `false` in 
+tracker context:
+
+```javascript title="Example" linenums="1" hl_lines="10-12"
+    const options = {
+      tracker: {
+        url: {
+            script: 'http://localhost:8686/tracker',
+            api: 'http://localhost:8686'
+        },
+        source: {
+            id: "3ee63fc6-490a-4fd8-bfb3-bf0c8c8d3387"
+        },
+        context: {
+            tracardiPass: false
+        }
+    }
+}
+```
+
 
 ### Respect Do Not Track (DNT) browser setting
 
