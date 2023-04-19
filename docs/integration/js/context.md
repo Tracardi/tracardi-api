@@ -142,8 +142,8 @@ The tracking script has the capability to include the current profile ID, sessio
 allowing for consistent profile ID persistence across domains that utilize the same Tracardi system. 
 
 To enable this functionality, you can add the
-following code: `trackExternalLinks: true`. This will automatically update all `A.href` links on the page with the `__tr_pid`, `__tr_src`, `__tr_sid`
-parameter, which will contain the current profile ID, source ID, session ID respectively.
+following code: `trackExternalLinks: true`. This will automatically update all `A.href` links on the page with the `__tr_pid`, `__tr_src`
+parameter, which will contain the current profile ID, source ID respectively.
 
 ```javascript title="Example" linenums="1" hl_lines="10-12"
     const options = {
@@ -187,7 +187,7 @@ Where possible system will use this information to merge profiles between device
 !!! Tip
 
     The script utilizes an underlying technique that involves creating a POST payload for the tracker, with 
-    parameters such as `__tr_pid`, `__tr_src`, and `__tr_sid`. The payload contains data sent in a specific context, 
+    parameters such as `__tr_pid`, `__tr_src`. The payload contains data sent in a specific context, 
     formatted as follows in JSON:
     
     ```json
@@ -199,8 +199,7 @@ Where possible system will use this information to merge profiles between device
         "tracardi": {
           "pass": {
             "profile": "0adfd4c8-36eb-40cd-9350-5df37706286a",
-            "source": "d15aaf64-90ff-4c72-9d93-e7851c326127",
-            "session": "9cb9a69b-e657-47dc-85f6-791ebc4b4822"
+            "source": "d15aaf64-90ff-4c72-9d93-e7851c326127"
           }
         }
       },
@@ -220,7 +219,7 @@ Where possible system will use this information to merge profiles between device
     device when the app is opened, and the first `/track` payload should include the refered IDs. The same 
     will also work with other systems. 
 
-To disable params `__tr_pid`, `__tr_src`, `__tr_sid` and turn off session context, set `tracardiPass` to `false` in 
+To disable params `__tr_pid`, `__tr_src` and turn off session context, set `tracardiPass` to `false` in 
 tracker context:
 
 ```javascript title="Example" linenums="1" hl_lines="10-12"
