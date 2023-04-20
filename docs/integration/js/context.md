@@ -142,8 +142,10 @@ The tracking script has the capability to include the current profile ID, sessio
 allowing for consistent profile ID persistence across domains that utilize the same Tracardi system. 
 
 To enable this functionality, you can add the
-following code: `trackExternalLinks: true`. This will automatically update all `A.href` links on the page with the `__tr_pid`, `__tr_src`
-parameter, which will contain the current profile ID, source ID respectively.
+following code: `trackExternalLinks: ['example.com', 'tracardi.com']`. This will automatically update all `A.href` links on the page 
+with the `__tr_pid`, `__tr_src` parameter, which will contain the current profile ID, source ID respectively, if
+the A.href URL end with any of the defined domains in `trackExternalLinks`. In our example it is 'example.com' and , 
+'tracardi.com'.
 
 ```javascript title="Example" linenums="1" hl_lines="10-12"
     const options = {
@@ -156,7 +158,7 @@ parameter, which will contain the current profile ID, source ID respectively.
             id: "3ee63fc6-490a-4fd8-bfb3-bf0c8c8d3387"
         },
         settings: {
-          trackExternalLinks: true
+          trackExternalLinks: ['example.com', 'tracardi.com']
         }
     }
 }
