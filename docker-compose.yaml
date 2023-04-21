@@ -46,3 +46,8 @@ services:
 
   redis:
     image: redis
+
+  worker:
+    image: tracardi/update-worker:0.8.1-dev
+    environment:
+      REDIS_HOST: redis://redis:6379
