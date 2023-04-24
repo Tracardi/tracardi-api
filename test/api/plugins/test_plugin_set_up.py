@@ -6,6 +6,18 @@ from tracardi.service.module_loader import load_callable, import_package
 from tracardi.service.wf.domain.node import Node
 
 
+async def test_should_set_up_plugin_tag_event_action():
+    
+    module = import_package("tracardi.process_engine.action.v1.internal.tag_event.plugin")
+    plugin_class = load_callable(module, "TagEventAction")
+    plugin = plugin_class()
+    plugin.node = Node(id="node-id", 
+                       name="test-node", 
+                       module="tracardi.process_engine.action.v1.internal.tag_event.plugin", 
+                       className="TagEventAction")
+    await plugin.set_up({'tags': 'tag1,tag2'})
+
+
 async def test_should_set_up_plugin_last_visit_action():
     
     module = import_package("tracardi.process_engine.action.v1.time.last_profile_visit.plugin")
@@ -18,16 +30,29 @@ async def test_should_set_up_plugin_last_visit_action():
     await plugin.set_up(None)
 
 
-async def test_should_set_up_plugin_limiter_action():
+async def test_should_set_up_plugin_telegram_post_action(mocker):
     
-    module = import_package("tracardi.process_engine.action.v1.internal.limiter.plugin")
-    plugin_class = load_callable(module, "LimiterAction")
+    mocker.patch(
+        # api_call is from slow.py but imported to main.py
+        'tracardi.service.storage.driver.storage.driver.resource.load',
+        return_value=Resource(
+            id="test-resource",
+            type="test",
+            credentials=ResourceCredentials(
+                production={'bot_token': 'bot_token', 'chat_id': 100},
+                test={'bot_token': 'bot_token', 'chat_id': 100}
+            )
+        )
+    )
+
+    module = import_package("tracardi.process_engine.action.v1.connectors.telegram.post.plugin")
+    plugin_class = load_callable(module, "TelegramPostAction")
     plugin = plugin_class()
     plugin.node = Node(id="node-id", 
                        name="test-node", 
-                       module="tracardi.process_engine.action.v1.internal.limiter.plugin", 
-                       className="LimiterAction")
-    await plugin.set_up({'keys': [], 'limit': 10, 'ttl': 60})
+                       module="tracardi.process_engine.action.v1.connectors.telegram.post.plugin", 
+                       className="TelegramPostAction")
+    await plugin.set_up({'resource': {'id': 'id', 'name': 'name'}, 'message': 'test'})
 
 
 async def test_should_set_up_plugin_google_analytics_event_tracker_action(mocker):
@@ -692,30 +717,6 @@ async def test_should_set_up_plugin_field_type_action():
     await plugin.set_up({'field': 'profile@id'})
 
 
-async def test_should_set_up_plugin_event_counter():
-    
-    module = import_package("tracardi.process_engine.action.v1.events.event_counter.plugin")
-    plugin_class = load_callable(module, "EventCounter")
-    plugin = plugin_class()
-    plugin.node = Node(id="node-id", 
-                       name="test-node", 
-                       module="tracardi.process_engine.action.v1.events.event_counter.plugin", 
-                       className="EventCounter")
-    await plugin.set_up({'event_type': {'id': '1', 'name': 'Some value'}, 'time_span': '-15m'})
-
-
-async def test_should_set_up_plugin_event_aggregator():
-    
-    module = import_package("tracardi.process_engine.action.v1.events.event_aggregator.plugin")
-    plugin_class = load_callable(module, "EventAggregator")
-    plugin = plugin_class()
-    plugin.node = Node(id="node-id", 
-                       name="test-node", 
-                       module="tracardi.process_engine.action.v1.events.event_aggregator.plugin", 
-                       className="EventAggregator")
-    await plugin.set_up({'field': {'id': '1', 'name': 'Some value'}, 'time_span': '-15m'})
-
-
 async def test_should_set_up_plugin_event_discarder():
     
     module = import_package("tracardi.process_engine.action.v1.events.event_discarder.plugin")
@@ -725,6 +726,30 @@ async def test_should_set_up_plugin_event_discarder():
                        name="test-node", 
                        module="tracardi.process_engine.action.v1.events.event_discarder.plugin", 
                        className="EventDiscarder")
+    await plugin.set_up({})
+
+
+async def test_should_set_up_plugin_profile_discarder():
+    
+    module = import_package("tracardi.process_engine.action.v1.profiles.profile_discarder.plugin")
+    plugin_class = load_callable(module, "ProfileDiscarder")
+    plugin = plugin_class()
+    plugin.node = Node(id="node-id", 
+                       name="test-node", 
+                       module="tracardi.process_engine.action.v1.profiles.profile_discarder.plugin", 
+                       className="ProfileDiscarder")
+    await plugin.set_up({})
+
+
+async def test_should_set_up_plugin_session_discarder():
+    
+    module = import_package("tracardi.process_engine.action.v1.sessions.session_discarder.plugin")
+    plugin_class = load_callable(module, "SessionDiscarder")
+    plugin = plugin_class()
+    plugin.node = Node(id="node-id", 
+                       name="test-node", 
+                       module="tracardi.process_engine.action.v1.sessions.session_discarder.plugin", 
+                       className="SessionDiscarder")
     await plugin.set_up({})
 
 
@@ -835,6 +860,19 @@ async def test_should_set_up_plugin_search_string_similarity_action():
                        className="SearchStringSimilarityAction")
     await plugin.set_up({'first_string': 'abc', 'second_string': 'abc', 'algorithm': 'levenshtein'})
 
+
+async def test_should_set_up_plugin_sleep_action():
+    
+    module = import_package("tracardi.process_engine.action.v1.time.sleep_action")
+    plugin_class = load_callable(module, "SleepAction")
+    plugin = plugin_class()
+    plugin.node = Node(id="node-id", 
+                       name="test-node", 
+                       module="tracardi.process_engine.action.v1.time.sleep_action", 
+                       className="SleepAction")
+    await plugin.set_up({'wait': 1})
+
+
 async def test_should_set_up_plugin_today_action():
     
     module = import_package("tracardi.process_engine.action.v1.time.today_action")
@@ -868,6 +906,18 @@ async def test_should_set_up_plugin_local_time_span_action():
                        name="test-node", 
                        module="tracardi.process_engine.action.v1.time.local_time_span.plugin", 
                        className="LocalTimeSpanAction")
+    await plugin.set_up({'end': '10:10:10', 'start': '12:10:10', 'timezone': 'session@context.time.tz'})
+
+
+async def test_should_set_up_plugin_profile_live_time_action():
+    
+    module = import_package("tracardi.process_engine.action.v1.time.profile_live_time.plugin")
+    plugin_class = load_callable(module, "ProfileLiveTimeAction")
+    plugin = plugin_class()
+    plugin.node = Node(id="node-id", 
+                       name="test-node", 
+                       module="tracardi.process_engine.action.v1.time.profile_live_time.plugin", 
+                       className="ProfileLiveTimeAction")
     await plugin.set_up({'end': '10:10:10', 'start': '12:10:10', 'timezone': 'session@context.time.tz'})
 
 
@@ -1005,30 +1055,6 @@ async def test_should_set_up_plugin_add_segment_action():
     await plugin.set_up({'segment': 'abc'})
 
 
-async def test_should_set_up_plugin_memorize_segment_action():
-    
-    module = import_package("tracardi.process_engine.action.v1.segmentation.memorize.plugin")
-    plugin_class = load_callable(module, "MemorizeSegmentAction")
-    plugin = plugin_class()
-    plugin.node = Node(id="node-id", 
-                       name="test-node", 
-                       module="tracardi.process_engine.action.v1.segmentation.memorize.plugin", 
-                       className="MemorizeSegmentAction")
-    await plugin.set_up({'memory_key': 'abc'})
-
-
-async def test_should_set_up_plugin_memorize_segment_action():
-    
-    module = import_package("tracardi.process_engine.action.v1.segmentation.recall.plugin")
-    plugin_class = load_callable(module, "MemorizeSegmentAction")
-    plugin = plugin_class()
-    plugin.node = Node(id="node-id", 
-                       name="test-node", 
-                       module="tracardi.process_engine.action.v1.segmentation.recall.plugin", 
-                       className="MemorizeSegmentAction")
-    await plugin.set_up({'memory_key': 'abc'})
-
-
 async def test_should_set_up_plugin_delete_segment_action():
     
     module = import_package("tracardi.process_engine.action.v1.segmentation.delete.plugin")
@@ -1051,6 +1077,42 @@ async def test_should_set_up_plugin_move_segment_action():
                        module="tracardi.process_engine.action.v1.segmentation.move.plugin", 
                        className="MoveSegmentAction")
     await plugin.set_up({'from_segment': 'abc', 'to_segment': 'asd'})
+
+
+async def test_should_set_up_plugin_add_interest_action():
+    
+    module = import_package("tracardi.process_engine.action.v1.interest.add.plugin")
+    plugin_class = load_callable(module, "AddInterestAction")
+    plugin = plugin_class()
+    plugin.node = Node(id="node-id", 
+                       name="test-node", 
+                       module="tracardi.process_engine.action.v1.interest.add.plugin", 
+                       className="AddInterestAction")
+    await plugin.set_up({'interest': 'abc', 'value': '1.0'})
+
+
+async def test_should_set_up_plugin_increase_interest_action():
+    
+    module = import_package("tracardi.process_engine.action.v1.interest.increase.plugin")
+    plugin_class = load_callable(module, "IncreaseInterestAction")
+    plugin = plugin_class()
+    plugin.node = Node(id="node-id", 
+                       name="test-node", 
+                       module="tracardi.process_engine.action.v1.interest.increase.plugin", 
+                       className="IncreaseInterestAction")
+    await plugin.set_up({'interest': 'abc', 'value': '1.0'})
+
+
+async def test_should_set_up_plugin_decrease_interest_action():
+    
+    module = import_package("tracardi.process_engine.action.v1.interest.decrease.plugin")
+    plugin_class = load_callable(module, "DecreaseInterestAction")
+    plugin = plugin_class()
+    plugin.node = Node(id="node-id", 
+                       name="test-node", 
+                       module="tracardi.process_engine.action.v1.interest.decrease.plugin", 
+                       className="DecreaseInterestAction")
+    await plugin.set_up({'interest': 'abc', 'value': '1.0'})
 
 
 async def test_should_set_up_plugin_object_to_json_action():
@@ -1086,8 +1148,8 @@ async def test_should_set_up_plugin_discord_web_hook_action(mocker):
             id="test-resource",
             type="test",
             credentials=ResourceCredentials(
-                production={'url': 'test'},
-                test={'url': 'test'}
+                production={'url': 'http://webhook_url'},
+                test={'url': 'http://webhook_url'}
             )
         )
     )
@@ -1099,7 +1161,7 @@ async def test_should_set_up_plugin_discord_web_hook_action(mocker):
                        name="test-node", 
                        module="tracardi.process_engine.action.v1.connectors.discord.push.plugin", 
                        className="DiscordWebHookAction")
-    await plugin.set_up({'message': 'message', 'timeout': 10, 'url': 'http://url', 'username': 'test'})
+    await plugin.set_up({'resource': {'id': 'id', 'name': 'name'}, 'message': 'message', 'timeout': 10, 'username': 'test'})
 
 
 async def test_should_set_up_plugin_geo_i_p_action(mocker):
@@ -1347,67 +1409,6 @@ async def test_should_set_up_plugin_add_empty_session_action():
     await plugin.set_up({})
 
 
-async def test_should_set_up_plugin_entity_upsert_action():
-    
-    module = import_package("tracardi.process_engine.action.v1.internal.entity.upsert.plugin")
-    plugin_class = load_callable(module, "EntityUpsertAction")
-    plugin = plugin_class()
-    plugin.node = Node(id="node-id", 
-                       name="test-node", 
-                       module="tracardi.process_engine.action.v1.internal.entity.upsert.plugin", 
-                       className="EntityUpsertAction")
-    await plugin.set_up({'id': '1', 'properties': '{}', 'reference_profile': True, 'traits': '{}', 'type': 'type'})
-
-
-async def test_should_set_up_plugin_entity_load_action():
-    
-    module = import_package("tracardi.process_engine.action.v1.internal.entity.load.plugin")
-    plugin_class = load_callable(module, "EntityLoadAction")
-    plugin = plugin_class()
-    plugin.node = Node(id="node-id", 
-                       name="test-node", 
-                       module="tracardi.process_engine.action.v1.internal.entity.load.plugin", 
-                       className="EntityLoadAction")
-    await plugin.set_up({'id': '1', 'reference_profile': True, 'type': {'id': 'type', 'name': 'type'}})
-
-
-async def test_should_set_up_plugin_entity_delete_action():
-    
-    module = import_package("tracardi.process_engine.action.v1.internal.entity.delete.plugin")
-    plugin_class = load_callable(module, "EntityDeleteAction")
-    plugin = plugin_class()
-    plugin.node = Node(id="node-id", 
-                       name="test-node", 
-                       module="tracardi.process_engine.action.v1.internal.entity.delete.plugin", 
-                       className="EntityDeleteAction")
-    await plugin.set_up({'id': '1', 'reference_profile': True, 'type': {'id': 'type', 'name': 'type'}})
-
-
-async def test_should_set_up_plugin_get_report_action(mocker):
-    
-    mocker.patch(
-        # api_call is from slow.py but imported to main.py
-        'tracardi.service.storage.driver.storage.driver.resource.load',
-        return_value=Resource(
-            id="test-resource",
-            type="test",
-            credentials=ResourceCredentials(
-                production={},
-                test={}
-            )
-        )
-    )
-
-    module = import_package("tracardi.process_engine.action.v1.internal.get_report.plugin")
-    plugin_class = load_callable(module, "GetReportAction")
-    plugin = plugin_class()
-    plugin.node = Node(id="node-id", 
-                       name="test-node", 
-                       module="tracardi.process_engine.action.v1.internal.get_report.plugin", 
-                       className="GetReportAction")
-    await plugin.set_up({'report_config': {'params': '{}', 'report': {'id': '1', 'name': '1'}}})
-
-
 async def test_should_set_up_plugin_create_response_action():
     
     module = import_package("tracardi.process_engine.action.v1.internal.add_response.plugin")
@@ -1477,7 +1478,7 @@ async def test_should_set_up_plugin_postpone_event_action():
                        name="test-node", 
                        module="tracardi.process_engine.action.v1.flow.postpone_event.plugin", 
                        className="PostponeEventAction")
-    await plugin.set_up({'event_type': 'test'})
+    await plugin.set_up({'event_type': 'type', 'source': {'id': 'x', 'name': 'x'}, 'event_properties': '{}', 'delay': 60})
 
 
 async def test_should_set_up_plugin_contains_string_action():
@@ -1576,6 +1577,18 @@ async def test_should_set_up_plugin_git_hub_get_issue_action(mocker):
                        module="tracardi.process_engine.action.v1.connectors.github.issues.get.plugin", 
                        className="GitHubGetIssueAction")
     await plugin.set_up({'resource': {'id': '', 'name': ''}, 'timeout': 10, 'owner': 'tracardi', 'repo': 'tracardi', 'issue_id': '1'})
+
+
+async def test_should_set_up_plugin_query_local_database():
+    
+    module = import_package("tracardi.process_engine.action.v1.connectors.elasticsearch.query_local.plugin")
+    plugin_class = load_callable(module, "QueryLocalDatabase")
+    plugin = plugin_class()
+    plugin.node = Node(id="node-id", 
+                       name="test-node", 
+                       module="tracardi.process_engine.action.v1.connectors.elasticsearch.query_local.plugin", 
+                       className="QueryLocalDatabase")
+    await plugin.set_up({'index': 'index', 'query': '{"query":{"match_all":{}}}'})
 
 
 async def test_should_set_up_plugin_elastic_search_fetcher(mocker):
