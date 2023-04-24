@@ -61,35 +61,36 @@ async def install_plugins():
     return await install_default_plugins()
 
 
-@router.get("/install/demo", tags=["installation"], include_in_schema=server.expose_gui_api, response_model=Optional[dict])
+@router.get("/install/demo", tags=["installation"], include_in_schema=server.expose_gui_api)
 async def install_demo_data():
     # Demo
+    if os.environ.get("DEMO", None) == 'yes':
 
-    event_source = EventSource(
-        id=open_rest_source_bridge.id,
-        type=["internal"],
-        name="Test random data",
-        channel="System",
-        description="Internal event source for random data.",
-        bridge=NamedEntity(**open_rest_source_bridge.dict()),
-        timestamp=datetime.datetime.utcnow(),
-        tags=["internal"],
-        groups=["Internal"]
-    )
+        event_source = EventSource(
+            id=open_rest_source_bridge.id,
+            type=["internal"],
+            name="Test random data",
+            channel="System",
+            description="Internal event source for random data.",
+            bridge=NamedEntity(**open_rest_source_bridge.dict()),
+            timestamp=datetime.datetime.utcnow(),
+            tags=["internal"],
+            groups=["Internal"]
+        )
 
-    print(await storage.driver.raw.bulk_upsert(
-        resources.get_index_constant('event-source').get_write_index(),
-        list(add_ids([event_source.dict()]))))
+        print(await storage.driver.raw.bulk_upsert(
+            resources.get_index_constant('event-source').get_write_index(),
+            list(add_ids([event_source.dict()]))))
 
-    await storage.driver.event_source.refresh()
+        await storage.driver.event_source.refresh()
 
-    for i in range(0, 10):
-        payload = generate_payload(source=open_rest_source_bridge.id)
+        for i in range(0, 10):
+            payload = generate_payload(source=open_rest_source_bridge.id)
 
-        print(await track_event(
-            TrackerPayload(**payload),
-            "0.0.0.0",
-            allowed_bridges=['internal']))
+            print(await track_event(
+                TrackerPayload(**payload),
+                "0.0.0.0",
+                allowed_bridges=['internal']))
 
 
 @router.post("/install", tags=["installation"], include_in_schema=server.expose_gui_api)
@@ -177,9 +178,9 @@ async def install(credentials: Optional[Credentials]):
             groups=["Internal"]
         )
 
-        print(await storage.driver.raw.bulk_upsert(
+        await storage.driver.raw.bulk_upsert(
             resources.get_index_constant('event-source').get_write_index(),
-            list(add_ids([event_source.dict()]))))
+            list(add_ids([event_source.dict()])))
 
         await storage.driver.event_source.refresh()
 
