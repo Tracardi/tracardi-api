@@ -1,3 +1,4 @@
+import datetime
 import logging
 import os
 from typing import Optional
@@ -5,16 +6,23 @@ from uuid import uuid4
 
 from fastapi import APIRouter, HTTPException
 
+from tracardi.domain.payload.tracker_payload import TrackerPayload
+from tracardi.service.tracker import track_event
+
 from app.config import server
 
 from tracardi.config import tracardi, elastic
 from tracardi.context import ServerContext, Context
 from tracardi.domain.credentials import Credentials
+from tracardi.domain.event_source import EventSource
+from tracardi.domain.named_entity import NamedEntity
 from tracardi.domain.user import User
 from tracardi.exceptions.log_handler import log_handler
+from tracardi.service.fake_data_maker.generate_payload import generate_payload
 from tracardi.service.plugin.plugin_install import install_default_plugins
+from tracardi.service.setup.data.defaults import open_rest_source_bridge
 from tracardi.service.setup.setup_indices import create_schema, install_default_data, \
-    run_on_start
+    run_on_start, add_ids
 from tracardi.service.storage.driver import storage
 from tracardi.service.storage.index import resources
 
@@ -51,6 +59,37 @@ async def check_if_installation_complete():
 @router.get("/install/plugins", tags=["installation"], include_in_schema=server.expose_gui_api, response_model=dict)
 async def install_plugins():
     return await install_default_plugins()
+
+
+@router.get("/install/demo", tags=["installation"], include_in_schema=server.expose_gui_api, response_model=Optional[dict])
+async def install_demo_data():
+    # Demo
+
+    event_source = EventSource(
+        id=open_rest_source_bridge.id,
+        type=["internal"],
+        name="Test random data",
+        channel="System",
+        description="Internal event source for random data.",
+        bridge=NamedEntity(**open_rest_source_bridge.dict()),
+        timestamp=datetime.datetime.utcnow(),
+        tags=["internal"],
+        groups=["Internal"]
+    )
+
+    print(await storage.driver.raw.bulk_upsert(
+        resources.get_index_constant('event-source').get_write_index(),
+        list(add_ids([event_source.dict()]))))
+
+    await storage.driver.event_source.refresh()
+
+    for i in range(0, 10):
+        payload = generate_payload(source=open_rest_source_bridge.id)
+
+        print(await track_event(
+            TrackerPayload(**payload),
+            "0.0.0.0",
+            allowed_bridges=['internal']))
 
 
 @router.post("/install", tags=["installation"], include_in_schema=server.expose_gui_api)
@@ -120,5 +159,36 @@ async def install(credentials: Optional[Credentials]):
     # Install production
     with ServerContext(Context(production=True)):
         production_install_result = await _install()
+
+    # Demo
+    if os.environ.get("DEMO", None) == 'yes':
+
+        # Demo
+
+        event_source = EventSource(
+            id=open_rest_source_bridge.id,
+            type=["internal"],
+            name="Test random data",
+            channel="System",
+            description="Internal event source for random data.",
+            bridge=NamedEntity(**open_rest_source_bridge.dict()),
+            timestamp=datetime.datetime.utcnow(),
+            tags=["internal"],
+            groups=["Internal"]
+        )
+
+        print(await storage.driver.raw.bulk_upsert(
+            resources.get_index_constant('event-source').get_write_index(),
+            list(add_ids([event_source.dict()]))))
+
+        await storage.driver.event_source.refresh()
+
+        for i in range(0, 150):
+            payload = generate_payload(source=open_rest_source_bridge.id)
+
+            print(await track_event(
+                TrackerPayload(**payload),
+                "0.0.0.0",
+                allowed_bridges=['internal']))
 
     return staging_install_result, production_install_result
