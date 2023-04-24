@@ -77,7 +77,7 @@ def test_should_count_events():
         result = response.json()
         count1 = result['count']
 
-        assert count1 == count + 1
+        assert count1 == count + 3  # Event: Test, Profile Create, Session Created.
 
     finally:
         response = endpoint.delete(f'/event/{event_id}')
@@ -132,7 +132,7 @@ def test_should_return_event_meta():
             response = endpoint.get('/events/metadata/type?limit=1000')
             assert response.status_code == 200
             result = response.json()
-            assert 'test' in result['result']
+            assert {'name': 'Test', 'id': 'test'} in result['result']
 
         finally:
             assert endpoint.delete(f'/event/{event_id}').status_code == 200
