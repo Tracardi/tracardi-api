@@ -42,8 +42,9 @@ def test_source_rule_and_flow():
         response = endpoint.post('/rule', data={
             "id": rule_id,
             "name": "End2End rule",
-            "event": {
-                "type": event_type
+            "event_type": {
+                "id": event_type,
+                "name": event_type
             },
             "flow": {
                 "id": flow_id,
@@ -95,7 +96,7 @@ def test_source_rule_and_flow():
         result = response.json()
         assert result['source']['id'] == source_id
         assert result['flow']['id'] == flow_id
-        assert result['event']['type'] == event_type
+        assert result['event_type']['id'] == event_type
 
         # Assert flow
         assert endpoint.get(f'/flow/production/{flow_id}').status_code == 200

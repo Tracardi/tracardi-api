@@ -33,8 +33,9 @@ def test_source_rule_and_flow():
         response = endpoint.post('/rule', data={
             "id": rule_id,
             "name": "Multiple events in one track",
-            "event": {
-                "type": event_type
+            "event_type": {
+                "id": event_type,
+                "name": event_type
             },
             "flow": {
                 "id": flow_id,

@@ -17,7 +17,7 @@ This plugin outputs a random value from provided list.
   "list_of_items": [
     "value-1",
     "payload@value",
-    "profile@traits.public.value"
+    "profile@traits.value"
   ]
 }
 ```

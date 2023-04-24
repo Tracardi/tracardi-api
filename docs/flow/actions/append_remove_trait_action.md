@@ -9,11 +9,11 @@ The following config:
 ```json
 {
   "append": {
-    "profile@traits.private.orders": "event@properties.order",
+    "profile@traits.orders": "event@properties.order",
     "session@properties.list": "event@properties.property_list"
   },
   "remove": {
-    "profile@traits.public.emails": "session@properties.email"
+    "profile@traits.emails": "session@properties.email"
   }
 }
 ```

@@ -41,8 +41,9 @@ def test_source_rule_and_flow():
         response = endpoint.post('/rule', data={
             "id": rule_id_1,
             "name": "Profile override rule-1",
-            "event": {
-                "type": event_type
+            "event_type": {
+                "id": event_type,
+                "name": event_type
             },
             "flow": {
                 "id": flow_id_1,

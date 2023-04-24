@@ -11,7 +11,7 @@ Example of configuration.
 ```json
 {
   "system": "C",
-  "city": "profile@traits.public.city"
+  "city": "profile@traits.city"
 }
 ```
 

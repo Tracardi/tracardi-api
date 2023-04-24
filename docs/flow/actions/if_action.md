@@ -8,7 +8,7 @@ This node uses a language very similar to SQL conditionals. It also uses dotted 
 All fields must contain a source and a path to value e.g:
 
 ```
-profile@traits.public.pii.name
+profile@data.pii.name
 ```
 
 This means the value *traits.public.pii.name* from profile will be used in the conditional statement.

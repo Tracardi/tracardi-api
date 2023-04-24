@@ -47,8 +47,9 @@ def test_should_count_multiple_page_views_from_one_api_call():
         response = endpoint.post('/rule', data={
             "id": rule_id,
             "name": "Multiple events in one track",
-            "event": {
-                "type": event_type
+            "event_type": {
+                "id": event_type,
+                "name": event_type
             },
             "flow": {
                 "id": flow_id,

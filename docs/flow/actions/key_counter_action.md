@@ -11,7 +11,7 @@ For example Lets assume the following configuration:
 ```json
 {
   "key": "payload@value",
-  "save_in": "payload@traits.public.counts"
+  "save_in": "payload@traits.counts"
 }
 ```
 
