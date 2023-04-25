@@ -76,8 +76,12 @@ nav:
           - installation/source/index.md
       - Production:
           - installation/production/index.md
-      - Kubernetes:
-          - installation/k8s/index.md
+          - installation/production/services.md
+          - installation/production/k8s/index.md
+          - installation/staging/index.md
+      - Commercial:
+          - installation/commercial/index.md
+
   - Configuration:
       - configuration/tracardi_configuration.md
       - configuration/best_practises.md
@@ -88,8 +92,17 @@ nav:
           - configuration/elasticsearch/elastic_sniffing.md
       - configuration/tracardi_ssl.md
   - Integration:
-      - integration/js-integration.md
-      - integration/api-integration.md
+      - API:
+        - integration/api/api-integration.md
+        - integration/api/mobile-integration.md
+        - integration/api/tracker-response.md
+        - integration/api/errors.md
+      - Javascript:
+        - integration/js/index.md
+        - integration/js/context.md
+        - integration/js/options.md
+        - integration/js/response.md
+        - integration/js/advanced.md
   - upgrade.md
   - trouble/index.md
   - Running:
@@ -103,6 +116,39 @@ nav:
           - events/event_tracking.md
           - events/event_validation.md
           - events/synchronization.md
+          - Internal event types:
+              - events/internal/index.md
+              - events/internal/basket-viewed.md
+              - events/internal/checkout-completed.md
+              - events/internal/checkout-started.md
+              - events/internal/checkout-status.md
+              - events/internal/delivery-info-entered.md
+              - events/internal/identification.md
+              - events/internal/loyalty-card-added.md
+              - events/internal/loyalty-card-removed.md
+              - events/internal/order-completed.md
+              - events/internal/order-started.md
+              - events/internal/page-print.md
+              - events/internal/page-view.md
+              - events/internal/payment-info-entered.md
+              - events/internal/product-added-to-basket.md
+              - events/internal/product-clicked.md
+              - events/internal/product-details-page-view.md
+              - events/internal/product-removed-from-basket.md
+              - events/internal/product-reviewed.md
+              - events/internal/product-search-result.md
+              - events/internal/product-shared.md
+              - events/internal/profile-archived.md
+              - events/internal/profile-created.md
+              - events/internal/profile-inactive.md
+              - events/internal/promotion-clicked.md
+              - events/internal/promotion-viewed.md
+              - events/internal/screen-view.md
+              - events/internal/search.md
+              - events/internal/session-closed.md
+              - events/internal/session-opened.md
+              - events/internal/sign-in.md
+
       - Profiles:
           - profiles/index.md
           - profiles/profile_merging.md
@@ -272,6 +318,9 @@ nav:
                   - Google:
                       - flow/actions/google_event_tracker_action.md
                       - flow/actions/google_v4_event_tracker_action.md
+                  - Matomo:
+                      - flow/actions/matomo/register_event.md
+
 
               - Regex:
                   - flow/actions/regex/regex_validator_action.md
@@ -341,6 +390,13 @@ nav:
           - notations/logic_notation.md
           - notations/templates.md
           - notations/object_template.md
+
+      - Q&A:
+          - qa/how_to_copy_data_from_event_to_profile.md
+          - qa/how_to_replace_a_profile_in_workflow.md
+          - qa/how_to_use_own_profile_id.md
+          - qa/how_to_use_workflow_editor.md
+          - qa/utms.md
   - api/index.md
   - Developers:
       - Development environmet set-up:

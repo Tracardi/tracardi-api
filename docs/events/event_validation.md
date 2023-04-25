@@ -28,7 +28,7 @@ json schema itself.
   "event@properties": {
     ...json-schema
   },
-  "profile@traits.public.my-data": {
+  "profile@traits.my-data": {
     ...json-schema
   }
 }

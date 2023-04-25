@@ -104,14 +104,14 @@ docker run -p 8787:80 -e API_URL=//127.0.0.1:8686 tracardi/tracardi-gui #(1)
 
 ## Import worker
 
-To run an import worker you will need the tracardi/worker to do the background importing of the data. Run the following 
+To run an import worker you will need the tracardi/update-worker to do the background importing of the data. Run the following 
 command to start the worker. 
 
 ```bash
-docker run -e REDIS_HOST=redis://<redis-ip>:6379 -d tracardi/worker #(1)
+docker run -e REDIS_HOST=redis://<redis-ip>:6379 -d tracardi/update-worker:0.8.0 #(1)
 ```
 
-1. If you want a certain version of docker image add version tag, e.g. `tracardi/worker:0.7.1`
+1. If you want a certain version of docker image add version tag, e.g. `tracardi/worker:0.8.0`
 
 
 !!! Note

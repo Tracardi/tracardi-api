@@ -33,8 +33,9 @@ def test_source_rule_and_flow():
         response = endpoint.post('/rule', data={
             "id": rule_id_1,
             "name": "Profile override rule-1",
-            "event": {
-                "type": event_type
+            "event_type": {
+                "id": event_type,
+                "name": event_type
             },
             "flow": {
                 "id": flow_id_1,
@@ -52,8 +53,9 @@ def test_source_rule_and_flow():
         response = endpoint.post('/rule', data={
             "id": rule_id_2,
             "name": "Profile override rule-1",
-            "event": {
-                "type": event_type
+            "event_type": {
+                "id": event_type,
+                "name": event_type
             },
             "flow": {
                 "id": flow_id_2,
@@ -74,13 +76,13 @@ def test_source_rule_and_flow():
         copy_trait1 = action(CopyTraitAction, init={
             "traits": {
                 "set": {
-                    "profile@traits.public.a": "event@properties.a"
+                    "profile@traits.a": "event@properties.a"
                 }
             }
         })
         append_trait = action(AppendTraitAction, init={
             "append": {
-                "profile@traits.public.b": "event@properties.a"
+                "profile@traits.b": "event@properties.a"
             }
         })
         increase_views = action(IncreaseViewsAction)
@@ -100,13 +102,13 @@ def test_source_rule_and_flow():
         copy_trait2 = action(CopyTraitAction, init={
             "traits": {
                 "set": {
-                    "profile@traits.public.a": "event@properties.b"
+                    "profile@traits.a": "event@properties.b"
                 }
             }
         })
         append_trait = action(AppendTraitAction, init={
             "append": {
-                "profile@traits.public.b": "event@properties.b"
+                "profile@traits.b": "event@properties.b"
             }
         })
         flow = Flow.build("Profile override flow test - 2", id=flow_id_2)
@@ -159,8 +161,8 @@ def test_source_rule_and_flow():
 
         assert result['stats']['visits'] == 1
         assert result['stats']['views'] == 2
-        assert result['traits']['public']['a'] in [1, 2]
-        assert len(set(result['traits']['public']['b']).difference({1, 2})) == 0
+        assert result['traits']['a'] in [1, 2]
+        assert len(set(result['traits']['b']).difference({1, 2})) == 0
 
         profile_id = result['id']
 

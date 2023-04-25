@@ -2,7 +2,7 @@ version: "3.7"
 services:
 
   tracardi-staging-api:
-    image: tracardi/com-tracardi-api:0.8.0.7
+    image: tracardi/com-tracardi-api:0.8.1
     environment:
       ELASTIC_HOST: http://elasticsearch:9200
       REDIS_HOST: redis://redis:6379
@@ -17,7 +17,7 @@ services:
       - elasticsearch
 
   tracardi-production-api:
-    image: tracardi/com-tracardi-api:0.8.0.7
+    image: tracardi/com-tracardi-api:0.8.1
     environment:
       ELASTIC_HOST: http://elasticsearch:9200
       REDIS_HOST: redis://redis:6379
@@ -31,7 +31,7 @@ services:
       - elasticsearch
 
   tracardi-scheduler-worker:
-    image: tracardi/com-tracardi-scheduler-worker:0.8.0.7
+    image: tracardi/com-tracardi-scheduler-worker:0.8.1
     environment:
       ELASTIC_HOST: http://elasticsearch:9200
       REDIS_HOST: redis
@@ -43,7 +43,7 @@ services:
       - elasticsearch
 
   tracardi-scheduler:
-    image: tracardi/com-tracardi-scheduler:0.8.0.7
+    image: tracardi/com-tracardi-scheduler:0.8.1
     environment:
       ELASTIC_HOST: http://elasticsearch:9200
       REDIS_HOST: redis
@@ -54,7 +54,7 @@ services:
       - elasticsearch
 
   tracardi-gui:
-    image: tracardi/tracardi-gui:0.8.0.7
+    image: tracardi/tracardi-gui:0.8.1
     environment:
       API_URL: http://tracardi-staging-api:8686
     ports:

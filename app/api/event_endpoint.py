@@ -2,6 +2,8 @@ from datetime import datetime
 from typing import List
 from fastapi import APIRouter, Depends, Response
 from tracardi.domain.enum.time_span import TimeSpan
+from tracardi.service import events
+from tracardi.service.events import get_default_event_type_schema
 from tracardi.service.storage.driver import storage
 from tracardi.domain.record.event_debug_record import EventDebugRecord
 from tracardi.service.wf.domain.debug_info import DebugInfo
@@ -114,19 +116,7 @@ async def event_types(query: str = None, limit: int = 1000):
     """
     Returns event types
     """
-    result = await storage.driver.event.unique_field_value(query, limit)
-    return {
-        "total": result.total,
-        "result": list(result)
-    }
-
-
-@router.get("/events/by_type/profile/{profile_id}", tags=["event"], include_in_schema=server.expose_gui_api)
-async def event_types(profile_id: str):
-    """
-    Returns number of events grouped by type for profile with given ID
-    """
-    return await storage.driver.event.aggregate_profile_events_by_type(profile_id, bucket_name='by_type')
+    return await events.get_event_types(query, limit)
 
 
 @router.get("/events/by_type", tags=["event"], include_in_schema=server.expose_gui_api)
@@ -319,7 +309,8 @@ async def get_events_for_session(session_id: str, profile_id: str, limit: int = 
     result = [{
         "id": doc["id"],
         "metadata": doc["metadata"],
-        "type": doc["type"]
+        "type": doc["type"],
+        "name": doc.get('name', None)
     } for doc in result]
 
     return {"result": result, "more_to_load": more_to_load}
@@ -335,3 +326,12 @@ async def get_events_for_profile(profile_id: str, limit: int = 24):
         profile_id,
         limit)
     return result.dict()
+
+
+@router.get("/event/type/{event_type}/schema", tags=["event"],
+            include_in_schema=server.expose_gui_api)
+async def get_event_type_data_schema(event_type: str):
+    """Gets pre-defined event type data schema"""
+
+    return get_default_event_type_schema(event_type)
+

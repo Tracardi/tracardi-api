@@ -25,8 +25,9 @@ def test_should_return_error_if_incorrect_source_id():
     data = {
         "id": "rule_id",
         "name": "string",
-        "event": {
-            "type": "string"
+        "event_type": {
+            "id": "string",
+            "name": "string"
         },
         "flow": {
             "id": "flow_id",
@@ -66,8 +67,9 @@ def test_should_create_new_rule():
         data = {
             "id": rule_id,
             "name": "string",
-            "event": {
-                "type": "string"
+            "event_type": {
+                "id": "string",
+                "name": "string"
             },
             "flow": {
                 "id": flow_id,

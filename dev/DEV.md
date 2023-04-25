@@ -15,7 +15,8 @@ docker run -p 9200:9200 -p 9300:9300 -m 8g -e "discovery.type=single-node" -v "/
 docker run -p 9200:9200 -p 9300:9300 -m 6g -e "discovery.type=single-node" docker.elastic.co/elasticsearch/elasticsearch:7.13.2
 
 # Run local redis
-docker run -p 6379:6379 redis
+docker run -p 6379:6379 redis redis-server --notify-keyspace-events Ex
+
 
 # Run local Tracardi GUI
 docker run -p 8787:80 -e API_URL=//127.0.0.1:8686 -e TRACK_DEBUG="yes" tracardi/tracardi-gui
@@ -55,7 +56,7 @@ docker run -d -p 18123:8123 -p19000:9000 --ulimit nofile=262144:262144 clickhous
 # Run tracardi api with SSL
 
 docker run -v /home/risto/PycharmProjects/tracardi-api/ssl:/ssl -p 8686:443 -e USER_NAME=admin -e PASSWORD=admin -e WORKERS=2 -e ELASTIC_HOST=http://192.168.1.103:9200 -e GUNICORN_CMD_ARGS="--keyfile=/ssl/key.pem --certfile=/ssl/cert.pem" tracardi/tracardi-api-ssl
-docker run -p 8686:80 -e ELASTIC_HOST=http://192.168.1.106:9200 -e tracardi/tracardi-api:0.8.0
+docker run -p 8686:80 -e ELASTIC_HOST=http://192.168.1.106:9200 -e tracardi/tracardi-api:0.8.1
 
 
 # Run GUI HTTPS and HTTP
@@ -99,4 +100,9 @@ docker run -p 8080:8080 \
 # Kafka
 
 docker run --rm --net=host landoop/fast-data-dev
+
+
+# Matomo
+
+helm upgrade matomo --set service.ports.http=9080,service.ports.https=9443,externalDatabase.host=192.168.1.190,externalDatabase.user=root,externalDatabase.password=root bitnami/matomo
 

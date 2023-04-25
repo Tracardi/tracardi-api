@@ -1,8 +1,8 @@
 # Installation of commercial version
 
-This is a short introduction to commercial Tracardi installation
-
-For the purpose of the test installation we will use docker-compose.
+This guide provides a brief introduction on how to install and test the commercial version of Tracardi using
+docker-compose. Please note that this installation is not intended for production use, but rather for testing purposes
+only.
 
 In order to install commercial version you will need to login to docker hub with our credentials.
 
@@ -10,7 +10,7 @@ In order to install commercial version you will need to login to docker hub with
 docker login
 ```
 
-And paste the credentials that we have sent you. 
+And paste the credentials that we have sent you.
 
 Then create a file .env-docker and paste the LICENSE in it:
 

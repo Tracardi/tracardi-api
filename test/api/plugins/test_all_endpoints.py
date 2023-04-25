@@ -10,7 +10,14 @@ from tracardi.service.setup.setup_plugins import installed_plugins, test_plugins
 
 def _load_plugin_registry_metadata(plugin_module) -> Plugin:
     module = import_package(plugin_module)
-    plugin = load_callable(module, 'register')
+    try:
+        plugin = load_callable(module, 'register')
+    except AttributeError as e:
+        # Registry in another file
+        parts = ".".join(plugin_module.split('.')[:-1])
+        plugin_module = f"{parts}.registry"
+        module = import_package(plugin_module)
+        plugin = load_callable(module, 'register')
 
     plugin_registry = plugin()  # type: Union[Plugin, Tuple[Plugin, Settings]]
     if isinstance(plugin_registry, tuple):

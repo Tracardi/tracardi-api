@@ -1,14 +1,24 @@
-# Inject values 
+# Inject values
 
-The purpose of this action is to debug workflows. It will inject values into
-workflow. Values are configured in config tag.
-The output payload can be a variety of types, including strings, integers or objects.
-The Inject node can initiate a flow with a specific payload value. By default, the node is 
-triggered in debug mode by clicking debug button.
+The Inject node in a workflow serves as a tool to debug workflows. This node can be used as the starting point of a flow
+that has a defined payload value. The Inject node is responsible for injecting values into the internal state of the
+workflow. The data that is injected can be of various types, including strings, integers, or objects.
+
+By default, the Inject node will trigger the workflow when the "debug" button is clicked. This means that the injected
+data will be available for subsequent nodes in the workflow to process. The Inject node can be used to simulate specific
+conditions or scenarios that can be used for testing purposes or for troubleshooting issues that may occur during the
+workflow execution.
+
+To use the Inject node, you will need to define the payload that you want to inject. This can be done by configuring the
+node properties to specify the payload data. Once the payload is defined, you can click the "debug" button to execute
+the workflow with the injected data.
+
+Overall, the Inject node is a useful tool for debugging workflows by allowing you to simulate specific conditions and
+inject data into the workflow's internal state.
 
 ## Configuration
 
-Type into configuration what you want to see on the output from this node.
+Type into configuration what you want to inject.
 
 Example:
 
@@ -20,7 +30,16 @@ Example:
 }
 ```
 
-The defined json will be returned as object.
+Select where the data should be injected. It can take te following values:
+
+* "Event Properties",
+* "Payload",
+* "Profile PII",
+* "Profile Traits",
+* "Profile Interests",
+* "Profile Counters",
+* "Profile Consents",
+* "Session Context"
 
 ## Side effects
 

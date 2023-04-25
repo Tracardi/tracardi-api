@@ -69,16 +69,15 @@
                     session: true,
                     storage: true,
                     screen: true,
-                    performance: false
+                    performance: true,
+                    location: true
                 },
                 settings: {
-                    respectDoNotTrack: false
+                    respectDoNotTrack: false,
+                    trackExternalLinks: ['tracardi.com']
                 }
             }
         }
-    </script>
-    <script>
-        window.response.context.profile = true;
 
         window.tracker.track("purchase-order", {"id": "Sun glasses - Badoo", "price": 13.45})
         window.tracker.track("profile-interest", {"Vacation": 1})
@@ -88,6 +87,14 @@
             "surname": "Doe",
             "email": "john.doe@gmail.com",
             "location": "Berlin/Germany"
+        });
+
+        // Change page if has response test.data
+        window.onTracardiReady.bind( ({tracker, helpers, context, config}) => {
+            if(context?.response?.test?.data) {
+                const customText = document.getElementById('custom')
+                customText.innerText = context?.response?.test?.data
+            }
         });
 
         window.onTracardiReady.bind( ({tracker, helpers, context, config}) => {
@@ -129,8 +136,8 @@
 const options = {
     tracker: {
         url: {
-            script: 'http://localhost:8686/tracker',
-            api: 'http://localhost:8686'
+            script: '//localhost:8686/tracker',
+            api: '//localhost:8686'
         },
         source: {
             id: "@test-source"
@@ -150,7 +157,6 @@ const options = {
 
 <p>This is the example code that sends events to TRACARDI. Events pinpoint what happened on your web-site</p>
 <pre>
-window.response.context.profile = true;
 window.tracker.track("purchase-order", {product": "Sun glasses - Badoo", "price": 13.45})
 window.tracker.track("profile-interest", {"Vacation": 1})
 window.tracker.track("page-view", {"custom-data": 1});
@@ -173,7 +179,13 @@ window.tracker.track("personal-data", {
     no
     test source or provided source does not exist in TRACARDI.</p>
 
-<pre id="response"></pre>
+<pre id="response" style="overflow: auto; width: 800px"></pre>
+
+<h2>TRACARDI DXP(Digital Experience Platform) functionality</h2>
+
+<p>TRACARDI will replace text below with the data that is sent from TRACARDI with response.</p>
+
+<pre id="custom">Static text to be replaced</pre>
 
 
 <h2>TRACARDI listeners</h2>
@@ -266,5 +278,9 @@ window.tracker.track("personal-data", {
 </div>
 
 <pre id="response-to-custom-event-on-page" style="display: none"></pre>
+
+<h3>External link</h3>
+<a href="https://tracardi.com" style="color: white">External link</a>
+
 </body>
 </html>

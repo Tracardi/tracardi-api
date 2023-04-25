@@ -74,7 +74,7 @@ def test_get_validation_schemas_by_tag():
     event_type = str(uuid4())
     try:
         _add_event_management_data(event_type)
-        response = endpoint.get("/event-type/management/search/by_tag?start=0&limit=10")
+        response = endpoint.get("/event-type/management/search/by_tag?start=0&limit=1000")
         assert response.status_code == 200
         result = response.json()
         assert 'total' in result

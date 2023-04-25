@@ -87,3 +87,15 @@ async def delete_profile(id: str, response: Response):
         return None
 
     return result
+
+
+@router.get("/profile/{profile_id}/by/{field}", tags=["event"], include_in_schema=server.expose_gui_api)
+async def profile_data_by(profile_id: str, field: str, table: bool = False):
+    bucket_name = f"by_{field}"
+    result = await storage.driver.event.aggregate_profile_events_by_field(profile_id,
+                                                                          field=field,
+                                                                          bucket_name=bucket_name)
+
+    if table:
+        return {id: count for id, count in result.aggregations[bucket_name][0].items()}
+    return [{"name": id, "value": count} for id, count in result.aggregations[bucket_name][0].items()]

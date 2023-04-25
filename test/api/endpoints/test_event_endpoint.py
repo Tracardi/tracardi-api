@@ -77,7 +77,7 @@ def test_should_count_events():
         result = response.json()
         count1 = result['count']
 
-        assert count1 == count + 1
+        assert count1 == count + 3  # Event: Test, Profile Create, Session Created.
 
     finally:
         response = endpoint.delete(f'/event/{event_id}')
@@ -132,7 +132,7 @@ def test_should_return_event_meta():
             response = endpoint.get('/events/metadata/type?limit=1000')
             assert response.status_code == 200
             result = response.json()
-            assert 'test' in result['result']
+            assert {'name': 'Test', 'id': 'test'} in result['result']
 
         finally:
             assert endpoint.delete(f'/event/{event_id}').status_code == 200
@@ -145,51 +145,6 @@ def test_should_return_event_meta():
             assert endpoint.get('/profiles/refresh').status_code == 200
 
             assert endpoint.delete(f'/session/{session_id}').status_code == 200
-
-
-def test_should_return_events_by_type_for_profile():
-    profile_id = 'missing'
-    response = endpoint.get(f'/events/by_type/profile/{profile_id}')
-    assert response.status_code == 200
-    result = response.json()
-    assert result['total'] >= 0
-    assert 'aggregations' in result
-    assert result['no_of_aggregates'] > 0
-    assert 'by_type' in result['aggregations']
-
-    event_type = str(uuid4())
-    session_id = str(uuid4())
-    source_id = str(uuid4())
-    response1, _, event_id, profile_id = _make_event(event_type, session_id=session_id, source_id=source_id)
-    response2, _, event_id1, profile_id1 = _make_event(event_type, session_id=session_id, source_id=source_id)
-
-    try:
-        # 2nd profile is not saved
-        assert profile_id1 == profile_id1
-
-        response = endpoint.get(f'/events/by_type/profile/{profile_id}')
-        assert response.status_code == 200
-        result = response.json()
-
-        assert result['total'] >= 0
-        assert 'aggregations' in result
-        assert 'by_type' in result['aggregations']
-        aggregation = dict(result['aggregations']['by_type'][0])
-        assert event_type in aggregation
-        assert aggregation[event_type] >= 2
-
-    finally:
-        assert endpoint.delete(f'/event/{event_id}').status_code == 200
-        assert endpoint.delete(f'/event/{event_id1}').status_code == 200
-        assert endpoint.get('/events/refresh').status_code == 200
-
-        assert endpoint.delete(f'/event-source/{source_id}').status_code == 200
-        assert endpoint.get('/event-sources/refresh').status_code == 200
-
-        assert endpoint.delete(f'/profile/{profile_id}').status_code == 200
-        assert endpoint.get('/profiles/refresh').status_code == 200
-
-        assert endpoint.delete(f'/session/{session_id}').status_code == 200
 
 
 def test_should_return_events_by_type():
