@@ -74,8 +74,10 @@ else:
 
 if License.has_service(LICENSE):
     from com_tracardi.endpoint import event_to_profile_copy
+    from com_tracardi.endpoint import event_props_to_event_traits_copy
 else:
     event_to_profile_copy = get_router(prefix="/events/copy")
+    event_props_to_event_traits_copy = get_router(prefix="/events/index")
 
 
 logging.basicConfig(level=logging.ERROR)
@@ -264,6 +266,7 @@ application.include_router(staging_endpoint.router)
 application.include_router(customer_endpoint.router)
 application.include_router(event_to_profile.router)
 application.include_router(event_to_profile_copy.router)
+application.include_router(event_props_to_event_traits_copy.router)
 
 # GraphQL
 

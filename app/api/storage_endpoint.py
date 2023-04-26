@@ -38,7 +38,7 @@ async def get_index_mapping_metadata(index: str, filter: str = None):
     """
     result = await storage.driver.raw.get_mapping_fields(index)
     if filter is not None:
-        result = [item for item in result if item.startswith(filter)]
+        result = [item for item in result if item.startswith(filter) and item!=filter]
     return {"result": result, "total": len(result)}
 
 
