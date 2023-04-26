@@ -32,11 +32,13 @@ async def check_indices_mapping_consistency():
 
 @router.get("/storage/mapping/{index}/metadata", tags=["storage"], include_in_schema=server.expose_gui_api,
             response_model=dict)
-async def get_index_mapping_metadata(index: str):
+async def get_index_mapping_metadata(index: str, filter: str = None):
     """
     Returns metadata of given index (str)
     """
     result = await storage.driver.raw.get_mapping_fields(index)
+    if filter is not None:
+        result = [item for item in result if item.startswith(filter)]
     return {"result": result, "total": len(result)}
 
 
