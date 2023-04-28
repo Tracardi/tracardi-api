@@ -30,9 +30,9 @@ This table describes which event property will be copied to event traits.
 
 | Event trait              | Event properties |
 | ------------------------ | ---------------- |
-| order.id                 | order_id         |
+| ec.order.id              | order_id         |
 | payment.method           | method           |
-| order.receiver           | receiver         |
+| ec.order.receiver        | receiver         |
 | contact.address.town     | delivery.town    |
 | contact.address.county   | delivery.county  |
 | contact.address.country  | delivery.country |

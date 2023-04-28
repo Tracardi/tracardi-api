@@ -31,8 +31,8 @@ This table describes which event property will be copied to event traits.
 
 | Event trait    | Event properties   |
 |----------------|--------------------|
-| promotion.id   | id                 |
-| promotion.name | name               | 
+| marketing.promotion.id   | id                 |
+| marketing.promotion.name | name               | 
 
 ## Copy event data to profile
 
@@ -42,7 +42,7 @@ Data will not be copied to profile.
 
 ```json
 {
-  "type": "promotion_viewed",
+  "type": "promotion-viewed",
   "properties": {
     "media": {
       "text": "50% off on all products",

@@ -41,14 +41,14 @@ This table describes which event property will be copied to event traits.
 
 | Event trait      | Event properties   |
 |------------------|--------------------|
-| product.id       | id                 |
-| product.name     | name               |
-| product.sku      | sku                |
-| product.category | category           |
-| product.brand    | brand              |
-| product.variant  | variant            |
-| product.price    | price              |
-| product.quantity | quantity           | 
+| ec.product.id       | id                 |
+| ec.product.name     | name               |
+| ec.product.sku      | sku                |
+| ec.product.category | category           |
+| ec.product.brand    | brand              |
+| ec.product.variant  | variant            |
+| ec.product.price    | price              |
+| ec.product.quantity | quantity           | 
 
 ## Copy event data to profile
 

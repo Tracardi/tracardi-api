@@ -1,4 +1,4 @@
-# Event: Sign-In
+# Event: Sign-Up
 
 When a user signs up for a service, this event should be used to track it. This could also be an identification point
 for profile merging.
@@ -49,7 +49,7 @@ can refer to the table below for the exact mapping of which fields will be copie
 
 ```json
 {
-  "type": "sign-in",
+  "type": "sign-up",
   "properties": {
     "lastname": "Doe",
     "firstname": "John",
@@ -68,7 +68,7 @@ can refer to the table below for the exact mapping of which fields will be copie
 ## Tracker example
 
 ```javascript
-window.tracker.track("Sign-Up", {
+window.tracker.track("sign-up", {
         "lastname": "Doe",
         "firstname": "John",
         "email": "johndoe@example.com",

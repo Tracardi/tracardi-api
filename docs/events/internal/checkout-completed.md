@@ -22,10 +22,10 @@ in order to be useful.
 
 This table describes which event property will be copied to event traits.
 
-| Event trait     | Event properties   |
-|-----------------|--------------------|
-| checkout.id     | id                 |
-| checkout.status | status             | 
+| Event trait        | Event properties   |
+|--------------------|--------------------|
+| ec.checkout.id     | id                 |
+| ec.checkout.status | status             | 
 
 ## Copy event data to profile
 

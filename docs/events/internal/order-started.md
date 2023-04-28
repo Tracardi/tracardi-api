@@ -35,10 +35,10 @@ in order to be useful.
 
 This table describes which event property will be copied to event traits.
 
-| Event trait   | Event properties   |
-|---------------|--------------------|
-| order.id      | id                 |
-| order.status  | status             | 
+| Event trait      | Event properties   |
+|------------------|--------------------|
+| ec.order.id      | id                 |
+| ec.order.status  | status             | 
 
 ## Copy event data to profile
 
@@ -73,7 +73,7 @@ Data will not be copied to profile.
     ],
     "affiliation": "Google",
     "income": {
-      "revenue": 12.99,
+      "revenue": 8.99,
       "value": 10.00
     },
     "cost": {

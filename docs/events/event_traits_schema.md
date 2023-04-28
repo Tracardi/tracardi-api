@@ -43,6 +43,7 @@ This is a simplified event traits schema. This type of schema will be created wh
     },
     "marketing": {
       "coupon": "string",
+      "channel": "string",
       "promotion": {
         "id": "string",
         "name": "string"

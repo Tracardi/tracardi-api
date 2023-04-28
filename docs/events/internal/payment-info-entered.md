@@ -23,7 +23,20 @@ Example usage:
 
 ## Auto indexing
 
-Data will not be indexed.
+Auto indexing helps to make data easy to find by creating a structure that organizes the data. This structure is made by
+copying information from the different parts of the data and putting it into a specific format that can be used to
+analyze and group the data. This is particularly helpful when dealing with unstructured data that needs to be organized
+in order to be useful.
+
+This table describes which event property will be copied to event traits.
+
+| Event trait      | Event properties   |
+|------------------|--------------------|
+| ec.order.id      | id|
+| payment.method   | method|
+| payment.credit_card.number | credit_card.number|
+| payment.credit_card.expires| credit_card.expires|
+| payment.credit_card.holder | credit_card.holder|
 
 ## Copy event data to profile
 

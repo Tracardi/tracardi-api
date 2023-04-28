@@ -29,7 +29,10 @@ in order to be useful.
 
 This table describes which event property will be copied to event traits.
 
-Data will not be indexed.
+| Event trait    | Event properties   |   
+|----------------|--------------------|   
+|ec.product.id|id|
+|marketing.channel|media|
 
 ## Copy event data to profile
 

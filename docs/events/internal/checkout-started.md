@@ -31,14 +31,14 @@ in order to be useful.
 
 This table describes which event property will be copied to event traits.
 
-| Event trait       | Event properties   |
-|-------------------|--------------------|
-| checkout.id       | id                 |
-| order.id          | order_id           |
-| checkout.status   | status             |
-| checkout.currency | currency           |
-| checkout.value    | value              |
-| checkout.coupon   | coupon             | 
+| Event trait          | Event properties   |
+|----------------------|--------------------|
+| ec.checkout.id       | id                 |
+| ec.order.id          | order_id           |
+| ec.checkout.status   | status             |
+| ec.checkout.currency | currency           |
+| ec.checkout.value    | value              |
+| ec.checkout.coupon   | coupon             | 
 
 ## Copy event data to profile
 

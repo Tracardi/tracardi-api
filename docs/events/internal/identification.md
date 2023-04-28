@@ -44,7 +44,7 @@ This table describes which event property will be copied to event traits.
 
 | Event trait            | Event properties   |
 |------------------------|--------------------|
-| contact.email          | email              |
+| contact.app.email      | email              |
 | contact.phone          | phone              |
 | pii.firstname          | firstname          |
 | pii.lastname           | lastname           |
@@ -54,14 +54,14 @@ This table describes which event property will be copied to event traits.
 | identifier.credit_card | credit_card        |
 | identifier.coupon      | coupon             |
 | identifier.badge       | badge              |
-| app.twitter            | twitter            |
-| app.whatsapp           | whatsapp           |
-| app.discord            | discord            |
-| app.slack              | slack              |
-| app.telegram           | telegram           |
-| app.wechat             | wechat             |
-| app.viber              | viber              |
-| app.signal             | signal             | 
+| contact.app.twitter    | twitter            |
+| contact.app.whatsapp   | whatsapp           |
+| contact.app.discord    | discord            |
+| contact.app.slack      | slack              |
+| contact.app.telegram   | telegram           |
+| contact.app.wechat     | wechat             |
+| contact.app.viber      | viber              |
+| contact.app.signal     | signal             | 
 
 ## Copy event data to profile
 
@@ -72,7 +72,7 @@ can refer to the table below for the exact mapping of which fields will be copie
 |-----------------------------|-------------------------------|--------------------------------------------------------------------------|
 | data.pii.firstname          | traits.pii.firstname          | Data will be assigned to profile always regardless if it was set or not. |
 | data.pii.lastname           | traits.pii.lastname           | Data will be assigned to profile always regardless if it was set or not. |
-| data.contact.email          | traits.contact.email          | Data will be assigned to profile always regardless if it was set or not. |
+| data.contact.email          | traits.contact.app.email      | Data will be assigned to profile always regardless if it was set or not. |
 | data.contact.phone          | traits.contact.phone          | Data will be assigned to profile always regardless if it was set or not. |
 | data.identifier.token       | traits.identifier.token       | Data will be assigned to profile always regardless if it was set or not. |
 | data.identifier.id          | traits.identifier.id          | Data will be assigned to profile always regardless if it was set or not. |
@@ -80,14 +80,14 @@ can refer to the table below for the exact mapping of which fields will be copie
 | data.identifier.credit_card | traits.identifier.credit_card | Data will be assigned to profile always regardless if it was set or not. |
 | data.identifier.coupon      | traits.identifier.coupon      | Data will be assigned to profile always regardless if it was set or not. |
 | data.identifier.badge       | traits.identifier.badge       | Data will be assigned to profile always regardless if it was set or not. |
-| data.contact.app.twitter    | traits.app.twitter            | Data will be assigned to profile always regardless if it was set or not. |
-| data.contact.app.whatsapp   | traits.app.whatsapp           | Data will be assigned to profile always regardless if it was set or not. |
-| data.contact.app.discord    | traits.app.discord            | Data will be assigned to profile always regardless if it was set or not. |
-| data.contact.app.slack      | traits.app.slack              | Data will be assigned to profile always regardless if it was set or not. |
-| data.contact.app.telegram   | traits.app.telegram           | Data will be assigned to profile always regardless if it was set or not. |
-| data.contact.app.wechat     | traits.app.wechat             | Data will be assigned to profile always regardless if it was set or not. |
-| data.contact.app.viber      | traits.app.viber              | Data will be assigned to profile always regardless if it was set or not. |
-| data.contact.app.signal     | traits.app.signal             | Data will be assigned to profile always regardless if it was set or not. |
+| data.contact.app.twitter    | traits.contact.app.twitter    | Data will be assigned to profile always regardless if it was set or not. |
+| data.contact.app.whatsapp   | traits.contact.app.whatsapp   | Data will be assigned to profile always regardless if it was set or not. |
+| data.contact.app.discord    | traits.contact.app.discord    | Data will be assigned to profile always regardless if it was set or not. |
+| data.contact.app.slack      | traits.contact.app.slack      | Data will be assigned to profile always regardless if it was set or not. |
+| data.contact.app.telegram   | traits.contact.app.telegram   | Data will be assigned to profile always regardless if it was set or not. |
+| data.contact.app.wechat     | traits.contact.app.wechat     | Data will be assigned to profile always regardless if it was set or not. |
+| data.contact.app.viber      | traits.contact.app.viber      | Data will be assigned to profile always regardless if it was set or not. |
+| data.contact.app.signal     | traits.contact.app.signal     | Data will be assigned to profile always regardless if it was set or not. |
 
 ## JSON example of event properties
 

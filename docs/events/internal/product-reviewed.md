@@ -26,9 +26,9 @@ This table describes which event property will be copied to event traits.
 
 | Event trait    | Event properties   |
 |----------------|--------------------|
-| product.id     | id                 |
-| product.review | review             |
-| product.rate   | rate               | 
+| ec.product.id     | id                 |
+| ec.product.review | review             |
+| ec.product.rate   | rate               | 
 
 
 ## Copy event data to profile
