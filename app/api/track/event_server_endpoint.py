@@ -32,12 +32,12 @@ router = APIRouter()
 
 
 async def parse_properties(request: Request):
-    if request.headers['Content-Type'] == 'application/json':
+    if request.headers.get('Content-Type', '') == 'application/json':
         try:
             return await request.json()
         except JSONDecodeError:
             return {}
-    elif request.headers['Content-Type'] in ['multipart/form-data', 'application/x-www-form-urlencoded']:
+    elif request.headers.get('Content-Type', '') in ['multipart/form-data', 'application/x-www-form-urlencoded']:
         return await request.form()
     else:
         return await request.body()
