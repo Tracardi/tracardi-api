@@ -1,0 +1,1 @@
+{"file_name": "docs/configuration/tracardi_configuration.md", "questions": ["What storage driver is available?", "What is the default storage driver?", "What is the name of the only storage driver available?"], "answer": "## Storage settings\n* `STORAGE_DRIVER` - Default: elastic. There is only one storage driver available at this moment, and it is elastic.\n"}
