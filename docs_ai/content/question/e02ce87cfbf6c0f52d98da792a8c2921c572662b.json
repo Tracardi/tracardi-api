@@ -1,0 +1,1 @@
+{"file_name": "docs/README.md", "questions": ["What command should be used to run a testrun in tracardi-api?", "What port should be used when running a testrun in tracardi-api?", "What is the purpose of the -v flag when running a testrun in tracardi-api?"], "answer": "# Testrun in tracardi-api\n```\ndocker run --rm -it -p 8000:8000 -v ${PWD}:/docs squidfunk/mkdocs-material\n```"}

@@ -1,0 +1,1 @@
+{"file_name": "docs/README.md", "questions": ["What command should be used to install the requirements?", "How do you install the requirements using pip?", "What is the syntax for installing requirements using pip?"], "answer": "# Install```\npip install -r docs/requirements.txt \n```"}

@@ -100,7 +100,7 @@ def yield_paragraphs(document):
         else:
             chunk += f"{line}\n"
     if chunk:
-        yield chunk.strip()
+        yield chunk.strip(" -")
 
 
 # Example usage
@@ -131,25 +131,28 @@ for i, (file_name, document) in enumerate(get_markdown(directory)):
             continue
 
         number_of_paragraphs += 1
-        sha1_hash = hashlib.sha1(document.encode()).hexdigest()
+        sha1_hash = hashlib.sha1(paragraph.encode()).hexdigest()
         file = f"{sha1_hash}.json"
-        print(file)
-        if not os.path.exists(file) or not os.path.isfile(file):
-            prompt = f"What question the following text answers. Give one question that covers the whole content. " \
-                     f"And at least 2 optional questions that cover only part of the text. " \
-                     f"Text is in markdown format. Write only one question per line, nothing else." \
-                     f"Text:\n{paragraph}\n\n"
-            json_question = get_ai_response(prompt)
-            print(json_question)
-            questions =json_question.split("\n")
-            questions = [q for q in questions if q!= "Optional questions:" or q!=""]
-            json_content = {
-                "file_name": file_name.replace('/home/risto/PycharmProjects/tracardi-api/', ''),
-                "questions": questions,
-                "answer": paragraph
-            }
+        print(number_of_paragraphs, file)
 
-            save_content(f"{sha1_hash}.json", json.dumps(json_content))
+        if os.path.exists(file) and os.path.isfile(file):
+            print("skipped")
+            continue
+        prompt = f"What question the following text answers. Give one question that covers the whole content. " \
+                 f"And at least 2 optional questions that cover only part of the text. " \
+                 f"Text is in markdown format. Write only one question per line, nothing else." \
+                 f"Text:\n{paragraph}\n\n"
+        json_question = get_ai_response(prompt)
+        print(json_question)
+        questions = json_question.split("\n")
+        questions = [q for q in questions if q != "Optional questions:" and q != ""]
+        json_content = {
+            "file_name": file_name.replace('/home/risto/PycharmProjects/tracardi-api/', ''),
+            "questions": questions,
+            "answer": paragraph
+        }
+
+        save_content(f"{sha1_hash}.json", json.dumps(json_content))
 
 
     # if not os.path.exists(file) or not os.path.isfile(file):

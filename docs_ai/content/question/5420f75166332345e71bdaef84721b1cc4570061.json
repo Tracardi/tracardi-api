@@ -1,0 +1,1 @@
+{"file_name": "docs/installation/docker/index.md", "questions": ["What is the easiest way to run Tracardi?", "How can Docker be used to install Tracardi?", "What are the steps to install Tracardi as a Docker container?"], "answer": "# Docker container installation\nThe easiest way to run Tracardi is to run it as a docker container."}

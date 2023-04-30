@@ -1,0 +1,1 @@
+{"file_name": "docs/README.md", "questions": ["What is the BuildType for the `mkdocs build` command in the tracardi-api folder?", "What is the command for building the tracardi-api folder?", "What is the folder for the `mkdocs build` command?"], "answer": "# BuildType `mkdocs build` in folder / in tracardi-api (it must be single project, without attached tracardi, etc.)\n"}

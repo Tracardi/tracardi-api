@@ -1,0 +1,1 @@
+{"file_name": "docs/integration/api/errors.md", "questions": ["What causes the \"Unauthorized\" error?", "What is the purpose of the \"source.id\" sent with payload?", "What is Tracardi?"], "answer": "## Response - Unauthorized\nThis error occurs when the `source.id` that is sent with payload does not exist in Tracardi."}
