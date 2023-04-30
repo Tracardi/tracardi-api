@@ -1,0 +1,5 @@
+The documentation provided outlines the process of integrating Tracardi with mobile apps or external systems. It is similar to the process of integrating with a web page, but Tracardi provides a JavaScript snippet to simplify the integration. This snippet automates the process of calling the track endpoint and saving the Session ID and Profile ID in the browser. 
+
+When integrating with mobile apps or backend systems, the process needs to be done manually. It is important to remember to save both the Profile ID and Session ID on the customer's device or backend system for effective tracking and personalization. For server-side applications, it is necessary to set a PHPSESSIONID or other relevant token that can be used to track the customer and store the Tracardi Profile ID and Session ID within the defined user session. 
+
+Following these steps is essential for successful integration of Tracardi with mobile apps or external systems, as it ensures seamless tracking and utilization of customer data for effective marketing automation and personalization.

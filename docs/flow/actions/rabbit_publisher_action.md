@@ -2,7 +2,7 @@
 
 The purpose of this plugin is to publish payload to RabbitMQ.
 
-It reads payload and sends it to defined RabbitMQ. RabbitMq must be defined as source in Tracardi.
+It reads payload and sends it to defined RabbitMQ. RabbitMq must be defined as resource in Tracardi.
 
 # Configuration
 

@@ -1,0 +1,5 @@
+Dot notation is a way to access data in the internal state of a workflow in Tracardi. It is a standard way to reference data in Tracardi and is used across many places such as plugins, destinations, etc. The format of dot notation is made up of a source and a path to data. The available sources are profile, event, payload, flow, session, and memory. The path is a string of keys that indicate where the data is placed. 
+
+In addition to accessing data, dot notation can also be used to access a part of data or items in an array. To access a part of data, the path should look like the source followed by the key. To access items in an array, the path should look like the source followed by the index of the item. Objects embedded inside arrays can also be retrieved using dot notation. 
+
+Finally, there is a warning associated with dot notation. If there is an error in the dot notation or it is not in the right format, the result will be the typed value. This means that any value that is not a valid dot notation will be returned as is. In cases where the object has keys with spaces, the dot notation should be written as the source followed by the key in brackets.

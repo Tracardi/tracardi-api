@@ -1,0 +1,1 @@
+This documentation provides information about how to configure and set up an integration between InfluxDB and Tracardi. It explains that an API token is needed to authorize API requests and provides instructions on how to manage and generate API tokens in the InfluxDB UI. It also provides a link to the InfluxDB documentation for more information about getting an API token.

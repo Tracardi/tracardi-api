@@ -2,9 +2,9 @@ Joins payload from incoming data.
 
 # Data join
 
-This plugin will join data form input connections. If the connections are named then it will merge the data from the
-input connection under as connection name. For example if the connection name is "Personal data" then the merged data
-will be:
+This plugin will join data form input connections. Connections can contain different data. This plugin will merge this data into one object. 
+If the connections are named then it will merge the data from the input connection under as connection name. 
+For example if the connection name is "Personal data" then the merged data will be:
 
 ```
 {

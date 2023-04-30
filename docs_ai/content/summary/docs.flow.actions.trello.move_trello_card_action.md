@@ -1,0 +1,5 @@
+This plugin moves a Trello card from one list to another. It takes any payload object as input and returns response from Trello API on port response, or empty payload on error port, if an error occurs. To begin working with Trello inside Tracardi, you need an API key and token. These can be retrieved by logging into Trello and visiting https://trello.com/app-key/. The API key is located at the top of the page and the token is located below the key. Once these are retrieved, they can be typed into Tracardi resources, which can be found under Traffic -> Outbound resources. 
+
+When configuring the Trello plugin form, the Trello resource, URL of Trello board, name of Trello list, and name of the card must be specified. Additionally, advanced configuration can be specified, which includes the source, board_url, list_name, list_id, and card_name. The list_id parameter does not matter and should be left as "" or null. 
+
+It is important to note that if there are two lists with the same name on one board, Tracardi will pick one of them without a method of specifying which one will be picked. This rule also applies to the cards.

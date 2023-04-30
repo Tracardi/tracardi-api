@@ -1,0 +1,1 @@
+{"file_name": "docs/README.md", "question": "How do I install the requirements for this project?", "answer": "# Install```\npip install -r docs/requirements.txt \n```"}
