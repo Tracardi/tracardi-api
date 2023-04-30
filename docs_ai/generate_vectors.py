@@ -1,10 +1,10 @@
 import hashlib
 import json
 import os
-import glob
 import openai
+from deepdiff.serialization import json_loads
 
-openai.api_key = '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'
+openai.api_key = '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'
 _local_dir = os.path.dirname(__file__)
 
 
@@ -135,17 +135,22 @@ for i, (file_name, document) in enumerate(get_markdown(directory)):
         file = f"{sha1_hash}.json"
         print(file)
         if not os.path.exists(file) or not os.path.isfile(file):
-            prompt = f"What question the following text answers. Give only one question that covers the whole content. " \
-                     f"Text is in markdown format." \
+            prompt = f"What question the following text answers. Give one question that covers the whole content. " \
+                     f"And at least 2 optional questions that cover only part of the text. " \
+                     f"Text is in markdown format. Write only one question per line, nothing else." \
                      f"Text:\n{paragraph}\n\n"
-            question = get_ai_response(prompt)
+            json_question = get_ai_response(prompt)
+            print(json_question)
+            questions =json_question.split("\n")
+            questions = [q for q in questions if q!= "Optional questions:" or q!=""]
             json_content = {
                 "file_name": file_name.replace('/home/risto/PycharmProjects/tracardi-api/', ''),
-                "question": question,
+                "questions": questions,
                 "answer": paragraph
             }
+
             save_content(f"{sha1_hash}.json", json.dumps(json_content))
-            exit()
+
 
     # if not os.path.exists(file) or not os.path.isfile(file):
 
