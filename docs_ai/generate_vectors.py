@@ -4,7 +4,7 @@ import os
 import openai
 from deepdiff.serialization import json_loads
 
-openai.api_key = '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'
+openai.api_key = os.environ.get('API_KEY', None)
 _local_dir = os.path.dirname(__file__)
 
 
