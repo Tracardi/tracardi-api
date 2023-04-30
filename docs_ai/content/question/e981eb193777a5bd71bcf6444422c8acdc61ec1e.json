@@ -1,0 +1,1 @@
+{"file_name": "docs/events/internal/profile-created.md", "questions": ["What properties are expected?", "What are the optional properties?", "What happens if a property is missing?"], "answer": "## Expected properties.\n!!! Tip\n\n    All properties are optional. If any property is missing it will not be processed and no error will be reported.\n\nNone defined."}

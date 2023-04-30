@@ -1,0 +1,1 @@
+{"file_name": "docs/events/internal/product-shared.md", "questions": ["What is an example of JSON?", "What is the type of the JSON example?", "What is the media of the JSON example?"], "answer": "## JSON example\n```json\n{\n  \"type\": \"product-shared\",\n  \"properties\": {\n    \"media\": \"Facebook\",\n    \"id\": \"abc-1234\"\n  }\n}\n\n```\n"}

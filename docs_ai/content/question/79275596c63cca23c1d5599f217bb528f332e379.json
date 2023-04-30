@@ -1,0 +1,1 @@
+{"file_name": "docs/resources/mongo_resource.md", "questions": ["What is MongoDB?", "What platforms does MongoDB support?", "What type of database is MongoDB?"], "answer": "MongoDB is a source-available cross-platform document-oriented database program. Classified as a NoSQL database program,\nMongoDB uses JSON-like documents with optional schemas."}
