@@ -2,7 +2,8 @@ import hashlib
 import json
 import os
 import openai
-from deepdiff.serialization import json_loads
+
+from docs_ai.utils import get_markdown
 
 openai.api_key = os.environ.get('API_KEY', None)
 _local_dir = os.path.dirname(__file__)
@@ -45,17 +46,6 @@ def get_ai_response(prompt):
         temperature=0,
     )
     return response.choices[0].text.strip()
-
-
-def get_markdown(directory):
-    for root, dirs, files in os.walk(directory):
-        for file_name in files:
-            if file_name.endswith('.md'):
-                file_path = os.path.join(root, file_name)
-                with open(file_path, 'r') as file:
-                    # Parse the markdown file and extract paragraphs
-                    markdown_text = file.read()
-                    yield os.path.realpath(file_path), markdown_text.strip()
 
 
 def process(file_path, content) -> bool:

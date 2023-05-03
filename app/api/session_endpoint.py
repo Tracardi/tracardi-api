@@ -13,10 +13,33 @@ router = APIRouter(
 )
 
 
+@router.get("/session/count/online", tags=["session"],
+            dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer", "maintainer"]))],
+            include_in_schema=server.expose_gui_api)
+async def count_sessions():
+    result = await storage.driver.session.count_online()
+    return {
+        "events": result.total,
+        "sessions": result.aggregations("sessions").get('value', 0)
+    }
+
+
+@router.get("/session/count/online/by_location", tags=["session"],
+            dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer", "maintainer"]))],
+            include_in_schema=server.expose_gui_api)
+async def count_sessions():
+    result = await storage.driver.session.count_online_by_location()
+    return {
+        "events": result.total,
+        "country": [{"name": item['key'], "count": item['doc_count']} for item in result.aggregations("country").buckets()],
+        "tz": [{"name": item['key'], "count": item['doc_count']} for item in result.aggregations("tz").buckets()]
+    }
+
+
 @router.get("/session/count", tags=["session"],
             dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer", "maintainer"]))],
             include_in_schema=server.expose_gui_api)
-async def count_events():
+async def count_sessions():
     return await storage.driver.session.count()
 
 

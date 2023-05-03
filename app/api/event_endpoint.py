@@ -120,11 +120,12 @@ async def event_types(query: str = None, limit: int = 1000):
 
 
 @router.get("/events/by_type", tags=["event"], include_in_schema=server.expose_gui_api)
-async def aggregate_event_types():
+async def aggregate_event_types(size: int = 100):
     """
     Returns number of events grouped by type
     """
-    return await storage.driver.event.aggregate_event_type()
+    print(size)
+    return await storage.driver.event.aggregate_event_type(bucket_size=size)
 
 
 @router.get("/events/by_tag", tags=["event"], include_in_schema=server.expose_gui_api)
@@ -334,4 +335,3 @@ async def get_event_type_data_schema(event_type: str):
     """Gets pre-defined event type data schema"""
 
     return get_default_event_type_schema(event_type)
-
