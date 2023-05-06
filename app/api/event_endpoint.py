@@ -124,7 +124,6 @@ async def aggregate_event_types(size: int = 100):
     """
     Returns number of events grouped by type
     """
-    print(size)
     return await storage.driver.event.aggregate_event_type(bucket_size=size)
 
 
