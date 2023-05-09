@@ -106,3 +106,10 @@ docker run --rm --net=host landoop/fast-data-dev
 
 helm upgrade matomo --set service.ports.http=9080,service.ports.https=9443,externalDatabase.host=192.168.1.190,externalDatabase.user=root,externalDatabase.password=root bitnami/matomo
 
+# ISSUES:
+ Can't logi in:
+ 
+delete the user index and reinstall
+
+
+curl -k -X DELETE "https://elastic:0q2673s1zLAZ9IPi22CEBlq2@localhost:9200/080.fa73a.tracardi-user?pretty"
