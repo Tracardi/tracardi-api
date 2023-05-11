@@ -9,7 +9,7 @@ from pydantic import ValidationError
 from app.api.auth.permissions import Permissions
 from tracardi.domain.entity import Entity
 from tracardi.domain.pro_service_form_data import TProMicroserviceCredentials, ProService, ProMicroService
-from tracardi.service.plugin.domain.register import Plugin
+from tracardi.service.plugin.domain.register import Plugin, MicroserviceConfig
 from tracardi.service.plugin.plugin_install import install_remote_plugin, install_plugin
 from app.api.domain.credentials import Credentials
 from tracardi.config import tracardi
@@ -222,6 +222,9 @@ async def save_tracardi_pro_microservice(pro: ProMicroService):
             plugin = Plugin(**data)
 
             plugin.metadata.name = resource.name
+
+            if plugin.spec.microservice is None:
+                plugin.spec.microservice = MicroserviceConfig.create()
 
             plugin.spec.microservice.service.id = pro.microservice.service.id
             plugin.spec.microservice.service.name = pro.microservice.service.name
