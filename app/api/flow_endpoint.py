@@ -292,40 +292,66 @@ async def update_flow_lock(id: str, lock: str):
 
 @router.post("/flow/debug", tags=["flow"],
              include_in_schema=server.expose_gui_api)
-async def debug_flow(flow: GraphFlow):
+async def debug_flow(flow: GraphFlow, event_id: Optional[str] = None):
     """
         Debugs flow sent in request body
     """
-    profile = Profile(id="@debug-profile-id",
-                      metadata=ProfileMetadata(
-                          time=ProfileTime(
-                              insert=datetime.utcnow()
-                          )
-                      ))
-    session = Session(id="@debug-session-id",
-                      metadata=SessionMetadata(
-                          time=SessionTime(
-                              insert=datetime.utcnow(),
-                              timestamp=datetime.timestamp(datetime.utcnow())
-                          )
-                      ))
-    event_session = EventSession(
-        id=session.id,
-        start=session.metadata.time.insert,
-        duration=session.metadata.time.duration
-    )
-    session.operation.new = True
-    source = Entity(id="@debug-source-id")
 
-    event = Event(
-        metadata=EventMetadata(time=EventTime(insert=datetime.utcnow())),
-        id='@debug-event-id',
-        type="@debug-event-type",
-        source=source,
-        session=event_session,
-        profile=profile,
-        context={}
-    )
+    if event_id is None:
+        profile = Profile(id="@debug-profile-id",
+                          metadata=ProfileMetadata(
+                              time=ProfileTime(
+                                  insert=datetime.utcnow()
+                              )
+                          ))
+        session = Session(id="@debug-session-id",
+                          metadata=SessionMetadata(
+                              time=SessionTime(
+                                  insert=datetime.utcnow(),
+                                  timestamp=datetime.timestamp(datetime.utcnow())
+                              )
+                          ))
+        event_session = EventSession(
+            id=session.id,
+            start=session.metadata.time.insert,
+            duration=session.metadata.time.duration
+        )
+        session.operation.new = True
+        source = Entity(id="@debug-source-id")
+
+        event = Event(
+            metadata=EventMetadata(time=EventTime(insert=datetime.utcnow())),
+            id='@debug-event-id',
+            type="@debug-event-type",
+            source=source,
+            session=event_session,
+            profile=profile,
+            context={}
+        )
+
+    else:
+        event = await storage.driver.event.load(event_id)
+
+        if event is None:
+            raise ValueError(f"Could not find event id {event_id}.")
+        event = event.to_entity(Event)
+        source = event.source
+
+        if event.has_profile():
+            profile = storage.driver.profile.load_by_id(event.profile.id)
+        else:
+            profile = None
+
+        if event.has_session():
+            session = storage.driver.session.load_by_id(event.session.id)
+            event_session = EventSession(
+                id=session.id,
+                start=session.metadata.time.insert,
+                duration=session.metadata.time.duration
+            )
+        else:
+            session = None
+            event_session = None
 
     tracker_payload = TrackerPayload(
         source=source,
@@ -336,7 +362,8 @@ async def debug_flow(flow: GraphFlow):
         request={},
         properties={},
         events=[EventPayload(type=event.type, properties=event.properties)],
-        # options={"scheduledFlowId": "c186d8b4-5b66-426b-89bb-a546931e083b", "scheduledNodeId": "e61e6a7e-a847-4754-99e7-74fb7446a748"}
+        # options={"scheduledFlowId": "c186d8b4-5b66-426b-89bb-a546931e083b",
+        # "scheduledNodeId": "e61e6a7e-a847-4754-99e7-74fb7446a748"}
     )
 
     tracker_payload.set_ephemeral(True)
