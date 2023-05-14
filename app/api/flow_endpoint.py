@@ -338,12 +338,13 @@ async def debug_flow(flow: GraphFlow, event_id: Optional[str] = None):
         source = event.source
 
         if event.has_profile():
-            profile = storage.driver.profile.load_by_id(event.profile.id)
+            profile = await storage.driver.profile.load_by_id(event.profile.id)
+            profile = profile.to_entity(Profile)
         else:
             profile = None
 
         if event.has_session():
-            session = storage.driver.session.load_by_id(event.session.id)
+            session = await storage.driver.session.load_by_id(event.session.id)
             event_session = EventSession(
                 id=session.id,
                 start=session.metadata.time.insert,
