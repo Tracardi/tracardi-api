@@ -6,7 +6,7 @@ profile ID should be used. The JavaScript code can be used to rewrite links on t
 and pass it to destination domain. However, the profile must first exist in the system.
 
 System then will recognize that the profile already exists and is redirected from other domain and will 
-connect the same profile to the customer event if customer never visited this page before.
+connect the same profile to the customer even if customer never visited this page before.
 
 Please note that default behaviour without `passing of profile ID` enabled would be to create a random profile ID
 if customer never visited the page before. And later merge the profile if customer provides data that can be used 
