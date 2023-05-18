@@ -141,8 +141,12 @@ navigation")__ will be sent as event context.
 The tracking script has the capability to include the current profile ID, session ID, and source ID in the URL parameter, 
 allowing for consistent profile ID persistence across domains that utilize the same Tracardi system. 
 
-To enable this functionality, you can add the
-following code: `trackExternalLinks: ['example.com', 'tracardi.com']`. This will automatically update all `A.href` links on the page 
+Please note that default behaviour without `passing of profile ID` enabled would be to create a random profile ID
+if customer never visited the page before. And later merge the profile if customer provides data that can be used 
+for this. 
+
+To enable this functionality, you can add the following code: `trackExternalLinks: ['example.com', 'tracardi.com']`. 
+This will automatically update all `A.href` links on the page 
 with the `__tr_pid`, `__tr_src` parameter, which will contain the current profile ID, source ID respectively, if
 the A.href URL end with any of the defined domains in `trackExternalLinks`. In our example it is 'example.com' and , 
 'tracardi.com'.
@@ -164,11 +168,20 @@ the A.href URL end with any of the defined domains in `trackExternalLinks`. In o
 }
 ```
 
+Tracardi recognize these params and saves them in `session.context` and replaces profile ID with the profile ID
+referenced in `__tr_pid`
+
+!!! Warning
+
+    Profile must exist in Tracardi to be passed from domain to domain. If profile does not exist then
+    new profile ID will be generated and a Javascript warning will be logged: `Referred Tracardi Profile Id
+    {referred_profile_id} is invalid`.
+
 !!! Notice
 
     This feature is available from version 0.8.1 up.
 
-Tracardi recognize these params and saves them in `session.context`.
+
 
 ```json
 {
