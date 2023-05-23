@@ -78,19 +78,19 @@ async def install_demo_data():
             groups=["Internal"]
         )
 
-        print(await storage.driver.raw.bulk_upsert(
+        await storage.driver.raw.bulk_upsert(
             resources.get_index_constant('event-source').get_write_index(),
-            list(add_ids([event_source.dict()]))))
+            list(add_ids([event_source.dict()])))
 
         await storage.driver.event_source.refresh()
 
         for i in range(0, 10):
             payload = generate_payload(source=open_rest_source_bridge.id)
 
-            print(await track_event(
+            await track_event(
                 TrackerPayload(**payload),
                 "0.0.0.0",
-                allowed_bridges=['internal']))
+                allowed_bridges=['internal'])
 
 
 @router.post("/install", tags=["installation"], include_in_schema=server.expose_gui_api)
