@@ -32,7 +32,7 @@ theme:
     - content.code.annotate
     - content.tabs.link
     - content.action.edit
-#    - navigation.tabs
+  #    - navigation.tabs
   palette:
     - primary: blue
       toggle:
@@ -93,16 +93,18 @@ nav:
       - configuration/tracardi_ssl.md
   - Integration:
       - API:
-        - integration/api/api-integration.md
-        - integration/api/mobile-integration.md
-        - integration/api/tracker-response.md
-        - integration/api/errors.md
+          - integration/api/api-integration.md
+          - integration/api/mobile-integration.md
+          - integration/api/tracker-response.md
+          - integration/api/errors.md
       - Javascript:
-        - integration/js/index.md
-        - integration/js/context.md
-        - integration/js/options.md
-        - integration/js/response.md
-        - integration/js/advanced.md
+          - integration/js/index.md
+          - integration/js/context.md
+          - integration/js/options.md
+          - integration/js/response.md
+          - integration/js/advanced.md
+      - Redirected Links:
+          - integration/redirect/index.md
   - upgrade.md
   - trouble/index.md
   - Running:
@@ -116,8 +118,11 @@ nav:
           - events/event_tracking.md
           - events/event_validation.md
           - events/synchronization.md
+          - Event traits schema:
+              - events/event_traits_schema.md
           - Internal event types:
               - events/internal/index.md
+              - events/internal/sign-up.md
               - events/internal/basket-viewed.md
               - events/internal/checkout-completed.md
               - events/internal/checkout-started.md
@@ -378,8 +383,8 @@ nav:
                   - flow/actions/require_consents_action.md
 
               - Errors:
-                - flow/actions/log_message_action.md
-                - flow/actions/throw_error_action.md
+                  - flow/actions/log_message_action.md
+                  - flow/actions/throw_error_action.md
 
 
 
@@ -397,6 +402,18 @@ nav:
           - qa/how_to_use_own_profile_id.md
           - qa/how_to_use_workflow_editor.md
           - qa/utms.md
+          - qa/can_tracardi_import_data_from_csv.md
+          - qa/how_many_records_can_tracardi_store.md
+          - qa/how_to_fix_import_pending.md
+          - qa/how_to_fix_webhook_validation_error.md
+          - qa/how_to_get_javascript_to_put_on_page.md
+          - qa/how_to_integrate_with_webhook.md
+          - qa/how_to_pass_profile_id_from_domain_to_domain.md
+          - qa/how_to_quickly_copy_data_from_node_to_node_in_wf.md
+          - qa/how_tracardi_loads_profile.md
+          - qa/other_qa.md
+          - qa/who_is_tracardi_for.md
+
   - api/index.md
   - Developers:
       - Development environmet set-up:
@@ -407,9 +424,9 @@ nav:
       - Plugins:
           - plugins/index.md
           - Tutorials:
-                - plugins/tutorial/part1.md
-                - plugins/tutorial/part2.md
-                - plugins/tutorial/part3.md
+              - plugins/tutorial/part1.md
+              - plugins/tutorial/part2.md
+              - plugins/tutorial/part3.md
           - plugins/forms/list_of_field_types.md
 
   - support_us.md
