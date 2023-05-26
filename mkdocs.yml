@@ -105,6 +105,8 @@ nav:
           - integration/js/advanced.md
       - Redirected Links:
           - integration/redirect/index.md
+      - Passing Profile ID in link:
+          - integration/param/index.md
   - upgrade.md
   - trouble/index.md
   - Running:
@@ -397,6 +399,7 @@ nav:
           - notations/object_template.md
 
       - Q&A:
+          - qa/how_to_track_clicked_links.md
           - qa/how_to_copy_data_from_event_to_profile.md
           - qa/how_to_replace_a_profile_in_workflow.md
           - qa/how_to_use_own_profile_id.md
@@ -411,8 +414,8 @@ nav:
           - qa/how_to_pass_profile_id_from_domain_to_domain.md
           - qa/how_to_quickly_copy_data_from_node_to_node_in_wf.md
           - qa/how_tracardi_loads_profile.md
-          - qa/other_qa.md
           - qa/who_is_tracardi_for.md
+          - qa/other_qa.md
 
   - api/index.md
   - Developers:
