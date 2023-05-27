@@ -1,6 +1,7 @@
 import os, sys
 import traceback
 from datetime import datetime
+from urllib.parse import urlparse
 
 from app.middleware.context import ContextRequestMiddleware
 from tracardi.context import get_context
@@ -292,6 +293,13 @@ async def add_process_time_header(request: Request, call_next):
     try:
 
         start_time = time()
+
+        # get tenant
+
+        api_domain = request.base_url
+        if api_domain.hostname not in ['localhost', '0.0.0.0', '127.0.0.1']:
+            parts = api_domain.hostname.split(".")
+            # ToDo tenant set
 
         # Todo Here throttler
 
