@@ -130,5 +130,8 @@ async def get_nth_last_session_for_profile(profile_id: str, n: Optional[int] = 0
         "id": result["id"],
         "metadata": result["metadata"],
         "context": result["context"],
-        "profile": result['profile']
+        "profile": result['profile'],
+        "device": result['device'],
+        "app": result['app'],
+        "os": result['os'],
     }
