@@ -12,7 +12,7 @@ from tracardi.service.tracker import track_event
 from app.config import server
 
 from tracardi.config import tracardi, elastic
-from tracardi.context import ServerContext, Context
+from tracardi.context import ServerContext, Context, get_context
 from tracardi.domain.credentials import Credentials
 from tracardi.domain.event_source import EventSource
 from tracardi.domain.named_entity import NamedEntity
@@ -127,7 +127,7 @@ async def install(credentials: Optional[Credentials]):
         }
 
     # Install staging
-    with ServerContext(Context(production=False)):
+    with ServerContext(get_context().switch_context(production=False)):
         staging_install_result = await _install()
 
         # Add admin
@@ -158,7 +158,7 @@ async def install(credentials: Optional[Credentials]):
             staging_install_result['plugins'] = await install_default_plugins()
 
     # Install production
-    with ServerContext(Context(production=True)):
+    with ServerContext(get_context().switch_context(production=True)):
         production_install_result = await _install()
 
     # Demo

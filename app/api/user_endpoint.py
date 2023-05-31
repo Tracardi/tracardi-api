@@ -2,7 +2,7 @@ from uuid import uuid4
 
 from fastapi import APIRouter, Depends, HTTPException, Header, Response
 
-from tracardi.context import ServerContext, Context
+from tracardi.context import ServerContext, Context, get_context
 from tracardi.domain.user import User
 from app.config import server
 from tracardi.service.storage.driver import storage
@@ -39,7 +39,7 @@ async def get_token(login_form_data: OAuth2PasswordRequestForm = Depends(),
 
     # Always log in the context of staging
 
-    with ServerContext(Context(production=False)):
+    with ServerContext(get_context().switch_context(production=False)):
 
         if not server.expose_gui_api:
             raise HTTPException(

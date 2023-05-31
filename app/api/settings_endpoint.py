@@ -222,7 +222,7 @@ system_settings = [
     ),
     SystemSettings(
         **{
-            "label": "INSTANCE_PREFIX",
+            "label": "TENANT_NAME",
             "value": tracardi.version.name,
             "desc": "Default: None. This setting defines a prefix for all tracardi indices."
         }

@@ -1,7 +1,6 @@
 import os, sys
 import traceback
 from datetime import datetime
-from urllib.parse import urlparse
 
 from app.middleware.context import ContextRequestMiddleware
 from tracardi.context import get_context
@@ -79,7 +78,6 @@ if License.has_service(LICENSE):
 else:
     event_to_profile_copy = get_router(prefix="/events/copy")
     event_props_to_event_traits_copy = get_router(prefix="/events/index")
-
 
 logging.basicConfig(level=logging.ERROR)
 logger = logging.getLogger(__name__)
@@ -177,6 +175,8 @@ application = FastAPI(
         "email": "office@tracardi.com",
     }
 )
+
+application.add_middleware(ContextRequestMiddleware)
 
 application.add_middleware(
     CORSMiddleware,
@@ -282,8 +282,8 @@ application.include_router(graphql_profiles,
 async def app_starts():
     logger.info(f"TRACARDI version {str(tracardi.version)} set-up starts.")
     await wait_for_connection(no_of_tries=10)
-    report_i_am_alive()
-    remove_dead_instances()
+    # report_i_am_alive()
+    # remove_dead_instances()
     logger.info("TRACARDI set-up finished.")
     logger.info(f"TRACARDI version {str(tracardi.version)} ready to operate.")
 
@@ -294,19 +294,13 @@ async def add_process_time_header(request: Request, call_next):
 
         start_time = time()
 
-        # get tenant
-
-        api_domain = request.base_url
-        if api_domain.hostname not in ['localhost', '0.0.0.0', '127.0.0.1']:
-            parts = api_domain.hostname.split(".")
-            # ToDo tenant set
-
         # Todo Here throttler
 
         response = await call_next(request)
         process_time = time() - start_time
         response.headers["X-Process-Time"] = str(process_time)
-        response.headers["X-Context"] = 'production' if get_context().production else 'staging'
+        if 'x-context' in request.headers:
+            response.headers["X-Context"] = request.headers.get('x-context')
 
         return response
 
@@ -320,8 +314,6 @@ async def add_process_time_header(request: Request, call_next):
             },
             content={"detail": str(e)}
         )
-
-application.add_middleware(ContextRequestMiddleware)
 
 
 @application.on_event("shutdown")

@@ -32,7 +32,7 @@ of all the environment variable names below.
 * `ELASTIC_REFRESH_PROFILES_AFTER_SAVE` - Default: no. When set to yes profile index will be forced to refresh its data
   after each update. That means that elastic will write all updates without buffering. This may slow the elastic
   significantly so be cautious with this setting.
-* `INSTANCE_PREFIX` - Default: None. It defines prefix for all elastic indexes. This can be used to run multiple
+* `TENANT_NAME` - Default: None. It defines prefix for all elastic indexes. This can be used to run multiple
   instances of Tracardi on one elastic instance.
 * `ELASTIC_LOGGING_LEVEL` - Default WARNING. Sets logging level of elastic requests. It may be useful to set it to INFO
   when debugging Tracardi.
