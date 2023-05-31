@@ -1,4 +1,4 @@
-My javascript is not sending events
+## My javascript is not sending events
 
 If your JavaScript is not sending events, there could be several reasons for this issue:
 
