@@ -45,3 +45,23 @@ In summary, the key distinction between entities and aux properties lies in thei
 establish a one-to-many relationship between profiles and associated data, while aux properties maintain a one-to-one
 relationship, providing an additional attribute specific to each profile. Understanding this difference allows for
 better organization and management of data within Tracardi based on your specific needs.
+
+## Entities as an Extension of Events
+
+It's important to note that the profile is also in a one-to-many relationship with events. This means that a single
+profile can have multiple events associated with it. Each event represents a specific action or occurrence related to
+the profile, such as a user interaction, a purchase, or any other significant event that you want to track.
+
+Since events capture a wide range of activities, entities can be seen as an extension of events. Entities provide a way
+to store additional data that may not be directly tied to a specific event but is still relevant to the profile. In
+other words, entities offer a mechanism to store information that doesn't fit neatly into the event structure or you do
+not want to keep this information in the event itself.
+
+For example, let's consider a scenario where you want to track purchases made by users. Each purchase can be represented
+as an event, and the associated data, such as the item purchased, the price, and the transaction details, can be stored
+within the event itself.
+
+However, there might be additional information related to the purchase that doesn't fit well within the event structure.
+This could include details like: if the confirmation email was sent by the workflow, or additional notes specific to
+that purchase. Instead of trying to raise another event, you can utilize entities to store these supplementary details
+and retrieve them when needed. 
