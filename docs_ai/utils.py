@@ -1,6 +1,10 @@
 import json
 import os
 
+import openai
+
+openai.api_key = os.environ.get('API_KEY', None)
+
 
 def get_markdown(directory):
     for root, dirs, files in os.walk(directory):
@@ -23,3 +27,15 @@ def get_jsons(folder_path):
                 data = json.load(json_file)
                 # do something with the JSON data
                 yield data
+
+
+def get_ai_response(prompt):
+    response = openai.Completion.create(
+        engine="text-davinci-003",
+        prompt=prompt,
+        max_tokens=1024,
+        n=1,
+        stop=None,
+        temperature=0,
+    )
+    return response.choices[0].text.strip()

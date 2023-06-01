@@ -1,11 +1,9 @@
 import hashlib
 import json
 import os
-import openai
 
-from docs_ai.utils import get_markdown
+from docs_ai.utils import get_markdown, get_ai_response
 
-openai.api_key = os.environ.get('API_KEY', None)
 _local_dir = os.path.dirname(__file__)
 
 
@@ -34,18 +32,6 @@ def save_content(file_name, content):
     # Save the content to a file with the hash as the file name
     with open(file_name, 'w') as file:
         file.write(content)
-
-
-def get_ai_response(prompt):
-    response = openai.Completion.create(
-        engine="text-davinci-003",
-        prompt=prompt,
-        max_tokens=1024,
-        n=1,
-        stop=None,
-        temperature=0,
-    )
-    return response.choices[0].text.strip()
 
 
 def process(file_path, content) -> bool:
@@ -79,11 +65,7 @@ def process(file_path, content) -> bool:
 def yield_paragraphs(document):
     chunk = ""
     for line in document.split("\n"):
-        if line.startswith("## "):
-            if chunk:
-                yield chunk.strip()
-            chunk = line
-        elif line.startswith("# "):
+        if line.startswith("# "):
             if chunk:
                 yield chunk.strip()
             chunk = line
@@ -91,6 +73,15 @@ def yield_paragraphs(document):
             chunk += f"{line}\n"
     if chunk:
         yield chunk.strip(" -")
+
+
+def chunk_string(string, chunk_size):
+    if len(string) <= chunk_size:
+        return [string]
+    chunks = []
+    for i in range(0, len(string), chunk_size):
+        chunks.append(string[i:i + chunk_size])
+    return chunks
 
 
 # Example usage
@@ -107,8 +98,8 @@ for i, (file_name, document) in enumerate(get_markdown(directory)):
     if document == "":
         continue
     print(f"Processing: {file_name}")
-    result = process(file_name, document)
-    print(i, file_name, result)
+    # result = process(file_name, document)
+    # print(i, file_name, result)
     short_file_name = file_name.replace('/home/risto/PycharmProjects/tracardi-api/', '')
 
     # Skip plugin documentation
@@ -130,23 +121,23 @@ for i, (file_name, document) in enumerate(get_markdown(directory)):
             print(f"Skipped {file}")
             continue
 
-        prompt = f"What question the following text answers. Give one question that covers the whole content. " \
-                 f"And at least 2 or 3 optional questions that cover only part of the text. Try to write qeiestion in " \
-                 f"form of \"How to?\" or \"What is\" if possible." \
-                 f"Text is in markdown format. Write only one question per line, nothing else." \
-                 f"Text:\n{paragraph}\n\n"
+        paragraphs = chunk_string(paragraph, 4000)
 
-        print(f"Fetching {prompt}")
-        json_question = get_ai_response(prompt)
-        print(json_question)
-        questions = json_question.split("\n")
-        questions = [q for q in questions if q != "Optional questions:" and q != ""]
-        json_content = {
-            "file_name": file_name.replace('/home/risto/PycharmProjects/tracardi-api/', ''),
-            "questions": questions,
-            "answer": paragraph
-        }
+        for paragraph in paragraphs:
+            prompt = f"What question the following text answers. Give one question that covers the whole content. " \
+                     f"And at least 2 or 3 optional questions that cover only part of the text. Try to write qeiestion in " \
+                     f"form of \"How to?\" or \"What is\" if possible." \
+                     f"Text is in markdown format. Write only one question per line, nothing else." \
+                     f"Text:\n{paragraph}\n\n"
 
-        save_content(f"{sha1_hash}.json", json.dumps(json_content))
+            json_question = get_ai_response(prompt)
+            print(json_question)
+            questions = json_question.split("\n")
+            questions = [q for q in questions if q != "Optional questions:" and q != ""]
+            json_content = {
+                "file_name": file_name.replace('/home/risto/PycharmProjects/tracardi-api/', ''),
+                "questions": questions,
+                "answer": paragraph
+            }
 
-
+            save_content(f"{sha1_hash}.json", json.dumps(json_content))
