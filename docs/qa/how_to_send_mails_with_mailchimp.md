@@ -12,7 +12,7 @@ To send emails with Mailchimp in Tracardi, follow these steps:
 * __Save API key__: If you are unable to change the API key and it does not get saved, try disabling the resource and then
   enabling it again. This may help in saving the updated API key.
 
-* Troubleshooting: If the issue persists, reach out to the plugin developer or support team to investigate the error and
+* __Troubleshooting__: If the issue persists, reach out to the plugin developer or support team to investigate the error and
   find a solution.
 
 Additionally, as an alternative solution, you can consider using the SMTP mailer in Tracardi to send emails. This can be
@@ -22,7 +22,7 @@ helpful if you continue to encounter difficulties with the Mailchimp integration
 
 Regarding triggering emails only once for the same event and user, you can achieve this by saving information about the
 sent email in the user's profile. For example, after sending an email, use the "Copy Data" action in Tracardi to set a
-flag in the profile (e.g., profile@aux.ad_email = 1). Before triggering the email, you can check this flag to determine
+flag in the profile (e.g., profile@aux.sent_email = 1). Before triggering the email, you can check this flag to determine
 if the email has already been sent for a specific event.
 
 Remember, it's important to save and utilize the necessary information in the profile to conditionally send emails and
