@@ -1,0 +1,9 @@
+This documentation explains two methods for tracking user activity in the system. The first method, Redirected Links, involves creating special links that contain user information and redirect them to a specific page. The second method, Parameter Addition, involves adding a parameter (e.g., tr_pid) to an existing link. This parameter contains user information and a tracking script sends an event to Tracardi. 
+
+The first method requires creating artificial links, which can be a bit cumbersome to manage when there are many of them. The second method avoids this problem since it uses existing links and only requires appending a parameter, like a profile ID. However, the Tracardi system script must be present on the page.
+
+These two techniques serve different purposes. The first one is useful for tracking if a client has viewed specific images. Since images cannot have a tracking script directly, the first method utilizes artificial links that redirect to the desired image. When the image is downloaded, Tracardi automatically sends an event. This is often used to track email openings (email tracking). If an email contains images and they are downloaded, it indicates that the user has seen the email.
+
+The second technique is handy for checking if a user accessed our website from a specific email. By adding parameters with the user's ID or session to the URL, we can track this information. Keep in mind that if a session number is provided, the event will be attached to the corresponding profile. If only a profile ID is given, a new session will be created for that profile.
+
+Both techniques have a wide range of applications, primarily tracking page transitions, image views, file downloads, and more. This documentation provides an overview of the two methods and their respective pros and cons. It also provides a link to further information about the Parameter Addition method.

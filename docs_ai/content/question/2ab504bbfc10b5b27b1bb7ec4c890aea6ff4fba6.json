@@ -1,0 +1,10 @@
+{
+  "file_name": "docs/integration/param/index.md",
+  "questions": [
+    "What is the process of forcing a profile ID on a page?",
+    "How to enable static Profile ID in an event source?",
+    "How to add a profile ID to a page's URL?",
+    "What is Redirected Links Bridge?"
+  ],
+  "answer": "# Forcing profile ID on the page\nSometimes you want to make sure that you track a specific user's activity. This can be useful when redirecting from\nemails or other sources. If you already have the customer's profile because the email was sent from Tracardi, you may\nwant to track that same profile when the user clicks on the link. To do this, you need to enable the static Profile ID\nin the event source that collects data and add the profile ID to the page's URL.\n\nIt's important to note that this profile tracking will only work if the tracking script is on the page you redirect the\nuser to. If the page doesn't have this script, you can refer to the documentation for information on Redirected Links\nBridge."
+}

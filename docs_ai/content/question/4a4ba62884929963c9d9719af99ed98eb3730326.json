@@ -1,0 +1,7 @@
+{
+  "file_name": "docs/integration/param/index.md",
+  "questions": [
+    "What is the process of creating a session for a specified profile?"
+  ],
+  "answer": "## Example\nFor example, by adding the \"__tr_pid\" and \"__tr_src\" parameters to the URL, which contain the current profile ID and\nsource ID, the system will create a session for the specified profile if it already exists. There are some conditions\nfor this to work. If the system already has a profile saved in the browser's local storage, it will try to merge the\nprevious history of events on that page with the new profile ID and its history. If the user is visiting your page for\nthe first time, there shouldn't be any issues.\n\nRemember that if a session number is provided, the event will be associated with the corresponding profile. If only a\nprofile ID is given, a new session will be created for that profile.\n"
+}

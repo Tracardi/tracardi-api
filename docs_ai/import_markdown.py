@@ -7,9 +7,10 @@ from docs_ai.utils import get_markdown
 _local_dir = os.path.dirname(__file__)
 directory = os.path.join(_local_dir, '../docs')
 
+
 def chunk_string(s, chunk_size=4000):
     """Split a string into chunks of the given size."""
-    return [s[i:i+chunk_size] for i in range(0, len(s), chunk_size)]
+    return [s[i:i + chunk_size] for i in range(0, len(s), chunk_size)]
 
 
 client = weaviate.Client(

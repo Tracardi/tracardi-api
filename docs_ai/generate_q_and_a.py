@@ -62,7 +62,7 @@ def process(file_path, content) -> bool:
             Do no use any code just plain text explanation 
             what information is included in the text. Include all most important information
             that you can later use to look up this content. Return at least two paragraphs if text
-            is longer then 500 letters. 
+            is longer then 1000 letters. 
             
             Documentation: {content}
             """
@@ -106,18 +106,19 @@ for i, (file_name, document) in enumerate(get_markdown(directory)):
 
     if document == "":
         continue
-
+    print(f"Processing: {file_name}")
     result = process(file_name, document)
     print(i, file_name, result)
     short_file_name = file_name.replace('/home/risto/PycharmProjects/tracardi-api/', '')
 
+    # Skip plugin documentation
     if short_file_name.startswith('docs/flow/action'):
         continue
 
     for paragraph in yield_paragraphs(document):
 
         if len(paragraph) < 50:
-            print("skipped", paragraph)
+            print(f"Skipped document {file_name}, paragraph `{paragraph}`.")
             continue
 
         number_of_paragraphs += 1
@@ -126,12 +127,16 @@ for i, (file_name, document) in enumerate(get_markdown(directory)):
         print(number_of_paragraphs, file)
 
         if os.path.exists(file) and os.path.isfile(file):
-            print("skipped")
+            print(f"Skipped {file}")
             continue
+
         prompt = f"What question the following text answers. Give one question that covers the whole content. " \
-                 f"And at least 2 optional questions that cover only part of the text. " \
+                 f"And at least 2 or 3 optional questions that cover only part of the text. Try to write qeiestion in " \
+                 f"form of \"How to?\" or \"What is\" if possible." \
                  f"Text is in markdown format. Write only one question per line, nothing else." \
                  f"Text:\n{paragraph}\n\n"
+
+        print(f"Fetching {prompt}")
         json_question = get_ai_response(prompt)
         print(json_question)
         questions = json_question.split("\n")
@@ -145,18 +150,3 @@ for i, (file_name, document) in enumerate(get_markdown(directory)):
         save_content(f"{sha1_hash}.json", json.dumps(json_content))
 
 
-    # if not os.path.exists(file) or not os.path.isfile(file):
-
-    # Parse the markdown file and extract chunks
-
-    # sha1_hash = hashlib.sha1(document.encode()).hexdigest()
-    # file = f"{sha1_hash}.answer"
-    # if not os.path.exists(file) or not os.path.isfile(file):
-    #     prompt = f"What question for the following text answers. Give at least two or more. " \
-    #              f"One question per line. Number the questions:\n{document}\n\n"
-    #
-    #     question = get_ai_response(prompt)
-    #     save_content(f"{sha1_hash}.question", question)
-    #     save_content(f"{sha1_hash}.answer", document)
-    #     print('----')
-    #     print(question)
