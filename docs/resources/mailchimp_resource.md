@@ -5,7 +5,7 @@ Mailchimp is a marketing automation platform and email marketing service.
 To connect Tracardi and MailChimp, you need an API key. To obtain an API key follow the steps:
 
 1. Log-in to your MailChimp account
-2. Click on your account icon in the bottom-left corner
+2. Click on your account icon in the top-right corner
 3. Select "Profile"
 4. Select "Extras > API keys" on the top, and click "Create A Key" beneath "Your API keys` section.
 5. Copy API key to Tracardi Form to Token field

@@ -1,6 +1,6 @@
 To send emails with Mailchimp in Tracardi, follow these steps:
 
-* __Obtain the API key__: Log in to your Mailchimp account, click on your account icon in the bottom-left corner,
+* __Obtain the API key__: Log in to your Mailchimp account, click on your account icon in the top-right corner,
   select "Profile," then choose "Extras > API keys." Click on "Create A Key" to generate an API key. Copy this key to
   the Token field in the Tracardi form.
 
