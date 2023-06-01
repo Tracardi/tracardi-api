@@ -16,7 +16,7 @@ generate a random name for the tenant.
 
 ## Enable Multi-Tenancy
 
-To enable multi-tenancy in Tracardi, you need to set the environment variable MULTI_TENANT to "yes". This tells Tracardi
+To enable multi-tenancy in Tracardi, you need to set the environment variable MULTI_TENANT to "yes". This tells Tracardi container
 that it should serve multiple tenants. The tenant name will be defined based on your API domain. For example, if your
 API domain is company-x.tracardi.com, the tenant name will be set as "companyx" by removing all non-alphanumeric
 characters. All the data indices for each tenant will be prefixed with the tenant name, creating a namespace in the
