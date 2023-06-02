@@ -4,7 +4,7 @@ from pprint import pprint
 import weaviate
 
 
-from docs_ai.utils import get_ai_response
+from docs_ai.utils import get_chat_gpt3_response
 
 client = weaviate.Client(
     url="http://192.168.1.190:8080/",  # Replace with your endpoint
@@ -55,5 +55,5 @@ Use this documentation: {context}
 
 print(f"RPMPT: {prompt}")
 print("-----")
-print(get_ai_response(prompt[:4090]))
+print(get_chat_gpt3_response(prompt[:4090]))
 # print(json.dumps(result, indent=4))

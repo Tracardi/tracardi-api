@@ -29,7 +29,7 @@ def get_jsons(folder_path):
                 yield data
 
 
-def get_ai_response(prompt):
+def get_chat_gpt3_response(prompt):
     response = openai.Completion.create(
         engine="text-davinci-003",
         prompt=prompt,
@@ -38,4 +38,16 @@ def get_ai_response(prompt):
         stop=None,
         temperature=0,
     )
+    return response.choices[0].text.strip()
+
+
+def get_chat_gpt3_5_response(system, assistant, user):
+    query = {
+        'model': 'gpt-3.5.turbo',
+        'messages': [{"role": "system", "content": system},
+                     {"role": "user", "content": user},
+                     {"role": "assistant", "content": assistant}]
+    }
+    response = openai.ChatCompletion.create(**query)
+
     return response.choices[0].text.strip()

@@ -2,7 +2,7 @@ import hashlib
 import json
 import os
 
-from docs_ai.utils import get_markdown, get_ai_response
+from docs_ai.utils import get_markdown, get_chat_gpt3_response
 
 _local_dir = os.path.dirname(__file__)
 
@@ -56,7 +56,7 @@ def process(file_path, content) -> bool:
         print("Too long", file_path)
         return False
 
-    summary = get_ai_response(prompt)
+    summary = get_chat_gpt3_response(prompt)
     save_summary(summary_file_name, summary)
 
     return True
@@ -130,7 +130,7 @@ for i, (file_name, document) in enumerate(get_markdown(directory)):
                      f"Text is in markdown format. Write only one question per line, nothing else." \
                      f"Text:\n{paragraph}\n\n"
 
-            json_question = get_ai_response(prompt)
+            json_question = get_chat_gpt3_response(prompt)
             print(json_question)
             questions = json_question.split("\n")
             questions = [q for q in questions if q != "Optional questions:" and q != ""]
