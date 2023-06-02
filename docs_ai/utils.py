@@ -43,11 +43,11 @@ def get_chat_gpt3_response(prompt):
 
 def get_chat_gpt3_5_response(system, assistant, user):
     query = {
-        'model': 'gpt-3.5.turbo',
+        'model': 'gpt-3.5-turbo',
         'messages': [{"role": "system", "content": system},
                      {"role": "user", "content": user},
                      {"role": "assistant", "content": assistant}]
     }
     response = openai.ChatCompletion.create(**query)
 
-    return response.choices[0].text.strip()
+    return response.choices[0].message
