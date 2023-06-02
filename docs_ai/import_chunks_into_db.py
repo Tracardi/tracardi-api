@@ -14,7 +14,7 @@ client = weaviate.Client(
 
 try:
     class_obj = {
-        "class": "Question",
+        "class": "Tracardi",
         "vectorizer": "text2vec-openai",
         "moduleConfig": {
             "text2vec-openai": {
@@ -22,7 +22,7 @@ try:
             }
         }
     }
-
+    # client.schema.delete_class("Tracardi")
     client.schema.create_class(class_obj)
 except weaviate.exceptions.UnexpectedStatusCodeException:
     pass
@@ -42,4 +42,4 @@ with client.batch as batch:
             "file": d["file_name"],
         }
 
-        client.batch.add_data_object(properties, "Question")
+        client.batch.add_data_object(properties, "Tracardi")

@@ -20,30 +20,40 @@ client = weaviate.Client(
 "Where tracardi stores profile visits."
 "What is dot notation."
 "How do I filter the data."
+"How do I import mongodb data to tracardi."
+"I got error Invalid API"
+"How I I send email in Tracardi" # *
+"Can I send marketing campaigns from tracardi"
+"Can I send SMSes with tracardi" #
+"How Do I install extensions" #
 
-question = "How do I import data to tracardi."
+
+question = "Can Tracardi use ChatGPT"
 nearText = {"concepts": [question]}
 
 result = (
     client.query
-    .get("Question", ["question", "answer"])
+    .get("Tracardi", ["question", "answer"])
     .with_additional(["distance"])
     .with_near_text(nearText)
-    .with_limit(30)
+    .with_limit(10)
     .do()
 )
 
 answers = []
-for item in result['data']['Get']['Question']:
+for item in result['data']['Get']['Tracardi']:
     answers.append(item['answer'])
 
-context = "\n".join(list(set(answers)))
-prompt = f"""You are an expert on Tracardi system. Answer the question: {question}
-Here is the information you should use. It may be inaccurate in some parts. Please extract the most accurate and 
-answer in detail so a 16 year old could understand. Use only provided information. If you do not think that the answer 
+context = "\n-- new document part --\n".join(list(set(answers)))
+prompt = f"""I have this documentation on Tracardi system. Use this information. Pick the most accurate document parts and
+answer in detail the question: "{question}". If you think that the answer 
 can not be found in provided information or the answer may be inaccurate respond with \"I can't answer this question\". 
-Information from tracardi documentation: {context}
+Rephrase the information for more clarity. Respond only with answer.
+
+Use this documentation: {context}
 """
 
+print(f"RPMPT: {prompt}")
+print("-----")
 print(get_ai_response(prompt[:4090]))
 # print(json.dumps(result, indent=4))
