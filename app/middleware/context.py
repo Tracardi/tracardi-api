@@ -18,7 +18,7 @@ def _get_context_object(scope) -> Context:
     # Production means production. Otherwise the context can be changed
     # form outside.
 
-    tenant = get_tenant_name_from_scope(scope)
+    tenant, hostname = get_tenant_name_from_scope(scope)
 
     if tenant is None:
         raise OSError("Can not find tenant for this URL. Tenant name can not be shorted then 3 letters and must "
@@ -45,7 +45,7 @@ def _get_context_object(scope) -> Context:
             _, token = token.split()
             user = token2user.get(token)
 
-    return Context(production=production, user=user, tenant=tenant)
+    return Context(production=production, user=user, tenant=tenant, host=hostname)
 
 
 class ContextRequestMiddleware:
