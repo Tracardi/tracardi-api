@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
 
-from tracardi.service.storage.index import resources
+from tracardi.service.storage.index import Resource
 from tracardi.service.storage.redis_client import RedisClient
 from tracardi.service.storage.elastic_client import ElasticClient
 
@@ -73,7 +73,7 @@ async def get_es_indices():
     """
     Returns list of indices in elasticsearch cluster. Accessible for roles: "admin"
     """
-    resource_aliases = resources.list_aliases()
+    resource_aliases = Resource().list_aliases()
 
     es = ElasticClient.instance()
     result = await es.list_indices()

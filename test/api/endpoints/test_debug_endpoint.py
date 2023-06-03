@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from test.utils import Endpoint
-from tracardi.service.storage.index import resources
+from tracardi.service.storage.index import Resource
 
 endpoint = Endpoint()
 
@@ -10,7 +10,7 @@ def test_should_return_indices():
     response = endpoint.get("/debug/es/indices")
     result = response.json()
     assert response.status_code == 200
-    alias = resources['version'].get_write_index()
+    alias = Resource()['version'].get_write_index()
     assert alias in result.keys()
 
 

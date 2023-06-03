@@ -12,17 +12,17 @@ from tracardi.service.storage.driver import storage
 from tracardi.service.storage.drivers.elastic.profile import deduplicate_profile
 from tracardi.service.storage.elastic_client import ElasticClient
 from tracardi.service.storage.factory import storage_manager
-from tracardi.service.storage.index import resources
+from tracardi.service.storage.index import Resource
 
 endpoint = Endpoint()
 month = datetime.now().month
 year = datetime.now().year
 prev_month = (datetime.now() - timedelta(days=32)).month
-curr_profile_index = resources.get_index_constant('profile').get_write_index()
+curr_profile_index = Resource().get_index_constant('profile').get_write_index()
 prev_profile_index = curr_profile_index.replace(f"-{year}-{month}", f"-{year}-{prev_month}")
-curr_session_index = resources.get_index_constant('session').get_write_index()
+curr_session_index = Resource().get_index_constant('session').get_write_index()
 prev_session_index = curr_session_index.replace(f"-{year}-{month}", f"-{year}-{prev_month}")
-curr_event_index = resources.get_index_constant('event').get_write_index()
+curr_event_index = Resource().get_index_constant('event').get_write_index()
 prev_event_index = curr_event_index.replace(f"-{year}-{month}", f"-{year}-{prev_month}")
 
 

@@ -21,7 +21,7 @@ def get_tenant_name(scope) -> Optional[str]:
                     parts = hostname.split(".")
                     if len(parts) >= 3:
                         _tenant_candidate = remove_non_alpha(parts[0])
-                        if len(_tenant_candidate) >= 5 and not _tenant_candidate.isnumeric():
+                        if len(_tenant_candidate) >= 3 and not _tenant_candidate.isnumeric():
                             tenant = _tenant_candidate
     else:
         tenant = tracardi.version.name
@@ -48,7 +48,8 @@ def _get_context_object(scope) -> Context:
     tenant = get_tenant_name(scope)
 
     if tenant is None:
-        raise OSError("Can not find tenant for this instance.")
+        raise OSError("Can not find tenant for this instance. Tenant name can not be shorted then 3 letters and must "
+                      "not contain numbers.")
 
     if not production:  # Staging as default
 

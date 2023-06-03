@@ -1,4 +1,4 @@
-from tracardi.service.storage.index import resources
+from tracardi.service.storage.index import Resource
 from test.utils import Endpoint
 
 endpoint = Endpoint()
@@ -11,7 +11,7 @@ def _check_if_has_installed_indices():
     assert isinstance(result, dict)
 
     installed_indices = result.keys()
-    for name, resource in resources.resources.items():
+    for name, resource in Resource().resources.items():
         assert resource.get_write_index() in installed_indices
 
 

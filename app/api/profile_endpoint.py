@@ -8,7 +8,7 @@ from tracardi.exceptions.exception import DuplicatedRecordException
 from tracardi.service.storage.driver import storage
 from tracardi.domain.profile import Profile
 from tracardi.service.storage.drivers.elastic.profile import deduplicate_profile
-from tracardi.service.storage.index import resources
+from tracardi.service.storage.index import Resource
 from .auth.permissions import Permissions
 from ..config import server
 
@@ -79,7 +79,7 @@ async def delete_profile(id: str, response: Response):
     Deletes profile with given ID (str)
     """
     # Delete from all indices
-    index = resources.get_index_constant("profile")
+    index = Resource().get_index_constant("profile")
     result = await storage.driver.profile.delete_by_id(id, index=index.get_multi_storage_alias())
 
     if result['deleted'] == 0:
