@@ -2,10 +2,32 @@ import json
 import os
 import requests
 from dotenv import load_dotenv
+
+from tracardi.config import tracardi
 from tracardi.domain.profile import Profile
 from tracardi.domain.session import Session, SessionMetadata
+from tracardi.service.tenant_manager import get_tenant_name_from_host
 
 load_dotenv()
+
+
+def get_test_tenant():
+    if not tracardi.multi_tenant:
+        tenant = tracardi.version.name
+    else:
+        host = os.environ.get('HOST', None)
+        if host is None:
+            raise ValueError("Can not find HOST env.")
+
+        parts = host.split("//")
+        if len(parts) > 1:
+            host = parts[1].strip(":")
+        tenant = get_tenant_name_from_host(host)
+
+    if tenant is None:
+        raise ValueError("Can not find tenant in HOST.")
+
+    return tenant
 
 
 class Endpoint:
