@@ -17,9 +17,9 @@ router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin", "developer", "maintainer"]))]
 )
 
-
+# todo can not find usages
 @router.get("/migration/check/from/{version}", tags=["migration"], include_in_schema=server.expose_gui_api)
-async def check_migration_consistency(prefix: str):
+async def check_migration_consistency(version: str):
 
     """
     Compares the mappings and indices of the local settings to those in a database, and lists any errors found.
@@ -44,7 +44,7 @@ async def check_migration_consistency(prefix: str):
 
     # Find differences in index counts between versions
     current_version = {index: count async for index, count in storage.driver.raw.count_all_indices_by_alias()}
-    prev_version = {index: count async for index, count in storage.driver.raw.count_all_indices_by_alias(prefix)}
+    prev_version = {index: count async for index, count in storage.driver.raw.count_all_indices_by_alias()}
 
     count_errors = defaultdict(list)
     for index, count in current_version.items():
