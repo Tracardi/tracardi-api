@@ -11,13 +11,16 @@ pattern = re.compile(r'[^a-z]')
 
 def get_tenant_name(scope) -> Optional[str]:
     tenant = None
+    print(tracardi.version.name)
     if tracardi.multi_tenant:
         if 'headers' in scope:
             headers = {item[0].decode(): item[1].decode() for item in scope['headers']}
             if 'host' in headers:
                 hostname = headers['host']
-                if hostname not in ['localhost', '0.0.0.0', '127.0.0.1']:
-                    hostname = hostname.split(":")[0]
+                hostname = hostname.split(":")[0]
+                if hostname in ['localhost', '0.0.0.0', '127.0.0.1']:
+                    tenant = tracardi.version.name
+                else:
                     parts = hostname.split(".")
                     if len(parts) >= 3:
                         _tenant_candidate = remove_non_alpha(parts[0])
@@ -48,8 +51,8 @@ def _get_context_object(scope) -> Context:
     tenant = get_tenant_name(scope)
 
     if tenant is None:
-        raise OSError("Can not find tenant for this instance. Tenant name can not be shorted then 3 letters and must "
-                      "not contain numbers.")
+        raise OSError("Can not find tenant for this URL. Tenant name can not be shorted then 3 letters and must "
+                      f"not contain numbers. Scope: {scope}")
 
     if not production:  # Staging as default
 
