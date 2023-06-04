@@ -66,7 +66,7 @@ async def websocket_endpoint_redis(websocket: WebSocket):
     await websocket.accept()
 
     redis = RedisClient()
-    psub = redis.client.pubsub()
+    psub = redis.pubsub()
     with psub as p:
         print(await p.subscribe("channel:1"))
     print(redis)

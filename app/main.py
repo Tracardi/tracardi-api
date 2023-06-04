@@ -31,7 +31,7 @@ from app.api import rule_endpoint, resource_endpoint, event_endpoint, \
     import_endpoint, \
     task_endpoint, storage_endpoint, destination_endpoint, user_log_endpoint, user_account_endpoint, install_endpoint, \
     delete_indices_endpoint, migration_endpoint, report_endpoint, live_segments_endpoint, \
-    console_log_endpoint, event_type_management, last_flow_ws, \
+    console_log_endpoint, event_type_management, \
     bridge_endpoint, entity_endpoint, staging_endpoint, customer_endpoint, event_to_profile
 from app.api.graphql.profile import graphql_profiles
 from app.api.track import event_server_endpoint
@@ -257,7 +257,7 @@ application.include_router(event_validator_endpoint.router)
 application.include_router(console_log_endpoint.router)
 application.include_router(event_type_management.router)
 application.include_router(event_source_redirects.router)
-application.include_router(last_flow_ws.router)
+# application.include_router(last_flow_ws.router)
 application.include_router(bridge_endpoint.router)
 application.include_router(entity_endpoint.router)
 application.include_router(consent_data_compliance_endpoint.router)

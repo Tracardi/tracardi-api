@@ -52,7 +52,7 @@ async def ping_redis():
     Tests connection between Redis instance and Tracardi instance. Accessible for roles: "admin"
     """
     client = RedisClient()
-    pong = client.client.ping()
+    pong = client.ping()
     if pong is not True:
         raise ConnectionError("Redis did not respond.")
 
