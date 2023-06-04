@@ -1,5 +1,6 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 
+from tracardi.config import tracardi
 from tracardi.service.storage.index import Resource
 from tracardi.service.storage.redis_client import RedisClient
 from tracardi.service.storage.elastic_client import ElasticClient
@@ -73,6 +74,10 @@ async def get_es_indices():
     """
     Returns list of indices in elasticsearch cluster. Accessible for roles: "admin"
     """
+
+    if tracardi.multi_tenant:
+        raise HTTPException(status_code=405, detail="This section is not allowed for multi-tenant server.")
+
     resource_aliases = Resource().list_aliases()
 
     es = ElasticClient.instance()
