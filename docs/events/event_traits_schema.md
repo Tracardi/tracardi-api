@@ -41,6 +41,9 @@ This is a simplified event traits schema. This type of schema will be created wh
        "firstname": "string",
        "lastname": "string"
     },
+    "message": {
+      "type": "string"
+    },
     "marketing": {
       "coupon": "string",
       "channel": "string",
@@ -107,6 +110,10 @@ This is a simplified event traits schema. This type of schema will be created wh
     "query": {
       "type": "string",
       "string": "string"
+    },
+    "journey": {
+      "state": "string",
+      "rate": "number"
     }
   }
 }
