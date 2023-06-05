@@ -12,7 +12,7 @@ from tracardi.service.tracker import track_event
 from app.config import server
 
 from tracardi.config import tracardi, elastic
-from tracardi.context import ServerContext, Context
+from tracardi.context import ServerContext, Context, get_context
 from tracardi.domain.credentials import Credentials
 from tracardi.domain.event_source import EventSource
 from tracardi.domain.named_entity import NamedEntity
@@ -24,7 +24,7 @@ from tracardi.service.setup.data.defaults import open_rest_source_bridge
 from tracardi.service.setup.setup_indices import create_schema, install_default_data, \
     run_on_start, add_ids
 from tracardi.service.storage.driver import storage
-from tracardi.service.storage.index import resources
+from tracardi.service.storage.index import Resource
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
@@ -42,7 +42,7 @@ async def check_if_installation_complete():
 
     # Missing admin
     existing_aliases = [idx[1] for idx in indices if idx[0] == 'existing_alias']
-    index = resources.get_index_constant('user')
+    index = Resource().get_index_constant('user')
     if index.get_index_alias() in existing_aliases:
         admins = await storage.driver.user.search_by_role('admin')
     else:
@@ -79,7 +79,7 @@ async def install_demo_data():
         )
 
         await storage.driver.raw.bulk_upsert(
-            resources.get_index_constant('event-source').get_write_index(),
+            Resource().get_index_constant('event-source').get_write_index(),
             list(add_ids([event_source.dict()])))
 
         await storage.driver.event_source.refresh()
@@ -115,7 +115,7 @@ async def install(credentials: Optional[Credentials]):
     # Install defaults
 
     async def _install():
-        schema_result = await create_schema(resources.get_index_mappings(), credentials.update_mapping)
+        schema_result = await create_schema(Resource().get_index_mappings(), credentials.update_mapping)
 
         await run_on_start()
 
@@ -127,7 +127,7 @@ async def install(credentials: Optional[Credentials]):
         }
 
     # Install staging
-    with ServerContext(Context(production=False)):
+    with ServerContext(get_context().switch_context(production=False)):
         staging_install_result = await _install()
 
         # Add admin
@@ -158,7 +158,7 @@ async def install(credentials: Optional[Credentials]):
             staging_install_result['plugins'] = await install_default_plugins()
 
     # Install production
-    with ServerContext(Context(production=True)):
+    with ServerContext(get_context().switch_context(production=True)):
         production_install_result = await _install()
 
     # Demo
@@ -179,7 +179,7 @@ async def install(credentials: Optional[Credentials]):
         )
 
         await storage.driver.raw.bulk_upsert(
-            resources.get_index_constant('event-source').get_write_index(),
+            Resource().get_index_constant('event-source').get_write_index(),
             list(add_ids([event_source.dict()])))
 
         await storage.driver.event_source.refresh()

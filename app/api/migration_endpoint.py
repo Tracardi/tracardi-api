@@ -1,6 +1,7 @@
 from collections import defaultdict
 
 from fastapi import APIRouter, Depends, HTTPException
+from tracardi.context import get_context
 
 from tracardi.service.storage.driver import storage
 from tracardi.service.storage.indices_manager import check_indices_mappings_consistency
@@ -17,9 +18,9 @@ router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin", "developer", "maintainer"]))]
 )
 
-
+# todo can not find usages
 @router.get("/migration/check/from/{version}", tags=["migration"], include_in_schema=server.expose_gui_api)
-async def check_migration_consistency(prefix: str):
+async def check_migration_consistency(version: str):
 
     """
     Compares the mappings and indices of the local settings to those in a database, and lists any errors found.
@@ -44,7 +45,7 @@ async def check_migration_consistency(prefix: str):
 
     # Find differences in index counts between versions
     current_version = {index: count async for index, count in storage.driver.raw.count_all_indices_by_alias()}
-    prev_version = {index: count async for index, count in storage.driver.raw.count_all_indices_by_alias(prefix)}
+    prev_version = {index: count async for index, count in storage.driver.raw.count_all_indices_by_alias()}
 
     count_errors = defaultdict(list)
     for index, count in current_version.items():
@@ -101,12 +102,13 @@ async def run_migration(migration: MigrationPayload):
 
 
 @router.get("/migration/{from_version}", tags=["migration"], include_in_schema=server.expose_gui_api)
-async def get_migration_schemas(from_version: str, from_prefix: Optional[str] = None):
+async def get_migration_schemas(from_version: str):
+    print(get_context().tenant)
     try:
         manager = MigrationManager(
             from_version=from_version,
             to_version=tracardi.version.version,
-            from_prefix=from_prefix,
+            from_prefix=get_context().tenant,
             to_prefix=tracardi.version.name
         )
         return await manager.get_customized_schemas()
