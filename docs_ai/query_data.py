@@ -28,7 +28,7 @@ client = weaviate.Client(
 "How Do I install extensions" #
 
 
-question = "Can Tracardi use ChatGPT"
+question = "Where can I find Javascript"
 nearText = {"concepts": [question]}
 
 result = (
