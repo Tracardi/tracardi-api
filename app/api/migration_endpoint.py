@@ -1,22 +1,19 @@
 from collections import defaultdict
-
 from fastapi import APIRouter, Depends, HTTPException
-from tracardi.context import get_context
-
+from tracardi.domain.version import Version
 from tracardi.service.storage.driver import storage
 from tracardi.service.storage.indices_manager import check_indices_mappings_consistency
-
 from app.api.auth.permissions import Permissions
 from app.config import server
 from tracardi.domain.migration_payload import MigrationPayload
 from tracardi.process_engine.migration.migration_manager import MigrationManager, MigrationNotFoundException
-from typing import Optional
 from tracardi.service.url_constructor import construct_elastic_url
 from tracardi.config import elastic, tracardi
 
 router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin", "developer", "maintainer"]))]
 )
+
 
 # todo can not find usages
 @router.get("/migration/check/from/{version}", tags=["migration"], include_in_schema=server.expose_gui_api)
@@ -102,13 +99,15 @@ async def run_migration(migration: MigrationPayload):
 
 
 @router.get("/migration/{from_version}", tags=["migration"], include_in_schema=server.expose_gui_api)
-async def get_migration_schemas(from_version: str):
-    print(get_context().tenant)
+async def get_migration_schemas(from_version: str, from_prefix: str=None):
+
+    from_version = Version(version=from_version, name=from_prefix)
+
     try:
         manager = MigrationManager(
-            from_version=from_version,
+            from_version=from_version.version,
+            from_prefix=from_version.name,
             to_version=tracardi.version.version,
-            from_prefix=get_context().tenant,
             to_prefix=tracardi.version.name
         )
         return await manager.get_customized_schemas()
