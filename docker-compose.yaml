@@ -8,7 +8,7 @@ services:
       REDIS_HOST: redis://redis:6379
       LOGGING_LEVEL: info
     ports:
-      - 8686:80
+      - 28686:80
     depends_on:
       - redis
       - elasticsearch
@@ -21,7 +21,7 @@ services:
       LOGGING_LEVEL: info
       PRODUCTION: "yes"
     ports:
-      - 18686:80
+      - 38686:80
     depends_on:
       - redis
       - elasticsearch
@@ -29,7 +29,7 @@ services:
   tracardi-gui:
     image: tracardi/tracardi-gui:0.8.0.11
     environment:
-      API_URL: http://tracardi-api:8686
+      API_URL: http://tracardi-api:28686
     ports:
       - 8787:80
     depends_on:
