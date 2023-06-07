@@ -1,1 +1,0 @@
-{"file_name": "docs/configuration/tracardi_ssl.md", "questions": ["What command is used to set the working directory in the container?", "What does the command RUN mkdir app/ do?", "What is the working directory set to in the container?"], "answer": "# set the working directory in the containerRUN mkdir app/\nWORKDIR /app"}

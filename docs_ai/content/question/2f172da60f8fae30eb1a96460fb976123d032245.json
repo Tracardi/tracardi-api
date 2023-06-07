@@ -1,7 +1,0 @@
-{
-  "file_name": "docs/getting_started/core_definitions.md",
-  "questions": [
-    "What is a workflow?"
-  ],
-  "answer": "## Workflows\nA workflow is a series of actions that are executed in response to an event. When an event is matched with a workflow, the actions in the workflow are executed according to the defined graph of nodes and connections.\n\nIn Tracardi a workflow is represented as a graph of nodes, with actions being assigned to individual nodes. The connections between nodes represent the flow of data from one action to another. Actions may perform a variety of tasks, such as copying data from the event to a user profile, saving the profile, querying for additional data, sending data to another system, or emitting a new event.\n\nActions in a workflow may be executed one after another, or they may be run in parallel. This allows for a high degree of flexibility in defining the sequence and execution of actions within a workflow. By constructing the appropriate graph of nodes and connections, it is possible to create complex, multi-step workflows that perform a wide range of tasks in response to events."
-}

@@ -1,1 +1,1 @@
-{"file_name": "docs/api/index.md", "questions": ["What is Tracardi?", "What is the API documentation for Tracardi?", "Where can I find the API documentation for Tracardi?"], "answer": "# API\nTracardi is an API-first platform, please visit http://127.0.0.1/docs to see the API documetnation.\n"}
+{"file_name": "docs/api/index.md", "questions": ["What is Tracardi?", "How to access Tracardi's API documentation?", "What is an API-first platform?"], "answer": "# API\nTracardi is an API-first platform, please visit http://127.0.0.1/docs to see the API documetnation.\n"}

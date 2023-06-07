@@ -1,9 +1,0 @@
-{
-  "file_name": "docs/development/react_env.md",
-  "questions": [
-    "What software prerequisites are needed to start working on Tracardi GUI?",
-    "What command is used to clone the Tracardi GUI source code from GitHub?",
-    "What command is used to install all project dependencies?"
-  ],
-  "answer": "## Software prerequisites\n* Docker\n* Node\n* Yarn\n* VSCode or WebStorm\n* Git\n\nTo start working on Tracardi GUI clone tracardi-gui repo.\n\n```bash\ngit clone http://github.com/tracardi/tracardi-gui  #(1)\n```\n\n1. Clones GUI source code from GitHub\n\nThen run:\n\n```bash\nyarn install  #(1)\n```\n\n1. This will install all project dependencies."
-}

@@ -1,1 +1,0 @@
-{"file_name": "docs/events/internal/basket-viewed.md", "questions": ["What is an example of JSON?", "What is the event in the JSON example?", "What is the id in the JSON example?"], "answer": "## JSON example\n```json\n{\n  \"event\": \"basket-viewed\",\n  \"properties\": {\n    \"id\": \"1234-abcd-5678-efgh\"\n  }\n}\n```\n"}

@@ -1,1 +1,0 @@
-{"file_name": "docs/configuration/tracardi_ssl.md", "questions": ["What command is used to install the dependencies?", "What is the name of the file containing the dependencies?", "What is the command to copy the file containing the dependencies?"], "answer": "## Install dependenciesCOPY app/requirements.txt .\nRUN pip install -r requirements.txt"}

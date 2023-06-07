@@ -1,1 +1,0 @@
-{"file_name": "docs/events/internal/search.md", "questions": ["What is an example of JSON syntax?", "What is the type of the JSON example?", "What is the query of the JSON example?"], "answer": "## JSON example\n```json\n{\n  \"type\": \"Search\",\n  \"properties\": {\n    \"query\": \"Contact email\",\n    \"category\": \"Search\"\n  }\n}\n```\n"}

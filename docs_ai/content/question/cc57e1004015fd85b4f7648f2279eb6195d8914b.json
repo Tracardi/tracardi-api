@@ -1,1 +1,0 @@
-{"file_name": "docs/running/index.md", "questions": ["What is the URL for the Tracardi GUI?", "Optional: How do I install Tracardi GUI?", "Optional: How do I open the Tracardi GUI?"], "answer": "# Tracardi GUI\nWhen everything is downloaded and installed open browser and go to http://127.0.0.1:8787 or IP where the Tracardi GUI is\ninstalled."}

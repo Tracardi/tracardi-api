@@ -1,1 +1,0 @@
-{"file_name": "docs/events/internal/profile-created.md", "questions": ["What will happen to event data?", "Optional:", "Will event data be copied to profile?", "What is the outcome of copying event data to profile?"], "answer": "## Copy event data to profile\nData will not be copied to profile.\n"}

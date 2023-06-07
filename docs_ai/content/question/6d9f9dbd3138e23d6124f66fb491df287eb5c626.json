@@ -1,1 +1,0 @@
-{"file_name": "docs/configuration/tracardi_configuration.md", "questions": ["What are the default settings for `TRACK_DEBUG` and `LOGGING_LEVEL`?", "What is the default setting for `TRACK_DEBUG`?", "What is the default setting for `LOGGING_LEVEL`?"], "answer": "## Debugging settings\n* `TRACK_DEBUG` - Default: no.\n* `LOGGING_LEVEL` - Default: WARNING"}

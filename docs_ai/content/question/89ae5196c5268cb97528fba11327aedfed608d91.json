@@ -1,1 +1,0 @@
-{"file_name": "docs/events/internal/product-added-to-basket.md", "questions": ["What event should be used when a customer adds a product to their shopping cart?", "What is the name of the event?", "What action does the event track?"], "answer": "# Event: Product Added To Basket\nThis event should be used when a customer adds a product to their shopping cart."}

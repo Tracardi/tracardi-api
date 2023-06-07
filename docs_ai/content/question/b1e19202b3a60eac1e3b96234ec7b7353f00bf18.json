@@ -1,1 +1,0 @@
-{"file_name": "docs/events/internal/basket-viewed.md", "questions": ["What will happen to the event data?", "Optional: Will the event data be copied to profile?", "Optional: Will the event data remain unchanged?"], "answer": "## Copy event data to profile\nData will not be copied to profile for this event."}

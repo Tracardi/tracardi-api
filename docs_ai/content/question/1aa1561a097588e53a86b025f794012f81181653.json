@@ -1,1 +1,0 @@
-{"file_name": "docs/events/internal/order-completed.md", "questions": ["What event should be used when a customer completes an order?", "What is the name of the event when a customer completes an order?", "What action should be taken when a customer completes an order?"], "answer": "# Event: Order Completed\nThis event should be used when a customer completes an order."}

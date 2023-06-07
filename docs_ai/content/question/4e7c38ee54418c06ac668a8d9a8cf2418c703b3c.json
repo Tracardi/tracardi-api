@@ -1,9 +1,0 @@
-{
-  "file_name": "docs/integration/js/advanced.md",
-  "questions": [
-    "How to bind directly to page elements using JavaScript code?",
-    "How to add a onClick event to a button?",
-    "What is `fire` attribute in the window.tracker.track function?"
-  ],
-  "answer": "## Binding directly to Page Elements\nYou can also bind events directly to page elements, such as buttons, using JavaScript code. However, please note that in\nthis case, you may not have access to response data, such as profile ID, etc. The example below shows how you can add an\nonClick event to a button that sends an event when clicked:\n\n```html\n\n<button onClick=\"testClick()\">Test click</button>\n```\n\nWhere the **testClick** function sends an event.\n\n```html title=\"Example\" linenums=\"1\"\n<script>\n  function testClick() {\n     window.tracker.track(\"page-view\", {\"view\": 1});\n  }\n</script>\n```\n\nPlease note that in this case, the event is recorded in the console but not sent to Tracardi by default. \n\n```\n[Tracker] Event track \nObject { type: \"track\", event: \"page-view\", properties: {\u2026}, options: {}, userId: null, anonymousId: \"642aa4a6-9a48-4c08-8fd5-f0772415c824\", meta: {\u2026} }\n```\n\nTo trigger the event and send it to Tracardi immediately, you can add the `fire` attribute with a value of `true` as a\nparameter to the window.tracker.track function, as shown in the example below:\n\n```html title=\"Example\" linenums=\"1\"\n<script>\n  function testClick() {\n     window.tracker.track(\"page-view\", {\"view\": 1}, {\"fire\": true}); // (1)\n  }\n</script>\n```\n\n1. This event will fire immediately.\n\nThe event \"interest\" will be sent immediately, because of `{\"fire\": true}`."
-}
