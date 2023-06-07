@@ -113,7 +113,8 @@ records for various reasons. Tracardi runs profile merging after the workflow en
     the value by which the customer data could be combined. This process will start automatically if the workflow has a merge
     profile action. 
 
-# Summary
+---
+Summary
 
 Questions that this documentation answers:
 

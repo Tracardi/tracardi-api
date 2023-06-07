@@ -41,8 +41,7 @@ https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-reindex.htm
 
 Reindexing data is nothing more than copying it from one index to another.
 
-# Summary
-
+---
 This documentation answers the following questions:
 
 * How can I upgrade Tracardi?

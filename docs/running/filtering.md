@@ -190,8 +190,7 @@ the previous query could be rewritten as:
 ```
 
 
-# Summary 
-
+---
 This documentation answer the following questions:
 
 * How to search profile, session, and events in Tracardi GUI

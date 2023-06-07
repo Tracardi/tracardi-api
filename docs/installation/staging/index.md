@@ -46,9 +46,8 @@ No need to worry about separate licenses for staging and production servers, all
     copying the data from the staging server to the production server. However, certain data such as events, profiles, or
     error logs will not be copied over during this process to ensure that the production server data remains intact.
 
-# Summary
-
-This documenation answers the following questions:
+---
+This documentation answers the following questions:
 
 * How to test workflows?
 * What is a staging server?

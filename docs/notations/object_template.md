@@ -87,8 +87,7 @@ will be:
 * [Make payload plugin](../flow/actions/reshape_payload_action.md)
 
 
-# Summary
-
+---
 This documentation answers the following questions:
 
 * What is an object template?

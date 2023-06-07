@@ -147,8 +147,7 @@ datetime.from_timestamp(payload@path.to.data) > datetime.from_timestamp(payload@
 ```
 
 
-# Summary
-
+---
 This documentation answers the following questions:
 
 * What is logic notation?

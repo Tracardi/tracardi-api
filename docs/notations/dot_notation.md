@@ -132,8 +132,7 @@ Notations that use dot notation:
 * [Object templates](object_template.md)
 * [Logic notation](logic_notation.md)
 
-# Summary
-
+---
 This documentation answers the following questions:
 
 * What is dot notation?

@@ -18,9 +18,8 @@ Mark-up  `{{profile@pii.name}}` will be replaced by the data from profile.
 * [Make payload plugin](../flow/actions/reshape_payload_action.md)
 
 
-# Summary
-
-This documenation answers the following questions:
+---
+This documentation answers the following questions:
 
 * How to reference data in text tempaltes?
 * What is the markup for data placeholders?

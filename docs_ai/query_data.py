@@ -27,7 +27,7 @@ client = weaviate.Client(
 "How Do I install extensions"  #
 
 question = """
-How to send event on a click that goes to external page. What is beacon
+How to upgrade tracardi?
 """
 nearText = {"concepts": [question]}
 
@@ -59,9 +59,9 @@ for answer, distance in answers:
 
 prompt = f"""I have this documentation on Tracardi system. It is set up of document parts that try to answer the question: "{question}".  
 Each part has distance metrics which is a distance from question to answer in terms of cosine similarity. 
-The bigger distance then the part seems less fit to answer the question. 
-Pick the most accurate document parts and answer in detail the question: "{question}". 
-Skip the parts that seems irrelevant to the asked question. If you think that the answer 
+The smaller distance the better source of information. 
+Find the most accurate document parts combine them and answer in detail the question: "{question}". 
+Do not use the parts that seems irrelevant to the asked question. If you think that the answer 
 can not be found in provided information or the answer may be inaccurate - respond with \"I can't answer this question\". 
 Respond only with answer.
 
@@ -71,11 +71,12 @@ Use this documentation: {context}
 print(f"RPMPT: {prompt}")
 
 print("-----")
-print(get_chat_gpt3_response(prompt[:4090]))
+chatgpt3_context = get_chat_gpt3_response(prompt[:4090])
+print(chatgpt3_context)
 print("---CHAT4---")
-print(get_chat_gpt3_5_response(system="You are an expert on Tracardi system.",
-                               user=prompt[:4090],
-                               assistant="""
+response = get_chat_gpt3_5_response(system="You are an expert on Tracardi system with the access to MD files with documentation.",
+                               user=f"Context: {chatgpt3_context}\n{prompt[:4090]}",
+                               assistant=f"""
                                These are the fundamentals of how tracardi works. 
                                Tracardi works by collecting data in the form of events, which correspond to customer actions. These events are categorized into event types, such as product purchases, and are stored in profiles. Profiles are maintained throughout the customer interaction and aggregate customer journey data using a graphical editor.
 
@@ -132,5 +133,7 @@ Core definitions:
     User/Customer is anonymous until the identification point is reached.
     Identification point enables merging of previous interactions/events with the identified profile.
     Tracardi can be integrated with mobile apps or external systems.
-                               """))
+                               """)
+
+print(response['content'])
 # print(json.dumps(result, indent=4))
