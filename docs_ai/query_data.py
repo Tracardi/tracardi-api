@@ -27,7 +27,7 @@ client = weaviate.Client(
 "How Do I install extensions"  #
 
 question = """
-How can I delete node on mac. Delete does not work. 
+Can I use tracardi for free.
 """
 
 prompt = f"""
