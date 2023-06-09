@@ -27,7 +27,7 @@ client = weaviate.Client(
 "How Do I install extensions"  #
 
 question = """
-How to create an object wht data form profile, event, or session?
+Why I have this error: Invalid data reference. Dot notation `event@...` could not access data?
 """
 
 prompt = f"""
@@ -81,7 +81,8 @@ response = get_chat_gpt3_5_response(
     system="You are an expert on Tracardi system with the access to MD files with documentation. "
            "You will be given a set of documents and their distance to question. "
            "The smaller distance the better source of information. Use the most accurate documents, "
-           "combine them, to answer the question in detail. If a code example is needed to explain "
+           "combine them, to answer the question in detail. If a code example available in documents "
+           "and is needed to explain "
            "and answer the question include the code as well.",
     user=prompt[:4090],
     assistant=""
