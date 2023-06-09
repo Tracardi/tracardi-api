@@ -11,3 +11,9 @@ items in an array. In some cases, you may need to use dot notation to access dat
 which case you would use `profile@key["My key with spaces"]`.
 
 For more information look for dot notation in the documentation.
+
+---
+This document answers the following questions:
+- How to get profile, event, or session data?
+- How to reference profile, event, or session data?
+- How to get data from profile, event, session, memory, workflow.

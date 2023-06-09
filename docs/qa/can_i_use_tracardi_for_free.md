@@ -10,3 +10,7 @@ features and support tailored to meet the needs of businesses operating at a lar
 
 In summary, Tracardi offers a free open-source version for individuals and small companies, but if you plan to sell or
 resell Tracardi as a service, you would need to consider the commercial open-source version.
+
+---
+This document also answers the questions:
+- Can I sell Tracardi?
