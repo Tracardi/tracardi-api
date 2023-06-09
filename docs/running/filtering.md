@@ -193,10 +193,8 @@ the previous query could be rewritten as:
 ---
 This documentation answer the following questions:
 
-* How to search profile, session, and events in Tracardi GUI
-* What is filtering used for in Tracardi?
-* How does Tracardi's query parser work for filtering?
-* What is the filtering syntax in Tracardi?
-* What are wildcard searches, and how can they be used in Tracardi filtering?
-* What are some other types of searches and operators that can be used for filtering in Tracardi, such as regular expressions and boolean operators?
-
+* How to search for profile, session, and events in Tracardi GUI
+* How to search data in Tracardi?
+* How does Tracardi's query parser work?
+* What is a query condition?
+* What is the syntax for searching, filtering in Tracardi?

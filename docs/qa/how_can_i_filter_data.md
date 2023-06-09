@@ -3,7 +3,7 @@
 To filter data in Tracardi, you can use the query syntax provided by the platform. Here are some examples of how to
 construct queries to filter data:
 
-1. Filter by a specific field value:
+1. Search by a specific field value:
 
 * To find records where the status field contains "active": status:active To find records where the event type field
   contains either "page-view" or "purchase": event.type:(page-view OR purchase)
@@ -38,3 +38,10 @@ construct queries to filter data:
 * The boolean operators AND, OR, and NOT (also written as &&, ||, and !) can be used to combine multiple conditions.
   Parentheses should be used to specify the desired precedence. For example, (quick AND fox) OR (brown AND fox) OR fox)
   AND NOT news will match records that contain "quick" and "fox" or "brown" and "fox" or just "fox", but not "news".
+
+For more information look for term `Data searching` in the documentation.
+
+---
+This document also answers the questions:
+- How to search data in Tracardi?
+- How to find data in Tracardi?

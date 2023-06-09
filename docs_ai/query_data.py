@@ -27,7 +27,7 @@ client = weaviate.Client(
 "How Do I install extensions"  #
 
 question = """
-How can I use reports in Tracardi?
+How to search data in Tracardi?
 """
 
 prompt = f"""
@@ -40,10 +40,10 @@ nearText = {"concepts": [question]}
 
 result = (
     client.query
-        .get("Tracardi", ["question", "answer"])
+        .get("Tracardi", ["question", "answer", "file"])
         .with_additional(["distance", "certainty"])
         .with_near_text(nearText)
-        .with_limit(10)
+        .with_limit(5)
         .do()
 )
 
@@ -51,18 +51,20 @@ answers = []
 skip_answers = {}
 for item in result['data']['Get']['Tracardi']:
     distance = item['_additional']['distance']
+    certainty = item['_additional']['certainty']
+    file = item['file']
     if distance > 0.2:
         continue
     if item['answer'] in skip_answers:
         continue
     skip_answers[item['answer']] = 1
-    answers.append((item['answer'], distance))
+    answers.append((item['answer'], distance, certainty, file))
 
 context = ""
 n = 0
-for answer, distance in answers:
+for answer, distance, certainty, file in answers:
     n += 1
-    context += f"\n\n-- Document part {n} (Distance: {distance}) --\n{answer}"
+    context += f"\n\n-- Document {file} (Distance: {distance}, Certainty: {certainty}) --\n{answer}"
 
 prompt = f"""I have this documentation on Tracardi system. Answer two questions. The general question 
 "{general_question}" and the user specific question: "{question}". Respond with one combined answer.
@@ -81,9 +83,10 @@ response = get_chat_gpt3_5_response(
     system="You are an expert on Tracardi system with the access to MD files with documentation. "
            "You will be given a set of documents and their distance to question. "
            "The smaller distance the better source of information. Use the most accurate documents, "
-           "combine them, to answer the question in detail. If a code example available in documents "
-           "and is needed to explain "
-           "and answer the question include the code as well.",
+           "combine them, to answer the question in detail. Remember that examples are good way of "
+           "answering the questions. "
+           "So if an example is available in documents "
+           "and is needed to explain and answer the question include the example as well.",
     user=prompt[:4090],
     assistant=""
     # assistant=f"""Previous answer context:
