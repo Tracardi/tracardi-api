@@ -1,1 +1,0 @@
-{"file_name": "docs/events/internal/identification.md", "questions": ["How to set a signal in an object?", "How to set a value in an object?", "What is the syntax for setting a signal in an object?"], "answer": "567890',\n  signal: '1234567890'\n});\n```\n"}

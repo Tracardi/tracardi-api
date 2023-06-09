@@ -1,6 +1,7 @@
 import hashlib
 import json
 import os
+import shutil
 
 from docs_ai.utils import get_markdown, get_chat_gpt3_response
 
@@ -75,6 +76,19 @@ def yield_paragraphs(document):
         yield chunk.strip(" -")
 
 
+def move_file(source_folder, destination_folder, filename):
+    source_path = os.path.join(source_folder, filename)
+    destination_path = os.path.join(destination_folder, filename)
+
+    try:
+        shutil.move(source_path, destination_path)
+        print(f"File '{filename}' moved successfully!")
+    except FileNotFoundError:
+        print(f"File '{filename}' not found in '{source_folder}'!")
+    except shutil.Error as e:
+        print(f"Error occurred while moving file '{filename}': {str(e)}")
+
+
 def chunk_string(string, chunk_size):
     if len(string) <= chunk_size:
         return [string]
@@ -87,8 +101,11 @@ def chunk_string(string, chunk_size):
 # Example usage
 
 directory = os.path.join(_local_dir, '../docs')
-question_directory = os.path.join(_local_dir, 'content/question')
 
+docs_directory = os.path.join(_local_dir, 'content/documentation')
+create_folder_if_not_exists(docs_directory)
+
+question_directory = os.path.join(_local_dir, 'content/question')
 create_folder_if_not_exists(question_directory)
 os.chdir(question_directory)
 
@@ -97,33 +114,48 @@ for i, (file_name, document) in enumerate(get_markdown(directory)):
 
     if document == "":
         continue
-    print(f"Processing: {file_name}")
-    # result = process(file_name, document)
-    # print(i, file_name, result)
-    short_file_name = file_name.replace('/home/risto/PycharmProjects/tracardi-api/', '')
 
+    short_file_name = file_name.replace('/home/risto/PycharmProjects/tracardi-api/', '')
     # Skip plugin documentation
     if short_file_name.startswith('docs/flow/action'):
         continue
 
-    for paragraph in yield_paragraphs(document):
+    print(f"Processing: {file_name}")
+    # result = process(file_name, document)
+    # print(i, file_name, result)
 
-        if len(paragraph) < 50:
-            print(f"Skipped document {file_name}, paragraph `{paragraph}`.")
-            continue
+    _short_file_name = None
+    if short_file_name.startswith('docs/'):
+        _short_file_name = short_file_name[5:]
+        _short_file_name = _short_file_name.replace("/", "_")
+        _short_file_name = _short_file_name.split('.')[0]
+        create_folder_if_not_exists(f"{docs_directory}/{_short_file_name}")
 
-        number_of_paragraphs += 1
-        sha1_hash = hashlib.sha1(paragraph.encode()).hexdigest()
-        file = f"{sha1_hash}.json"
-        print(number_of_paragraphs, file)
+    for main_paragraph in yield_paragraphs(document):
 
-        if os.path.exists(file) and os.path.isfile(file):
-            print(f"Skipped {file}")
-            continue
-
-        paragraphs = chunk_string(paragraph, 4000)
+        paragraphs = chunk_string(main_paragraph, 4000)
 
         for paragraph in paragraphs:
+
+            if len(paragraph) < 50:
+                print(f"Skipped document {file_name}, paragraph `{paragraph}`.")
+                continue
+
+            number_of_paragraphs += 1
+            sha1_hash = hashlib.sha1(paragraph.encode()).hexdigest()
+            file = f"{sha1_hash}.json"
+
+            data_file = os.path.join(docs_directory, _short_file_name, file)
+
+            if os.path.exists(file) and os.path.isfile(file):
+                shutil.move(file, data_file)
+                print(f"Moved {file}")
+                continue
+
+            if os.path.exists(data_file) and os.path.isfile(data_file):
+                print(f"   Skipped {data_file}")
+                continue
+
             prompt = f"What question the following text answers. Give one question that covers the whole content. " \
                      f"And at least 2 or 3 optional questions that cover only part of the text. Try to write qeiestion in " \
                      f"form of \"How to?\" or \"What is\" if possible." \
@@ -140,4 +172,4 @@ for i, (file_name, document) in enumerate(get_markdown(directory)):
                 "answer": paragraph
             }
 
-            save_content(f"{sha1_hash}.json", json.dumps(json_content))
+            save_content(data_file, json.dumps(json_content))

@@ -1,0 +1,10 @@
+{
+  "file_name": "docs/qa/how_to_import_data_with_python.md",
+  "questions": [
+    "How to import data with python?",
+    "What is the example code for importing data with python?",
+    "How to read data from a CSV file with python?",
+    "How to post data with python?"
+  ],
+  "answer": "# How to import data with python?\nYou can use `/track` endpoint to import data form CSV.\n\nExample:\n\n```python\nimport csv\nimport requests\n\n\ndef read_csv(filename):\n    with open(filename, 'r') as file:\n        reader = csv.reader(file)\n        headers = next(reader)  # Read the header row\n        for row in reader:  # Iterate over the remaining rows\n            yield dict(zip(headers, row))  # spit out column name and data"
+}

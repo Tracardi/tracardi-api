@@ -1,0 +1,9 @@
+{
+  "file_name": "docs/notations/object_template.md",
+  "questions": [
+    "What is dot notation?",
+    "What is logic notation?",
+    "How to make a payload plugin?"
+  ],
+  "answer": "# Read also about related topics:\n* [Templates](templates.md)\n* [Dot notation](dot_notation.md)\n* [Logic notation](logic_notation.md)\n* [Make payload plugin](../flow/actions/reshape_payload_action.md)\n\n\n---\nThis documentation answers the following questions:\n\n- What is an object template?\n- When should you use an object template?\n- Can you reshape data into any object you want using an object template?\n- How to respond with JSON object that has data form profile\n- What is an example of an object template?\n- How do you reference data in an object template using dot notation?\n- What happens when you reference data in an object template using dot notation?\n- Can you provide an example of using an object template with sample data from profile and event?\n- How to create an object or JSON with data from profile, event, or session?\n"
+}
