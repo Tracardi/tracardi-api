@@ -27,7 +27,7 @@ client = weaviate.Client(
 "How Do I install extensions"  #
 
 question = """
-Why I have this error: Invalid data reference. Dot notation `event@...` could not access data?
+How can I use reports in Tracardi?
 """
 
 prompt = f"""
@@ -41,7 +41,7 @@ nearText = {"concepts": [question]}
 result = (
     client.query
         .get("Tracardi", ["question", "answer"])
-        .with_additional(["distance"])
+        .with_additional(["distance", "certainty"])
         .with_near_text(nearText)
         .with_limit(10)
         .do()

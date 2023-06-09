@@ -3,6 +3,22 @@ import os
 
 from docs_ai.utils import get_jsons
 
+
+def record_exists(client, hash):
+    where_filter = {
+        "path": ["hash"],
+        "operator": "Equal",
+        "valueText": hash,
+    }
+
+    return (
+        client.query
+            .get("Tracardi", ["question", "answer", 'file', 'hash'])
+            .with_where(where_filter)
+            .do()
+    )
+
+
 key = os.environ.get('API_KEY', "None")
 
 client = weaviate.Client(
@@ -30,9 +46,9 @@ except weaviate.exceptions.UnexpectedStatusCodeException:
 i = 0
 # Configure a batch process
 with client.batch as batch:
-    batch.batch_size = 100
+    batch.batch_size = 10
     # Batch import all Questions
-    for d in get_jsons('content/question'):
+    for d, hash in get_jsons('content/documentation'):
         questions = "\n".join(d['questions'])
         i += 1
         print(f"importing question: {i + 1}")
@@ -40,6 +56,9 @@ with client.batch as batch:
             "answer": d["answer"],
             "question": questions,
             "file": d["file_name"],
+            "hash": hash
         }
-
-        client.batch.add_data_object(properties, "Tracardi")
+        print(properties)
+        response = record_exists(client, hash)
+        print(len(response['data']['Get']['Tracardi']))
+        # client.batch.add_data_object(properties, "Tracardi")
