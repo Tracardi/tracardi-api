@@ -1,0 +1,1 @@
+{"file_name": "docs/qa/bulk/extension_questions.md", "questions": ["What is the process to use RabbitMq with Tracardi?", "How to install RabbitMq extension in Tracardi?", "How to use RabbitMq with Tracardi?"], "answer": "# Can Tracardi use RabbitMq ?\nYes. To use RabbitMq, install the extension RabbitMq in Resource/Extensions.", "hash": "33ae1bc3e2eae6b3e6f35f24865947a2ec20c1fa"}

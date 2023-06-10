@@ -1,0 +1,1 @@
+{"file_name": "docs/qa/bulk/extension_questions.md", "questions": ["What is the process to use Scheduler in Tracardi?", "How to install Scheduler in Tracardi?", "How to access Scheduler in Tracardi?"], "answer": "# Can Tracardi use Scheduler ?\nYes. To use Scheduler, install the extension Scheduler in Resource/Extensions.", "hash": "babd264ee9339eda63e6368b0971b63265a243e0"}

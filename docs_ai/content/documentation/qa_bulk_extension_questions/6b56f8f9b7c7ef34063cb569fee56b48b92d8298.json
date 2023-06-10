@@ -1,0 +1,1 @@
+{"file_name": "docs/qa/bulk/extension_questions.md", "questions": ["What is the process to use MongoDB with Tracardi?", "How to install MongoDB extension in Tracardi?", "How to use MongoDB with Tracardi?"], "answer": "# Can Tracardi use MongoDB ?\nYes. To use MongoDB, install the extension MongoDB in Resource/Extensions.", "hash": "6b56f8f9b7c7ef34063cb569fee56b48b92d8298"}
