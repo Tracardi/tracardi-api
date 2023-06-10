@@ -1,3 +1,4 @@
+import json
 import os
 from pprint import pprint
 
@@ -25,10 +26,13 @@ client = weaviate.Client(
 "Can I send marketing campaigns from tracardi"
 "Can I send SMSes with tracardi"  #
 "How Do I install extensions"  #
+"Does Tracardi have Mysql Plugin?"
 
 question = """
-How to search data in Tracardi?
+How can I load profile in webhook?
 """
+
+question = question.strip("?!.")
 
 prompt = f"""
 Rewrite question "{question}" to be more general. Respond only with question.
@@ -60,9 +64,31 @@ for item in result['data']['Get']['Tracardi']:
     skip_answers[item['answer']] = 1
     answers.append((item['answer'], distance, certainty, file))
 
+pprint(answers)
+
+documents = []
+for answer, distance, certainty, file in answers:
+    prompt = f"""Is the text I provided below related to the question: "{question.strip()}". Answer only YES or NO 
+    Text: {answer}"""
+    yes_no = get_chat_gpt3_5_response(
+        system=f"Your objective is to find the best document related the question: '{question.strip()}' "
+               f"and return YES or NO",
+        user=prompt[:4090],
+        assistant=""
+        # assistant=f"""Previous answer context:
+        # {chatgpt3_context}
+        # """
+    )
+    if yes_no['content'] == 'YES':
+        documents.append((answer, distance, certainty, file))
+
+if not documents:
+    print("No data in documentation")
+    exit()
+
 context = ""
 n = 0
-for answer, distance, certainty, file in answers:
+for answer, distance, certainty, file in documents:
     n += 1
     context += f"\n\n-- Document {file} (Distance: {distance}, Certainty: {certainty}) --\n{answer}"
 
@@ -75,16 +101,16 @@ Use this documentation: {context}
 
 print(f"RPMPT: {prompt}")
 
-print("--CHAT3---")
-chatgpt3_context = get_chat_gpt3_response(prompt[:4090])
-print(chatgpt3_context)
+# print("--CHAT3---")
+# chatgpt3_context = get_chat_gpt3_response(prompt[:4090])
+# print(chatgpt3_context)
 print("---CHAT4---")
 response = get_chat_gpt3_5_response(
     system="You are an expert on Tracardi system with the access to MD files with documentation. "
            "You will be given a set of documents and their distance to question. "
-           "The smaller distance the better source of information. Use the most accurate documents, "
-           "combine them, to answer the question in detail. Remember that examples are good way of "
-           "answering the questions. "
+           "The smaller distance the better source of information. Use the documents, "
+           "to answer the question as good as possible using all the available information. "
+           "Remember that examples are good way of answering the questions. "
            "So if an example is available in documents "
            "and is needed to explain and answer the question include the example as well.",
     user=prompt[:4090],
