@@ -1,0 +1,1 @@
+{"file_name": "docs/qa/bulk/plugins_questions.md", "questions": ["What is the Delete entity plugin?", "How to delete an entity by its ID using Tracardi?", "Optional:", "What is Tracardi?", "What is an entity?"], "answer": "# Can Tracardi delete an entity by its ID?\nYes. It can with the Delete entity plugin.", "hash": "b288812719280f03ab3955cd5190dce00aa3816a"}

@@ -1,0 +1,1 @@
+{"file_name": "docs/qa/bulk/plugins_questions.md", "questions": ["What is the Load entity plugin?", "How to load an entity by its ID using Tracardi?", "What is the purpose of the Load entity plugin?"], "answer": "# Can Tracardi load an entity by its ID?\nYes. It can with the Load entity plugin.", "hash": "475a8c251c07b4da46d7ac82e48212a39ad01918"}

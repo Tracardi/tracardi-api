@@ -1,0 +1,1 @@
+{"file_name": "docs/qa/bulk/plugins_questions.md", "questions": ["What is the UUID4 plugin?", "How to generate a random UUID with Tracardi?"], "answer": "# Can Tracardi generate a random UUID?\nYes, it can with the \"UUID4\" plugin.", "hash": "c4a846c74df9c1587724bbdfb3d101b1a7d95167"}

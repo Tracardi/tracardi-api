@@ -1,0 +1,1 @@
+{"file_name": "docs/qa/bulk/plugins_questions.md", "questions": ["What is the capability of Tracardi with the Get event source plugin?"], "answer": "# Can Tracardi read the source that the event came from?\nYes. It can with the Get event source plugin.", "hash": "68279d7ca7f323a711a45a906f705756bb966ff5"}

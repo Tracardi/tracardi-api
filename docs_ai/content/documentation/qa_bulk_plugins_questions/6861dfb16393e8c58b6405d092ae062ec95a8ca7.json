@@ -1,0 +1,1 @@
+{"file_name": "docs/qa/bulk/plugins_questions.md", "questions": ["What is the Starts with plugin?", "How to check if a string starts with a defined prefix using Tracardi?"], "answer": "# Can Tracardi check if a string starts with the defined prefix?\nYes. It can with the Starts with plugin.", "hash": "6861dfb16393e8c58b6405d092ae062ec95a8ca7"}
