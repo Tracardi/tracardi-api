@@ -143,3 +143,6 @@ This documentation answers the following questions:
 * How can a part of data be accessed using dot notation in Tracardi?
 * How can items in an array be accessed using dot notation in Tracardi?
 * Can objects embedded inside arrays be retrieved using dot notation in Tracardi?
+* How can I access profile data in tracardi?
+* How can I access event data in tracardi?
+* How can I access session data in tracardi?

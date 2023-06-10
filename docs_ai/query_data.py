@@ -29,7 +29,7 @@ client = weaviate.Client(
 "Does Tracardi have Mysql Plugin?"
 
 question = """
-How can I load profile in webhook?
+How can I access profile data in tracardi?
 """
 
 question = question.strip("?!.")
@@ -92,9 +92,9 @@ for answer, distance, certainty, file in documents:
     n += 1
     context += f"\n\n-- Document {file} (Distance: {distance}, Certainty: {certainty}) --\n{answer}"
 
-prompt = f"""I have this documentation on Tracardi system. Answer two questions. The general question 
-"{general_question}" and the user specific question: "{question}". Respond with one combined answer.
-Respond only if you are sure of the answer correctness, otherwise say "I don't know answer to this question".
+prompt = f"""I have this documentation on Tracardi system. Answer question "{general_question} {question}". 
+Respond with one answer. Respond only if you are sure of the answer correctness, otherwise say "I don't know answer
+to this question".
 
 Use this documentation: {context}
 """
