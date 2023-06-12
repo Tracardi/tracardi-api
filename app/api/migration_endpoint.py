@@ -1,5 +1,7 @@
 from collections import defaultdict
 from fastapi import APIRouter, Depends, HTTPException
+from tracardi.context import get_context
+
 from tracardi.domain.version import Version
 from tracardi.service.storage.driver import storage
 from tracardi.service.storage.indices_manager import check_indices_mappings_consistency
@@ -77,11 +79,12 @@ async def check_migration_consistency(version: str):
 @router.post("/migration", tags=["migration"], include_in_schema=server.expose_gui_api)
 async def run_migration(migration: MigrationPayload):
     try:
+        context = get_context()
         manager = MigrationManager(
             from_version=migration.from_version,
             to_version=tracardi.version.version,
             from_prefix=migration.from_prefix,
-            to_prefix=tracardi.version.name
+            to_prefix=context.tenant
         )
         elastic_host = construct_elastic_url(
             host=elastic.host if isinstance(elastic.host, str) else elastic.host[0],
@@ -102,13 +105,14 @@ async def run_migration(migration: MigrationPayload):
 async def get_migration_schemas(from_version: str, from_prefix: str=None):
 
     from_version = Version(version=from_version, name=from_prefix)
-
+    print(tracardi.multi_tenant, tracardi.version.version, tracardi.version.name, get_context())
+    context = get_context()
     try:
         manager = MigrationManager(
             from_version=from_version.version,
             from_prefix=from_version.name,
             to_version=tracardi.version.version,
-            to_prefix=tracardi.version.name
+            to_prefix=context.tenant
         )
         return await manager.get_customized_schemas()
 
