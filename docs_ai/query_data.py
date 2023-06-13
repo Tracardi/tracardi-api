@@ -29,7 +29,7 @@ client = weaviate.Client(
 "Does Tracardi have Mysql Plugin?"
 
 question = """
-Why my background task is in pending state?
+What is the architecture of tracardi
 """
 
 question = question.strip("?!.")
@@ -70,6 +70,7 @@ documents = []
 for answer, distance, certainty, file in answers:
     prompt = f"""Is the text I provided below related to the question: "{question.strip()}". Answer only YES or NO 
     Text: {answer}"""
+
     yes_no = get_chat_gpt3_5_response(
         system=f"Your objective is to find the best document related the question: '{question.strip()}' "
                f"and return YES or NO",
