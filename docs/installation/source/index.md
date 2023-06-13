@@ -3,7 +3,7 @@
 ## Software prerequisites
 
 * Docker
-* Python w wersji 3.8
+* Python version 3.9
 * Pip
 * Python Virtual Environment
 * PyCharm
@@ -185,17 +185,17 @@ Type:
 
 ```bash
 cd tracardi-api
-python3.8 -m venv venv  # (1)
+python3.9 -m venv venv  # (1)
 cd ..
 cd tracardi
-python3.8 -m venv venv
+python3.9 -m venv venv
 ```
 
-1. Installs virtual environment with python 3.8
+1. Installs virtual environment with python 3.9
 
 !!! Tip
 
-    Before creating the virtual environment make sure you have version 3.8.x installed. Type `python --version` to see if the version is correct.
+    Before creating the virtual environment make sure you have version 3.9.x installed. Type `python --version` to see if the version is correct.
 
 # Install dependencies
 
