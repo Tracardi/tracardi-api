@@ -404,7 +404,7 @@ nav:
           - qa/how_to_replace_a_profile_in_workflow.md
           - qa/how_to_use_own_profile_id.md
           - qa/how_to_use_workflow_editor.md
-          - qa/utms.md
+          - qa/how_to_store_utms.md
           - qa/can_tracardi_import_data_from_csv.md
           - qa/how_many_records_can_tracardi_store.md
           - qa/how_to_fix_import_pending.md
@@ -472,8 +472,6 @@ nav:
           - qa/errors/error_6.md
           - qa/errors/error_7.md
           - qa/errors/error_8.md
-
-          - qa/other_qa.md
 
   - api/index.md
   - Developers:
