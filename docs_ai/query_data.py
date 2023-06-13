@@ -29,7 +29,7 @@ client = weaviate.Client(
 "Does Tracardi have Mysql Plugin?"
 
 question = """
-What parts of tracardi tracardi consists of?
+Why my background task is in pending state?
 """
 
 question = question.strip("?!.")
@@ -93,7 +93,7 @@ for answer, distance, certainty, file in documents:
     context += f"\n\n-- Document {file} (Distance: {distance}, Certainty: {certainty}) --\n{answer}"
 
 prompt = f"""I have this documentation on Tracardi system. Answer question "{general_question} {question}". 
-Respond with one answer. Respond only if you are sure of the answer correctness, otherwise say "I don't know answer
+Respond with one detailed answer. Respond only if you are sure of the answer correctness, otherwise say "I don't know answer
 to this question".
 
 Use this documentation: {context}
@@ -112,7 +112,8 @@ response = get_chat_gpt3_5_response(
            "to answer the question as good as possible using all the available information. "
            "Remember that examples are good way of answering the questions. "
            "So if an example is available in documents "
-           "and is needed to explain and answer the question include the example as well.",
+           "and is needed to explain and answer the question include the example as well. "
+           "Give as verbose information as possible.",
     user=prompt[:4090],
     assistant=""
     # assistant=f"""Previous answer context:
