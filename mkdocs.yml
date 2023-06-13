@@ -415,6 +415,64 @@ nav:
           - qa/how_to_quickly_copy_data_from_node_to_node_in_wf.md
           - qa/how_tracardi_loads_profile.md
           - qa/who_is_tracardi_for.md
+          - qa/can_i_send_marketing_campaigns.md
+          - qa/can_i_use_tracardi_for_free.md
+          - qa/can_tracardi_use_chatgpt.md
+          - qa/how_can_i_benefit_from_commercial_version.md
+          - qa/how_can_i_benefit_from_partnership_with_tracardi.md
+          - qa/how_can_i_filter_data.md
+          - qa/how_can_i_install_extensions.md
+          - qa/how_can_i_load_profile.md
+          - qa/how_can_i_load_session.md
+          - qa/how_can_i_use_reports.md
+          - qa/how_get_mailchimp_api_key_for_transactional_emails.md
+          - qa/how_profile_ event_and_session_ids_are_tied_up_together.md
+          - qa/how_to_add_segement_based_on_customer_visits.md
+          - qa/how_to_bind_event_to_a_click.md
+          - qa/how_to_check_registered_email_in_mailchimp.md
+          - qa/how_to_configure_tracardi_to_be_multi_tenant.md
+          - qa/how_to_delete_a_node.md
+          - qa/how_to_import_data_to_tracardi.md
+          - qa/how_to_import_data_with_python.md
+          - qa/how_to_personalize_messages.md
+          - qa/how_to_send_event_on_a_click_that_goes_to_external_page.md
+          - qa/how_to_send_mails_with_mailchimp.md
+          - qa/how_to_store_utms.md
+          - qa/how_to_upgrade_tracardi.md
+          - qa/how_tracardi_records_vistits.md
+          - qa/how_tracardi_uses_entities.md
+          - qa/i_get_error_api_invaild_from_mailchimp.md
+          - qa/my_javascript_is_not_sending_events.md
+          - qa/my_workflow_is_not_working.md
+          - qa/what_are_available_installation_types.md
+          - qa/what_are_examples_of_real_time_or_time_based_segmentations.md
+          - qa/what_are_main_differences_between_os_and_com.md
+          - qa/what_are_predefined_event_types.md
+          - qa/what_database_use_tracardi.md
+          - qa/what_is_dot_notation.md
+          - qa/what_is_profile.md
+          - qa/what_is_session.md
+          - qa/what_plugins_has_tracardi.md
+          - qa/what_types_of_segmentation_has_tracardi.md
+          - qa/when_i_know_if_the_event_was_processed.md
+          - qa/where_is_profile_visits_are_counted.md
+          - qa/why_this_is_a_security_risk_to_use_simple_profile_and_session_id.md
+          - qa/why_webhook_events_do_not_have_session_and_profile.md
+          - qa/bulk/available_extensions_with_description.md
+          - qa/bulk/available_extenstions.md
+          - qa/bulk/extension_questions.md
+          - qa/bulk/other_qa.md
+          - qa/bulk/plugins_questions.md
+          - qa/errors/error_1.md
+          - qa/errors/error_10.md
+          - qa/errors/error_2.md
+          - qa/errors/error_3.md
+          - qa/errors/error_4.md
+          - qa/errors/error_5.md
+          - qa/errors/error_6.md
+          - qa/errors/error_7.md
+          - qa/errors/error_8.md
+
           - qa/other_qa.md
 
   - api/index.md
