@@ -76,3 +76,11 @@ This is technical documentation of source code and dockers.
 - Source:tracardi/worker
 - Github: https://github.com/Tracardi/tracardi-api
 - Description: This is open-source Tracardi worker responsible for imports and system migration. 
+
+---
+This document also answers the questions.
+
+- Provide an overview of the different components that comprise Tracardi ?
+- What are the key building blocks or modules that constitute Tracardi ?
+- What are the fundamental components or sections within Tracardi ?
+- What are the main functions of Tracardi components ?
