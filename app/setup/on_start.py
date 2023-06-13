@@ -25,7 +25,8 @@ async def update_api_instance():
                 logger.info(f"HEARTBEAT. API instance id `{instance.id}` was UPDATED.")
             return result
         else:
-            logger.warning(f"API instance index does not exist. Instance will be updated next time")
+            logger.warning(f"System not installed. Visit GUI to install the system. "
+                           f"API instance index does not exist. Instance will be updated next time.")
 
     except StorageException as e:
         logger.error(f"API instance `{instance.id}` was NOT UPDATED due to ERROR `{str(e)}`")

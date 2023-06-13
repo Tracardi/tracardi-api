@@ -29,7 +29,7 @@ client = weaviate.Client(
 "Does Tracardi have Mysql Plugin?"
 
 question = """
-How can I access profile data in tracardi?
+What parts of tracardi tracardi consists of?
 """
 
 question = question.strip("?!.")
