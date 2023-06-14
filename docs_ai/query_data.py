@@ -27,9 +27,11 @@ client = weaviate.Client(
 "Can I send SMSes with tracardi"  #
 "How Do I install extensions"  #
 "Does Tracardi have Mysql Plugin?"
+"What is the syntax for the IF condition?"
+"how to purge event, session, profile?"
 
 question = """
-What is the architecture of tracardi
+How tracardi bot works?
 """
 
 question = question.strip("?!.")
@@ -108,6 +110,7 @@ print(f"RPMPT: {prompt}")
 print("---CHAT4---")
 response = get_chat_gpt3_5_response(
     system="You are an expert on Tracardi system with the access to MD files with documentation. "
+           "Your name is Tracardi Bot. "
            "You will be given a set of documents and their distance to question. "
            "The smaller distance the better source of information. Use the documents, "
            "to answer the question as good as possible using all the available information. "
