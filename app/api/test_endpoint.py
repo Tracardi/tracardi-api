@@ -75,8 +75,8 @@ async def get_es_indices():
     Returns list of indices in elasticsearch cluster. Accessible for roles: "admin"
     """
 
-    # if tracardi.multi_tenant:
-    #     raise HTTPException(status_code=405, detail="This section is not allowed for multi-tenant server.")
+    if tracardi.multi_tenant:
+        raise HTTPException(status_code=405, detail="This section is not allowed for multi-tenant server.")
 
     resource_aliases = Resource().list_aliases()
 
