@@ -391,15 +391,15 @@ Yes, Tracardi can convert IP to location information using the "GeoIp service" p
 
 # Can Tracardi discard the current profile?
 
-Yes, Tracardi can discard the current profile using the "Discard Profile" plugin
+ Yes, Tracardi can discard the current profile using the "Discard Profile" plugin
 
 # Can Tracardi discard the current session?
 
-Yes, Tracardi can discard the current session using the "Discard Session" plugin
+ Yes, Tracardi can discard the current session using the "Discard Session" plugin
 
 # Can Tracardi load previous sessions for the current profile and inject them into the payload?
 
-Yes, Tracardi can load previous sessions for the current profile and inject them into the payload using the "Get
+ Yes, Tracardi can load previous sessions for the current profile and inject them into the payload using the "Get
 previous session" plugin
 
 # Can Tracardi use regex matching and return matched data?
@@ -408,29 +408,29 @@ Yes, Tracardi can use regex matching and return matched data using the "Regex ma
 
 # Can Tracardi replace substrings that match a regex pattern with a given replacement string?
 
-Yes, Tracardi can replace substrings that match a regex pattern with a given replacement string using the "Regex
+ Yes, Tracardi can replace substrings that match a regex pattern with a given replacement string using the "Regex
 replace" plugin
 
 # Can Tracardi validate data with a regex pattern?
 
-Yes, Tracardi can validate data with a regex pattern using the "Regex validator" plugin
+ Yes, Tracardi can validate data with a regex pattern using the "Regex validator" plugin
 
 # Can Tracardi validate objects using a JSON validation schema?
 
-Yes, Tracardi can validate objects using a JSON validation schema using the "JSON schema validator" plugin
+ Yes, Tracardi can validate objects using a JSON validation schema using the "JSON schema validator" plugin
 
 # Can Tracardi parse URL parameters, parse them, and return the result on the output?
 
-Yes, Tracardi can parse URL parameters, parse them, and return the result on the output using the "Parse URL" plugin
+ Yes, Tracardi can parse URL parameters, parse them, and return the result on the output using the "Parse URL" plugin
 
 # Can Tracardi split the workflow based on whether it is day or night at the given latitude and longitude?
 
-Yes, Tracardi can split the workflow based on whether it is day or night at the given latitude and longitude using the "
+ Yes, Tracardi can split the workflow based on whether it is day or night at the given latitude and longitude using the "
 Day/Night" plugin
 
 # Can Tracardi check if the current date is a weekend or not?
 
-Yes, Tracardi can check if the current date is a weekend or not using the "If it's a weekend" plugin
+ Yes, Tracardi can check if the current date is a weekend or not using the "If it's a weekend" plugin
 
 # Can Tracardi check if the current time is within a defined time span?
 
