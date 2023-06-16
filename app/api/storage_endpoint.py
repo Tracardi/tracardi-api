@@ -38,8 +38,8 @@ async def get_index_mapping_metadata(index: str, filter: str = None):
     Returns metadata of given index (str)
     """
 
-    if tracardi.multi_tenant:
-        raise HTTPException(status_code=405, detail="This operation is not allowed for multi-tenant server.")
+    # if tracardi.multi_tenant:
+    #     raise HTTPException(status_code=405, detail="This operation is not allowed for multi-tenant server.")
 
     result = await storage.driver.raw.get_mapping_fields(index)
     if filter is not None:
