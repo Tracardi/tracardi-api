@@ -13,12 +13,11 @@ which is identified by a unique profile ID in Tracardi. There are different ways
    time-triggered segmentation process is initiated. Tracardi runs this process periodically, such as every hour, to
    check if the defined condition is met.
 
-3. Adhoc Segmentation: This method involves segmenting customers based on existing data. It includes selecting profiles
+3. Post event Segmentation: This method involves segmenting customers based on existing data. It includes selecting profiles
    using available data, such as demographic information (age, shoe size, location), to create segments. While this
    method is less sophisticated compared to the others, it can still be useful for filtering based on aggregated values
    like the number of specific events or the most recent event type. However, adhoc segmentation is limited when it
-   comes to segmenting based on event sequences or external data. To perform more complex segmentations, it's
-   recommended to combine the previous methods and real-time triggers.
+   comes to segmenting based on event sequences or external data.
 
 At present, Tracardi exclusively provides the initial two segmentation methods. However, numerous scenarios that involve
 the third method can be accomplished by employing the first two methods. For instance, when segmenting based on existing

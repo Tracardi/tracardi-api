@@ -24,4 +24,4 @@ By addressing these aspects, you should be able to identify the underlying cause
 and take appropriate steps to resolve the issue.
 
 ---
-- Hot ot debug live segmentation?
+- How ot debug live segmentation?
