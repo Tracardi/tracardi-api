@@ -6,7 +6,7 @@ To configure Tracardi as a multi-tenant system, you need to follow these steps:
 
 In Tracardi, multi-tenancy means that a single Tracardi container can serve data for multiple separated tenants. Each
 tenant's data is stored in a separate namespace within the storage, ensuring data isolation and separation between
-tenants.
+tenants. This feature is available only in commercial Tracardi version.
 
 ## Configure Tracardi as Single Tenant (Default)
 
@@ -61,3 +61,12 @@ specific error message: "Can not find tenant for this instance." This error indi
 tenant name have not been met. In other words, the tenant name provided does not meet the necessary criteria as
 discussed earlier. By reviewing the logs and ensuring that the tenant name meets the required prerequisites, you can
 resolve this issue and successfully start the multi-tenant Tracardi server API.
+
+---
+This document answers the following questions:
+- How to set-up multitenacy in Tracardi?
+- How to set-up GUI to be multi tenant installation?
+- How multi tenant setup works in Tracardi?
+- How tenants are differentiated in Tracardi?
+- How to enable tenant in Tracardi?
+- Is multi tenancy available in open-source version?
