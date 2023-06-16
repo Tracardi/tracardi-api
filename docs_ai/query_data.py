@@ -31,7 +31,7 @@ client = weaviate.Client(
 "how to purge event, session, profile?"
 
 question = """
-How does Tracardi bot work?
+How post event segmentation work
 """
 
 question = question.strip("?!.")
