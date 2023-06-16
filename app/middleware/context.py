@@ -30,8 +30,9 @@ def _get_context_object(scope) -> Context:
     tenant, hostname = get_tenant_name_from_scope(scope)
 
     if tenant is None:
-        raise OSError("Can not find tenant for this URL. Tenant name can not be shorted then 3 letters and must "
-                      f"not contain numbers. Scope: {scope}")
+        raise OSError(f"Can not find tenant for this URL. Reason: Tenant name can not be shorted then 3 letters "
+                      f"and must not contain numbers. Your system is set-up to support multi-tenancy "
+                      f"that means access only through domain name is available. Scope: {scope}")
 
     if not production:  # Staging as default
 

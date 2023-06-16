@@ -16,9 +16,9 @@ generate a random name for the tenant.
 
 ## Enable Multi-Tenancy
 
-To enable multi-tenancy in Tracardi, you need to set the environment variable MULTI_TENANT to "yes". This tells Tracardi container
-that it should serve multiple tenants. The tenant name will be defined based on your API domain. For example, if your
-API domain is company-x.tracardi.com, the tenant name will be set as "companyx" by removing all non-alphanumeric
+To enable multi-tenancy in Tracardi, you need to set the environment variable MULTI_TENANT to "yes". This tells Tracardi
+container that it should serve multiple tenants. The tenant name will be defined based on your API domain. For example,
+if your API domain is company-x.tracardi.com, the tenant name will be set as "companyx" by removing all non-alphanumeric
 characters. All the data indices for each tenant will be prefixed with the tenant name, creating a namespace in the
 storage.
 
@@ -45,6 +45,14 @@ tenant with the name "xxx". Similarly, in the case of "zzz.xxx.mydomain.com," th
 You can define the list of available tenants by setting the environment variable TENANT_API to the URL of the tenant
 manager microservice. This microservice will manage the list of tenants and provide the necessary functionality to
 create, update, and delete tenants.
+
+## Set Multi Tenant GUI
+
+Set the environment variable called MULTI_TENANT to "yes". This setting will disable index management on the graphical
+user interface (GUI).
+
+In a multi-tenant installation, managing indices is not available. Multi-tenant installations are designed to have
+access to the entire Elasticsearch cluster, rather than tenant index management.
 
 ## Errors
 
