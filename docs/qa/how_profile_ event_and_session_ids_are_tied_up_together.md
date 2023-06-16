@@ -1,6 +1,6 @@
 # How profile, event and session ids are tied up together?
 
-* Events have references to both the event ID and session ID.
+* Events have references to both the profile ID and session ID.
 * Sessions have references to the profile ID.
 * This means that a profile can be associated with multiple events and sessions (session is basically a visit).
 

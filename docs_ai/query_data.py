@@ -31,7 +31,7 @@ client = weaviate.Client(
 "how to purge event, session, profile?"
 
 question = """
-How post event segmentation work
+How profile event an session are related
 """
 
 question = question.strip("?!.")
