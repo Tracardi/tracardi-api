@@ -31,6 +31,13 @@ system_settings = [
     ),
     SystemSettings(
         **{
+            "label": "MULTI_TENANT",
+            "value": tracardi.multi_tenant,
+            "desc": "Default: No. Turns on multi tenancy feature for commercial versions."
+        }
+    ),
+    SystemSettings(
+        **{
             "label": "RUN_HEARTBEAT_EVERY",
             "value": server.heartbeat_every,
             "desc": "Default: 300. The time each worker reports its health."
