@@ -1,9 +1,1 @@
-{
-  "file_name": "docs/qa/bulk/plugins_questions.md",
-  "questions": [
-    "What is the \"Whois\" plugin?",
-    "How to check a domain in the WHOIS service with Tracardi?"
-  ],
-  "answer": "# Can Tracardi check a domain in the WHOIS service?\nYes, it can with the \"Whois\" plugin.",
-  "hash": "09644142889871f9de8cd931c1d3c6875c0a0596"
-}
+{"file_name": "docs/qa/bulk/plugins_questions.md", "questions": ["What is the \"Whois\" plugin?", "How to check a domain in the WHOIS service with Tracardi?"], "answer": "# Can Tracardi check a domain in the WHOIS service?\nYes, it can with the \"Whois\" plugin.", "hash": "09644142889871f9de8cd931c1d3c6875c0a0596"}

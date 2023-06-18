@@ -1,10 +1,1 @@
-{
-  "file_name": "docs/qa/bulk/plugins_questions.md",
-  "questions": [
-    "What is the \"Enrich profile\" plugin?",
-    "How to retrieve data about a provided email from the FullContact service?",
-    "What is FullContact?"
-  ],
-  "answer": "# Can Tracardi retrieve data about a provided email from the FullContact service?\nYes, it can with the \"Enrich profile\" plugin.",
-  "hash": "16fd23d67a9218b1417cf4b0aea78ff33b4f4353"
-}
+{"file_name": "docs/qa/bulk/plugins_questions.md", "questions": ["What is the \"Enrich profile\" plugin?", "How to retrieve data about a provided email from the FullContact service?", "Optional:", "What is Tracardi?", "What is FullContact?"], "answer": "# Can Tracardi retrieve data about a provided email from the FullContact service?\nYes, it can with the \"Enrich profile\" plugin.", "hash": "16fd23d67a9218b1417cf4b0aea78ff33b4f4353"}

@@ -14,9 +14,10 @@ aggregating events. If the data is inconsistent or has an incorrect data type, s
 receiving it as a string ("24 yeas old"), Tracardi will throw an error and not index it. Data in traits have structure and
 types, allowing for aggregation, such as calculating the average age based on the "age" trait.
 
-To summarize, if an event includes a property, that property could be converted to a trait so that all events involving
-the property could be identified and aggregated. Properties allow for recording and searching, while traits enable
-analysis and aggregation with structured indexing.
+To summarize, if an event includes a property, that property could be copied to a trait so that all events involving
+this attribute could be identified and aggregated. Copied property gets removed from properties, and it is moved to traits. 
+Properties allow for recording and searching, while traits enable analysis and aggregation with structured indexing.
+Not all data must be moved from properties to traits only the one you think you will need to aggregate the events.
 
 ---
 This document answers the following questions:
