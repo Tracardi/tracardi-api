@@ -187,9 +187,9 @@ async def install(credentials: Optional[Credentials]):
         for i in range(0, 150):
             payload = generate_payload(source=open_rest_source_bridge.id)
 
-            print(await track_event(
+            await track_event(
                 TrackerPayload(**payload),
                 "0.0.0.0",
-                allowed_bridges=['internal']))
+                allowed_bridges=['internal'])
 
     return staging_install_result, production_install_result
