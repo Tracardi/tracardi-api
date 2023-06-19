@@ -4,7 +4,7 @@ from typing import Optional
 from fastapi import APIRouter
 from fastapi import HTTPException, Depends
 
-from tracardi.service.storage.driver import storage
+from tracardi.service.storage.driver.storage.driver import action as action_db
 from app.service.grouper import search
 from tracardi.domain.enum.yes_no import YesNo
 from tracardi.domain.entity import Entity
@@ -21,11 +21,11 @@ router = APIRouter(
 
 
 async def _load_record(id: str) -> Optional[FlowActionPluginRecord]:
-    return FlowActionPluginRecord.create(await storage.driver.action.load_by_id(id))
+    return FlowActionPluginRecord.create(await action_db.load_by_id(id))
 
 
 async def _store_record(data: Entity):
-    return await storage.driver.action.save(data)
+    return await action_db.save(data)
 
 
 @router.get("/flow/action/plugin/{id}", tags=["flow", "action"],
@@ -103,10 +103,10 @@ async def delete_plugin(id: str):
     """
     Deletes FlowActionPlugin object.
     """
-    result = await storage.driver.action.delete_by_id(id)
+    result = await action_db.delete_by_id(id)
     if result is None:
         raise HTTPException(status_code=404, detail=f"Can not delete missing plugin '{id}'")
-    await storage.driver.action.refresh()
+    await action_db.refresh()
 
     return result
 
@@ -124,7 +124,7 @@ async def upsert_plugin(action: FlowActionPlugin):
     action.id = hashlib.md5(action_id.encode()).hexdigest()
 
     result = await _store_record(FlowActionPluginRecord.encode(action))
-    await storage.driver.action.refresh()
+    await action_db.refresh()
     return result
 
 
@@ -136,9 +136,9 @@ async def get_plugins_list(flow_type: Optional[str] = None, query: Optional[str]
     """
     _current_plugin = None
     if flow_type is None:
-        result = await storage.driver.action.load_all(limit=500)
+        result = await action_db.load_all(limit=500)
     else:
-        result = await storage.driver.action.filter(purpose=flow_type, limit=500)
+        result = await action_db.filter(purpose=flow_type, limit=500)
 
     _result = []
     for r in result:

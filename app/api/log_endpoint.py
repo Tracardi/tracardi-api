@@ -3,7 +3,7 @@ from typing import Optional
 from fastapi import APIRouter, Depends
 from app.api.auth.permissions import Permissions
 from app.config import server
-from tracardi.service.storage.driver import storage
+from tracardi.service.storage.driver.storage.driver import log as log_db
 
 router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin", "maintainer"]))]
@@ -24,7 +24,7 @@ async def get_logs(page: Optional[int] = None, query: Optional[str] = None):
     start = page * page_size
     limit = page_size
 
-    result = await storage.driver.log.load_all(start, limit) if query is None else \
-        await storage.driver.log.load_by_query_string(query, start, limit)
+    result = await log_db.load_all(start, limit) if query is None else \
+        await log_db.load_by_query_string(query, start, limit)
 
     return result.dict()

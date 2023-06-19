@@ -7,12 +7,13 @@ from uuid import uuid4
 from fastapi import APIRouter, HTTPException
 
 from tracardi.domain.payload.tracker_payload import TrackerPayload
+from tracardi.service.storage.driver.storage.driver import system as system_db
 from tracardi.service.tracker import track_event
 
 from app.config import server
 
 from tracardi.config import tracardi, elastic
-from tracardi.context import ServerContext, Context, get_context
+from tracardi.context import ServerContext, get_context
 from tracardi.domain.credentials import Credentials
 from tracardi.domain.event_source import EventSource
 from tracardi.domain.named_entity import NamedEntity
@@ -23,7 +24,9 @@ from tracardi.service.plugin.plugin_install import install_default_plugins
 from tracardi.service.setup.data.defaults import open_rest_source_bridge
 from tracardi.service.setup.setup_indices import create_schema, install_default_data, \
     run_on_start, add_ids
-from tracardi.service.storage.driver import storage
+from tracardi.service.storage.driver.storage.driver import raw as raw_db
+from tracardi.service.storage.driver.storage.driver import event_source as event_source_db
+from tracardi.service.storage.driver.storage.driver import user as user_db
 from tracardi.service.storage.index import Resource
 
 router = APIRouter()
@@ -38,20 +41,20 @@ async def check_if_installation_complete():
     Returns list of missing and updated indices
     """
 
-    is_schema_ok, indices = await storage.driver.system.is_schema_ok()
+    _is_schema_ok, indices = await system_db.is_schema_ok()
 
     # Missing admin
     existing_aliases = [idx[1] for idx in indices if idx[0] == 'existing_alias']
     index = Resource().get_index_constant('user')
     if index.get_index_alias() in existing_aliases:
-        admins = await storage.driver.user.search_by_role('admin')
+        admins = await user_db.search_by_role('admin')
     else:
         admins = None
 
     has_admin_account = admins is not None and admins.total > 0
 
     return {
-        "schema_ok": is_schema_ok,
+        "schema_ok": _is_schema_ok,
         "admin_ok": has_admin_account
     }
 
@@ -78,11 +81,11 @@ async def install_demo_data():
             groups=["Internal"]
         )
 
-        await storage.driver.raw.bulk_upsert(
+        await raw_db.bulk_upsert(
             Resource().get_index_constant('event-source').get_write_index(),
             list(add_ids([event_source.dict()])))
 
-        await storage.driver.event_source.refresh()
+        await event_source_db.refresh()
 
         for i in range(0, 10):
             payload = generate_payload(source=open_rest_source_bridge.id)
@@ -98,7 +101,7 @@ async def install(credentials: Optional[Credentials]):
     if tracardi.installation_token and tracardi.installation_token != credentials.token:
         raise HTTPException(status_code=403, detail="Installation forbidden. Invalid installation token.")
 
-    info = await storage.driver.raw.health()
+    info = await raw_db.health()
 
     if 'number_of_data_nodes' in info and int(info['number_of_data_nodes']) == 1:
         os.environ['ELASTIC_INDEX_REPLICAS'] = "0"
@@ -131,7 +134,7 @@ async def install(credentials: Optional[Credentials]):
         staging_install_result = await _install()
 
         # Add admin
-        admins = await storage.driver.user.search_by_role('admin')
+        admins = await user_db.search_by_role('admin')
 
         if credentials.needs_admin and admins.total == 0:
             user = User(
@@ -142,8 +145,8 @@ async def install(credentials: Optional[Credentials]):
                 full_name="Default Admin"
             )
 
-            if not await storage.driver.user.check_if_exists(credentials.username):
-                await storage.driver.user.add_user(user)
+            if not await user_db.check_if_exists(credentials.username):
+                await user_db.add_user(user)
                 logger.info("Default admin account created.")
 
             staging_install_result['admin'] = True
@@ -178,11 +181,11 @@ async def install(credentials: Optional[Credentials]):
             groups=["Internal"]
         )
 
-        await storage.driver.raw.bulk_upsert(
+        await raw_db.bulk_upsert(
             Resource().get_index_constant('event-source').get_write_index(),
             list(add_ids([event_source.dict()])))
 
-        await storage.driver.event_source.refresh()
+        await event_source_db.refresh()
 
         for i in range(0, 150):
             payload = generate_payload(source=open_rest_source_bridge.id)

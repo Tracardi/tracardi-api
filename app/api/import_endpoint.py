@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException, Depends
-from tracardi.service.storage.driver import storage
+from tracardi.service.storage.driver.storage.driver import import_config as import_config_db
 from tracardi.worker.celery_worker import celery
 from .auth.permissions import Permissions
 from ..config import server
@@ -28,7 +28,7 @@ async def run_import(import_id: str, name: str = None, debug: bool = True):
 
     try:
 
-        import_configuration = await storage.driver.import_config.load(import_id)
+        import_configuration = await import_config_db.load(import_id)
         if import_configuration is None:
             raise HTTPException(status_code=404, detail=f"No import source configuration found for id {import_id}")
 
@@ -94,7 +94,7 @@ async def get_import_by_id(import_id: str):
     Returns import configuration.
     """
 
-    result = await storage.driver.import_config.load(import_id)
+    result = await import_config_db.load(import_id)
     if result is not None:
         return result
     else:
@@ -118,8 +118,8 @@ async def save_import_config(import_configuration: dict):
         import_processor.config_model(**import_configuration.config)
 
         # Safe configuration
-        result = await storage.driver.import_config.save(import_configuration)
-        await storage.driver.import_config.refresh()
+        result = await import_config_db.save(import_configuration)
+        await import_config_db.refresh()
         return result
 
     except ValidationError as e:
@@ -136,8 +136,8 @@ async def delete_import_configuration(import_id: str):
     Deletes import configuration
     """
 
-    result = await storage.driver.import_config.delete(import_id)
-    await storage.driver.import_config.refresh()
+    result = await import_config_db.delete(import_id)
+    await import_config_db.refresh()
     return result
 
 
@@ -148,7 +148,7 @@ async def get_all_imports(limit: int = 50, query: str = None):
     Returns all imports.
     """
 
-    result = await storage.driver.import_config.load_all(limit, query)
+    result = await import_config_db.load_all(limit, query)
     return {"grouped": {"General": result}} if result else {}
 
 

@@ -7,7 +7,10 @@ from pytimeparse.timeparse import timeparse
 from tracardi.domain.consent_type import ConsentType
 from tracardi.domain.payload.customer_consent import CustomerConsent
 from tracardi.domain.profile import Profile, ConsentRevoke
-from tracardi.service.storage.driver import storage
+from tracardi.service.storage.driver.storage.driver import session as session_db
+from tracardi.service.storage.driver.storage.driver import event_source as event_source_db
+from tracardi.service.storage.driver.storage.driver import profile as profile_db
+from tracardi.service.storage.driver.storage.driver import consent_type as consent_type_db
 
 router = APIRouter()
 
@@ -17,16 +20,16 @@ async def add_consent_type(data: CustomerConsent, all: Optional[bool] = False):
     """
     Adds customer consent
     """
-    session = await storage.driver.session.load_by_id(data.session.id)
-    profile = await storage.driver.profile.load_by_id(data.profile.id)
-    source = await storage.driver.event_source.load(data.source.id)
+    session = await session_db.load_by_id(data.session.id)
+    profile = await profile_db.load_by_id(data.profile.id)
+    source = await event_source_db.load(data.source.id)
 
     if not source or not profile or not session:
         raise HTTPException(status_code=403, detail="Access denied")
 
     profile = profile.to_entity(Profile)
     if all:
-        for consent in await storage.driver.consent_type.load_all():
+        for consent in await consent_type_db.load_all():
             consent_type = ConsentType(**consent)
 
             if consent_type.auto_revoke:
@@ -50,4 +53,4 @@ async def add_consent_type(data: CustomerConsent, all: Optional[bool] = False):
                 if consent in profile.consents:
                     del profile.consents[consent]
     profile.aux['consents'] = {"displayed": True}
-    return await storage.driver.profile.save(profile)
+    return await profile_db.save(profile)

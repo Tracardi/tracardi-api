@@ -2,7 +2,7 @@ from datetime import datetime
 
 from fastapi import APIRouter, Depends
 from app.config import server
-from tracardi.service.storage.driver import storage
+from tracardi.service.storage.driver.storage.driver import raw as raw_db
 from .auth.permissions import Permissions
 
 router = APIRouter(
@@ -15,7 +15,7 @@ async def get_elastic_indices():
     """
     Returns list of Elasticsearch indices
     """
-    return await storage.driver.raw.indices()
+    return await raw_db.indices()
 
 
 @router.get("/debug/server/time", tags=["debug"], include_in_schema=server.expose_gui_api)

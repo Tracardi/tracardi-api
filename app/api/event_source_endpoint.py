@@ -9,7 +9,7 @@ from tracardi.domain.enum.type_enum import TypeEnum
 from tracardi.domain.event_source import EventSource
 from tracardi.exceptions.log_handler import log_handler
 from tracardi.service.event_source_manager import event_source_types, save_source
-from tracardi.service.storage.driver import storage
+from tracardi.service.storage.driver.storage.driver import event_source as event_source_db
 from app.service.grouper import search
 from .auth.permissions import Permissions
 from ..config import server
@@ -30,7 +30,7 @@ async def list_event_sources(query: str = None):
     """
     Lists all event sources that match given query (str) parameter
     """
-    result = await storage.driver.event_source.load_all(limit=1000)
+    result = await event_source_db.load_all(limit=1000)
 
     total = result.total
     result = [EventSource(**r) for r in result]
@@ -93,7 +93,7 @@ async def load_event_source(id: str, response: Response):
     """
     Returns event source with given ID (str)
     """
-    result = await storage.driver.event_source.load(id)
+    result = await event_source_db.load(id)
 
     if result is None:
         response.status_code = 404
@@ -120,13 +120,13 @@ async def delete_event_source(id: str, response: Response):
     """
     Deletes event source with given ID (str)
     """
-    result = await storage.driver.event_source.delete_by_id(id)
+    result = await event_source_db.delete_by_id(id)
 
     if result is None:
         response.status_code = 404
         return None
 
-    await storage.driver.event_source.refresh()
+    await event_source_db.refresh()
     return True
 
 
@@ -137,7 +137,7 @@ async def refresh_event_sources():
     """
     Refreshes event source index in database
     """
-    return await storage.driver.event_source.refresh()
+    return await event_source_db.refresh()
 
 
 @router.get("/event-sources/entity",
@@ -149,9 +149,9 @@ async def list_event_sources_names_and_ids(add_current: bool = False, type: Opti
     """
 
     if type:
-        result = await storage.driver.event_source.load_by(field="type", value=type)
+        result = await event_source_db.load_by(field="type", value=type)
     else:
-        result = await storage.driver.event_source.load_all(limit=limit)
+        result = await event_source_db.load_all(limit=limit)
 
     if result is None:
         return {

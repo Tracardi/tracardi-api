@@ -11,7 +11,9 @@ with ServerContext(Context(production=False, tenant=get_test_tenant())):
     from test.api.endpoints.test_event_source_endpoint import _create_event_source
     from tracardi.domain.profile import Profile
     from tracardi.exceptions.exception import DuplicatedRecordException
-    from tracardi.service.storage.driver import storage
+    from tracardi.service.storage.driver.storage.driver import event as event_db
+    from tracardi.service.storage.driver.storage.driver import session as session_db
+    from tracardi.service.storage.driver.storage.driver import profile as profile_db
     from tracardi.service.storage.drivers.elastic.profile import deduplicate_profile
     from tracardi.service.storage.elastic_client import ElasticClient
     from tracardi.service.storage.factory import storage_manager
@@ -107,9 +109,9 @@ with ServerContext(Context(production=False, tenant=get_test_tenant())):
             assert event.saved == 1
             events.append(event.ids[0])
 
-        await storage.driver.session.refresh()
-        await storage.driver.profile.refresh()
-        await storage.driver.event.refresh()
+        await session_db.refresh()
+        await profile_db.refresh()
+        await event_db.refresh()
 
         return profile, session, events
 
@@ -153,23 +155,23 @@ with ServerContext(Context(production=False, tenant=get_test_tenant())):
                 response = endpoint.post("/track", data=payload)
                 assert response.status_code == 200
 
-                await storage.driver.profile.refresh()
-                await storage.driver.session.refresh()
-                await storage.driver.event.refresh()
+                await profile_db.refresh()
+                await session_db.refresh()
+                await event_db.refresh()
 
-                await storage.driver.session.load_by_id(session_id)
-                await storage.driver.profile.load_by_id(profile_id)
+                await session_db.load_by_id(session_id)
+                await profile_db.load_by_id(profile_id)
 
             finally:
                 assert endpoint.delete(f'/event-source/{source_id}').status_code in [200, 404]
                 assert endpoint.delete(f'/session/{session_id}').status_code in [200, 404]
                 assert endpoint.delete(f'/profile/{profile_id}').status_code in [200, 404]
                 for event_id in events:
-                    await storage.driver.event.delete_by_id(event_id)
+                    await event_db.delete_by_id(event_id)
 
-                await storage.driver.profile.refresh()
-                await storage.driver.session.refresh()
-                await storage.driver.event.refresh()
+                await profile_db.refresh()
+                await session_db.refresh()
+                await event_db.refresh()
 
 
     async def test_should_deduplicate_profile():
@@ -205,11 +207,11 @@ with ServerContext(Context(production=False, tenant=get_test_tenant())):
 
             with pytest.raises(DuplicatedRecordException):
                 # Trows error duplicate record
-                await storage.driver.profile.load_by_id(profile_id)
+                await profile_db.load_by_id(profile_id)
 
             # When record is duplicated also session gets duplicated
             with pytest.raises(DuplicatedRecordException):
-                await storage.driver.session.load_by_id(session_id)
+                await session_db.load_by_id(session_id)
 
             profile_records = await storage_manager('profile').load_by("ids", profile_id, limit=10)
 
@@ -224,9 +226,9 @@ with ServerContext(Context(production=False, tenant=get_test_tenant())):
             profile = await deduplicate_profile(profile1)
             assert profile.id == profile1 == profile_id
 
-            await storage.driver.profile.refresh()
+            await profile_db.refresh()
 
-            record = await storage.driver.profile.load_by_id(profile_id)
+            record = await profile_db.load_by_id(profile_id)
             assert record is not None
             assert record.get_meta_data() is not None
 
@@ -263,11 +265,11 @@ with ServerContext(Context(production=False, tenant=get_test_tenant())):
             assert session1 == session2
 
             with pytest.raises(DuplicatedRecordException):
-                await storage.driver.profile.load_by_id(profile_id)
+                await profile_db.load_by_id(profile_id)
 
             # When record is duplicated also session gets duplicated
             with pytest.raises(DuplicatedRecordException):
-                await storage.driver.session.load_by_id(session_id)
+                await session_db.load_by_id(session_id)
 
             # Now track the duplicated profile. It should de duplicate the session and profile
 
@@ -297,16 +299,16 @@ with ServerContext(Context(production=False, tenant=get_test_tenant())):
 
                 assert response.status_code == 200
 
-                await storage.driver.profile.refresh()
-                await storage.driver.session.refresh()
-                await storage.driver.event.refresh()
+                await profile_db.refresh()
+                await session_db.refresh()
+                await event_db.refresh()
 
                 # Should be no errors
-                await storage.driver.profile.load_by_id(profile_id)
-                await storage.driver.session.load_by_id(session_id)
+                await profile_db.load_by_id(profile_id)
+                await session_db.load_by_id(session_id)
 
                 for event_id in events1 + events2:
-                    event = await storage.driver.event.load(event_id)
+                    event = await event_db.load(event_id)
                     assert event['id'] == event_id
 
             finally:
@@ -314,8 +316,8 @@ with ServerContext(Context(production=False, tenant=get_test_tenant())):
                 assert endpoint.delete(f'/session/{session_id}').status_code in [200, 404]
                 assert endpoint.delete(f'/profile/{profile_id}').status_code in [200, 404]
                 for event_id in events1 + events2:
-                    await storage.driver.event.delete_by_id(event_id)
+                    await event_db.delete_by_id(event_id)
 
-                await storage.driver.profile.refresh()
-                await storage.driver.session.refresh()
-                await storage.driver.event.refresh()
+                await profile_db.refresh()
+                await session_db.refresh()
+                await event_db.refresh()

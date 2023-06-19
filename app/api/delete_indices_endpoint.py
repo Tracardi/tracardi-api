@@ -2,7 +2,6 @@ from fastapi import APIRouter, Depends, HTTPException
 from app.config import server
 from tracardi.config import tracardi
 from tracardi.service.storage.elastic_client import ElasticClient
-from elasticsearch import ElasticsearchException
 from .auth.permissions import Permissions
 from typing import Optional
 from tracardi.domain.version import Version

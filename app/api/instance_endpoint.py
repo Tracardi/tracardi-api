@@ -1,10 +1,9 @@
 from typing import Optional
 
 from fastapi import APIRouter, Depends
-from fastapi import HTTPException
 from app.api.auth.permissions import Permissions
 from app.config import server
-from tracardi.service.storage.driver import storage
+from tracardi.service.storage.driver.storage.driver import api_instance as instance_api_db
 
 router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer", "maintainer"]))]
@@ -28,7 +27,7 @@ async def all_api_instances(page: Optional[int] = None):
         page_size = server.page_size
     start = page * page_size
     limit = page_size
-    result = await storage.driver.api_instance.load_all(start, limit)
+    result = await instance_api_db.load_all(start, limit)
 
     return {
         "total": result.total,
@@ -49,4 +48,4 @@ async def remove_stale_api_instances():
             dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer", "maintainer"]))],
             include_in_schema=server.expose_gui_api)
 async def count_api_instances():
-    return await storage.driver.api_instance.count()
+    return await instance_api_db.count()

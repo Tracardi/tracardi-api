@@ -9,7 +9,8 @@ from app.api.auth.permissions import Permissions
 from app.config import server
 from app.service.data_generator import generate_fake_data, generate_random_date
 from tracardi.domain.event_source import EventSource
-from tracardi.service.storage.driver import storage
+from tracardi.service.storage.driver.storage.driver import event_source as event_source_db
+from tracardi.service.storage.driver.storage.driver import raw as raw_db
 from datetime import datetime
 
 router = APIRouter(
@@ -30,7 +31,7 @@ async def create_test_data():
         description="This resource is created for test purposes.",
         tags=['test']
     )
-    return await storage.driver.event_source.save(resource)
+    return await event_source_db.save(resource)
 
 
 # not in test
@@ -44,7 +45,7 @@ async def make_fake_data():
             record = record.dict()
             if index in ['event', 'session']:
                 record['metadata']['time']['insert'] = generate_random_date()
-            await storage.driver.raw.index(index).upsert(record)
+            await raw_db.index(index).upsert(record)
 
 
 @router.get("/test/redis", tags=["test"], include_in_schema=server.expose_gui_api)
@@ -63,7 +64,7 @@ async def get_es_cluster_health():
     """
     Tests connection between Elasticsearch and Tracardi by returning cluster info. Accessible for roles: "admin"
     """
-    health = await storage.driver.raw.health()
+    health = await raw_db.health()
     if not isinstance(health, dict):
         raise ConnectionError("Elasticsearch did not pass health check.")
     return health

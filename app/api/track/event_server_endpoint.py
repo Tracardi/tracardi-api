@@ -14,7 +14,8 @@ from tracardi.domain.entity import Entity
 from tracardi.domain.event_metadata import EventPayloadMetadata
 from tracardi.domain.payload.event_payload import EventPayload
 from tracardi.domain.time import Time
-from tracardi.service.storage.driver import storage
+from tracardi.service.storage.driver.storage.driver import event_redirect as event_redirect_db
+from tracardi.service.storage.driver.storage.driver import session as session_db
 from tracardi.service.tracker import track_event
 from tracardi.config import tracardi
 from tracardi.domain.payload.tracker_payload import TrackerPayload
@@ -222,7 +223,7 @@ async def request_redirect(request: Request, redirect_id: str, session_id: Optio
     if session_id:
         session_id = session_id.strip()
     redirect_id = redirect_id.strip()
-    redirect_config = await storage.driver.event_redirect.load_by_id(redirect_id)
+    redirect_config = await event_redirect_db.load_by_id(redirect_id)
 
     if not redirect_config:
         raise HTTPException(status_code=404)
@@ -245,7 +246,7 @@ async def request_redirect(request: Request, redirect_id: str, session_id: Optio
 
     session = None
     if session_id:
-        session = await storage.driver.session.load_by_id(session_id)
+        session = await session_db.load_by_id(session_id)
 
     dot = DotAccessor(
         payload={

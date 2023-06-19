@@ -5,10 +5,7 @@ from app.config import server
 from pydantic import ValidationError
 from app.api.user_endpoint import UserPayload, UserSoftEditPayload
 
-from elasticsearch import ElasticsearchException
-
 from app.service.user_manager import update_user
-from tracardi.config import tracardi
 from app.api.auth.permissions import Permissions
 
 router = APIRouter(

@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
 
-from tracardi.service.storage.driver import storage
+from tracardi.service.storage.driver.storage.driver import task as task_db
 from .auth.permissions import Permissions
 from ..config import server
 from tracardi.domain.task import Task
@@ -23,7 +23,7 @@ async def load_tasks(query: str = None, limit: int = 50):
             }
         }
 
-    result = await storage.driver.task.load_tasks(query, limit=limit)
+    result = await task_db.load_tasks(query, limit=limit)
     return {
         "grouped": {
             "Tasks": list(result)
@@ -55,7 +55,7 @@ async def load_tasks_by_type(type: str, query: str = None, limit: int = 50):
             }
         })
 
-    result = await storage.driver.task.load_tasks(body, limit=limit)
+    result = await task_db.load_tasks(body, limit=limit)
 
     return {
         "grouped": {
@@ -66,11 +66,11 @@ async def load_tasks_by_type(type: str, query: str = None, limit: int = 50):
 
 @router.delete("/task/{id}", tags=["task"], include_in_schema=server.expose_gui_api)
 async def delete_task(id: str):
-    return await storage.driver.task.delete_task(id)
+    return await task_db.delete_task(id)
 
 
 @router.post("/task", tags=["task"], include_in_schema=server.expose_gui_api)
 async def upsert_task(task: Task):
-    result = await storage.driver.task.upsert_task(task)
-    await storage.driver.task.refresh()
+    result = await task_db.upsert_task(task)
+    await task_db.refresh()
     return result

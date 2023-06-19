@@ -4,7 +4,7 @@ from typing import Optional
 from fastapi import APIRouter
 from fastapi import Depends
 
-from tracardi.service.storage.driver import storage
+from tracardi.service.storage.driver.storage.driver import segment as segment_db
 from app.service.grouper import search
 from tracardi.domain.segment import Segment
 from tracardi.domain.value_object.bulk_insert_result import BulkInsertResult
@@ -17,7 +17,7 @@ router = APIRouter(
 
 
 async def _load_record(id: str) -> Optional[Segment]:
-    return Segment.create(await storage.driver.segment.load_by_id(id))
+    return Segment.create(await segment_db.load_by_id(id))
 
 
 @router.get("/segment/{id}",
@@ -38,9 +38,9 @@ async def delete_segment(id: str):
     Deletes segment with given ID (str)
     """
 
-    result = await storage.driver.segment.delete_by_id(id)
+    result = await segment_db.delete_by_id(id)
 
-    await storage.driver.segment.refresh()
+    await segment_db.refresh()
     return result
 
 
@@ -51,7 +51,7 @@ async def refresh_segments():
     """
     Refreshes segments index
     """
-    return await storage.driver.segment.refresh()
+    return await segment_db.refresh()
 
 
 @router.get("/segments",
@@ -61,7 +61,7 @@ async def get_segments(query: str = None):
     """
     Returns segments with match of given query (str) on name of event type
     """
-    result = await storage.driver.segment.load_all()
+    result = await segment_db.load_all()
     total = result.total
     result = [Segment.construct(Segment.__fields_set__, **r) for r in result]
 
@@ -103,6 +103,6 @@ async def upsert_segment(segment: Segment):
     """
     Adds new segment to database
     """
-    result = await storage.driver.segment.save(segment.dict())
-    await storage.driver.segment.refresh()
+    result = await segment_db.save(segment.dict())
+    await segment_db.refresh()
     return result

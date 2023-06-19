@@ -6,7 +6,7 @@ from app.api.auth.permissions import Permissions
 from app.config import server
 from tracardi.domain.console import Console
 
-from tracardi.service.storage.driver import storage
+from tracardi.service.storage.driver.storage.driver import console_log as console_log_db
 
 router = APIRouter()
 
@@ -22,7 +22,7 @@ async def get_event_logs(event_id: str, sort: str = None):
             "metadata.timestamp": sort
         }]
 
-    storage_records = await storage.driver.console_log.load_by_event(event_id, sort=sort)
+    storage_records = await console_log_db.load_by_event(event_id, sort=sort)
     return {
         "result": [Console.decode_record(log) for log in storage_records],
         "total": storage_records.total
@@ -41,7 +41,7 @@ async def get_node_logs(node_id: str, sort: str = None):
             "metadata.timestamp": sort
         }]
 
-    storage_records = await storage.driver.console_log.load_by_node(node_id, sort=sort)
+    storage_records = await console_log_db.load_by_node(node_id, sort=sort)
 
     return {
         "result": [Console.decode_record(log) for log in storage_records],
@@ -60,7 +60,7 @@ async def get_flow_logs(flow_id: str, sort: str = None):
             "metadata.timestamp": sort
         }]
 
-    storage_records = await storage.driver.console_log.load_by_flow(flow_id, sort=sort)
+    storage_records = await console_log_db.load_by_flow(flow_id, sort=sort)
 
     return {
         "result": [Console.decode_record(log) for log in storage_records],
@@ -81,7 +81,7 @@ async def get_profile_logs(id: str, sort: str = None):
             "metadata.timestamp": sort
         }]
 
-    storage_records = await storage.driver.console_log.load_by_profile(id, sort=sort)
+    storage_records = await console_log_db.load_by_profile(id, sort=sort)
 
     return {
         "result": [Console.decode_record(log) for log in storage_records],

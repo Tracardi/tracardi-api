@@ -3,7 +3,8 @@ from typing import Optional
 from fastapi import APIRouter, Response, Depends
 
 from tracardi.service.setup.setup_resources import get_destinations
-from tracardi.service.storage.driver import storage
+from tracardi.service.storage.driver.storage.driver import destination as destination_db
+from tracardi.service.storage.driver.storage.driver import resource as resource_db
 from tracardi.domain.destination import Destination, DestinationRecord
 from .auth.permissions import Permissions
 from ..config import server
@@ -22,8 +23,8 @@ async def save_destination(destination: Destination):
     """
 
     record = DestinationRecord.encode(destination)
-    result = await storage.driver.destination.save(record)
-    await storage.driver.destination.refresh()
+    result = await destination_db.save(record)
+    await destination_db.refresh()
     return result
 
 
@@ -33,7 +34,7 @@ async def get_destination(id: str, response: Response):
     """
     Returns destination or None if destination does not exist.
     """
-    destination_record = await storage.driver.destination.load(id)
+    destination_record = await destination_db.load(id)
 
     if destination_record is None:
         response.status_code = 404
@@ -49,7 +50,7 @@ async def get_destinations_list():
     Returns destinations.
     """
 
-    storage_result = await storage.driver.destination.load_all()
+    storage_result = await destination_db.load_all()
     return storage_result.dict()
 
 
@@ -63,7 +64,7 @@ async def get_destinations_type_list():
 
 @router.get("/destinations/by_tag", tags=["destination"], response_model=dict, include_in_schema=server.expose_gui_api)
 async def get_destinations_by_tag(query: str = None, start: int = 0, limit: int = 100) -> dict:
-    result = await storage.driver.destination.load_all(start, limit=limit)
+    result = await destination_db.load_all(start, limit=limit)
     return group_records(result, query, group_by='tags', search_by='name', sort_by='name')
 
 
@@ -72,13 +73,13 @@ async def delete_destination(id: str, response: Response):
     """
     Deletes destination with given id
     """
-    result = await storage.driver.destination.delete(id)
+    result = await destination_db.delete(id)
 
     if result is None:
         response.status_code = 404
         return None
 
-    await storage.driver.destination.refresh()
+    await destination_db.refresh()
     return True
 
 
@@ -86,6 +87,6 @@ async def delete_destination(id: str, response: Response):
             tags=["resource"],
             include_in_schema=server.expose_gui_api)
 async def list_destination_resources():
-    data, total = await storage.driver.resource.load_destinations()
+    data, total = await resource_db.load_destinations()
     result = {r.id: r for r in data if r.is_destination()}
     return result
