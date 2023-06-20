@@ -3,7 +3,7 @@ from fastapi import APIRouter
 from fastapi import Depends
 from fastapi.responses import Response
 from tracardi.domain.session import Session
-from tracardi.service.storage.driver.storage.driver import session as session_db
+from tracardi.service.storage.driver.elastic import session as session_db
 from tracardi.service.storage.index import Resource
 from .auth.permissions import Permissions
 from ..config import server

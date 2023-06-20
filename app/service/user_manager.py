@@ -2,7 +2,7 @@ from typing import Tuple
 
 from app.api.domain.user_payload import UserPayload
 from tracardi.domain.user import User
-from tracardi.service.storage.driver.storage.driver import user as user_db
+from tracardi.service.storage.driver.elastic import user as user_db
 
 
 async def update_user(id, user_payload: UserPayload) -> Tuple[int, User]:

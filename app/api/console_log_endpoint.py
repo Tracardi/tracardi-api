@@ -6,7 +6,7 @@ from app.api.auth.permissions import Permissions
 from app.config import server
 from tracardi.domain.console import Console
 
-from tracardi.service.storage.driver.storage.driver import console_log as console_log_db
+from tracardi.service.storage.driver.elastic import console_log as console_log_db
 
 router = APIRouter()
 

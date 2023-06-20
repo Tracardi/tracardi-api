@@ -4,8 +4,8 @@ from strawberry.types import Info
 
 from app.api.graphql.utils.casters import cast
 from tracardi import domain
-from tracardi.service.storage.driver.storage.driver import event as event_db
-from tracardi.service.storage.driver.storage.driver import profile as profile_db
+from tracardi.service.storage.driver.elastic import event as event_db
+from tracardi.service.storage.driver.elastic import profile as profile_db
 from app.api.graphql.interfaces import Entity
 from app.api.graphql.scalars.json_scalar import JSONScalar
 from tracardi.service.storage.elastic_storage import ElasticFiledSort

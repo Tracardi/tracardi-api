@@ -12,7 +12,7 @@ from app.service.error_converter import convert_errors
 from tracardi.domain.config_validation_payload import ConfigValidationPayload
 from tracardi.domain.record.flow_action_plugin_record import FlowActionPluginRecord
 from tracardi.service.module_loader import is_coroutine
-from tracardi.service.storage.driver.storage.driver import action as action_db
+from tracardi.service.storage.driver.elastic import action as action_db
 from fastapi.encoders import jsonable_encoder
 from tracardi.service.module_loader import import_package, load_callable
 

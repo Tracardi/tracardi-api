@@ -4,7 +4,7 @@ from app.config import server
 from app.service.grouping import group_records
 
 from tracardi.domain.consent_type import ConsentType
-from tracardi.service.storage.driver.storage.driver import consent_type as consent_type_db
+from tracardi.service.storage.driver.elastic import consent_type as consent_type_db
 
 router = APIRouter()
 

@@ -7,10 +7,10 @@ from pytimeparse.timeparse import timeparse
 from tracardi.domain.consent_type import ConsentType
 from tracardi.domain.payload.customer_consent import CustomerConsent
 from tracardi.domain.profile import Profile, ConsentRevoke
-from tracardi.service.storage.driver.storage.driver import session as session_db
-from tracardi.service.storage.driver.storage.driver import event_source as event_source_db
-from tracardi.service.storage.driver.storage.driver import profile as profile_db
-from tracardi.service.storage.driver.storage.driver import consent_type as consent_type_db
+from tracardi.service.storage.driver.elastic import session as session_db
+from tracardi.service.storage.driver.elastic import event_source as event_source_db
+from tracardi.service.storage.driver.elastic import profile as profile_db
+from tracardi.service.storage.driver.elastic import consent_type as consent_type_db
 
 router = APIRouter()
 

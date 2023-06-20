@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from app.config import server
 from tracardi.config import tracardi
-from tracardi.service.storage.elastic_client import ElasticClient
+from tracardi.service.storage.driver.elastic import raw as raw_db
 from .auth.permissions import Permissions
 from typing import Optional
 from tracardi.domain.version import Version
@@ -19,15 +19,13 @@ async def delete_old_indices(version: str, codename: Optional[str] = None):
     if version == tracardi.version:
         raise HTTPException(status_code=409, detail="You cannot delete indices that are currently used.")
 
-    # todo use storage driver this is forbidden
-    es = ElasticClient.instance()
-    indices = await es.list_indices()
+    indices = await raw_db.indices()
     to_delete = [index for index in indices if index.startswith(
         f"{version.get_version_prefix()}.{version.name}.tracardi-"
     )]
 
     result = {}
     for alias in to_delete:
-        result[alias] = await es.remove_index(alias)
+        result[alias] = await raw_db.remove_index(alias)
 
     return result

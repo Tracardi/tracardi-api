@@ -6,8 +6,8 @@ from fastapi.responses import Response
 
 from tracardi.exceptions.exception import DuplicatedRecordException
 from tracardi.domain.profile import Profile
-from tracardi.service.storage.driver.storage.driver import profile as profile_db
-from tracardi.service.storage.driver.storage.driver import event as event_db
+from tracardi.service.storage.driver.elastic import profile as profile_db
+from tracardi.service.storage.driver.elastic import event as event_db
 from tracardi.service.storage.index import Resource
 from .auth.permissions import Permissions
 from ..config import server

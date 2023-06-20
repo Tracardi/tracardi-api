@@ -5,7 +5,7 @@ from fastapi import Depends
 
 from tracardi.config import tracardi
 from tracardi.service.kql.autocomplete import KQLAutocomplete
-from tracardi.service.storage.driver.storage.driver import raw as raw_db
+from tracardi.service.storage.driver.elastic import raw as raw_db
 from tracardi.domain.enum.indexes_histogram import IndexesHistogram
 from tracardi.domain.enum.indexes_search import IndexesSearch
 from tracardi.domain.sql_query import SqlQuery

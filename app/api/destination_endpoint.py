@@ -3,8 +3,8 @@ from typing import Optional
 from fastapi import APIRouter, Response, Depends
 
 from tracardi.service.setup.setup_resources import get_destinations
-from tracardi.service.storage.driver.storage.driver import destination as destination_db
-from tracardi.service.storage.driver.storage.driver import resource as resource_db
+from tracardi.service.storage.driver.elastic import destination as destination_db
+from tracardi.service.storage.driver.elastic import resource as resource_db
 from tracardi.domain.destination import Destination, DestinationRecord
 from .auth.permissions import Permissions
 from ..config import server

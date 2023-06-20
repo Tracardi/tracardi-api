@@ -11,9 +11,9 @@ with ServerContext(Context(production=False, tenant=get_test_tenant())):
     from test.api.endpoints.test_event_source_endpoint import _create_event_source
     from tracardi.domain.profile import Profile
     from tracardi.exceptions.exception import DuplicatedRecordException
-    from tracardi.service.storage.driver.storage.driver import event as event_db
-    from tracardi.service.storage.driver.storage.driver import session as session_db
-    from tracardi.service.storage.driver.storage.driver import profile as profile_db
+    from tracardi.service.storage.driver.elastic import event as event_db
+    from tracardi.service.storage.driver.elastic import session as session_db
+    from tracardi.service.storage.driver.elastic import profile as profile_db
     from tracardi.service.storage.elastic_client import ElasticClient
     from tracardi.service.storage.factory import storage_manager
     from tracardi.service.storage.index import Resource

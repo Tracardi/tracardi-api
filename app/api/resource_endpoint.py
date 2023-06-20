@@ -7,7 +7,7 @@ from tracardi.config import tracardi
 from tracardi.domain.enum.type_enum import TypeEnum
 from tracardi.exceptions.log_handler import log_handler
 from tracardi.service.setup.setup_resources import get_type_of_resources
-from tracardi.service.storage.driver.storage.driver import resource as resource_db
+from tracardi.service.storage.driver.elastic import resource as resource_db
 from tracardi.service.wf.domain.named_entity import NamedEntity
 from app.service.grouper import search
 from tracardi.domain.resource import Resource, ResourceRecord

@@ -4,7 +4,7 @@ from app.api.auth.permissions import Permissions
 from app.config import server
 from app.service.grouping import group_records
 from tracardi.domain.event_to_profile import EventToProfile
-from tracardi.service.storage.driver.storage.driver import event_to_profile as event_to_profile_db
+from tracardi.service.storage.driver.elastic import event_to_profile as event_to_profile_db
 from typing import Optional
 
 router = APIRouter(

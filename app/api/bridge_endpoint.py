@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends
 from app.api.auth.permissions import Permissions
 from app.config import server
 
-from tracardi.service.storage.driver.storage.driver import bridge as bridge_db
+from tracardi.service.storage.driver.elastic import bridge as bridge_db
 
 router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin", "developer"]))]

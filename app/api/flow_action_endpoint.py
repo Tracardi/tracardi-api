@@ -4,7 +4,7 @@ from typing import Optional
 from fastapi import APIRouter
 from fastapi import HTTPException, Depends
 
-from tracardi.service.storage.driver.storage.driver import action as action_db
+from tracardi.service.storage.driver.elastic import action as action_db
 from app.service.grouper import search
 from tracardi.domain.enum.yes_no import YesNo
 from tracardi.domain.entity import Entity

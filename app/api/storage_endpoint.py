@@ -5,8 +5,8 @@ from fastapi import APIRouter, Depends, HTTPException
 from app.api.auth.permissions import Permissions
 from app.config import server
 from tracardi.config import tracardi
-from tracardi.service.storage.driver.storage.driver import raw as raw_db
-from tracardi.service.storage.driver.storage.driver import snapshot as snapshot_db
+from tracardi.service.storage.driver.elastic import raw as raw_db
+from tracardi.service.storage.driver.elastic import snapshot as snapshot_db
 from tracardi.service.storage.elastic_client import ElasticClient
 from tracardi.service.storage.indices_manager import check_indices_mappings_consistency
 

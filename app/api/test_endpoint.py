@@ -9,8 +9,8 @@ from app.api.auth.permissions import Permissions
 from app.config import server
 from app.service.data_generator import generate_fake_data, generate_random_date
 from tracardi.domain.event_source import EventSource
-from tracardi.service.storage.driver.storage.driver import event_source as event_source_db
-from tracardi.service.storage.driver.storage.driver import raw as raw_db
+from tracardi.service.storage.driver.elastic import event_source as event_source_db
+from tracardi.service.storage.driver.elastic import raw as raw_db
 from datetime import datetime
 
 router = APIRouter(

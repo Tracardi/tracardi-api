@@ -5,7 +5,7 @@ from tracardi.config import tracardi
 from tracardi.exceptions.exception import StorageException
 from tracardi.domain.api_instance import ApiInstance
 from tracardi.exceptions.log_handler import log_handler
-from tracardi.service.storage.driver.storage.driver import api_instance as api_instance_db
+from tracardi.service.storage.driver.elastic import api_instance as api_instance_db
 
 __local_dir = os.path.dirname(__file__)
 logger = logging.getLogger(__name__)

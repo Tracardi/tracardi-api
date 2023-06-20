@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from tracardi.context import get_context
 
 from tracardi.domain.version import Version
-from tracardi.service.storage.driver.storage.driver import raw as raw_db
+from tracardi.service.storage.driver.elastic import raw as raw_db
 from tracardi.service.storage.indices_manager import check_indices_mappings_consistency
 from app.api.auth.permissions import Permissions
 from app.config import server

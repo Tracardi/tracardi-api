@@ -14,11 +14,11 @@ from tracardi.exceptions.exception import StorageException
 from tracardi.domain.console import Console
 from tracardi.service.console_log import ConsoleLog
 from tracardi.service.secrets import encrypt
-from tracardi.service.storage.driver.storage.driver import flow as flow_db
-from tracardi.service.storage.driver.storage.driver import rule as rule_db
-from tracardi.service.storage.driver.storage.driver import event as event_db
-from tracardi.service.storage.driver.storage.driver import profile as profile_db
-from tracardi.service.storage.driver.storage.driver import session as session_db
+from tracardi.service.storage.driver.elastic import flow as flow_db
+from tracardi.service.storage.driver.elastic import rule as rule_db
+from tracardi.service.storage.driver.elastic import event as event_db
+from tracardi.service.storage.driver.elastic import profile as profile_db
+from tracardi.service.storage.driver.elastic import session as session_db
 from tracardi.service.utils.getters import get_entity_id
 from tracardi.service.wf.domain.flow_history import FlowHistory
 from tracardi.service.wf.domain.work_flow import WorkFlow

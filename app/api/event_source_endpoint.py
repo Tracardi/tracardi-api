@@ -9,7 +9,7 @@ from tracardi.domain.enum.type_enum import TypeEnum
 from tracardi.domain.event_source import EventSource
 from tracardi.exceptions.log_handler import log_handler
 from tracardi.service.event_source_manager import event_source_types, save_source
-from tracardi.service.storage.driver.storage.driver import event_source as event_source_db
+from tracardi.service.storage.driver.elastic import event_source as event_source_db
 from app.service.grouper import search
 from .auth.permissions import Permissions
 from ..config import server

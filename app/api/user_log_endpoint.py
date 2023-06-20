@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
 from app.config import server
-from tracardi.service.storage.driver.storage.driver import user_log as user_log_db
+from tracardi.service.storage.driver.elastic import user_log as user_log_db
 from pydantic import BaseModel
 from typing import Optional
 from .auth.permissions import Permissions

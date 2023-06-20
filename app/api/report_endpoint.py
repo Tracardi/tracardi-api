@@ -3,7 +3,7 @@ from fastapi import HTTPException, Depends
 from .auth.permissions import Permissions
 from ..config import server
 from ..service.grouping import group_records
-from tracardi.service.storage.driver.storage.driver import report as report_db
+from tracardi.service.storage.driver.elastic import report as report_db
 from typing import Optional
 from tracardi.domain.report import Report
 from app.api.domain.report_test_payload import ReportTestPayload

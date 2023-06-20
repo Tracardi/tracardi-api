@@ -7,7 +7,7 @@ from uuid import uuid4
 from fastapi import APIRouter, HTTPException
 
 from tracardi.domain.payload.tracker_payload import TrackerPayload
-from tracardi.service.storage.driver.storage.driver import system as system_db
+from tracardi.service.storage.driver.elastic import system as system_db
 from tracardi.service.tracker import track_event
 
 from app.config import server
@@ -24,9 +24,9 @@ from tracardi.service.plugin.plugin_install import install_default_plugins
 from tracardi.service.setup.data.defaults import open_rest_source_bridge
 from tracardi.service.setup.setup_indices import create_schema, install_default_data, \
     run_on_start, add_ids
-from tracardi.service.storage.driver.storage.driver import raw as raw_db
-from tracardi.service.storage.driver.storage.driver import event_source as event_source_db
-from tracardi.service.storage.driver.storage.driver import user as user_db
+from tracardi.service.storage.driver.elastic import raw as raw_db
+from tracardi.service.storage.driver.elastic import event_source as event_source_db
+from tracardi.service.storage.driver.elastic import user as user_db
 from tracardi.service.storage.index import Resource
 
 router = APIRouter()

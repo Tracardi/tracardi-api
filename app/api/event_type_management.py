@@ -6,8 +6,8 @@ from app.api.auth.permissions import Permissions
 from app.config import server
 from app.service.grouping import group_records
 from tracardi.domain.event_type_metadata import EventTypeMetadata
-from tracardi.service.storage.driver.storage.driver import event_management as event_management_db
-from tracardi.service.storage.driver.storage.driver import event as event_db
+from tracardi.service.storage.driver.elastic import event_management as event_management_db
+from tracardi.service.storage.driver.elastic import event as event_db
 from typing import Optional
 
 

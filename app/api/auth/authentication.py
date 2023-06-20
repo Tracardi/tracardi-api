@@ -1,8 +1,8 @@
 import logging
 from tracardi.config import tracardi
 from tracardi.exceptions.log_handler import log_handler
-from tracardi.service.storage.driver.storage.driver import user_log as user_log_db
-from tracardi.service.storage.driver.storage.driver import user as user_db
+from tracardi.service.storage.driver.elastic import user_log as user_log_db
+from tracardi.service.storage.driver.elastic import user as user_db
 from ..auth.user_db import token2user
 from fastapi.security import OAuth2PasswordBearer
 from tracardi.domain.user import User
