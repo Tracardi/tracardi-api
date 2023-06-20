@@ -1,12 +1,12 @@
 # Staging server
 
-A staging server is a type of server environment that is used to test and debug new code changes before they are
-deployed to a production server. Tracardi has a clear separation of a test and production data. This allows developers
-to test and refine new features or bug fixes in a safe and controlled environment, without impacting the performance or
-functionality of the live production website or application. It also allows QA Team to test the application before it
-goes to the production. This helps ensure that the code is stable and functioning properly before it is made available
-to end users. Overall, using a staging server helps to minimize the risk of errors or disruptions in a live production
-environment, and helps to ensure the quality and stability of the final product.
+A staging server is a type of server environment that is used to test and debug new settings/configuration changes
+before they are deployed to a production server. Tracardi has a clear separation of a test and production data. This
+allows developers to test and refine new settings in a safe and controlled environment, without impacting
+the performance or functionality of the live production website or application. It also allows QA Team to test the
+application before it goes to the production. This helps ensure that the configuration is stable and functioning
+properly before it is made available to end users. Overall, using a staging server helps to minimize the risk of errors
+or disruptions in a live production environment, and helps to ensure the quality and stability of the final product.
 
 ## Tracardi staging server deployment
 
@@ -45,6 +45,10 @@ No need to worry about separate licenses for staging and production servers, all
     Once changes have been tested on the staging server, they can then be deployed to the production system. This is done by
     copying the data from the staging server to the production server. However, certain data such as events, profiles, or
     error logs will not be copied over during this process to ensure that the production server data remains intact.
+
+## More information
+
+More information can be found at https://youtu.be/10W7OzezF_k
 
 ---
 This documentation answers the following questions:

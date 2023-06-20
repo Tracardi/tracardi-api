@@ -31,7 +31,7 @@ client = weaviate.Client(
 "how to purge event, session, profile?"
 
 question = """
-How profile event an session are related
+What does staging mean in tracardi version?
 """
 
 question = question.strip("?!.")
