@@ -5,7 +5,7 @@ from fastapi import APIRouter
 from fastapi import Depends
 
 from tracardi.domain.live_segment import LiveSegment
-from tracardi.service.storage.driver import storage
+from tracardi.service.storage.driver.elastic import live_segment as live_segment_db
 from app.service.grouper import search
 from tracardi.domain.value_object.bulk_insert_result import BulkInsertResult
 from .auth.permissions import Permissions
@@ -23,7 +23,7 @@ async def get_live_segment(id: str) -> Optional[LiveSegment]:
     """
     Returns live segment with given ID (str)
     """
-    return await storage.driver.live_segment.load_by_id(id)
+    return await live_segment_db.load_by_id(id)
 
 
 @router.delete("/segment/live/{id}",
@@ -33,8 +33,8 @@ async def delete_live_segment(id: str):
     """
     Deletes live segment with given ID (str)
     """
-    result = await storage.driver.live_segment.delete_by_id(id)
-    await storage.driver.live_segment.refresh()
+    result = await live_segment_db.delete_by_id(id)
+    await live_segment_db.refresh()
     return result
 
 
@@ -45,7 +45,7 @@ async def refresh_live_segments():
     """
     Refreshes live segments index
     """
-    return await storage.driver.live_segment.refresh()
+    return await live_segment_db.refresh()
 
 
 @router.get("/segments/live",
@@ -55,7 +55,7 @@ async def get_live_segments(query: str = None):
     """
     Returns live segments with match of given query (str) on name of event type
     """
-    result = await storage.driver.live_segment.load_all()
+    result = await live_segment_db.load_all()
     total = result.total
     result = [LiveSegment(**r) for r in result]
 
@@ -89,6 +89,6 @@ async def upsert_live_segment(segment: LiveSegment):
     """
     Adds new live segment to database
     """
-    result = await storage.driver.live_segment.save(segment.dict())
-    await storage.driver.live_segment.refresh()
+    result = await live_segment_db.save(segment.dict())
+    await live_segment_db.refresh()
     return result

@@ -2,10 +2,10 @@ from uuid import uuid4
 
 from fastapi import APIRouter, Depends, HTTPException, Header, Response
 
-from tracardi.context import ServerContext, Context, get_context
+from tracardi.context import ServerContext, get_context
 from tracardi.domain.user import User
 from app.config import server
-from tracardi.service.storage.driver import storage
+from tracardi.service.storage.driver.elastic import user as user_db
 from pydantic import BaseModel
 from typing import Optional, Union
 
@@ -46,10 +46,10 @@ async def get_token(login_form_data: OAuth2PasswordRequestForm = Depends(),
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="Access forbidden")
 
-        try:
-            token = await auth.login(login_form_data.username, login_form_data.password)
-        except Exception as e:
-            raise HTTPException(status_code=400, detail=str(e))
+        # try:
+        token = await auth.login(login_form_data.username, login_form_data.password)
+        # except Exception as e:
+        #     raise HTTPException(status_code=400, detail=str(e))
 
         return token
 
@@ -94,8 +94,8 @@ async def set_user_preference(key: str, preference: Union[dict, str, int, float]
     """
 
     user.set_preference(key, preference)
-    result = await storage.driver.user.update_user(user)
-    await storage.driver.user.refresh()
+    result = await user_db.update_user(user)
+    await user_db.refresh()
 
     token2user.set(user)
 
@@ -110,7 +110,7 @@ async def delete_user_preference(key: str, user=Depends(Permissions(["admin", "d
 
     if key in user.preference:
         user.delete_preference(key)
-        result = await storage.driver.user.update_user(user)
+        result = await user_db.update_user(user)
 
         token2user.set(user)
 
@@ -134,7 +134,7 @@ async def refresh_users():
     Refreshes users index
     """
 
-    return await storage.driver.user.refresh()
+    return await user_db.refresh()
 
 
 @router.get("/user/flush", tags=["user"], include_in_schema=server.expose_gui_api, response_model=dict)
@@ -143,7 +143,7 @@ async def flush_users():
     Flushes users index
     """
 
-    return await storage.driver.user.flush()
+    return await user_db.flush()
 
 
 @router.post("/user", tags=["user"], include_in_schema=server.expose_gui_api, response_model=dict)
@@ -153,17 +153,17 @@ async def add_user(user_payload: UserPayload):
     Creates new user in database
     """
 
-    user_exists = await storage.driver.user.check_if_exists(user_payload.email)
+    user_exists = await user_db.check_if_exists(user_payload.email)
     if not user_exists:
         expiration_timestamp = user_payload.get_expiration_date()
-        result = await storage.driver.user.add_user(
+        result = await user_db.add_user(
             User(
                 **user_payload.dict(),
                 id=str(uuid4()),
                 expiration_timestamp=expiration_timestamp
             )
         )
-        await storage.driver.user.refresh()
+        await user_db.refresh()
 
         return result
     else:
@@ -178,11 +178,11 @@ async def delete_user(id: str, user=Depends(Permissions(["admin"]))):
 
     if id == user.id:
         raise HTTPException(status_code=403, detail="You cannot delete your own account")
-    result = await storage.driver.user.delete_user(id)
+    result = await user_db.delete_user(id)
 
     if result is None:
         raise HTTPException(status_code=404, detail=f"User '{id}' not found")
-    await storage.driver.user.refresh()
+    await user_db.refresh()
 
     return {"deleted": 1 if result["result"] == "deleted" else 0}
 
@@ -193,7 +193,7 @@ async def get_user(id: str):
     Returns user with given ID
     """
 
-    record = await storage.driver.user.load_by_id(id)
+    record = await user_db.load_by_id(id)
     if record is None:
         raise HTTPException(status_code=404, detail=f"User {id} not found.")
 
@@ -209,7 +209,7 @@ async def get_users(start: int = 0, limit: int = 100, query: Optional[str] = "")
     Lists users according to given query (str), start (int) and limit (int) parameters
     """
 
-    return await storage.driver.user.search_by_name(start, limit, query)
+    return await user_db.search_by_name(start, limit, query)
 
 
 @router.post("/user/{id}", tags=["user"], include_in_schema=server.expose_gui_api, response_model=dict)

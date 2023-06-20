@@ -14,7 +14,11 @@ from tracardi.exceptions.exception import StorageException
 from tracardi.domain.console import Console
 from tracardi.service.console_log import ConsoleLog
 from tracardi.service.secrets import encrypt
-from tracardi.service.storage.driver import storage
+from tracardi.service.storage.driver.elastic import flow as flow_db
+from tracardi.service.storage.driver.elastic import rule as rule_db
+from tracardi.service.storage.driver.elastic import event as event_db
+from tracardi.service.storage.driver.elastic import profile as profile_db
+from tracardi.service.storage.driver.elastic import session as session_db
 from tracardi.service.utils.getters import get_entity_id
 from tracardi.service.wf.domain.flow_history import FlowHistory
 from tracardi.service.wf.domain.work_flow import WorkFlow
@@ -36,17 +40,17 @@ router = APIRouter(
 
 
 async def _load_record(id: str) -> Optional[FlowRecord]:
-    return FlowRecord.create(await storage.driver.flow.load_by_id(id))
+    return FlowRecord.create(await flow_db.load_by_id(id))
 
 
 async def _store_record(data: Entity):
-    return await storage.driver.flow.save(data)
+    return await flow_db.save(data)
 
 
 async def _deploy_production_flow(flow: Flow, flow_record: Optional[FlowRecord] = None):
 
     if flow_record is None:
-        old_flow_record = await storage.driver.flow.load_record(flow.id)
+        old_flow_record = await flow_db.load_record(flow.id)
     else:
         old_flow_record = flow_record
 
@@ -72,21 +76,21 @@ async def _upsert_flow_draft(draft: Flow, rearrange_nodes: Optional[bool] = Fals
 
         # Check if origin flow exists
 
-    flow_record = await storage.driver.flow.load_record(draft.id)  # type: FlowRecord
+    flow_record = await flow_db.load_record(draft.id)  # type: FlowRecord
 
     if flow_record is None:
         flow_record = draft.get_empty_workflow_record(draft.type)
 
     flow_record.draft = encrypt(draft.dict())
 
-    result = await storage.driver.flow.save_record(flow_record)
+    result = await flow_db.save_record(flow_record)
 
     return result, flow_record
 
 
 @router.get("/flows/refresh", tags=["flow"], include_in_schema=server.expose_gui_api)
 async def flow_refresh():
-    return await storage.driver.flow.refresh()
+    return await flow_db.refresh()
 
 
 @router.post("/flow/draft/nodes/rearrange", tags=["flow"], response_model=dict, include_in_schema=server.expose_gui_api)
@@ -121,7 +125,7 @@ async def load_flow_draft(id: str, response: Response):
     Loads draft version of flow with given ID (str)
     """
 
-    flow_record = await storage.driver.flow.load_record(id)  # type: FlowRecord
+    flow_record = await flow_db.load_record(id)  # type: FlowRecord
 
     if flow_record is None:
         response.status_code = 404
@@ -144,7 +148,7 @@ async def get_flow(id: str, response: Response):
     """
     Returns production version of flow with given ID (str)
     """
-    flow_record = await storage.driver.flow.load_record(id)  # type: FlowRecord
+    flow_record = await flow_db.load_record(id)  # type: FlowRecord
 
     if flow_record is None:
         response.status_code = 404
@@ -162,7 +166,7 @@ async def restore_production_flow_backup(id: str, production_draft: ProductionDr
     """
     Returns previous version of production flow with given ID (str)
     """
-    flow_record = await storage.driver.flow.load_record(id)  # type: FlowRecord
+    flow_record = await flow_db.load_record(id)  # type: FlowRecord
 
     if flow_record is None:
         raise HTTPException(status_code=404, detail="Flow id: `{}` does not exist.".format(id))
@@ -175,7 +179,7 @@ async def restore_production_flow_backup(id: str, production_draft: ProductionDr
     except ValueError as e:
         raise HTTPException(status_code=406, detail=str(e))
 
-    result = await storage.driver.flow.save_record(flow_record)
+    result = await flow_db.save_record(flow_record)
     if result.saved == 1:
         if production_draft.value == ProductionDraft.production:
             return flow_record.get_production_workflow()
@@ -273,7 +277,7 @@ async def upsert_flow_details(flow_metadata: FlowMetaData):
         flow_record.draft = encrypt(draft_workflow.dict())
 
     result = await _store_record(flow_record)
-    await storage.driver.flow.refresh()
+    await flow_db.refresh()
     return result
 
 
@@ -330,7 +334,7 @@ async def debug_flow(flow: GraphFlow, event_id: Optional[str] = None):
         )
 
     else:
-        event = await storage.driver.event.load(event_id)
+        event = await event_db.load(event_id)
 
         if event is None:
             raise ValueError(f"Could not find event id {event_id}.")
@@ -338,13 +342,13 @@ async def debug_flow(flow: GraphFlow, event_id: Optional[str] = None):
         source = event.source
 
         if event.has_profile():
-            profile = await storage.driver.profile.load_by_id(event.profile.id)
+            profile = await profile_db.load_by_id(event.profile.id)
             profile = profile.to_entity(Profile)
         else:
             profile = None
 
         if event.has_session():
-            session = await storage.driver.session.load_by_id(event.session.id)
+            session = await session_db.load_by_id(event.session.id)
             event_session = EventSession(
                 id=session.id,
                 start=session.metadata.time.insert,
@@ -423,14 +427,14 @@ async def delete_flow(id: str, response: Response):
     Deletes flow with given id (str)
     """
     # Delete rule before flow
-    rule_delete_result = await storage.driver.rule.delete_by_id(id)
-    flow_delete_result = await storage.driver.flow.delete_by_id(id)
+    rule_delete_result = await rule_db.delete_by_id(id)
+    flow_delete_result = await flow_db.delete_by_id(id)
 
     if flow_delete_result is None:
         response.status_code = 404
         return None
 
-    await storage.driver.flow.refresh()
+    await flow_db.refresh()
 
     return {
         "rule": rule_delete_result,

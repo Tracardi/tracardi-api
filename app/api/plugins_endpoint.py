@@ -12,7 +12,7 @@ from app.service.error_converter import convert_errors
 from tracardi.domain.config_validation_payload import ConfigValidationPayload
 from tracardi.domain.record.flow_action_plugin_record import FlowActionPluginRecord
 from tracardi.service.module_loader import is_coroutine
-from tracardi.service.storage.driver import storage
+from tracardi.service.storage.driver.elastic import action as action_db
 from fastapi.encoders import jsonable_encoder
 from tracardi.service.module_loader import import_package, load_callable
 
@@ -58,7 +58,7 @@ async def plugins():
     """
     Returns plugins from database
     """
-    return await storage.driver.action.load_all()
+    return await action_db.load_all()
 
 
 @router.post("/plugin/{plugin_id}/config/validate", tags=["action"], include_in_schema=server.expose_gui_api)
@@ -71,7 +71,7 @@ async def validate_plugin_configuration(plugin_id: str,
     """
 
     try:
-        record = await storage.driver.action.load_by_id(plugin_id)
+        record = await action_db.load_by_id(plugin_id)
 
         if record is None:
             raise HTTPException(status_code=404, detail=f"No action plugin for id `{plugin_id}`")

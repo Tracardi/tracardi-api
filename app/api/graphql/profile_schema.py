@@ -4,7 +4,8 @@ from strawberry.types import Info
 
 from app.api.graphql.utils.casters import cast
 from tracardi import domain
-from tracardi.service.storage.driver import storage
+from tracardi.service.storage.driver.elastic import event as event_db
+from tracardi.service.storage.driver.elastic import profile as profile_db
 from app.api.graphql.interfaces import Entity
 from app.api.graphql.scalars.json_scalar import JSONScalar
 from tracardi.service.storage.elastic_storage import ElasticFiledSort
@@ -75,14 +76,14 @@ class EventAggregationsBuckets:
     @strawberry.field
     async def by_time(self) -> 'JSONScalar':
         bucket_name = 'by_time'
-        aggregated_events = await storage.driver.event.heatmap_by_profile(self.id, bucket_name)
+        aggregated_events = await event_db.heatmap_by_profile(self.id, bucket_name)
         bucket, items = next(aggregated_events.iterate(bucket_name))  # There is only one key
         return items
 
     @strawberry.field
     async def by_type(self) -> 'JSONScalar':
         bucket_name = 'by_type'
-        aggregated_events = await storage.driver.event.aggregate_profile_events_by_type(self.id, bucket_name)
+        aggregated_events = await event_db.aggregate_profile_events_by_type(self.id, bucket_name)
         bucket, items = next(aggregated_events.iterate(bucket_name))  # There is only one key
         return items
 
@@ -121,7 +122,7 @@ class Profile(Entity):
             ElasticFiledSort("metadata.time.insert", "DESC", 'strict_date_optional_time_nanos')
         ]
 
-        events = await storage.driver.event.load_event_by_values(key_value_pais, sort_by, limit=limit)
+        events = await event_db.load_event_by_values(key_value_pais, sort_by, limit=limit)
         return [
             # todo add request data to event
             Event(
@@ -141,7 +142,7 @@ class Profile(Entity):
 class ProfileQuery:
     @strawberry.field
     async def profile(self, info: Info, id: strawberry.ID) -> Profile:
-        record = await storage.driver.profile.load_by_id(id)
+        record = await profile_db.load_by_id(id)
         if record is None:
             raise ValueError("There is no profile {}".format(id))
         profile = record.to_entity(domain.profile.Profile)

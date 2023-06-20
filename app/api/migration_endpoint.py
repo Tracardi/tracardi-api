@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from tracardi.context import get_context
 
 from tracardi.domain.version import Version
-from tracardi.service.storage.driver import storage
+from tracardi.service.storage.driver.elastic import raw as raw_db
 from tracardi.service.storage.indices_manager import check_indices_mappings_consistency
 from app.api.auth.permissions import Permissions
 from app.config import server
@@ -43,8 +43,8 @@ async def check_migration_consistency(version: str):
     }
 
     # Find differences in index counts between versions
-    current_version = {index: count async for index, count in storage.driver.raw.count_all_indices_by_alias()}
-    prev_version = {index: count async for index, count in storage.driver.raw.count_all_indices_by_alias()}
+    current_version = {index: count async for index, count in raw_db.count_all_indices_by_alias()}
+    prev_version = {index: count async for index, count in raw_db.count_all_indices_by_alias()}
 
     count_errors = defaultdict(list)
     for index, count in current_version.items():

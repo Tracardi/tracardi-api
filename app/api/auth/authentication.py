@@ -1,14 +1,13 @@
 import logging
-
-from elasticsearch.exceptions import NotFoundError
-
 from tracardi.config import tracardi
 from tracardi.exceptions.log_handler import log_handler
+from tracardi.service.storage.driver.elastic import user_log as user_log_db
+from tracardi.service.storage.driver.elastic import user as user_db
 from ..auth.user_db import token2user
 from fastapi.security import OAuth2PasswordBearer
 from tracardi.domain.user import User
 from tracardi.exceptions.exception import LoginException
-from tracardi.service.storage.driver import storage
+
 
 _singleton = None
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/user/token")
@@ -25,7 +24,7 @@ class Authentication:
         logger.info(f"Authorizing {username}...")
 
         try:
-            user = await storage.driver.user.get_by_credentials(
+            user = await user_db.get_by_credentials(
                 email=username,
                 password=password
             )  # type: User
@@ -33,18 +32,18 @@ class Authentication:
             raise LoginException(f"System not installed. Got error {str(e)}")
 
         if user is None:
-            await storage.driver.user_log.add_log(email=username, successful=False)
+            await user_log_db.add_log(email=username, successful=False)
             raise LoginException("Incorrect username or password.")
 
         if user.disabled:
-            await storage.driver.user_log.add_log(email=username, successful=False)
+            await user_log_db.add_log(email=username, successful=False)
             raise LoginException("This account was disabled")
 
         if user.is_expired():
-            await storage.driver.user_log.add_log(email=username, successful=False)
+            await user_log_db.add_log(email=username, successful=False)
             raise LoginException("This account has expired.")
 
-        await storage.driver.user_log.add_log(email=username, successful=True)
+        await user_log_db.add_log(email=username, successful=True)
 
         return user
 

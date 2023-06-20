@@ -6,7 +6,6 @@ from tracardi.service.license import License
 
 from app.config import server
 from tracardi.config import tracardi
-from tracardi.service.storage.driver import storage
 
 router = APIRouter()
 

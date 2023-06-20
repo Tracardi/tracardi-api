@@ -2,7 +2,7 @@ from typing import Optional
 
 from fastapi import APIRouter
 from fastapi import Depends
-from tracardi.service.storage.driver import storage
+from tracardi.service.storage.driver.elastic import flow as flow_db
 from tracardi.service.wf.domain.named_entity import NamedEntity
 from app.service.grouper import search
 from tracardi.domain.flow import FlowRecord
@@ -23,9 +23,9 @@ async def get_flows(type: Optional[str] = None, limit: int = 500):
     """
 
     if type is None:
-        result = await storage.driver.flow.load_all(limit=limit)
+        result = await flow_db.load_all(limit=limit)
     else:
-        result = await storage.driver.flow.filter(type=type, limit=limit)
+        result = await flow_db.filter(type=type, limit=limit)
 
     total = result.total
     result = [NamedEntity(**r) for r in result]
@@ -44,7 +44,7 @@ async def get_flows(query: str = None):
     """
     Gets flows that match given query (str) with their name
     """
-    result = await storage.driver.flow.load_all(limit=200)
+    result = await flow_db.load_all(limit=200)
     total = result.total
     result = [FlowRecord(**r) for r in result]
 
@@ -67,7 +67,7 @@ async def refresh_flows():
     """
     Refreshed flow index
     """
-    return await storage.driver.flow.refresh()
+    return await flow_db.refresh()
 
 
 @router.get("/flows/by_tag", tags=["flow"], include_in_schema=server.expose_gui_api,
@@ -78,7 +78,7 @@ async def get_grouped_flows(type: Optional[str] = None, query: str = None, limit
     Returns workflows grouped according to given query (str) and limit (int) parameters
     """
     if type is None:
-        result = await storage.driver.flow.load_all(limit=limit)
+        result = await flow_db.load_all(limit=limit)
     else:
-        result = await storage.driver.flow.filter(type=type, limit=limit)
+        result = await flow_db.filter(type=type, limit=limit)
     return group_records(result, query, group_by='projects', search_by='name', sort_by='name')

@@ -3,7 +3,6 @@ import traceback
 from datetime import datetime
 
 from app.middleware.context import ContextRequestMiddleware
-from tracardi.context import get_context
 from tracardi.service.license import License, SCHEDULER, IDENTIFICATION, COMPLIANCE, RESHAPING, REDIRECTS, VALIDATOR, \
     LICENSE
 

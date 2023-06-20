@@ -4,7 +4,8 @@ from fastapi import APIRouter, Depends, Response
 from tracardi.domain.enum.time_span import TimeSpan
 from tracardi.service import events
 from tracardi.service.events import get_default_event_type_schema
-from tracardi.service.storage.driver import storage
+from tracardi.service.storage.driver.elastic import event as event_db
+from tracardi.service.storage.driver.elastic import debug_info as debug_info_db
 from tracardi.domain.record.event_debug_record import EventDebugRecord
 from tracardi.service.wf.domain.debug_info import DebugInfo
 from .auth.permissions import Permissions
@@ -42,7 +43,7 @@ async def get_event_types():
                 })
             yield row
 
-    result = await storage.driver.event.aggregate_events_by_type_and_source()
+    result = await event_db.aggregate_events_by_type_and_source()
     return list(_get_data(result))
 
 
@@ -51,7 +52,7 @@ async def events_refresh_index():
     """
     Refreshes event index.
     """
-    return await storage.driver.event.refresh()
+    return await event_db.refresh()
 
 
 @router.get("/events/flush", tags=["event"], include_in_schema=server.expose_gui_api)
@@ -59,17 +60,17 @@ async def events_refresh_index():
     """
     Flushes event index.
     """
-    return await storage.driver.event.flush()
+    return await event_db.flush()
 
 
 @router.get("/event/count", tags=["event"], include_in_schema=server.expose_gui_api)
 async def count_events():
-    return await storage.driver.event.count()
+    return await event_db.count()
 
 
 @router.get("/event/avg/requests", tags=["event"], include_in_schema=server.expose_gui_api)
 async def count_events():
-    result = await storage.driver.event.count(query={
+    result = await event_db.count(query={
         "query": {
             "range": {
                 "metadata.time.insert": {
@@ -84,7 +85,7 @@ async def count_events():
 
 @router.get("/event/avg/process-time", tags=["event"], include_in_schema=server.expose_gui_api)
 async def count_avg_process_time() -> dict:
-    return await storage.driver.event.get_avg_process_time()
+    return await event_db.get_avg_process_time()
 
 
 # todo not used - not in tests
@@ -95,7 +96,7 @@ async def heatmap_by_profile(id: str):
     """
     bucket_name = "items_over_time"
 
-    result = await storage.driver.event.heatmap_by_profile(id, bucket_name)
+    result = await event_db.heatmap_by_profile(id, bucket_name)
     return {key: value for key, value in result.process(__format_time_buckets, bucket_name)}[bucket_name]
 
 
@@ -107,7 +108,7 @@ async def heatmap():
     """
     bucket_name = "items_over_time"
 
-    result = await storage.driver.event.heatmap_by_profile(None, bucket_name)
+    result = await event_db.heatmap_by_profile(None, bucket_name)
     return {key: value for key, value in result.process(__format_time_buckets, bucket_name)}[bucket_name]
 
 
@@ -124,7 +125,7 @@ async def aggregate_event_types(size: int = 100):
     """
     Returns number of events grouped by type
     """
-    return await storage.driver.event.aggregate_event_type(bucket_size=size)
+    return await event_db.aggregate_event_type(bucket_size=size)
 
 
 @router.get("/events/by_tag", tags=["event"], include_in_schema=server.expose_gui_api)
@@ -132,7 +133,7 @@ async def aggregate_event_tags():
     """
     Returns number of events grouped by tags
     """
-    return await storage.driver.event.aggregate_event_tag()
+    return await event_db.aggregate_event_tag()
 
 
 @router.get("/events/by_status", tags=["event"], include_in_schema=server.expose_gui_api)
@@ -140,7 +141,7 @@ async def aggregate_event_statuses():
     """
     Returns number of events grouped by tags
     """
-    return await storage.driver.event.aggregate_event_status()
+    return await event_db.aggregate_event_status()
 
 
 @router.get("/events/by_source", tags=["event"], include_in_schema=server.expose_gui_api)
@@ -148,7 +149,7 @@ async def aggregate_event_tags(buckets_size: int = 30):
     """
     Returns number of events grouped by event source
     """
-    return await storage.driver.event.aggregate_events_by_source(buckets_size=buckets_size)
+    return await event_db.aggregate_events_by_source(buckets_size=buckets_size)
 
 
 # todo not used -  not in tests
@@ -157,7 +158,7 @@ async def event_types(profile_id: str):
     """
     Returns events heatmap for profile with given ID
     """
-    return await storage.driver.event.load_events_heatmap(profile_id)
+    return await event_db.load_events_heatmap(profile_id)
 
 
 # todo not used -  not in tests
@@ -166,7 +167,7 @@ async def event_types():
     """
     Returns number of events grouped by event time
     """
-    return await storage.driver.event.load_events_heatmap()
+    return await event_db.load_events_heatmap()
 
 
 @router.get("/event/{id}",
@@ -176,7 +177,7 @@ async def get_event(id: str, response: Response):
     """
     Returns event with given ID
     """
-    record = await storage.driver.event.load(id)
+    record = await event_db.load(id)
 
     if record is None:
         response.status_code = 404
@@ -199,7 +200,7 @@ async def delete_event(id: str):
     """
     Deletes event with given ID
     """
-    return await storage.driver.event.delete_by_id(id)
+    return await event_db.delete_by_id(id)
 
 
 @router.get("/event/debug/{id}", tags=["event"], response_model=List[DebugInfo],
@@ -208,7 +209,7 @@ async def get_event_debug_info(id: str):
     """
     Returns debug info of event with given ID
     """
-    encoded_debug_records = await storage.driver.debug_info.load_by_event(id)
+    encoded_debug_records = await debug_info_db.load_by_event(id)
     if encoded_debug_records is not None:
         debug_info = [EventDebugRecord.decode(record, from_dict=True)
                       for record in encoded_debug_records]  # type: List[DebugInfo]
@@ -235,7 +236,7 @@ async def get_grouped_by_tags_profile(profile_id: str):
             }
         }
     }
-    result = await storage.driver.event.aggregate_profile_events(
+    result = await event_db.aggregate_profile_events(
         profile_id=profile_id,
         aggregate_query=aggregate_query
     )
@@ -266,7 +267,7 @@ async def get_grouped_by_tags_time(time_from: datetime, time_to: datetime):
             }
         }
     }
-    result = await storage.driver.event.aggregate_timespan_events(
+    result = await event_db.aggregate_timespan_events(
         time_from=time_from,
         time_to=time_to,
         aggregate_query=aggregate_query
@@ -284,7 +285,7 @@ async def get_for_source_grouped_by_type_time(source_id: str, time_span: TimeSpa
     """
     time_span: d - last day, w - last week, M - last month, y - last year
     """
-    return await storage.driver.event.aggregate_source_by_type(source_id, time_span)
+    return await event_db.aggregate_source_by_type(source_id, time_span)
 
 
 @router.get("/event/for-source/{source_id}/by-tag/{time_span}", tags=["event"], include_in_schema=server.expose_gui_api,
@@ -293,14 +294,14 @@ async def get_for_source_grouped_by_tags_time(source_id: str, time_span: TimeSpa
     """
     time_span: d - last day, w - last week, M - last month, y - last year
     """
-    return await storage.driver.event.aggregate_source_by_tags(source_id, time_span)
+    return await event_db.aggregate_source_by_tags(source_id, time_span)
 
 
 @router.get("/events/session/{session_id}/profile/{profile_id}", tags=["event"],
             include_in_schema=server.expose_gui_api,
             response_model=dict)
 async def get_events_for_session(session_id: str, profile_id: str, limit: int = 20):
-    result = await storage.driver.event.get_events_by_session_and_profile(
+    result = await event_db.get_events_by_session_and_profile(
         profile_id,
         session_id,
         limit)
@@ -322,7 +323,7 @@ async def get_events_for_session(session_id: str, profile_id: str, limit: int = 
 async def get_events_for_profile(profile_id: str, limit: int = 24):
     """ Load events for profile id """
 
-    result = await storage.driver.event.get_events_by_profile(
+    result = await event_db.get_events_by_profile(
         profile_id,
         limit)
     return result.dict()

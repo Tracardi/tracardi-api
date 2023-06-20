@@ -1,5 +1,5 @@
 from json import JSONDecodeError
-from fastapi import APIRouter, Request, HTTPException
+from fastapi import APIRouter, Request
 from app.config import server
 from app.setup.on_start import update_api_instance
 

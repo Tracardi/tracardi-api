@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends
 from app.api.auth.permissions import Permissions
 from app.config import server
 
-from tracardi.service.storage.driver import storage
+from tracardi.service.storage.driver.elastic import bridge as bridge_db
 
 router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin", "developer"]))]
@@ -15,7 +15,7 @@ async def get_data_bridges():
     """
     Returns list of available data bridges
     """
-    result = await storage.driver.bridge.load_all()
+    result = await bridge_db.load_all()
     return result.dict()
 
 
@@ -24,7 +24,7 @@ async def get_data_bridges():
     """
     Returns list of available data bridges
     """
-    result = await storage.driver.bridge.load_all()
+    result = await bridge_db.load_all()
 
     result = [
         {
@@ -45,4 +45,4 @@ async def get_data_bridges(bridge_id: str):
     """
     Returns data bridge
     """
-    return await storage.driver.bridge.load_by_id(bridge_id)
+    return await bridge_db.load_by_id(bridge_id)
