@@ -8,8 +8,6 @@ from tracardi.exceptions.exception import DuplicatedRecordException
 from tracardi.domain.profile import Profile
 from tracardi.service.storage.driver.storage.driver import profile as profile_db
 from tracardi.service.storage.driver.storage.driver import event as event_db
-
-from tracardi.service.storage.drivers.elastic.profile import deduplicate_profile
 from tracardi.service.storage.index import Resource
 from .auth.permissions import Permissions
 from ..config import server
@@ -68,7 +66,7 @@ async def get_profile_by_id(id: str, response: Response) -> Optional[dict]:
         result['_meta'] = record.get_meta_data()
         return result
     except DuplicatedRecordException as e:
-        await deduplicate_profile(id)
+        await profile_db.deduplicate_profile(id)
         raise e
 
 

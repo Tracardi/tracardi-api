@@ -14,7 +14,6 @@ with ServerContext(Context(production=False, tenant=get_test_tenant())):
     from tracardi.service.storage.driver.storage.driver import event as event_db
     from tracardi.service.storage.driver.storage.driver import session as session_db
     from tracardi.service.storage.driver.storage.driver import profile as profile_db
-    from tracardi.service.storage.drivers.elastic.profile import deduplicate_profile
     from tracardi.service.storage.elastic_client import ElasticClient
     from tracardi.service.storage.factory import storage_manager
     from tracardi.service.storage.index import Resource
@@ -223,7 +222,7 @@ with ServerContext(Context(production=False, tenant=get_test_tenant())):
             # Assert that profile is in 2 indices
             assert len(set(indices)) == 2
 
-            profile = await deduplicate_profile(profile1)
+            profile = await profile_db.deduplicate_profile(profile1)
             assert profile.id == profile1 == profile_id
 
             await profile_db.refresh()
