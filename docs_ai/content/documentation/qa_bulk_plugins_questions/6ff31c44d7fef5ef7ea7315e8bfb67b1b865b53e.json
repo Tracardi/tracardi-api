@@ -1,0 +1,1 @@
+{"file_name": "docs/qa/bulk/plugins_questions.md", "questions": ["What is the way to end the workflow using Tracardi?", "How to end the workflow using Tracardi?", "What plugin does Tracardi use to end the workflow?"], "answer": "# Can Tracardi end the workflow?\nYes, Tracardi can end the workflow using the \"End\" plugin", "hash": "6ff31c44d7fef5ef7ea7315e8bfb67b1b865b53e"}
