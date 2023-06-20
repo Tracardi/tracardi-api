@@ -1,6 +1,6 @@
 # Profile segmentation
 
-This action will add/remove segment to/from the profile.
+This action will add/remove segment to/from the profile. This action needs __profile update__ to save changes to the profile.
 
 ## Configuration
 
@@ -23,10 +23,12 @@ This action will add/remove segment to/from the profile.
 * *condition* - Condition for segmentation. If the condition is met then the profile will be added or removed to/from
   defined segment.
 
-# Input
+## Input
 
 This action does not process input.
 
-# Output
+## Output
 
 Input payload.
+
+
