@@ -187,7 +187,7 @@ async def install(credentials: Optional[Credentials]):
 
         await event_source_db.refresh()
 
-        for i in range(0, 150):
+        for i in range(0, 100):
             payload = generate_payload(source=open_rest_source_bridge.id)
 
             await track_event(
