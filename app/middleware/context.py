@@ -5,7 +5,12 @@ from tracardi.config import tracardi
 from tracardi.context import Context, ServerContext
 from starlette.types import ASGIApp, Receive, Scope, Send
 from app.api.auth.user_db import token2user
-from tracardi.service.tenant_manager import get_tenant_name_from_scope
+from tracardi.service.license import License
+
+if License.has_license():
+    from com_tracardi.service.tenant_manager import get_tenant_name_from_scope
+else:
+    from tracardi.service.tenant_manager import get_tenant_name_from_scope
 
 
 def _get_header_value(scope, key) -> Optional[str]:

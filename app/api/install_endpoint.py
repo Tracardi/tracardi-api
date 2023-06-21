@@ -5,13 +5,11 @@ from typing import Optional
 from uuid import uuid4
 
 from fastapi import APIRouter, HTTPException
-
 from tracardi.domain.payload.tracker_payload import TrackerPayload
+from tracardi.service.license import License
 from tracardi.service.storage.driver.elastic import system as system_db
 from tracardi.service.tracker import track_event
-
 from app.config import server
-
 from tracardi.config import tracardi, elastic
 from tracardi.context import ServerContext, get_context
 from tracardi.domain.credentials import Credentials
@@ -29,6 +27,10 @@ from tracardi.service.storage.driver.elastic import event_source as event_source
 from tracardi.service.storage.driver.elastic import user as user_db
 from tracardi.service.storage.index import Resource
 
+if License.has_license():
+    from com_tracardi.service.multi_tenant_manager import MultiTenantManager
+
+
 router = APIRouter()
 logger = logging.getLogger(__name__)
 logger.setLevel(tracardi.logging_level)
@@ -41,7 +43,7 @@ async def check_if_installation_complete():
     Returns list of missing and updated indices
     """
 
-    _is_schema_ok, indices = await system_db.is_schema_ok()
+    is_schema_ok, indices = await system_db.is_schema_ok()
 
     # Missing admin
     existing_aliases = [idx[1] for idx in indices if idx[0] == 'existing_alias']
@@ -53,9 +55,25 @@ async def check_if_installation_complete():
 
     has_admin_account = admins is not None and admins.total > 0
 
+    if tracardi.multi_tenant and (not is_schema_ok or not has_admin_account):
+        if License.has_license():
+            mtm = MultiTenantManager()
+            await mtm.authorize(tracardi.multi_tenant_manager_api_key)
+            context = get_context()
+            tenant = await mtm.is_tenant_allowed(context.tenant)
+            if not tenant:
+                return {
+                    "schema_ok": False,
+                    "admin_ok": False,
+                    "form_ok": False,
+                    "warning": f"Tenant [{context.tenant}] not allowed. Set MULTI_TENANT to \"no\"."
+                }
+
     return {
-        "schema_ok": _is_schema_ok,
-        "admin_ok": has_admin_account
+        "schema_ok": is_schema_ok,
+        "admin_ok": has_admin_account,
+        "form_ok": True,
+        "warning": None
     }
 
 
@@ -98,8 +116,25 @@ async def install_demo_data():
 
 @router.post("/install", tags=["installation"], include_in_schema=server.expose_gui_api)
 async def install(credentials: Optional[Credentials]):
-    if tracardi.installation_token and tracardi.installation_token != credentials.token:
-        raise HTTPException(status_code=403, detail="Installation forbidden. Invalid installation token.")
+
+    if tracardi.multi_tenant:
+        if not License.has_license():
+            raise HTTPException(status_code=403, detail="Installation forbidden. Multi-tenant installation not "
+                                                        "allowed in open-source version.")
+
+        mtm = MultiTenantManager()
+        await mtm.authorize(tracardi.multi_tenant_manager_api_key)
+        context = get_context()
+        tenant = await mtm.is_tenant_allowed(context.tenant)
+        if not tenant:
+            raise HTTPException(status_code=403, detail=f"Installation forbidden. Tenant [{context.tenant}] not allowed.")
+
+        if tenant.install_key and tenant.install_key != credentials.token:
+            raise HTTPException(status_code=403, detail="Installation forbidden. Invalid installation token.")
+
+    else:
+        if tracardi.installation_token and tracardi.installation_token != credentials.token:
+            raise HTTPException(status_code=403, detail="Installation forbidden. Invalid installation token.")
 
     info = await raw_db.health()
 
