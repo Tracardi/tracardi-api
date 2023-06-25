@@ -1,6 +1,6 @@
 pip>=21.2.4
 strawberry-graphql[fastapi]==0.189.0
-fastapi[all]>=0.85.0
+fastapi[all]==0.89.0
 uvicorn[standard]>=0.18.3
 pydantic==1.10.9
 aiofiles==22.1.0
