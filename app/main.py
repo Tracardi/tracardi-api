@@ -15,10 +15,9 @@ from random import randint
 from starlette.responses import JSONResponse
 from time import time
 from app.config import server
-from app.api.auth.permissions import Permissions
 from tracardi.service.elastic.connection import wait_for_connection
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi import FastAPI, Request, Depends
+from fastapi import FastAPI, Request
 from starlette.staticfiles import StaticFiles
 from app.api import rule_endpoint, resource_endpoint, event_endpoint, \
     profile_endpoint, flow_endpoint, generic_endpoint, \
@@ -28,7 +27,12 @@ from app.api import rule_endpoint, resource_endpoint, event_endpoint, \
     consent_type_endpoint, flow_action_endpoint, flows_endpoint, info_endpoint, \
     user_endpoint, debug_endpoint, log_endpoint, tracardi_pro_endpoint, \
     import_endpoint, \
-    task_endpoint, storage_endpoint, destination_endpoint, user_log_endpoint, user_account_endpoint, install_endpoint, \
+    task_endpoint, \
+    storage_endpoint, \
+    destination_endpoint, \
+    user_log_endpoint, \
+    user_account_endpoint, \
+    install_endpoint, \
     delete_indices_endpoint, migration_endpoint, report_endpoint, live_segments_endpoint, \
     console_log_endpoint, event_type_management, \
     bridge_endpoint, entity_endpoint, staging_endpoint, customer_endpoint, event_to_profile
@@ -83,15 +87,15 @@ logger.setLevel(tracardi.logging_level)
 logger.addHandler(log_handler)
 
 print(f"""
-88888888888 8888888b.         d8888  .d8888b.         d8888 8888888b.  8888888b. 8888888 
-    888     888   Y88b       d88888 d88P  Y88b       d88888 888   Y88b 888   Y88b  888   
-    888     888    888      d88P888 888    888      d88P888 888    888 888    888  888   
-    888     888   d88P     d88P 888 888            d88P 888 888   d88P 888    888  888   
-    888     8888888P"     d88P  888 888           d88P  888 8888888P"  888    888  888   
-    888     888 T88b     d88P   888 888    888   d88P   888 888 T88b   888    888  888   
-    888     888  T88b   d8888888888 Y88b  d88P  d8888888888 888  T88b  888   d88P  888   
+88888888888 8888888b.         d8888  .d8888b.         d8888 8888888b.  8888888b. 8888888
+    888     888   Y88b       d88888 d88P  Y88b       d88888 888   Y88b 888   Y88b  888
+    888     888    888      d88P888 888    888      d88P888 888    888 888    888  888
+    888     888   d88P     d88P 888 888            d88P 888 888   d88P 888    888  888
+    888     8888888P"     d88P  888 888           d88P  888 8888888P"  888    888  888
+    888     888 T88b     d88P   888 888    888   d88P   888 888 T88b   888    888  888
+    888     888  T88b   d8888888888 Y88b  d88P  d8888888888 888  T88b  888   d88P  888
     888     888   T88b d88P     888  "Y8888P"  d88P     888 888   T88b 8888888P" 8888888
-    
+
 {str(tracardi.version)}""", flush=True)
 if License.has_license():
     license = License.check()
