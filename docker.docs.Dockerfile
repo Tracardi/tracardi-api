@@ -1,4 +1,4 @@
-FROM python:3.9
+FROM python:3.10
 MAINTAINER office@tracardi.com
 
 RUN apt-get update

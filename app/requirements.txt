@@ -1,17 +1,15 @@
 pip>=21.2.4
-strawberry-graphql[fastapi]==0.189.0
 fastapi[all]==0.89.0
 uvicorn[standard]>=0.22.0
 pydantic==1.10.9
 aiofiles==22.1.0
 aioredis==2.0.1
-hiredis==2.0.0
+hiredis==2.2.3
 redis==4.3.4
 elasticsearch[async]==7.10.1
 prodict==0.8.18
 lark==1.1.2
 cron-validator==1.0.6
 python-multipart
-
 
 git+https://github.com/Tracardi/tracardi.git@performance-tweaks  # Change to 0.8.2-dev

@@ -32,7 +32,6 @@ from app.api import rule_endpoint, resource_endpoint, event_endpoint, \
     delete_indices_endpoint, migration_endpoint, report_endpoint, live_segments_endpoint, \
     console_log_endpoint, event_type_management, \
     bridge_endpoint, entity_endpoint, staging_endpoint, customer_endpoint, event_to_profile
-from app.api.graphql.profile import graphql_profiles
 from app.api.track import event_server_endpoint
 from app.setup.on_start import update_api_instance, clear_dead_api_instances
 from tracardi.config import tracardi
@@ -267,14 +266,6 @@ application.include_router(customer_endpoint.router)
 application.include_router(event_to_profile.router)
 application.include_router(event_to_profile_copy.router)
 application.include_router(event_props_to_event_traits_copy.router)
-
-# GraphQL
-
-application.include_router(graphql_profiles,
-                           prefix="/graphql",
-                           include_in_schema=server.expose_gui_api,
-                           dependencies=[Depends(Permissions(roles=["admin"]))],
-                           tags=["graphql"])
 
 
 @application.on_event("startup")
