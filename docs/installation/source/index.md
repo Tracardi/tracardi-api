@@ -3,7 +3,7 @@
 ## Software prerequisites
 
 * Docker
-* Python version 3.9
+* Python version 3.9 or 3.10 (for version 0.8.1+)
 * Pip
 * Python Virtual Environment
 * PyCharm
@@ -191,7 +191,7 @@ cd tracardi
 python3.9 -m venv venv
 ```
 
-1. Installs virtual environment with python 3.9
+1. Installs virtual environment with python 3.9 or 3.10 (for version 0.8.1+)
 
 !!! Tip
 

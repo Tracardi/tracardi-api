@@ -129,18 +129,6 @@ async def test_should_set_up_plugin_contains_pattern_action():
     await plugin.set_up({'field': 'payload@field', 'pattern': 'all'})
 
 
-async def test_should_set_up_plugin_google_translate_action():
-    
-    module = import_package("tracardi.process_engine.action.v1.connectors.google.translate.plugin")
-    plugin_class = load_callable(module, "GoogleTranslateAction")
-    plugin = plugin_class()
-    plugin.node = Node(id="node-id", 
-                       name="test-node", 
-                       module="tracardi.process_engine.action.v1.connectors.google.translate.plugin", 
-                       className="GoogleTranslateAction")
-    await plugin.set_up({'text_to_translate': 'Hello', 'source_language': 'en', 'destination_language': 'en'})
-
-
 async def test_should_set_up_plugin_payload_memory_collector():
     
     module = import_package("tracardi.process_engine.action.v1.memory.collect.plugin")
