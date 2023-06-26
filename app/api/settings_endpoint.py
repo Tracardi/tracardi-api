@@ -207,6 +207,14 @@ system_settings = [
     ),
     SystemSettings(
         **{
+            "label": "PRODUCTION",
+            "value": tracardi.version.production,
+            "desc": "This variable defines default API context. If it is set to \"production,\" "
+                    "the data will be accessible within the production GUI context."
+        }
+    ),
+    SystemSettings(
+        **{
             "label": "ELASTIC_HOST",
             "value": elastic.host,
             "desc": "Default: 127.0.0.1. This setting defines a IP address of elastic search instance. See Connecting "
