@@ -9,13 +9,11 @@ from tracardi.domain.time import EventTime
 from tracardi.domain.event import Event
 from tracardi.domain.entity import Entity
 from tracardi.domain.session import Session, SessionMetadata
-from tracardi.domain.pii import PII
 from tracardi.domain.time import ProfileTime, ProfileVisit
 from tracardi.domain.metadata import ProfileMetadata
 from tracardi.domain.profile_stats import ProfileStats
 from tracardi.domain.profile import Profile
 from tracardi.domain.event_source import EventSource
-import names
 
 
 def generate_events_for_profile(profiles, sessions, sources):
@@ -47,11 +45,6 @@ def generate_profile():
         metadata=ProfileMetadata(time=ProfileTime(insert=date, visit=ProfileVisit(last=date, current=date))),
         stats=ProfileStats(views=randint(0, 300)),
         traits={},
-        pii=PII(
-            name=names.get_first_name(),
-            surname=names.get_last_name(),
-            email="test@test.com"
-        ),
         segments=[random.choice(['frequent-user', 'customer', 'first-timer', 'vip'])],
         active=True
     )
