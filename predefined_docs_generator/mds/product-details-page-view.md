@@ -48,7 +48,6 @@ This table describes which event property will be copied to event traits.
 | product.brand    | brand              |
 | product.variant  | variant            |
 | product.price    | price              |
-| product.quantity | quantity           | 
 
 ## Copy event data to profile
 
@@ -61,7 +60,6 @@ Data will not be copied to profile.
   "type": "product-details-page-view",
   "properties": {
     "price": 25.99,
-    "quantity": 1,
     "sku": "ABC123",
     "id": "PROD001",
     "name": "Men's Running Shoes",
@@ -85,7 +83,6 @@ Data will not be copied to profile.
 ```javascript
 window.tracker.track("product-details-page-view", {
         "price": 25.99,
-        "quantity": 1,
         "sku": "ABC123",
         "id": "PROD001",
         "name": "Men's Running Shoes",

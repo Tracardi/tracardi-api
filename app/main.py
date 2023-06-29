@@ -194,6 +194,14 @@ application.mount("/tracker",
                       directory=os.path.join(_local_dir, "tracker")),
                   name="tracker")
 
+demo = os.path.join(_local_dir, "demo")
+if os.path.exists(demo) and os.environ.get("DEMO", None) == 'yes':
+    application.mount("/demo",
+                      StaticFiles(
+                          html=True,
+                          directory=os.path.join(_local_dir, "demo")),
+                      name="demo")
+
 documentation = os.path.join(_local_dir, "../site")
 
 if os.path.exists(documentation):
