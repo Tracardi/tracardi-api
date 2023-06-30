@@ -79,13 +79,15 @@ async def check_migration_consistency(version: str):
 @router.post("/migration", tags=["migration"], include_in_schema=server.expose_gui_api)
 async def run_migration(migration: MigrationPayload):
     try:
-        context = get_context()
+        tenant = get_context().tenant
+
         manager = MigrationManager(
             from_version=migration.from_version,
-            to_version=tracardi.version.version,
-            from_prefix=migration.from_prefix,
-            to_prefix=context.tenant
+            from_prefix=migration.from_tenant_name,
+            to_version=MigrationManager.get_current_db_version_prefix(tracardi.version),  # Version as 081
+            to_prefix=tenant
         )
+
         elastic_host = construct_elastic_url(
             host=elastic.host if isinstance(elastic.host, str) else elastic.host[0],
             scheme=elastic.scheme,
@@ -101,18 +103,20 @@ async def run_migration(migration: MigrationPayload):
         raise HTTPException(status_code=404, detail=str(e))
 
 
-@router.get("/migration/{from_version}", tags=["migration"], include_in_schema=server.expose_gui_api)
-async def get_migration_schemas(from_version: str, from_prefix: str=None):
+@router.get("/migration/{from_db_version}", tags=["migration"], include_in_schema=server.expose_gui_api)
+async def get_migration_schemas(from_db_version: str, from_tenant_name: str = None):
 
-    from_version = Version(version=from_version, name=from_prefix)
-    print(tracardi.multi_tenant, tracardi.version.version, tracardi.version.name, get_context())
-    context = get_context()
+    if from_tenant_name is None:
+        from_tenant_name = Version._generate_name(from_db_version)
+
+    tenant = get_context().tenant
     try:
         manager = MigrationManager(
-            from_version=from_version.version,
-            from_prefix=from_version.name,
-            to_version=tracardi.version.version,
-            to_prefix=context.tenant
+            from_version=from_db_version,  # Version as 080
+            from_prefix=from_tenant_name,
+            # My current db version and tenant
+            to_version=MigrationManager.get_current_db_version_prefix(tracardi.version),  # Version as 081
+            to_prefix=tenant
         )
         return await manager.get_customized_schemas()
 
