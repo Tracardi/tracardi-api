@@ -22,7 +22,7 @@ from starlette.staticfiles import StaticFiles
 from app.api import rule_endpoint, resource_endpoint, event_endpoint, \
     profile_endpoint, flow_endpoint, generic_endpoint, \
     segments_endpoint, \
-    tql_endpoint, health_endpoint, session_endpoint, instance_endpoint, plugins_endpoint, \
+    tql_endpoint, health_endpoint, session_endpoint, plugins_endpoint, \
     settings_endpoint, event_source_endpoint, test_endpoint, \
     consent_type_endpoint, flow_action_endpoint, flows_endpoint, info_endpoint, \
     user_endpoint, debug_endpoint, log_endpoint, tracardi_pro_endpoint, \
@@ -37,7 +37,6 @@ from app.api import rule_endpoint, resource_endpoint, event_endpoint, \
     console_log_endpoint, event_type_management, \
     bridge_endpoint, entity_endpoint, staging_endpoint, customer_endpoint, event_to_profile
 from app.api.track import event_server_endpoint
-from app.setup.on_start import update_api_instance, clear_dead_api_instances
 from tracardi.config import tracardi
 from tracardi.exceptions.log_handler import log_handler
 from tracardi.service.storage.elastic_client import ElasticClient
@@ -240,7 +239,6 @@ application.include_router(user_endpoint.auth_router)
 application.include_router(generic_endpoint.router)
 application.include_router(health_endpoint.router)
 application.include_router(session_endpoint.router)
-application.include_router(instance_endpoint.router)
 application.include_router(plugins_endpoint.router)
 application.include_router(test_endpoint.router)
 application.include_router(settings_endpoint.router)
@@ -284,8 +282,6 @@ application.include_router(event_props_to_event_traits_copy.router)
 async def app_starts():
     logger.info(f"TRACARDI version {str(tracardi.version)} set-up starts.")
     await wait_for_connection(no_of_tries=10)
-    # report_i_am_alive()
-    # remove_dead_instances()
     logger.info("TRACARDI set-up finished.")
     logger.info(f"TRACARDI version {str(tracardi.version)} ready to operate.")
 
@@ -322,28 +318,6 @@ async def add_process_time_header(request: Request, call_next):
 async def app_shutdown():
     elastic = ElasticClient.instance()
     await elastic.close()
-
-
-def report_i_am_alive():
-    try:
-        async def heartbeat():
-            while True:
-                await update_api_instance()
-                await asyncio.sleep(server.heartbeat_every)
-
-        asyncio.create_task(heartbeat())
-    except Exception:
-        logger.error("Report I_AM_ALIVE could not be saved in storage.", exc_info=True)
-
-
-def remove_dead_instances():
-    async def clear_dead_instances():
-        while True:
-            await clear_dead_api_instances()
-            clear_interval = randint(60 * 15, 60 * 60)
-            await asyncio.sleep(clear_interval)
-
-    asyncio.create_task(clear_dead_instances())
 
 
 if __name__ == "__main__":

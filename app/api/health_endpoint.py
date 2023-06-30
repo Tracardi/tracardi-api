@@ -1,7 +1,6 @@
 from json import JSONDecodeError
 from fastapi import APIRouter, Request
 from app.config import server
-from app.setup.on_start import update_api_instance
 
 router = APIRouter()
 
@@ -66,10 +65,3 @@ async def delete_healthcheck(r: Request):
         return await r.body()
 
 
-@router.get("/health/report/instance", tags=["health"], include_in_schema=server.expose_gui_api)
-async def register_api_instance_health():
-    """
-    Returns the health check of a running instance
-    """
-
-    return await update_api_instance()

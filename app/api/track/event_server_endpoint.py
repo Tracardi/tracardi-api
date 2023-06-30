@@ -9,7 +9,6 @@ from tracardi.service.notation.dict_traverser import DictTraverser
 from tracardi.service.notation.dot_accessor import DotAccessor
 
 from app.api.track.service.http import get_headers
-from tracardi.domain.api_instance import ApiInstance
 from tracardi.domain.entity import Entity
 from tracardi.domain.event_metadata import EventPayloadMetadata
 from tracardi.domain.payload.event_payload import EventPayload
@@ -70,9 +69,6 @@ async def _track(tracker_payload: TrackerPayload, host: str, allowed_bridges):
         logger.error(message)
         raise HTTPException(detail=message,
                             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    finally:
-        api_instance = ApiInstance()
-        api_instance.increase_track_requests()
 
 
 @router.post("/track", tags=['collector'])
