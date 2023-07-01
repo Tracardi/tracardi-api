@@ -3,6 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException
 
 from tracardi.domain.entity_index_mapping import EntityIndexMapping
 from tracardi.service.storage.driver.elastic import raw as raw_db
+from tracardi.service.storage.driver.elastic import entity as entity_db
 from .auth.permissions import Permissions
 from ..config import server
 
@@ -24,3 +25,8 @@ async def get_entity_index_mapping(index: str):
         return await raw_db.get_mapping(index)
     except NotFoundError as e:
         return HTTPException(status_code=404, detail=str(e))
+
+
+@router.get("/entity/count", tags=["entity"], include_in_schema=server.expose_gui_api)
+async def entity_count(query: dict = None):
+    return await entity_db.count(query)

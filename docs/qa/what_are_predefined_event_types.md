@@ -1,7 +1,7 @@
-# What are predefined event types?
+# What are build-in event types?
 
 
-Predefined event types in Tracardi are pre-built event types that come with default properties. These event types are
+Predefined event types in Tracardi are built-in event types that come with default properties. These event types are
 designed to track the customer journey on websites or applications. When these internal event types are used, Tracardi
 automatically detects them and populates the profile and session with relevant data.
 

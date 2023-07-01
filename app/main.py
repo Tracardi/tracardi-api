@@ -26,6 +26,7 @@ from app.api import rule_endpoint, resource_endpoint, event_endpoint, \
     settings_endpoint, event_source_endpoint, test_endpoint, \
     consent_type_endpoint, flow_action_endpoint, flows_endpoint, info_endpoint, \
     user_endpoint, debug_endpoint, log_endpoint, tracardi_pro_endpoint, \
+    event_type_predefined, \
     import_endpoint, \
     task_endpoint, \
     storage_endpoint, \
@@ -276,6 +277,7 @@ application.include_router(customer_endpoint.router)
 application.include_router(event_to_profile.router)
 application.include_router(event_to_profile_copy.router)
 application.include_router(event_props_to_event_traits_copy.router)
+application.include_router(event_type_predefined.router)
 
 
 @application.on_event("startup")

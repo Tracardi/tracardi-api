@@ -13,7 +13,7 @@ copying automatically.
 
 ## Pre-build event types
 
-Starting from version 0.8.1, Tracardi includes pre-built event types that can be used for auto-coping. These internal
+Starting from version 0.8.1, Tracardi includes build-in event types that can be used for auto-coping. These internal
 event types are designed to track the customer journey on websites or applications, and they come with default
 properties that eliminate the need for manual copying.
 
