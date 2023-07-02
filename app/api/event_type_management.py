@@ -1,4 +1,5 @@
 import asyncio
+from uuid import uuid4
 
 from fastapi import APIRouter, Depends, HTTPException
 
@@ -6,6 +7,7 @@ from app.api.auth.permissions import Permissions
 from app.config import server
 from app.service.grouping import group_records
 from tracardi.domain.event_type_metadata import EventTypeMetadata
+from tracardi.service.events import get_default_event_type_mapping
 from tracardi.service.storage.driver.elastic import event_management as event_management_db
 from tracardi.service.storage.driver.elastic import event as event_db
 from typing import Optional
@@ -60,10 +62,34 @@ async def get_event_type_metadata(event_type: str):
     """
     Returns event type metadata for given event type
     """
+
+    records = []
+
+    build_in = get_default_event_type_mapping(event_type, "copy")
+    if build_in is not None:
+        build_in = {
+            'id': str(uuid4()),
+            'name': 'Build in mapping',
+            'event_type': event_type, 'description': f"\"{event_type}\" event mapping.",
+            'enabled': True,
+            'index_schema': build_in,
+            'tags': ['General'],
+            'build_in': True
+        }
+        records.append(build_in)
+
     record = await event_management_db.get_event_type_metadata(event_type)
-    if record is None:
+    if record is not None:
+        record['build-in'] = False
+        records.append(record)
+
+    if not records:
         raise HTTPException(status_code=404, detail=f"Metadata for {event_type} not found.")
-    return record
+
+    return {
+        "total": len(records),
+        "result": records
+    }
 
 
 @router.delete("/management/{event_type}", tags=["event-type"], include_in_schema=server.expose_gui_api,

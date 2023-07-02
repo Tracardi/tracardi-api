@@ -1,11 +1,16 @@
+from uuid import uuid4
+
 from fastapi import APIRouter, Depends, HTTPException
 
 from app.api.auth.permissions import Permissions
 from app.config import server
 from app.service.grouping import group_records
 from tracardi.domain.event_to_profile import EventToProfile
+from tracardi.service.events import get_default_event_type_mapping
 from tracardi.service.storage.driver.elastic import event_to_profile as event_to_profile_db
 from typing import Optional
+
+from tracardi.service.string_manager import capitalize_event_type_id
 
 router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin", "developer"]))]
@@ -46,10 +51,43 @@ async def get_event_to_profile(event_type: str):
     Returns event to profile schema for given event type
     """
 
-    records = await event_to_profile_db.get_event_to_profile(event_type)
-    if records.total == 0:
+    records = []
+    build_in = get_default_event_type_mapping(event_type, "profile")
+    if build_in is not None:
+        build_in = {
+            'id': str(uuid4()),
+            'name': 'Build-in event to profile mapping',
+            'event_type': {'id': event_type, 'name': capitalize_event_type_id(event_type)},
+            'description': f"This is build-in system profile mapping for event type \"{event_type}\"",
+            'enabled': True,
+            'build_in': True,
+            'config': {},
+            'event_to_profile': [
+                {
+                    'event': {'value': item[0], 'ref': True},
+                    'op': item[1],
+                    'profile': {'value': source, 'ref': True}
+                } for source, item in build_in.items()
+            ],
+            'tags': ['General']}
+        records.append(build_in)
+
+    custom_records = await event_to_profile_db.get_event_to_profile(event_type)
+    if custom_records is not None:
+        custom_records = custom_records.dict()
+        for item in custom_records['result']:
+            item['build_in'] = False
+            records.append(item)
+
+    total = len(records)
+
+    if total == 0:
         raise HTTPException(status_code=404, detail=f"Event to profile coping schema for {event_type} not found.")
-    return records.dict()
+
+    return {
+        "total": total,
+        "result": records
+    }
 
 
 @router.get("/event-to-profile/{event_id}",
