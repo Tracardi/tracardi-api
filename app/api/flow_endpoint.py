@@ -26,7 +26,7 @@ from tracardi.domain.flow_meta_data import FlowMetaData
 from tracardi.domain.entity import Entity
 from tracardi.domain.event import Event, EventSession
 from tracardi.domain.flow import Flow
-from tracardi.service.wf.domain.flow import Flow as GraphFlow
+from tracardi.service.wf.domain.flow_graph import FlowGraph
 from tracardi.domain.flow import FlowRecord
 from tracardi.domain.profile import Profile
 from tracardi.domain.session import Session, SessionMetadata, SessionTime
@@ -296,7 +296,7 @@ async def update_flow_lock(id: str, lock: str):
 
 @router.post("/flow/debug", tags=["flow"],
              include_in_schema=server.expose_gui_api)
-async def debug_flow(flow: GraphFlow, event_id: Optional[str] = None):
+async def debug_flow(flow: FlowGraph, event_id: Optional[str] = None):
     """
         Debugs flow sent in request body
     """
