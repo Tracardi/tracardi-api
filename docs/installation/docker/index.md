@@ -92,7 +92,7 @@ docker run -p 8686:80 -e ELASTIC_HOST=https://user:password@<your-laptop-ip>:920
 Pull and run Tracardi Graphical User Interface.
 
 ```bash
-docker run -p 8787:80 -e API_URL=//127.0.0.1:8686 tracardi/tracardi-gui #(1)
+docker run -p 8787:80 tracardi/tracardi-gui #(1)
 ```
 
 1. If you want a certain version of docker image add version tag, e.g. `tracardi/tracardi-gui:0.7.1`
@@ -119,17 +119,9 @@ docker run -e REDIS_HOST=redis://<redis-ip>:6379 -d tracardi/update-worker:0.8.0
     Replace the `<redis-ip>` with the IP of the redis instance. Keep the version of worker the same as 
     `tracard/tracardi-api`
 
-## Start Tracardi Documentation
-
-Pull and run Tracardi Documentation. This is the documentation you are reading right now
-
-```bash
-docker run -p 8585:8585 tracardi/tracardi-docs
-```
-
 ## Tracardi Graphical User Interface
 
-Visit http://127.0.0.1:8787 and follow the instructions to set up Tracardi.
+Visit http://127.0.0.1:8787 and follow the instructions to set up Tracardi. When asked for Tracardi API type: http://127.0.0.1:8686. 
 
 ## System Documentation
 
