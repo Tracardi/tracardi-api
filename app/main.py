@@ -35,7 +35,7 @@ from app.api import rule_endpoint, resource_endpoint, event_endpoint, \
     user_account_endpoint, \
     install_endpoint, \
     delete_indices_endpoint, migration_endpoint, report_endpoint, live_segments_endpoint, \
-    console_log_endpoint, event_type_management, \
+    console_log_endpoint, event_type_mapping, \
     bridge_endpoint, entity_endpoint, staging_endpoint, customer_endpoint, event_to_profile
 from app.api.track import event_server_endpoint
 from tracardi.config import tracardi
@@ -264,7 +264,7 @@ application.include_router(live_segments_endpoint.router)
 application.include_router(event_reshaping_schema_endpoint.router)
 application.include_router(event_validator_endpoint.router)
 application.include_router(console_log_endpoint.router)
-application.include_router(event_type_management.router)
+application.include_router(event_type_mapping.router)
 application.include_router(event_source_redirects.router)
 # application.include_router(last_flow_ws.router)
 application.include_router(bridge_endpoint.router)

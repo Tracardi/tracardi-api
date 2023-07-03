@@ -12,14 +12,13 @@ from tracardi.service.storage.driver.elastic import event_management as event_ma
 from tracardi.service.storage.driver.elastic import event as event_db
 from typing import Optional
 
-
 router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin", "developer"]))],
     prefix="/event-type"
 )
 
 
-@router.put("/management/refresh", tags=["event-type"], include_in_schema=server.expose_gui_api,
+@router.put("/mapping/refresh", tags=["event-type"], include_in_schema=server.expose_gui_api,
             response_model=dict)
 async def refresh_event_type_metadata():
     """
@@ -28,10 +27,9 @@ async def refresh_event_type_metadata():
     return await event_management_db.refresh()
 
 
-@router.post("/management", tags=["event-type"], include_in_schema=server.expose_gui_api,
+@router.post("/mapping", tags=["event-type"], include_in_schema=server.expose_gui_api,
              response_model=dict)
 async def add_event_type_metadata(event_type_metadata: EventTypeMetadata):
-
     """
     Creates new event type metadata in database
     """
@@ -54,13 +52,13 @@ async def add_event_type_metadata(event_type_metadata: EventTypeMetadata):
     return result
 
 
-@router.get("/management/{event_type}",
+@router.get("/mappings/{event_type}",
             tags=["event-type"],
             include_in_schema=server.expose_gui_api,
             response_model=dict)
-async def get_event_type_metadata(event_type: str):
+async def list_event_type_metadata(event_type: str):
     """
-    Returns event type metadata for given event type
+    Returns a list of event type mappings both build-in and custom for given event type
     """
 
     records = []
@@ -84,7 +82,7 @@ async def get_event_type_metadata(event_type: str):
         records.append(record)
 
     if not records:
-        raise HTTPException(status_code=404, detail=f"Metadata for {event_type} not found.")
+        raise HTTPException(status_code=404, detail=f"Mapping for event type [{event_type}] not found.")
 
     return {
         "total": len(records),
@@ -92,7 +90,24 @@ async def get_event_type_metadata(event_type: str):
     }
 
 
-@router.delete("/management/{event_type}", tags=["event-type"], include_in_schema=server.expose_gui_api,
+@router.get("/mapping/{event_type}",
+            tags=["event-type"],
+            include_in_schema=server.expose_gui_api,
+            response_model=dict)
+async def get_event_type_metadata(event_type: str):
+    """
+    Return custom event type mapping for given event type
+    """
+
+    record = await event_management_db.get_event_type_metadata(event_type)
+
+    if not record:
+        raise HTTPException(status_code=404, detail=f"Mapping for event type [{event_type}] not found.")
+
+    return record
+
+
+@router.delete("/mapping/{event_type}", tags=["event-type"], include_in_schema=server.expose_gui_api,
                response_model=dict)
 async def del_event_type_metadata(event_type: str):
     """
@@ -104,18 +119,18 @@ async def del_event_type_metadata(event_type: str):
     return {"deleted": 1 if result is not None and result["result"] == "deleted" else 0}
 
 
-@router.get("/management", tags=["event-type"], include_in_schema=server.expose_gui_api,
-            response_model=list)
-async def list_event_type_metadatas(start: Optional[int] = 0, limit: Optional[int] = 200):
-    """
-    List of event type metadata.
-    """
+# @router.get("/mappings", tags=["event-type"], include_in_schema=server.expose_gui_api,
+#             response_model=list)
+# async def list_event_type_mappings(start: Optional[int] = 0, limit: Optional[int] = 200):
+#     """
+#     List of event type mappings.
+#     """
+#
+#     result = await event_management_db.load_events_type_metadata(start, limit)
+#     return list(result)
 
-    result = await event_management_db.load_events_type_metadata(start, limit)
-    return list(result)
 
-
-@router.get("/management/search/by_tag", tags=["event-type"], include_in_schema=server.expose_gui_api,
+@router.get("/search/mappings", tags=["event-type"], include_in_schema=server.expose_gui_api,
             response_model=dict)
 async def list_event_type_metadatas_by_tag(query: str = None, start: Optional[int] = 0, limit: Optional[int] = 200):
     """
@@ -123,4 +138,3 @@ async def list_event_type_metadatas_by_tag(query: str = None, start: Optional[in
     """
     result = await event_management_db.load_events_type_metadata(start, limit)
     return group_records(result, query, group_by='tags', search_by='name', sort_by='name')
-
