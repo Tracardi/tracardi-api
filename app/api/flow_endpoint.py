@@ -343,7 +343,8 @@ async def debug_flow(flow: FlowGraph, event_id: Optional[str] = None):
 
         if event.has_profile():
             profile = await profile_db.load_by_id(event.profile.id)
-            profile = profile.to_entity(Profile)
+            if profile is not None:
+                profile = profile.to_entity(Profile)
         else:
             profile = None
 
