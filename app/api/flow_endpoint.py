@@ -343,8 +343,10 @@ async def debug_flow(flow: FlowGraph, event_id: Optional[str] = None):
 
         if event.has_profile():
             profile = await profile_db.load_by_id(event.profile.id)
-            if profile is not None:
-                profile = profile.to_entity(Profile)
+            if profile is None:
+                raise ValueError(f"Could not find profile id {event.profile.id} attached to event id {event_id}. "
+                                 f"Debugging will fail if profile is expected.")
+            profile = profile.to_entity(Profile)
         else:
             profile = None
 
