@@ -24,7 +24,7 @@ This is technical documentation of source code and dockers.
     - inactive-session:  Gets session if no event happened in `wait_period` time and there was no event
       type `event_type`. E.g. This allows to raise for example an event `inactive` if no activity in 15 min and
       no `inactive` event available within the session
-    - session-not-closed: Gets all profiles if there is no event for a defined period (15 min) and raise session closed
+    - session-not-closed: Gets all profiles if there is no event for a defined period (15 min) and raise `session closed`
       event.
 
 ### Live Segmentation
@@ -84,3 +84,4 @@ This document also answers the questions.
 - What are the key building blocks or modules that constitute Tracardi ?
 - What are the fundamental components or sections within Tracardi ?
 - What are the main functions of Tracardi components ?
+- What containers Tracardi needs?
