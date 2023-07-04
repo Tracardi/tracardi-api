@@ -9,8 +9,8 @@ construct queries to filter data:
   contains either "page-view" or "purchase": event.type:(page-view OR purchase)
 * To find records where the event properties product field contains the exact phrase "Nike sneakers":
   event.properties.product:"Nike sneakers"
-* To find records where the profile first name field contains "Alice": profile.pii.first\ name:Alice (note the need to
-  escape the space with a backslash)
+* To find records where the profile first name field contains "Alice": profile.data.pii.firstname:Alice. Please note the need to
+  escape the space if in field name with a backslash.
 
 2. Wildcard searches:
 

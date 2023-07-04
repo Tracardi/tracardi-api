@@ -34,7 +34,7 @@ You can specify fields to search in the query syntax:
 * where the profile first name field contains Alice (note how we need to escape the space with a backslash)
 
     ```
-    profile.pii.first\ name:Alice
+    profile.data.pii.first\ name:Alice
     ```
 
 * where any of the fields __book.title__, __book.content__ or __book.date__ contains quick or brown (note how we need to escape the
