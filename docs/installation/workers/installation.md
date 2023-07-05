@@ -26,7 +26,8 @@ the `tracardi/tracardi-api` Docker container.
 ## 2. Commercial Worker for Segmentation and Mapping
 
 The Commercial Worker for Segmentation, Post-Collection Event Mapping, and Post-Collection Profile Mapping plays a vital
-role in processing commercial tasks, including segmentation and mapping events and profiles after collection.
+role in processing commercial tasks, including segmentation (both workflow and conditional) and mapping events and
+profiles after collection.
 
 To run this worker, execute the following Docker command:
 
