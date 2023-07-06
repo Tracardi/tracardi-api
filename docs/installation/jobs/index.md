@@ -103,7 +103,7 @@ Jobs can be scheduled and run using crontab or Kubernetes cron jobs based on you
 
 ### Segmentation Job
 
-To run the Segmentation Job, use the following Docker command for the `tracardi/com-tracardi-segmentation-worker`
+To run the Segmentation Job, use the following Docker command for the `tracardi/com-tracardi-segmentation-job`
 container:
 
 ```bash
@@ -111,7 +111,7 @@ docker run \
 -e ELASTIC_HOST=http://<elastic-ip>:9200 \
 -e REDIS_HOST=redis://<redis-ip>:6379 \
 -e REDIS_PASSWORD=password \
-tracardi/com-tracardi-segmentation-worker:0.8.1
+tracardi/com-tracardi-segmentation-job:0.8.1
 ```
 
 The Segmentation Job uses the same environment variables as `tracardi/tracardi-api`. Ensure that all the connections are
