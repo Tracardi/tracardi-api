@@ -1,10 +1,10 @@
 # Tracardi Worker Installation
 
-Tracardi relies on three different workers to ensure smooth operations and efficient processing of data. Each worker
+Tracardi relies on four different workers to ensure smooth operations and efficient processing of data. Each worker
 serves a specific purpose in the Tracardi ecosystem. Below are details about each worker and instructions on how to set
 them up.
 
-## 1. Migration and Import Worker
+## 1. Open-Source Migration and Import Worker
 
 The Migration and Import Worker is responsible for system upgrades and data import tasks, which are carried out in the
 background. It ensures a seamless transition when updating the Tracardi system and handles data imports efficiently.
@@ -50,6 +50,18 @@ docker run \
 -e ELASTIC_HOST=http://192.168.1.101:9200 \
 -e REDIS_HOST=192.168.1.101 \
 tracardi/com-tracardi-scheduler-worker:0.8.1
+```
+
+## 4. Post-Collection Worker
+
+The Post-Collection Event Mapping, and Post-Collection Profile Mapping is required for mapping events and
+profiles after collection.
+
+```bash
+docker run \
+-e ELASTIC_HOST=http://<elastic-ip>:9200 \
+-e REDIS_HOST=redis://<redis-ip>:6379 \
+tracardi/com-tracardi-post-collection-worker:0.8.1
 ```
 
 ## Additional Information
