@@ -33,8 +33,9 @@ To run this worker, execute the following Docker command:
 
 ```bash
 docker run \
--e ELASTIC_HOST=http://192.168.1.101:9200 \
--e REDIS_HOST=redis://192.168.1.101:6379 \
+-e ELASTIC_HOST=http://<elastic-ip>:9200 \
+-e REDIS_HOST=redis://<redis-ip>:6379 \
+-e LOGGING_LEVEL=info \
 tracardi/com-tracardi-segmentation-worker:0.8.1
 ```
 
@@ -47,8 +48,9 @@ To run the Scheduler Worker, execute the following Docker command:
 
 ```bash
 docker run \
--e ELASTIC_HOST=http://192.168.1.101:9200 \
--e REDIS_HOST=192.168.1.101 \
+-e ELASTIC_HOST=http://<elastic-ip>:9200 \
+-e REDIS_HOST=<redis-ip> \
+-e LOGGING_LEVEL=info \
 tracardi/com-tracardi-scheduler-worker:0.8.1
 ```
 
@@ -61,7 +63,8 @@ profiles after collection.
 docker run \
 -e ELASTIC_HOST=http://<elastic-ip>:9200 \
 -e REDIS_HOST=redis://<redis-ip>:6379 \
-tracardi/com-tracardi-post-collection-worker:0.8.1
+-e LOGGING_LEVEL=info \
+tracardi/com-tracardi-coping-worker:0.8.1
 ```
 
 ## Additional Information
