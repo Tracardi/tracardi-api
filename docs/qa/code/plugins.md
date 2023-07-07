@@ -255,3 +255,74 @@ That means the `FormGroup` "Event type plugin configuration" is created with two
 type". The `id` of a `FormField` must match with a configuration property in `init`, allowing for a connection between the form
 value and the configuration value. This is explained as "This is how you bind configuration with the form field." in the
 documentation.
+
+# What is a simple code template for custom plugin?
+
+```python
+from tracardi.service.plugin.domain.register import Plugin, Spec, MetaData, Documentation, PortDoc
+from tracardi.service.plugin.runner import ActionRunner
+from tracardi.service.plugin.domain.result import Result
+
+
+class FlowWalker(ActionRunner):
+
+   def __init__(self):
+      # Init data here 
+      pass
+
+   async def set_up(self, config):
+      # setup resource if needed
+      pass
+
+   async def run(self, payload: dict):
+      # process and return data
+      return Result(port="payload", value=payload)
+
+   async def close(self):
+      # close all open connections
+      pass
+
+# Register plugin
+def register() -> Plugin:
+    return Plugin(
+        start=False,
+        spec=Spec(
+            module=__name__,  # Module name
+            className=FlowWalker.__name__,  # Class Name
+            inputs=["payload"],  # input ports, must be one
+            outputs=["payload"],  # output ports, may be many
+            version='0.7.1',
+            license="MIT",
+            author="Author"
+        ),
+        metadata=MetaData(
+            name='FlowWalker',  # Plugin name
+            desc='Does nothing.',  # Plugin description
+            icon='error',  # Icon
+            group=["Events"],  # Group in the menu
+            documentation=Documentation(  # Port documentation
+                inputs={  # Documentation for input port. We defined that input port is named 'payload`
+                    "payload": PortDoc(desc="This port takes payload object.")
+                },
+                outputs={ # Documentation for output port. We defined that output port is also named 'payload`
+                    "payload": PortDoc(desc="This port returns given payload without any changes.")
+                }
+            )
+        )
+    )
+
+```
+
+Notice that `outputs=["payload"]` matches the `return Result(port="payload", value=payload)` and 
+
+```python
+outputs={ "payload": PortDoc(desc="This port returns given payload without any changes.") }
+```
+
+The same with `inputs=["payload"]` that matches: 
+
+```python
+inputs={  "payload": PortDoc(desc="This port takes payload object.") }
+```
+
+in the documentation propery of object metadata.
