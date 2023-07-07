@@ -4,7 +4,7 @@ import os
 
 import weaviate
 
-from docs_ai.utils import get_markdown, get_chat_gpt3_response
+from docs_ai.utils import get_markdown, get_chat_gpt3_response, get_chat_gpt3_5_response
 
 _local_dir = os.path.dirname(__file__)
 
@@ -267,7 +267,12 @@ with client.batch as batch:
                      f"Text is in markdown format. Write only one question per line, nothing else." \
                      f"Text:\n{paragraph}\n\n"
 
-            json_question = get_chat_gpt3_response(prompt)
+            json_question = get_chat_gpt3_5_response(
+                system="Try to find general questions as well as specific ones. Do not create long questions, try to make it simple.",
+                user=prompt,
+                assistant=""
+            )
+
             questions = json_question.split("\n")
             questions = [q for q in questions if q != "Optional questions:" and q != ""]
             json_content = {

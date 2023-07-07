@@ -56,4 +56,4 @@ def get_chat_gpt3_5_response(system, assistant, user):
     }
     response = openai.ChatCompletion.create(**query)
 
-    return response.choices[0].message
+    return response.choices[0].message.content
