@@ -117,7 +117,7 @@ An exemplary plugin form in Tracardi could be the "Event type plugin configurati
 provided document. Here is its structure:
 
 ```python
-[
+Form(groups=[
     FormGroup(
         name="Event type plugin configuration",
         description="Define required event type",
@@ -159,7 +159,7 @@ The form array should be referenced in `register` function in Plugin object prop
 from tracardi.service.plugin.domain.register import Plugin, Spec, MetaData
 from tracardi.service.plugin.domain.register import Form, FormGroup, FormField, FormComponent  # 
 
-
+# this is the function that will be called to get the data of plugin when it is registered.
 def register() -> Plugin:
     return Plugin(
 
