@@ -1,3 +1,5 @@
+# How backups are done in Tracardi.
+
 Tracardi uses the built-in backup mechanism of Elasticsearch that allows you to create backups of your data for disaster
 recovery and data protection.
 
@@ -31,3 +33,4 @@ Here's an overview of how backups work in Elasticsearch:
 8. **Disaster Recovery**: In the event of a disaster or data loss, you can restore a snapshot to recover your data.
    Elasticsearch provides options to restore the entire cluster, specific indices, or individual shards from a snapshot.
 
+Please read more about Elasticsearch (ES) backups in documentation.  
