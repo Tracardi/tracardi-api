@@ -48,6 +48,10 @@ methods or an altered structure.
 
 Note that plugins should b register in the system. Check the documentation on how to register the plugin.
 
+---
+This document answers the questions:
+- How to write a custom plugin?
+
 # Where should I place plugins in tracardi code?
 
 In Tracardi, you should place your plugins in the `tracardi/process_engine/action/v1` folder. The recommended way to
@@ -72,6 +76,10 @@ tracardi/
 
 By following this structure, you ensure that your plugin is placed in the appropriate directory within the Tracardi
 codebase. This makes it easier to manage and maintain your plugins in a standardized manner.
+
+---
+This document answers the questions:
+- How to write a custom plugin?
 
 # My plugin is not visible on plugin list?
 
@@ -102,7 +110,7 @@ the `tracardi/service/setup/setup_plugins.py` file. To resolve this issue, follo
 By adding the plugin registration code to the `setup_plugins.py` file, you inform Tracardi about the existence of your
 plugin and make it accessible through the user interface.
 
-# Give me a fully working example of the tracardi class  with description?
+# Give me a fully working example of the tracardi class with description?
 
 Here's the whole code with descriptions for easier understanding:
 
@@ -408,3 +416,7 @@ The `register` function returns a `Plugin` instance that represents the plugin r
 
 By using this code template, you can create your own Tracardi plugins that generate passwords or perform other custom
 actions with configurable settings.
+
+---
+This document answers the questions:
+- How to write a custom plugin?
