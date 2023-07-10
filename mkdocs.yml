@@ -337,7 +337,6 @@ nav:
                   - flow/actions/question_popup_action.md
                   - flow/actions/rating_popup_action.md
                   - flow/actions/contact_popup_action.md
-                  - flow/actions/generic_uix_action.md
                   - Chat:
                       - flow/actions/chatwoot_widget_action.md
                       - flow/actions/intercom_widget_action.md

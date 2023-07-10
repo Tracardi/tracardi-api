@@ -19,12 +19,18 @@ Include the return data schema if possible.
 
 # General context
 
-Tracardi plugins are used in workflows. Workflow has internal state. It can be referenced byt the dot notation. In
+Tracardi plugins are used in workflows. They are sometimes called actions or action plugins. Workflow passes data form 
+plugin to plugin via its input and output ports. Plugin may have one input port and many output ports. 
+
+Workflow has internal state. It can be referenced byt the dot notation. In
 short, dot notation is a way of referencing data in Tracardi. It is used to access data from the internal state of the
 workflow, such as the event, profile, payload, flow, session, and memory. It is written in the form of <source>@<
 path.to.data>, where the source is the type of data you are referencing and the path is a string of keys that indicate
 where the data is located. Class DotAccessor is used to access dot notated data. Usually the DotAccessor dict is
 returned by `self._get_dot_accessor(payload)`. DotAccessor extends dict and acts as dict.
+
+Workflow can also execute UX plugins that in return will inject some javascript to the page where the Tracardi 
+integration script is placed.
 
 # How the code is organized:
 
@@ -137,71 +143,109 @@ Use this template to generate the documentation:
 
 
 ```markdown
-# Plugin name
+# <Put here plugin name from metadata.name>
 
-Put here plugin short description inferred from the code and available manual.
+<Put here plugin short description inferred from the code and available manual.></Put>
 
+# Version
+
+<Put the version of the plugin the documentation was created for. Plugin version can be found in code in `spec.version` property of Plugin object.>
 
 ## Description
 
-Put here verbose description of plugin. Use the logic from the run method to describe how the plugin works. Describe it setp by step. If possible include in here the example of the output from the plugin. 
-Mention the version of the plugin the documentation was created for.
+<Put here verbose description of plugin. Use the logic from the run method to describe how the plugin works. Describe it setp by step. If possible include in here the example of the output from the plugin.> 
+
 
 # Inputs and Outputs
 
-Put here information about input and outputs with examples if possible.
+<Put here information about input and outputs with examples if possible.>
 
 
 # Configuration
 
-Put here the configuration description in a bullet like style with all configuration parameters.
+<Put here the configuration description in a bullet like style with all configuration parameters.>
 
 # JSON Configuration
 
-Put here the data from spec.init filled with some example values. Only one example.
+<Put here the data from spec.init filled with some example values. Only one example.>
 
 # Required resources
 
-Put here required resources. If none recourse defined in the plugin form or code write "This plugin does not require external resources tobe configured".
+<Put here required resources. If none recourse defined in the plugin form or code write "This plugin does not require external resources tobe configured".>
 
 # Errors
 
-Put here all possible errors. Put here Exception message (not exception type) theat means if there is ` raise ValueError("Profile event sequencing can not be performed without profile. Is this a profile less event?")` "Profile event sequencing can not be performed without profile. Is this a profile less event?" not `ValueError`.
-and after the error the description when it may occur.
+<Put here all possible errors. Put here Exception message (not exception type) theat means if there is ` raise ValueError("Profile event sequencing can not be performed without profile. Is this a profile less event?")` "Profile event sequencing can not be performed without profile. Is this a profile less event?" not `ValueError`.
+and after the error the description when it may occur.>
 
 ```
 
 ---
 Here is the full plugin code:
 
-from tracardi.service.storage.driver.elastic import event as event_db
-from tracardi.service.plugin.runner import ActionRunner
+from com_tracardi.service.tracker_event_validator import EventsValidationHandler
+from tracardi.service.console_log import ConsoleLog
 from tracardi.service.plugin.domain.register import Plugin, Spec, MetaData, Documentation, PortDoc, Form, FormGroup, \
     FormField, FormComponent
 from tracardi.service.plugin.domain.result import Result
-from pytimeparse import parse
-from .model.configuration import Configuration
+from tracardi.service.plugin.runner import ActionRunner
+from pydantic import validator
+from typing import Dict, Union
+from tracardi.exceptions.exception import EventValidationException
+from tracardi.domain.event_validator import EventValidator, ValidationSchema
+import jsonschema
+import json
+from tracardi.service.plugin.domain.config import PluginConfig
 
 
-def validate(config: dict) -> Configuration:
-    return Configuration(**config)
+class Config(PluginConfig):
+    validation_schema: Union[str, Dict[str, Dict]]
+
+    @validator("validation_schema")
+    def validate_config_schema(cls, v):
+        if isinstance(v, str):
+            try:
+                v = json.loads(v)
+            except json.JSONDecodeError:
+                raise ValueError("Given JSON is invalid.")
+
+        for value in v.values():
+            try:
+                jsonschema.Draft202012Validator.check_schema(value)
+            except jsonschema.SchemaError:
+                raise ValueError(f"Given validation JSON-schema is invalid.")
+        return v
 
 
-class EventCounter(ActionRunner):
-    config: Configuration
+def validate(config: dict) -> Config:
+    return Config(**config)
+
+
+class SchemaValidator(ActionRunner):
+
+    config: Config
 
     async def set_up(self, init):
         self.config = validate(init)
 
     async def run(self, payload: dict, in_edge=None) -> Result:
-        time_span_in_sec = parse(self.config.time_span.strip("-"))
-
-        no_of_events = await event_db.count_events_by_type(
-            self.profile.id,
-            self.config.event_type.id,
-            time_span_in_sec
+        dot = self._get_dot_accessor(payload)
+        payload_validator = EventValidator(
+            validation=ValidationSchema(json_schema=self.config.validation_schema),
+            event_type="no-type",
+            name="validation",
+            id="1",
+            tags=[]
         )
-        return Result(port="payload", value={"events": no_of_events})
+
+        try:
+            v = EventsValidationHandler(dot, ConsoleLog())
+            result = v.validate_with_multiple_schemas([payload_validator])
+            if result:
+                return Result(port="true", value=payload)
+            return Result(port="false", value=payload)
+        except EventValidationException:
+            return Result(port="error", value=payload)
 
 
 def register() -> Plugin:
@@ -209,103 +253,116 @@ def register() -> Plugin:
         start=False,
         spec=Spec(
             module=__name__,
-            className=EventCounter.__name__,
+            className='SchemaValidator',
             inputs=["payload"],
-            outputs=['payload'],
-            version='0.8.1',
-            license="MIT",
-            author="Dawid Kruk",
-            manual="event_counter_action",
+            outputs=["true", "false", "error"],
+            version='0.7.4',
+            license="Tracardi Commercial License",
+            author="Dawid Kruk, Risto Kowaczewski",
+            manual="validate_with_json_schema_action",
             init={
-                "event_type": {"name": "", "id": ""},
-                "time_span": "-15m"
+                "validation_schema": {}
             },
             form=Form(
                 groups=[
                     FormGroup(
-                        name="Event counter settings",
-                        description="Event counter reads how many events of defined type were triggered "
-                                    "within defined time.",
+                        name="JSON Schema Validation Configuration",
                         fields=[
                             FormField(
-                                id="event_type",
-                                name="Event type",
-                                description="Select event type you would like to count.",
-                                component=FormComponent(type="eventType", props={
-                                    "label": "Event type"
-                                })
-                            ),
-                            FormField(
-                                id="time_span",
-                                name="Time span",
-                                description="Type time span, e.g. -15minutes.",
-                                component=FormComponent(type="text", props={
-                                    "label": "Time span"
-                                })
-                            ),
+                                id="validation_schema",
+                                name="JSON validation schema",
+                                description="Please provide a JSON validation schema that you want to validate data "
+                                            "with.",
+                                component=FormComponent(type="json", props={"label": "Schema"})
+                            )
                         ]
                     )
-                ])
+                ]
+            )
         ),
         metadata=MetaData(
-            name='Event counter',
-            desc='This plugin reads how many events of defined type were triggered within defined time.',
-            icon='event',
-            group=["Events"],
-            tags=['pro', 'event'],
-            purpose=['collection', 'segmentation'],
+            name='JSON schema validator',
+            desc='Validates objects using provided JSON validation schema.',
+            icon='ok',
+            group=["Validators"],
             documentation=Documentation(
                 inputs={
-                    "payload": PortDoc(desc="Reads payload object.")
+                    "payload": PortDoc(desc="This port takes payload object.")
                 },
                 outputs={
-                    "payload": PortDoc(desc="Returns number of event of given type.")
+                    "true": PortDoc(desc="This port returns payload if it passes defined validation."),
+                    "false": PortDoc(desc="This port returns payload if it does not pass defined validation."),
+                    "error": PortDoc(desc="This port returns payload if it does not pass defined validation "
+                                          "due to an error in validation schema.")
                 }
             ),
-            pro=True
+            commercial=True
         )
     )
 
 
 
-
 Available manual:
 
-# Limiter plugin
+# Validate with JSON schema plugin
 
-The plugin limits the number of launches to a certain number in a given period of time. It is particularly useful when we would like to protect valuable resources from overloading or limit the triggering of some plugins.
-You have to remember that some events maybe triggered very fast and process time of a event may be longer then the time between the event triggers. That may cause the workflow to run server times. Is such case a throttle (limiter) may be used to limit the number of executions.
-It works ina a way that stops execution of a workflow branch if some threshold is passed, for example, 10 starts within one minute. The workflow will work until 10 executions are completed and then will throttle the rest of the executions until one minute end (or other defined time range).
+This plugin validates objects using provided JSON schema.
 
-# Configuration
+## Input
 
-In order to properly configure the plugin, we need to know what resource we are protecting and how we identify it. Let's assume that we want to send emails to the specified email address. However, we don't want the system to send more than one email per day. Regardless of the email's message. In this case, the protected resource is email. Therefore, the key that will identify our limiter (throttle) will be the email address. You can define a pair of keys. e.g. if we do not want the customer to accidentally receive an email with the same content twice, we can set the key for the email and the e-mail message.
-The order of throttle keys is important, because this is the way the limiter identifies the protected resource.
+This plugin takes any payload as input.
 
-# Side effects
+## Outputs
 
-The limiters placed in different workflows share the same information if they have he same key. That means if we send emails in many workflow and throttle/limit the number executions based on email - execution in one workflow will add up to the limit on the other workflow as well. This is a very powerful feature that can protect resources across all workflows if set properly.
-If you want the limiter to work only for one workflow and not across all workflows add workflow id (or custom key) to a limiter key, e.g. workflow.id + email.
+This plugin returns payload on port **TRUE** if validation is passed, or payload on port **FALSE** if validation fails.
+If the schema is incorrect then the **ERROR** port is triggered. 
 
-# Advanced JSON configuration
-
-Example
+#### JSON configuration
 
 ```json
 {
-  "keys": ["workflow@id", "profile@pii.email", "custom-key"],
-  "limit": 10
-  "ttl": 60
+  "validation_schema": "<validation-object>"
 }
 ```
 
-* __keys__ - keys that identify the throttle. It may reference data from workflow or be a custome keys
-* __limit__ - the number of allowed passes within defined time
-* __ttl__ - time to live for a throttle. The time period that must pass for the __limit__ to be reset to 0.
+Example of valid schema to provide in the form field or as a value of **validation_schema**:
 
-# Outputs
+```json
+{
+  "payload@properties.sale": {
+    "type": "object",
+    "properties": {
+      "price": {
+        "type": "number"
+      },
+      "name": {
+        "type": "string",
+        "maxLength": 15
+      }
+    }
+  },
+  "profile@context.timestamp": {
+    "type": "integer"
+  }
+}
+```
 
-* __pass__ - Triggers this port if not limited. Returns input payload.
-* __block__ - Triggers this port if executions are limited. Returns input payload.
-
+```json
+ {
+    "payload@...": {
+      "title": "Product",
+      "description": "A product from Acme's catalog",
+      "type": "object",
+      "properties": {
+        "productId": {
+          "description": "The unique identifier for a product",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "productId"
+      ]
+    }
+  }
+```
 
