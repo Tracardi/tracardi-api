@@ -1,8 +1,28 @@
 # IF Action
 
-If you want your flow to perform some conditional operation use this node. 
+The "If" plugin in Tracardi is a conditional action that allows you to selectively run a branch of the workflow based on a specified condition. This plugin evaluates the provided condition and returns the payload on the "true" port if the condition is met, or on the "false" port if the condition is not met.
 
-# Language
+## Plugin Configuration
+
+The behavior of the "If" plugin is determined by the following configuration options:
+
+- **Condition statement**: This configuration option allows you to provide a condition for the IF statement. If the condition is met, the payload will be returned on the "true" port; otherwise, the "false" port will be triggered.
+
+- **Return value only once per condition change**: By enabling this option, the relevant port will be triggered only once per condition change. If the option is disabled, the flow will be stopped.
+
+- **Expire trigger again after**: If the value is set to 0, the event will occur only once and will not be triggered again unless the conditions change. However, if a value greater than 0 is set, the event will be triggered again after the specified number of seconds, regardless of whether the conditions have changed or not.
+
+- **Return input payload instead of True/False**: Enabling this option will return the input payload on the output ports if it is enabled; otherwise, True/False will be returned.
+
+## Plugin Outputs
+
+The "If" plugin has two output ports:
+
+- **true**: If the defined condition is met, the payload will be returned on this port.
+
+- **false**: If the defined condition is not met, the payload will be returned on this port.
+
+# Condition syntax
 
 This node uses a language very similar to SQL conditionals. It also uses dotted path notation to access the data.
 All fields must contain a source and a path to value e.g:
