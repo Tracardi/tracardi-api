@@ -137,6 +137,11 @@ converter.reshape(self.config.some-property)
 
 It means that it parses `some-propery` from the configuration (which is usually the dictionary) and replaces the dot notated values that reference the internet data of workflow. 
 
+
+# Operations inside the run method
+
+If the plugin updates the execution graph it means it updates workflow so event, profile, or session is available as internal state of workflow.
+
 # Documentation template
 
 Use this template to generate the documentation:
@@ -183,69 +188,40 @@ and after the error the description when it may occur.>
 ---
 Here is the full plugin code:
 
-from com_tracardi.service.tracker_event_validator import EventsValidationHandler
-from tracardi.service.console_log import ConsoleLog
-from tracardi.service.plugin.domain.register import Plugin, Spec, MetaData, Documentation, PortDoc, Form, FormGroup, \
-    FormField, FormComponent
+from uuid import uuid4
+from tracardi.domain.entity import Entity
+from tracardi.domain.event import EventSession
+from tracardi.domain.session import Session, SessionMetadata
+from tracardi.domain.value_object.operation import Operation
+from tracardi.service.plugin.domain.register import Plugin, Spec, MetaData, Documentation, PortDoc
 from tracardi.service.plugin.domain.result import Result
 from tracardi.service.plugin.runner import ActionRunner
-from pydantic import validator
-from typing import Dict, Union
-from tracardi.exceptions.exception import EventValidationException
-from tracardi.domain.event_validator import EventValidator, ValidationSchema
-import jsonschema
-import json
-from tracardi.service.plugin.domain.config import PluginConfig
+from tracardi.service.storage.driver.elastic import session as session_db
 
 
-class Config(PluginConfig):
-    validation_schema: Union[str, Dict[str, Dict]]
-
-    @validator("validation_schema")
-    def validate_config_schema(cls, v):
-        if isinstance(v, str):
-            try:
-                v = json.loads(v)
-            except json.JSONDecodeError:
-                raise ValueError("Given JSON is invalid.")
-
-        for value in v.values():
-            try:
-                jsonschema.Draft202012Validator.check_schema(value)
-            except jsonschema.SchemaError:
-                raise ValueError(f"Given validation JSON-schema is invalid.")
-        return v
-
-
-def validate(config: dict) -> Config:
-    return Config(**config)
-
-
-class SchemaValidator(ActionRunner):
-
-    config: Config
-
-    async def set_up(self, init):
-        self.config = validate(init)
+class AddEmptySessionAction(ActionRunner):
 
     async def run(self, payload: dict, in_edge=None) -> Result:
-        dot = self._get_dot_accessor(payload)
-        payload_validator = EventValidator(
-            validation=ValidationSchema(json_schema=self.config.validation_schema),
-            event_type="no-type",
-            name="validation",
-            id="1",
-            tags=[]
-        )
 
-        try:
-            v = EventsValidationHandler(dot, ConsoleLog())
-            result = v.validate_with_multiple_schemas([payload_validator])
-            if result:
-                return Result(port="true", value=payload)
-            return Result(port="false", value=payload)
-        except EventValidationException:
-            return Result(port="error", value=payload)
+        session = Session(
+                id=str(uuid4()),
+                profile=Entity(id=self.profile.id) if self.profile is not None else None,
+                metadata=SessionMetadata(),
+                operation=Operation(update=True)
+            )
+        self.session = session
+        self.event.session = EventSession(
+                id=session.id,
+                start=session.metadata.time.insert,
+                duration=session.metadata.time.duration
+            )
+        self.event.operation.update = True
+        self.execution_graph.set_sessions(session)
+        await session_db.save(session)
+
+        self.set_tracker_option("saveSession", True)
+
+        return Result(port='payload', value=payload)
 
 
 def register() -> Plugin:
@@ -253,50 +229,30 @@ def register() -> Plugin:
         start=False,
         spec=Spec(
             module=__name__,
-            className='SchemaValidator',
+            className='AddEmptySessionAction',
             inputs=["payload"],
-            outputs=["true", "false", "error"],
-            version='0.7.4',
-            license="Tracardi Commercial License",
-            author="Dawid Kruk, Risto Kowaczewski",
-            manual="validate_with_json_schema_action",
-            init={
-                "validation_schema": {}
-            },
-            form=Form(
-                groups=[
-                    FormGroup(
-                        name="JSON Schema Validation Configuration",
-                        fields=[
-                            FormField(
-                                id="validation_schema",
-                                name="JSON validation schema",
-                                description="Please provide a JSON validation schema that you want to validate data "
-                                            "with.",
-                                component=FormComponent(type="json", props={"label": "Schema"})
-                            )
-                        ]
-                    )
-                ]
-            )
+            outputs=['payload'],
+            version='0.7.0',
+            license="MIT",
+            author="Risto Kowaczewski",
+            init=None,
+            form=None,
+
         ),
         metadata=MetaData(
-            name='JSON schema validator',
-            desc='Validates objects using provided JSON validation schema.',
-            icon='ok',
-            group=["Validators"],
+            name='Create empty session',
+            desc='Ads new session to the event. Empty session gets created with random id.',
+            icon='session',
+            group=["Operations"],
+            keywords=['new', 'add', 'create'],
             documentation=Documentation(
                 inputs={
                     "payload": PortDoc(desc="This port takes payload object.")
                 },
                 outputs={
-                    "true": PortDoc(desc="This port returns payload if it passes defined validation."),
-                    "false": PortDoc(desc="This port returns payload if it does not pass defined validation."),
-                    "error": PortDoc(desc="This port returns payload if it does not pass defined validation "
-                                          "due to an error in validation schema.")
+                    "payload": PortDoc(desc="Returns input payload.")
                 }
-            ),
-            commercial=True
+            )
         )
     )
 
@@ -304,65 +260,5 @@ def register() -> Plugin:
 
 Available manual:
 
-# Validate with JSON schema plugin
-
-This plugin validates objects using provided JSON schema.
-
-## Input
-
-This plugin takes any payload as input.
-
-## Outputs
-
-This plugin returns payload on port **TRUE** if validation is passed, or payload on port **FALSE** if validation fails.
-If the schema is incorrect then the **ERROR** port is triggered. 
-
-#### JSON configuration
-
-```json
-{
-  "validation_schema": "<validation-object>"
-}
-```
-
-Example of valid schema to provide in the form field or as a value of **validation_schema**:
-
-```json
-{
-  "payload@properties.sale": {
-    "type": "object",
-    "properties": {
-      "price": {
-        "type": "number"
-      },
-      "name": {
-        "type": "string",
-        "maxLength": 15
-      }
-    }
-  },
-  "profile@context.timestamp": {
-    "type": "integer"
-  }
-}
-```
-
-```json
- {
-    "payload@...": {
-      "title": "Product",
-      "description": "A product from Acme's catalog",
-      "type": "object",
-      "properties": {
-        "productId": {
-          "description": "The unique identifier for a product",
-          "type": "integer"
-        }
-      },
-      "required": [
-        "productId"
-      ]
-    }
-  }
-```
+None
 
