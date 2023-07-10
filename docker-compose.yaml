@@ -10,7 +10,7 @@ services:
       DEMO: yes
       PRODUCTION: no
     ports:
-      - 38686:80
+      - 8686:80
     depends_on:
       - redis
       - elasticsearch
