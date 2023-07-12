@@ -6,7 +6,7 @@ from uuid import uuid4
 
 from fastapi import APIRouter, HTTPException
 from tracardi.domain.payload.tracker_payload import TrackerPayload
-from tracardi.service.license import License
+from tracardi.service.license import License, MULTI_TENANT
 from tracardi.service.storage.driver.elastic import system as system_db
 from tracardi.service.tracker import track_event
 from app.config import server
@@ -27,7 +27,7 @@ from tracardi.service.storage.driver.elastic import event_source as event_source
 from tracardi.service.storage.driver.elastic import user as user_db
 from tracardi.service.storage.index import Resource
 
-if License.has_license():
+if License.has_license() and License.has_service(MULTI_TENANT):
     from com_tracardi.service.multi_tenant_manager import MultiTenantManager
 
 
@@ -56,7 +56,7 @@ async def check_if_installation_complete():
     has_admin_account = admins is not None and admins.total > 0
 
     if tracardi.multi_tenant and (not is_schema_ok or not has_admin_account):
-        if License.has_license():
+        if License.has_service(MULTI_TENANT):
             mtm = MultiTenantManager()
             await mtm.authorize(tracardi.multi_tenant_manager_api_key)
             context = get_context()
@@ -119,8 +119,11 @@ async def install(credentials: Optional[Credentials]):
 
     if tracardi.multi_tenant:
         if not License.has_license():
-            raise HTTPException(status_code=403, detail="Installation forbidden. Multi-tenant installation not "
+            raise HTTPException(status_code=403, detail="Installation forbidden. Multi-tenant installation is not "
                                                         "allowed in open-source version.")
+        if not License.has_service(MULTI_TENANT):
+            raise HTTPException(status_code=403, detail="Installation forbidden. Multi-tenant installation is not "
+                                                        "included in your license.")
 
         mtm = MultiTenantManager()
         await mtm.authorize(tracardi.multi_tenant_manager_api_key)
