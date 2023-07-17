@@ -51,8 +51,8 @@ The above data is referred to as the "tracker payload" in Tracardi documentation
   journey. Some of those algorithms will be described below.
 * __context__ - this is a JSON data that describes the context of the event. It can be an agent type, e.g. mobile app
   name, service name. This part is defined by the user.
-* __events__ - this is a collection of event objects that consist of: type, properties, context, and options. See below
-  for more details.
+* __events__ - this is a collection of event objects called [Event Payload](event_payload.md), that consist of: type,
+  properties, context, time, tags, and options. See [here](event_payload.md) for more details.
 * __options__ - this is a key-value store for additional options.
 
 Tracardi can collect several events in one request. That's why we define a list of objects in the events key. Each event
