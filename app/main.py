@@ -10,8 +10,6 @@ _local_dir = os.path.dirname(__file__)
 sys.path.append(f"{_local_dir}/api/proto/stubs")
 
 import logging
-import asyncio
-from random import randint
 from starlette.responses import JSONResponse
 from time import time
 from app.config import server

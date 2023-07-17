@@ -40,6 +40,8 @@ Description of environment variables:
 - `QUALIFY_BY`: Specifies the qualifying operation or pattern to match. In this case, "inactive-session" indicates that
   the job searches for inactive sessions.
 - `EVENT_TYPE`: Defines the event type that must be registered if it qualifies for it.
+- `OPEN_EVENT_TYPE`: Defines the open event type that must be registered if it we want to close it with `CLOSE_EVENT_TYPE`.
+- `CLOSE_EVENT_TYPE`: Defines the close event type.
 
 Each job serves a specific purpose, and the provided example focuses on the Heartbeat Job, which looks for sessions
 without a `session-inactive` event within the time range of now and -1 hour. If there is no `session-inactive` event,
@@ -70,7 +72,7 @@ docker run \
 tracardi/com-heartbeat-job:0.8.1
 ```
 
-2. Session Close Job (SCHEDULE="*/15 * * * *"):
+2. Visit End Job (SCHEDULE="*/15 * * * *"):
 
 ```bash
 docker run \
@@ -80,7 +82,8 @@ docker run \
 -e RANGE="now-1h|now" \
 -e QUALIFY_BY="session-not-closed" \
 -e SKIP_SECONDS=1800 \
--e EVENT_TYPE="session-closed" \
+-e OPEN_EVENT_TYPE="visit-started" \
+-e CLOSE_EVENT_TYPE="visit-ended" \
 tracardi/com-heartbeat-job:0.8.1
 ```
 
