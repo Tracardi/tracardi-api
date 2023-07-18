@@ -4,6 +4,7 @@ from fastapi import Depends
 from fastapi.responses import Response
 from tracardi.domain.session import Session
 from tracardi.service.storage.driver.elastic import session as session_db
+from tracardi.service.storage.driver.elastic.session import _aggregate_session
 from tracardi.service.storage.index import Resource
 from .auth.permissions import Permissions
 from ..config import server
@@ -28,12 +29,65 @@ async def count_sessions():
             dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer", "maintainer"]))],
             include_in_schema=server.expose_gui_api)
 async def get_sessions_by_app():
-    result = await session_db.count_session_by_browser()
-    return {
-        "sessions": result.total,
-        "browsers": [{"name": item['key'], "value": item['doc_count']} for item in
-                     result.aggregations("browsers").buckets()],
-    }
+    bucket_name = 'sessions_by_app'
+    result = await _aggregate_session(bucket_name, by='app.name', buckets_size=20)
+
+    if bucket_name not in result.aggregations:
+        return []
+
+    return [{"name": id, "value": count} for id, count in result.aggregations[bucket_name][0].items()]
+
+
+@router.get("/sessions/count/by_os_name", tags=["session"],
+            dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer", "maintainer"]))],
+            include_in_schema=server.expose_gui_api)
+async def get_sessions_by_os_name():
+    bucket_name = 'sessions_by_os_name'
+    result = await _aggregate_session(bucket_name, by='os.name', buckets_size=20)
+
+    if bucket_name not in result.aggregations:
+        return []
+
+    return [{"name": id, "value": count} for id, count in result.aggregations[bucket_name][0].items()]
+
+
+@router.get("/sessions/count/by_device_geo", tags=["session"],
+            dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer", "maintainer"]))],
+            include_in_schema=server.expose_gui_api)
+async def get_sessions_by_device_location():
+    bucket_name = 'sessions_by_device_geo'
+    result = await _aggregate_session(bucket_name, by='device.geo.country.name', buckets_size=20)
+
+    if bucket_name not in result.aggregations:
+        return []
+
+    return [{"name": id, "value": count} for id, count in result.aggregations[bucket_name][0].items()]
+
+
+@router.get("/sessions/count/by_channel", tags=["session"],
+            dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer", "maintainer"]))],
+            include_in_schema=server.expose_gui_api)
+async def get_sessions_by_channel():
+    bucket_name = 'sessions_by_channel'
+    result = await _aggregate_session(bucket_name, by='metadata.channel', buckets_size=20)
+
+    if bucket_name not in result.aggregations:
+        return []
+
+    return [{"name": id, "value": count} for id, count in result.aggregations[bucket_name][0].items()]
+
+
+@router.get("/sessions/count/by_resolution", tags=["session"],
+            dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer", "maintainer"]))],
+            include_in_schema=server.expose_gui_api)
+async def get_sessions_by_channel():
+    bucket_name = 'sessions_by_resolution'
+    result = await _aggregate_session(bucket_name, by='device.resolution', buckets_size=20)
+
+    if bucket_name not in result.aggregations:
+        return []
+
+    return [{"name": id, "value": count} for id, count in result.aggregations[bucket_name][0].items()]
 
 
 @router.get("/session/count/online/by_location", tags=["session"],

@@ -121,11 +121,11 @@ async def event_types(query: str = None, limit: int = 1000):
 
 
 @router.get("/events/by_type", tags=["event"], include_in_schema=server.expose_gui_api)
-async def aggregate_event_types(size: int = 100):
+async def aggregate_event_types():
     """
     Returns number of events grouped by type
     """
-    return await event_db.aggregate_event_type(bucket_size=size)
+    return await event_db.aggregate_event_type()
 
 
 @router.get("/events/by_tag", tags=["event"], include_in_schema=server.expose_gui_api)
@@ -142,6 +142,38 @@ async def aggregate_event_statuses():
     Returns number of events grouped by tags
     """
     return await event_db.aggregate_event_status()
+
+
+@router.get("/events/by_device_geo", tags=["event"], include_in_schema=server.expose_gui_api)
+async def aggregate_event_device_geo_location():
+    """
+    Returns number of events grouped by device location
+    """
+    return await event_db.aggregate_event_device_geo()
+
+
+@router.get("/events/by_os_name", tags=["event"], include_in_schema=server.expose_gui_api)
+async def aggregate_event_device_geo_location():
+    """
+    Returns number of events grouped by operation system name
+    """
+    return await event_db.aggregate_event_os_name()
+
+
+@router.get("/events/by_channel", tags=["event"], include_in_schema=server.expose_gui_api)
+async def aggregate_event_channels():
+    """
+    Returns number of events grouped by channels
+    """
+    return await event_db.aggregate_event_channels()
+
+
+@router.get("/events/by_resolution", tags=["event"], include_in_schema=server.expose_gui_api)
+async def aggregate_event_resolution():
+    """
+    Returns number of events grouped by screen resolution
+    """
+    return await event_db.aggregate_event_resolution()
 
 
 @router.get("/events/by_source", tags=["event"], include_in_schema=server.expose_gui_api)
