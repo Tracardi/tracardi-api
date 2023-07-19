@@ -81,6 +81,10 @@ nav:
           - installation/staging/index.md
       - Commercial:
           - installation/commercial/index.md
+          - installation/jobs/index.md
+          - installation/scheduler/installation.md
+          - installation/workers/installation.md
+
 
   - Configuration:
       - configuration/tracardi_configuration.md
@@ -97,6 +101,7 @@ nav:
           - integration/api/mobile-integration.md
           - integration/api/tracker-response.md
           - integration/api/errors.md
+          - integration/api/event_payload.md
       - Javascript:
           - integration/js/index.md
           - integration/js/context.md
@@ -109,6 +114,10 @@ nav:
           - integration/param/index.md
   - upgrade.md
   - trouble/index.md
+  - Data:
+      - data/event_fields.md
+      - data/profile_fields.md
+
   - Running:
       - running/index.md
       - Traffic:
@@ -211,6 +220,35 @@ nav:
               - flow/actions/join_output_payloads.md
               - flow/actions/limiter_action.md
               - flow/actions/marge_data_action.md
+              - flow/actions/internal/add_empty_profile.md
+              - flow/actions/internal/add_empty_session.md
+
+              - Commercial:
+                  - flow/actions/pause_and_resume.md
+                  - flow/actions/commercial/background.md
+                  - flow/actions/commercial/chat_gpt_prompt.md
+                  - flow/actions/commercial/event_aggregator.md
+                  - flow/actions/commercial/event_counter.md
+                  - flow/actions/commercial/generic_js_ux.md
+                  - flow/actions/commercial/limiter.md
+                  - flow/actions/commercial/load_report.md
+                  - flow/actions/commercial/open_replay_ux.md
+                  - flow/actions/commercial/pause_and_resume.md
+                  - flow/actions/commercial/sequence_matcher.md
+                  - flow/actions/commercial/sequencer.md
+                  - flow/actions/commercial/twillio_sms.md
+                  - flow/actions/commercial/weaviate_delete.md
+                  - flow/actions/commercial/weaviate_exists.md
+                  - flow/actions/commercial/weaviate_load.md
+                  - flow/actions/commercial/weaviate_store.md
+                  - flow/actions/commercial/youtube_player.md
+
+              - Segmentaion:
+                  - flow/actions/segmentation/add_segment_action.md
+                  - flow/actions/segmentation/delete_segment_action.md
+                  - flow/actions/segmentation/move_segment_action.md
+                  - flow/actions/segmentation/profile_segment.md
+
               - Operations:
                   - flow/actions/update_profile_action.md
                   - flow/actions/merge_profiles_action.md
@@ -316,7 +354,6 @@ nav:
                   - flow/actions/url_parser_action.md
                   - flow/actions/string_splitter_action.md
                   - flow/actions/string_properties_action.md
-                  - flow/actions/profile_segment.md
                   - flow/actions/mapping_action.md
 
               - Validators:
@@ -431,6 +468,73 @@ nav:
           - qa/bulk/extension_questions.md
           - qa/bulk/other_qa.md
           - qa/bulk/plugins_questions.md
+          - qa/can_i_add_custom_event_timestamp.md
+          - qa/can_i_only_process_the_event.md
+          - qa/can_you_describe_tracardi_components.md
+          - qa/difference_between_major_and_minor_upgrades.md
+          - qa/do_i_have_to_define_custom_properties_upfront.md
+          - qa/do_i_need_license_for_saas.md
+          - qa/does_tracarid_have_its_own_backup_system.md
+          - qa/hot_to_use_reports.md
+          - qa/how_backups_are_made_in_tracardi.md
+          - qa/how_can_I_authorize_and_get_API KEY.md
+          - qa/how_do_i_setup_multi_tenant.md
+          - qa/how_live_segmentation_works_from_technical_point_of_view.md
+          - qa/how_pause_and_resume_works.md
+          - qa/how_post_segmentation_works.md
+          - qa/how_system_process_event_context.md
+          - qa/how_tenant_are_diffrenciated.md
+          - qa/how_to_aggregate_events_for_segmentation.md
+          - qa/how_to_automate _obtaining_the_API_key.md
+          - qa/how_to_automate_new_tenant_creation_in_tms.md
+          - qa/how_to_create_new_tenant.md
+          - qa/how_to_integrate_TMS_with_Tracardi.md
+          - qa/how_to_purge_events_sessions_profiles.md
+          - qa/how_tracard_bot_works.md
+          - qa/how_tracardi_is_upgraded.md
+          - qa/live_segmentation_does_not_change_profile.md
+          - qa/major_os_competitors.md
+          - qa/pricing_comparation.md
+          - qa/tenant_management_service_api.md
+          - qa/unomi_vs_tracardi.md
+          - qa/what_are_parts_of_tracardi.md
+          - qa/what_are_session-open_and_visit-open_meant_for.md
+          - qa/what_are_the_pros_and cons_of_multi-tenant setup.md
+          - qa/what_is_aux_data.md
+          - qa/what_is_customer_journey.md
+          - qa/what_is_ephemeral_event_source.md
+          - qa/what_is_event_context.md
+          - qa/what_is_event_property.md
+          - qa/what_is_event_tag.md
+          - qa/what_is_major_version_upgrade.md
+          - qa/what_is_minor_version_upgrade.md
+          - qa/what_is_misc_data.md
+          - qa/what_is_the_archtecture_of_tracardi.md
+          - qa/what_is_the_cost_of_tracardi.md
+          - qa/what_is_the_difference_between_event_traits_and_properties.md
+          - qa/what_is_the_difference_between_tracardi_and_segment.md
+          - qa/what_is_the_difference_between_zapier_and_tracardi.md
+          - qa/what_is_tms_reponsible_for.md
+          - qa/what_is_tracardi_worker_responsible_for.md
+          - qa/what_staging_means.md
+          - qa/when_can_i_use_tracardi_for_free.md
+          - qa/where_can_i_find_report_id.md
+          - qa/where_to_store_custom_properties.md
+          - qa/why_background_task_in_pending_state.md
+          - qa/why_do_I_have_session-opened.md
+          - qa/why_live_segmentation_does_not work.md
+          - qa/why_post_event_segmentation_does_not work.md
+          - qa/bulk/generic_tracardi_qa.md
+          - qa/bulk/license.md
+          - qa/bulk/questions_about_event_data.md
+          - qa/bulk/questions_about_profile_data.md
+          - qa/bulk/staging_server_qa.md
+          - qa/bulk/tracardi_installation.md
+          - qa/bulk/workflow.md
+          - qa/code/plugins.md
+          - qa/code/plugins1.md
+          - qa/errors/error_11.md
+          - qa/errors/error_12.md
           - qa/errors/error_1.md
           - qa/errors/error_10.md
           - qa/errors/error_2.md
