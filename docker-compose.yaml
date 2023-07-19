@@ -30,6 +30,8 @@ services:
       discovery.type: single-node
       xpack.security.enabled: "false"
       cluster.name: contextElasticSearch
+    volumes:
+      - elasticsearch-data:/usr/share/elasticsearch/data
 
   redis:
     image: redis
@@ -38,3 +40,7 @@ services:
     image: tracardi/update-worker:0.8.1-rc3
     environment:
       REDIS_HOST: redis://redis:6379
+
+volumes:
+  elasticsearch-data:
+    driver: local
