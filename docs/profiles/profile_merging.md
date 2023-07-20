@@ -1,44 +1,60 @@
 # Profile merging and Identity resolution
 
-## Introduction
+## Profile Merging
 
-Profile merging is the process of combining multiple customer profiles that belong to the same person, but have been saved as separate records. This can happen for various reasons such as using different devices, browsers or even different email addresses. In order to combine these data into one record, it is necessary to select a merging key that will be a unique value acress the whole system and by which the customer data could be combined. This can be an email address, credit card, or any other global identifier that can be used to group client profiles.
+Profile merging is the process of bringing together multiple customer profiles that belong to the same person but have
+been stored separately for various reasons, like using different devices or email addresses. To create a complete
+profile, a unique merging key is chosen to combine the data across the entire system. This merging key can be an email
+address, credit card, or any other identifier that groups client profiles.
 
-!!! Example
+**Example:** Imagine a customer, John, uses his laptop with Firefox and gets profile ID 1. When he uses Google Chrome on
+the same laptop, he gets profile ID 2. Then, when he uses his mobile phone, he gets profile ID 3. Although all these
+profiles represent John, they have different data. For instance, profile ID 1 may have purchase data but not his name,
+which is saved in profile ID 2. By merging these profiles, we can have a complete understanding of John as a customer.
 
-    For example, if a customer uses their laptop with Firefox browser, they may have one profile with an ID of 1. But when they use 
-    the same device but using Google Chrome, they may have another profile with ID of 2. And when they use a mobile phone, they may 
-    have a third profile with ID of 3. Even though they are the same person, they have 3 different profiles. Profile ID 1 may have 
-    data about their purchases but not their name and surname, while their first and last name may be saved in profile ID 2. 
-    Profile merging is needed to aggregate all the fragmented data set into one profile to have a complete understanding of the customer.
+## Identity Resolution
 
-## Identity resolution
+Identity resolution is a broader term used to link various pieces of data about an individual or entity to create a
+comprehensive and accurate view. In a customer data platform (CDP), identity resolution helps connect data from
+different sources, like website interactions and email campaigns, to form a unified customer profile.
 
-Identity resolution is a broader term. It is the process of linking multiple pieces of data about a single individual or entity, in order to create a complete and accurate picture of that individual or entity. This can be done using a variety of techniques, such as matching data based on common attributes, using machine learning algorithms to identify patterns in the data, or using external data sources to supplement and verify the data.
+## Merging Process
 
-In the context of a customer data platform (CDP), identity resolution is used to link together data about a customer from multiple sources, such as website interactions, email campaigns, and customer service interactions, by merging the data.
+Merging customer profiles is a complex process that involves following rules and procedures. It starts by retrieving the
+current customer profile from the database. If the event is handled by a workflow with the profile merging action or is
+marked as an identification point in the customer journey, the system uses the defined "merge key" (like an email
+address) to load the profile data instead of the profile's ID.
 
-## Merging process
+If the system finds multiple profiles with the same merge key, it merges the data from all these profiles into one. In
+case of conflicting data, like different names, the system resolves the conflict by picking the last value and saving
+other values in an "aux.conflict.name" field, like ["Bill", "William"].
 
-Merging is a complex process that involves combining multiple customer profiles that belong to the same person. It is done by following rules and procedures.
+The merged profile receives a new ID, and a new profile record is created. Obsolete profiles are deleted, and the events
+associated with the deleted profiles are copied to the new merged profile.
 
-The process begins by downloading the current customer profile from the database. If the event is configured to be processed by a workflow that has the profile merging action defined, or if the event is defined as an identification point in the customer journey, the system will use the defined "merge key" to load the profile data again necessary using this key instead of profile's ID. The merge key is usually an email address, credit card, etc.
+The new profile ID is saved locally on the device's database using JavaScript. However, it's important to note that not
+all devices may update their reference to the current profile with the new ID immediately.
 
-If the system finds more than one profile with for example the same email address, it will merge the data from all profile records. The current profile and all other profiles that contain the merge key will be combined into a single profile.
+## Profile Propagation
 
-If there are different values for the same field, for example, if one profile has the name "Bill" and another has the name "William", the system will consider the data to be in a "conflict state". The system will pick the last value and override the name, but will also save all available values in an "aux.conflict.name" field, for this example that would be ["Bill", "William"].
+Consider this example: A customer uses an online store with a laptop and a mobile phone, and each device has a different
+profile ID. The laptop has profile ID 1, and the mobile phone has profile ID 2.
 
-The combined profile will be given a new ID, and a new profile record will be created. All obsolete profiles will be deleted, and the events that were associated with the deleted profiles will be copied to the new merged profile.
+At some point, the customer enters their email address on the laptop, creating a new merged profile with ID 3. The
+laptop's browser saves a reference to this new profile. However, the mobile phone still stores the reference to the old
+profile.
 
-The new profile ID will be saved by the javascript code on the device's local database. However, it's important to note that this does not mean that the reference to the current profile has been changed on all devices. It means that the system has a master profile of the customer with all the data collected from different devices but the devices themselves may not be updated with the new ID.
+The next time the customer uses their mobile phone to access the online store, the system uses the old profile ID to
+identify them. But instead of loading the old profile, the system recognizes that the old profile ID has been merged
+with a new profile. The mobile phone receives the new profile ID (3) and saves it locally.
 
-## Profile propagation
+This way, the linked profile information propagates to all devices, and the customer will have the same updated profile
+ID on both the laptop and the mobile phone. This provides a complete customer view and improves the overall customer
+experience.
 
-Consider the following example, a customer is using an online store with two different devices: a laptop and a mobile phone. Both devices have references to the customer's profile, but the profile ID is different on each device. On the laptop, the profile ID is 1, and on the mobile phone, the profile ID is 2.
+!!! Note
 
-At some point, the customer enters their email address into the online store using their laptop. A new merged profile is created and it has an ID of 3. The reference to this profile is saved in the browser on the laptop. However, the reference to the old profile is still stored on the mobile phone.
-
-Next time when the customer uses their mobile phone to access the online store again, the system will use the old profile ID to identify the customer. But, instead of loading old profile, the system will download the new merged profile. This happens because Tracardi has the capability to recognize that an old profile ID no longer exists and has been merged with the new profile. Device will receive new profile ID that will be saved locally. 
-
-This way, the information about the linked profile will be propagated to all devices. The customer will have the same profile ID on both devices and all the data will be updated and merged, this way the system can have a complete customer view and provide a better customer experience.
- 
+    It is **very important** to synchronize `profile.id` returned in response with the profile ID saved on a client side.
+    If the profile in the response is different from the one sent, it means the client should update its `profile.id` 
+    and send the new one with the next call. Missing this step may cause the `profile.id` to be recreated with each 
+    call to the /track API, potentially causing issues with the customer's profile.

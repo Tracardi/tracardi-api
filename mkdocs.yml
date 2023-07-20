@@ -112,15 +112,12 @@ nav:
       - Passing Profile ID in link:
           - integration/param/index.md
 
-  - Data:
-      - data/event_fields.md
-      - data/profile_fields.md
-
   - Traffic:
       - traffic/inbound/index.md
       - traffic/outbound/index.md
   - Events:
       - events/index.md
+      - data/event_fields.md
       - getting_started/tracking.md
       - events/event_tracking.md
       - events/event_validation.md
@@ -129,9 +126,12 @@ nav:
           - events/event_traits_schema.md
       - Internal event types:
           - events/internal/index.md
+  - Sessions:
+      - session/index.md
   # General definition of profile and its properties
   - Profiles:
       - profiles/index.md
+      - data/profile_fields.md
       - profiles/profile_merging.md
       - profiles/profile_segmentation.md
   # Description of tracardi resources that it can use to fetch data.
@@ -403,14 +403,31 @@ nav:
 
   - Q&A:
      - System architecture:
-       - qa/how_tracardi_uses_entities.md
-       - qa/what_is_event_context.md
-       - qa/what_is_event_property.md
-       - qa/what_is_event_tag.md
-       - qa/what_is_aux_data.md
-       - qa/what_is_misc_data.md
-       - qa/what_is_session.md
-       - qa/what_is_profile.md
+
+       - Inbound Traffic:
+         - qa/what_is_bridge.md
+         - qa/what_is_event_source.md
+         - qa/what_is_the_difference_between_bridge_and_event_source.md
+       - Events:
+         - qa/what_is_event.md
+         - qa/what_is_event_property.md
+         - qa/what_is_event_context.md
+         - qa/what_is_event_tag.md
+       - Profile and session:
+         - qa/how_to_copy_data_from_event_to_profile.md
+         - qa/how_can_i_load_profile.md
+         - qa/how_can_i_load_session.md
+         - qa/where_is_profile_visits_are_counted.md
+         - qa/how_profile_event_and_session_ids_are_tied_up_together.md
+         - qa/why_this_is_a_security_risk_to_use_simple_profile_and_session_id.md
+         - qa/why_do_I_have_session-opened.md
+         - qa/what_is_aux_data.md
+         - qa/what_is_misc_data.md
+         - qa/what_is_session.md
+         - qa/what_is_profile.md
+       - Entities:
+         - qa/how_tracardi_uses_entities.md
+
 
      - Installation and upgrades:
        - qa/how_to_upgrade_tracardi.md
@@ -424,6 +441,19 @@ nav:
        - qa/difference_between_major_and_minor_upgrades.md
        - qa/how_to_automate_obtaining_the_API_key.md
        - qa/what_database_use_tracardi.md
+       - Multi-tenancy:
+         - qa/what_is_multi_tenant_setup.md
+         - qa/how_do_i_setup_multi_tenant.md
+         - qa/how_to_configure_tracardi_to_be_multi_tenant.md
+         - qa/what_are_the_pros_and cons_of_multi-tenant_setup.md
+         - qa/how_do_i_setup_multi_tenant.md
+         - qa/how_tenant_are_diffrenciated.md
+         - qa/how_to_create_new_tenant.md
+         - Mutli-tenant management service (TMS):
+           - qa/waht_is_tms.md
+           - qa/tenant_management_service_api.md
+           - qa/what_is_tms_reponsible_for.md
+           - qa/how_to_integrate_TMS_with_Tracardi.md
 
      - Integration:
        - qa/where_to_place_the_javascript_integration_codes.md
@@ -447,12 +477,6 @@ nav:
        - qa/how_tracardi_loads_profile.md
        - qa/when_i_know_if_the_event_was_processed.md
 
-
-     - Data import:
-       - qa/can_tracardi_import_data_from_csv.md
-       - qa/how_to_import_data_to_tracardi.md
-       - qa/how_to_import_data_with_python.md
-
      - Workflow:
        - qa/how_to_replace_a_profile_in_workflow.md
        - qa/how_to_use_workflow_editor.md
@@ -467,26 +491,6 @@ nav:
          - qa/bulk/extension_questions.md
          - qa/code/plugins.md
          - qa/code/plugins1.md
-
-     - Profile and session:
-       - qa/how_to_copy_data_from_event_to_profile.md
-       - qa/how_can_i_load_profile.md
-       - qa/how_can_i_load_session.md
-       - qa/where_is_profile_visits_are_counted.md
-       - qa/how_profile_event_and_session_ids_are_tied_up_together.md
-       - qa/why_this_is_a_security_risk_to_use_simple_profile_and_session_id.md
-       - qa/why_do_I_have_session-opened.md
-
-     - Multi-tenancy:
-       - qa/how_do_i_setup_multi_tenant.md
-       - qa/how_to_configure_tracardi_to_be_multi_tenant.md
-       - qa/what_are_the_pros_and cons_of_multi-tenant_setup.md
-       - qa/how_do_i_setup_multi_tenant.md
-       - qa/how_tenant_are_diffrenciated.md
-       - qa/how_to_create_new_tenant.md
-       - qa/tenant_management_service_api.md
-       - qa/what_is_tms_reponsible_for.md
-       - qa/how_to_integrate_TMS_with_Tracardi.md
 
      - Commercial version:
        - qa/how_can_i_benefit_from_commercial_version.md
@@ -520,6 +524,11 @@ nav:
      - Backups:
          - qa/does_tracarid_have_its_own_backup_system.md
          - qa/how_backups_are_made_in_tracardi.md
+
+     - Data import:
+         - qa/can_tracardi_import_data_from_csv.md
+         - qa/how_to_import_data_to_tracardi.md
+         - qa/how_to_import_data_with_python.md
 
      - General:
        - qa/how_to_store_utms.md

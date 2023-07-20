@@ -1,4 +1,4 @@
-# Event Fields Description
+# Event Fields
 
 - `id`: The event ID, representing a unique identifier for each event.
 - `metadata`: Contains metadata information related to the event, such as time, time zone, visits, and auxiliary

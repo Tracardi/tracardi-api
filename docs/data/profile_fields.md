@@ -1,4 +1,4 @@
-# Profile Fields Description
+# Profile Fields
 
 - `id`: The profile ID, representing a unique identifier for each profile.
 - `ids`: A list of previous profile IDs and IDs from external systems, used to reference the same profile stored in
