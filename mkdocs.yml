@@ -85,7 +85,6 @@ nav:
           - installation/scheduler/installation.md
           - installation/workers/installation.md
 
-
   - Configuration:
       - configuration/tracardi_configuration.md
       - configuration/best_practises.md
@@ -112,438 +111,465 @@ nav:
           - integration/redirect/index.md
       - Passing Profile ID in link:
           - integration/param/index.md
-  - upgrade.md
-  - trouble/index.md
+
   - Data:
       - data/event_fields.md
       - data/profile_fields.md
 
-  - Running:
-      - running/index.md
-      - Traffic:
-          - traffic/inbound/index.md
-          - traffic/outbound/index.md
-      - Events:
-          - events/index.md
-          - getting_started/tracking.md
-          - events/event_tracking.md
-          - events/event_validation.md
-          - events/synchronization.md
-          - Event traits schema:
-              - events/event_traits_schema.md
-          - Internal event types:
-              - events/internal/index.md
+  - Traffic:
+      - traffic/inbound/index.md
+      - traffic/outbound/index.md
+  - Events:
+      - events/index.md
+      - getting_started/tracking.md
+      - events/event_tracking.md
+      - events/event_validation.md
+      - events/synchronization.md
+      - Event traits schema:
+          - events/event_traits_schema.md
+      - Internal event types:
+          - events/internal/index.md
+  # General definition of profile and its properties
+  - Profiles:
+      - profiles/index.md
+      - profiles/profile_merging.md
+      - profiles/profile_segmentation.md
+  # Description of tracardi resources that it can use to fetch data.
+  - Resources:
+      - resources/index.md
+      - Documentation:
+          - resources/elastic_email_resource.md
+          - resources/matomo_resource.md
+          - resources/novu_resource.md
+          - resources/redis_resource.md
+          - resources/activecampaign_resource.md
+          - resources/airtable_resource.md
+          - resources/amplitude_resource.md
+          - resources/aws_resource.md
+          - resources/civi_resource.md
+          - resources/fullcontact_resource.md
+          - resources/hubspot_resource.md
+          - resources/mailchimp_resource.md
+          - resources/mautic_resource.md
+          - resources/meaningcloud_resource.md
+          - resources/microservice_resource.md
+          - resources/mongo_resource.md
+          - resources/mysql_resource.md
+          - resources/postgresql_resource.md
+          - resources/pushover_resource.md
+          - resources/rabbitmq_resource.md
+          - resources/scheduler_resource.md
+          - resources/sendgrid_resource.md
+          - resources/influxdb_resource.md
+          - resources/mixpanel_resource.md
+          - resources/mqtt_resource.md
+          - resources/salesforce_resource.md
+          - resources/zapier_resource.md
+          - resources/chatwoot_resource.md
+          - resources/elasticsearch_resource.md
+          - resources/sms77_resource.md
+          - resources/twitter_resource.md
+          - resources/discord_resource.md
+          - resources/ga4_tracker_resource.md
+          - resources/github_resource.md
+          - resources/ua3_tracker_resource.md
+  # Workflow and its action plugins that can be used
+  - Workflows:
+      - flow/index.md
+      - Actions:
+          - flow/actions/index.md
+          - flow/actions/if_action.md
+          - flow/actions/elastic_email_contact_action.md
+          - flow/actions/elastic_email_transactional_action.md
+          - flow/actions/detect_client_agent_action.md
+          - flow/actions/inject_action.md
+          - flow/actions/event_scheduler_action.md
+          - flow/actions/get_prev_event_action.md
+          - flow/actions/get_prev_session_action.md
+          - flow/actions/new_event_action.md
+          - flow/actions/new_visit_action.md
+          - flow/actions/event_counter_action.md
+          - flow/actions/condition_set_action.md
+          - flow/actions/count_by_query_string_action.md
+          - flow/actions/reshape_payload_action.md
+          - flow/actions/assign_profile_id_action.md
+          - flow/actions/template_action.md
+          - flow/actions/append_remove_trait_action.md
+          - flow/actions/start_action.md
+          - flow/actions/base64_decode.md
+          - flow/actions/base64_encode.md
+          - flow/actions/data_exists_action.md
+          - flow/actions/profile_inject_action.md
+          - flow/actions/sort_array_action.md
+          - flow/actions/sorted_dict_action.md
+          - flow/actions/string_join_action.md
+          - flow/actions/string_similarity_action.md
+          - flow/actions/twitter_tweet_action.md
+          - flow/actions/geo/geo_ip_locator.md
+          - flow/actions/sms77/sms77_send_sms_plugin.md
+          - flow/actions/calculator_action.md
+          - flow/actions/random_element_action.md
+          - flow/actions/assign_condition_result_action.md
+          - flow/actions/reduce_array_action.md
+          - flow/actions/password_generator_action.md
+          - flow/actions/contains_pattern_action.md
+          - flow/actions/google_translate_action.md
+          - flow/actions/join_output_payloads.md
+          - flow/actions/limiter_action.md
+          - flow/actions/marge_data_action.md
+          - flow/actions/internal/add_empty_profile.md
+          - flow/actions/internal/add_empty_session.md
 
-      - Profiles:
-          - profiles/index.md
-          - profiles/profile_merging.md
-          - profiles/profile_segmentation.md
-      - Resources:
-          - resources/index.md
-          - Documentation:
-              - resources/elastic_email_resource.md
-              - resources/matomo_resource.md
-              - resources/novu_resource.md
-              - resources/redis_resource.md
-              - resources/activecampaign_resource.md
-              - resources/airtable_resource.md
-              - resources/amplitude_resource.md
-              - resources/aws_resource.md
-              - resources/civi_resource.md
-              - resources/fullcontact_resource.md
-              - resources/hubspot_resource.md
-              - resources/mailchimp_resource.md
-              - resources/mautic_resource.md
-              - resources/meaningcloud_resource.md
-              - resources/microservice_resource.md
-              - resources/mongo_resource.md
-              - resources/mysql_resource.md
-              - resources/postgresql_resource.md
-              - resources/pushover_resource.md
-              - resources/rabbitmq_resource.md
-              - resources/scheduler_resource.md
-              - resources/sendgrid_resource.md
-              - resources/influxdb_resource.md
-              - resources/mixpanel_resource.md
-              - resources/mqtt_resource.md
-              - resources/salesforce_resource.md
-              - resources/zapier_resource.md
-              - resources/chatwoot_resource.md
-              - resources/elasticsearch_resource.md
-              - resources/sms77_resource.md
-              - resources/twitter_resource.md
-              - resources/discord_resource.md
-              - resources/ga4_tracker_resource.md
-              - resources/github_resource.md
-              - resources/ua3_tracker_resource.md
+          # Commercial version plugins
+          - Commercial:
+              - flow/actions/pause_and_resume.md
+              - flow/actions/commercial/background.md
+              - flow/actions/commercial/chat_gpt_prompt.md
+              - flow/actions/commercial/event_aggregator.md
+              - flow/actions/commercial/event_counter.md
+              - flow/actions/commercial/generic_js_ux.md
+              - flow/actions/commercial/limiter.md
+              - flow/actions/commercial/load_report.md
+              - flow/actions/commercial/open_replay_ux.md
+              - flow/actions/commercial/pause_and_resume.md
+              - flow/actions/commercial/sequence_matcher.md
+              - flow/actions/commercial/sequencer.md
+              - flow/actions/commercial/twillio_sms.md
+              - flow/actions/commercial/weaviate_delete.md
+              - flow/actions/commercial/weaviate_exists.md
+              - flow/actions/commercial/weaviate_load.md
+              - flow/actions/commercial/weaviate_store.md
+              - flow/actions/commercial/youtube_player.md
 
-      - Workflows:
-          - flow/index.md
-          - Actions:
-              - flow/actions/index.md
-              - flow/actions/if_action.md
-              - flow/actions/elastic_email_contact_action.md
-              - flow/actions/elastic_email_transactional_action.md
-              - flow/actions/detect_client_agent_action.md
-              - flow/actions/inject_action.md
-              - flow/actions/event_scheduler_action.md
-              - flow/actions/get_prev_event_action.md
-              - flow/actions/get_prev_session_action.md
-              - flow/actions/new_event_action.md
-              - flow/actions/new_visit_action.md
-              - flow/actions/event_counter_action.md
-              - flow/actions/condition_set_action.md
-              - flow/actions/count_by_query_string_action.md
-              - flow/actions/reshape_payload_action.md
-              - flow/actions/assign_profile_id_action.md
-              - flow/actions/template_action.md
-              - flow/actions/append_remove_trait_action.md
-              - flow/actions/start_action.md
-              - flow/actions/base64_decode.md
-              - flow/actions/base64_encode.md
-              - flow/actions/data_exists_action.md
-              - flow/actions/profile_inject_action.md
-              - flow/actions/sort_array_action.md
-              - flow/actions/sorted_dict_action.md
-              - flow/actions/string_join_action.md
-              - flow/actions/string_similarity_action.md
-              - flow/actions/twitter_tweet_action.md
-              - flow/actions/geo/geo_ip_locator.md
-              - flow/actions/sms77/sms77_send_sms_plugin.md
-              - flow/actions/calculator_action.md
-              - flow/actions/random_element_action.md
-              - flow/actions/assign_condition_result_action.md
-              - flow/actions/reduce_array_action.md
-              - flow/actions/password_generator_action.md
-              - flow/actions/contains_pattern_action.md
-              - flow/actions/google_translate_action.md
-              - flow/actions/join_output_payloads.md
-              - flow/actions/limiter_action.md
-              - flow/actions/marge_data_action.md
-              - flow/actions/internal/add_empty_profile.md
-              - flow/actions/internal/add_empty_session.md
+          - Segmentaion:
+              - flow/actions/segmentation/add_segment_action.md
+              - flow/actions/segmentation/delete_segment_action.md
+              - flow/actions/segmentation/move_segment_action.md
+              - flow/actions/segmentation/profile_segment.md
 
-              - Commercial:
-                  - flow/actions/pause_and_resume.md
-                  - flow/actions/commercial/background.md
-                  - flow/actions/commercial/chat_gpt_prompt.md
-                  - flow/actions/commercial/event_aggregator.md
-                  - flow/actions/commercial/event_counter.md
-                  - flow/actions/commercial/generic_js_ux.md
-                  - flow/actions/commercial/limiter.md
-                  - flow/actions/commercial/load_report.md
-                  - flow/actions/commercial/open_replay_ux.md
-                  - flow/actions/commercial/pause_and_resume.md
-                  - flow/actions/commercial/sequence_matcher.md
-                  - flow/actions/commercial/sequencer.md
-                  - flow/actions/commercial/twillio_sms.md
-                  - flow/actions/commercial/weaviate_delete.md
-                  - flow/actions/commercial/weaviate_exists.md
-                  - flow/actions/commercial/weaviate_load.md
-                  - flow/actions/commercial/weaviate_store.md
-                  - flow/actions/commercial/youtube_player.md
-
-              - Segmentaion:
-                  - flow/actions/segmentation/add_segment_action.md
-                  - flow/actions/segmentation/delete_segment_action.md
-                  - flow/actions/segmentation/move_segment_action.md
-                  - flow/actions/segmentation/profile_segment.md
-
-              - Operations:
-                  - flow/actions/update_profile_action.md
-                  - flow/actions/merge_profiles_action.md
-                  - flow/actions/segment_profiles_action.md
-                  - flow/actions/new_profile_action.md
-                  - flow/actions/update_event_action.md
-                  - flow/actions/update_session_action.md
-              - Stats:
-                  - flow/actions/increment_action.md
-                  - flow/actions/decrement_action.md
-                  - flow/actions/increase_views_action.md
-                  - flow/actions/increase_visits_action.md
-                  - flow/actions/key_counter_action.md
-              - Connectors:
-                  - flow/actions/zapier_webhook_action.md
-                  - flow/actions/smtp_connector_action.md
-                  - flow/actions/remote_call_action.md
-                  - flow/actions/fullcontact_webhook_action.md
-                  - flow/actions/rabbit_publisher_action.md
-                  - flow/actions/send_pushover_msg_action.md
-                  - flow/actions/weather_action.md
-                  - flow/actions/oauth2_token_action.md
-                  - flow/actions/send_to_influx_db_action.md
-                  - flow/actions/rabbitmq_action.md
-                  - flow/actions/fetch_from_airtable_action.md
-                  - flow/actions/fetch_from_influxdb_action.md
-                  - flow/actions/elasticsearch_query_action.md
-                  - flow/password_generator_action.md
-                  - flow/actions/contains_string_action.md
-                  - flow/actions/ends_with_action.md
-                  - flow/actions/starts_with_action.md
-                  - flow/actions/weekdays_checker_action.md
-                  - Databases:
-                      - flow/actions/mongo_query_action.md
-                      - flow/actions/mysql_connector_action.md
-                      - flow/actions/send_to_airtable_action.md
-                  - Messagers:
-                      - flow/actions/send_to_slack_channel_action.md
-                      - flow/actions/discord_webhook_action.md
-                      - flow/actions/telegram/telegram_post_plugin.md
-                  - Novu:
-                      - flow/actions/novu_plugin_action.md
-                  - Elastic mail:
-                      - flow/actions/elastic_email_bulk_action.md
-                      - flow/actions/elastic_email_change_contact_status_action.md
-                      - flow/actions/elastic_email_contact_add_action.md
-                  - Trello:
-                      - flow/actions/trello/add_trello_card_action.md
-                      - flow/actions/trello/add_trello_member_action.md
-                      - flow/actions/trello/delete_trello_card_action.md
-                      - flow/actions/trello/move_trello_card_action.md
-                  - Mautic:
-                      - flow/actions/add_mautic_contact_action.md
-                      - flow/actions/fetch_mautic_contact_by_email_action.md
-                      - flow/actions/fetch_mautic_contact_by_id_action.md
-                      - flow/actions/edit_points_in_mautic_action.md
-                      - flow/actions/edit_segment_in_mautic_action.md
-                  - Mixpanel:
-                      - flow/actions/fetch_mixpanel_funnel_action.md
-                      - flow/actions/send_to_mixpanel_action.md
-                  - Mailchimp:
-                      - flow/actions/mailchimp_transactional_action.md
-                      - flow/actions/mailchimp_add_to_audience_action.md
-                      - flow/actions/mailchimp_remove_from_audience_action.md
-                  - Sales force:
-                      - flow/actions/send_to_data_extension_action.md
-                  - Active campaign:
-                      - flow/actions/fetch_ac_contact_by_email_action.md
-                      - flow/actions/add_active_campaign_contact_action.md
-                  - Hubspot:
-                      - flow/actions/hubspot_get_company_action.md
-                      - flow/actions/hubspot_get_contact_action.md
-                      - flow/actions/hubspot_update_company_action.md
-                      - flow/actions/hubspot/hubspot_add_company_action.md
-                      - flow/actions/hubspot/hubspot_add_contact_action.md
-                      - flow/actions/hubspot_update_contact_action.md
-                  - Sendgrid:
-                      - flow/actions/sendgrid_add_contact_to_list.md
-                      - flow/actions/sendgrid_add_to_global_suppression.md
-                      - flow/actions/sendgrid_send_email.md
-                  - Google:
-                      - flow/actions/google_event_tracker_action.md
-                      - flow/actions/google_v4_event_tracker_action.md
-                  - Matomo:
-                      - flow/actions/matomo/register_event.md
-
-
-              - Regex:
-                  - flow/actions/regex/regex_validator_action.md
-                  - flow/actions/regex/regex_match.md
-                  - flow/actions/regex/regex_replace_action.md
-
-              - Locations:
-                  - flow/actions/geo_ip_locator.md
-
-              - Time:
-                  - flow/actions/day_night_split_action.md
-                  - flow/actions/local_time_span_action.md
-                  - flow/actions/calculate_time_difference_action.md
-                  - flow/actions/today_action.md
-
-              - Processing:
-                  - flow/actions/url_parser_action.md
-                  - flow/actions/string_splitter_action.md
-                  - flow/actions/string_properties_action.md
-                  - flow/actions/mapping_action.md
-
-              - Validators:
-                  - flow/actions/validate_with_json_schema_action.md
-                  - flow/actions/string_validator_action.md
-                  - flow/actions/field_type_action.md
-
-              - Machine Learning:
-                  - flow/actions/text_classification_action.md
-                  - flow/actions/lang_detection_action.md
-                  - flow/actions/sentiment_analysis_action.md
-                  - flow/actions/corporate_reputation_action.md
-                  - flow/actions/deep_categorization_action.md
-                  - flow/actions/summarization_action.md
-                  - flow/actions/topics_extraction_action.md
-
-              - UX:
-                  - flow/actions/question_popup_action.md
-                  - flow/actions/rating_popup_action.md
-                  - flow/actions/contact_popup_action.md
-                  - Chat:
-                      - flow/actions/chatwoot_widget_action.md
-                      - flow/actions/intercom_widget_action.md
-                      - flow/actions/livechat_widget_action.md
-                      - flow/actions/zendesk_widget_action.md
-
-              - Memory:
-                  - flow/actions/write_to_memory_action.md
-                  - flow/actions/read_from_memory_action.md
-                  - flow/actions/memory/payload_memory_collector.md
-
-              - Consents:
-                  - flow/actions/add_consents_action.md
-                  - flow/actions/require_consents_action.md
-
-              - Errors:
-                  - flow/actions/log_message_action.md
-                  - flow/actions/throw_error_action.md
+          - Operations:
+              - flow/actions/update_profile_action.md
+              - flow/actions/merge_profiles_action.md
+              - flow/actions/segment_profiles_action.md
+              - flow/actions/new_profile_action.md
+              - flow/actions/update_event_action.md
+              - flow/actions/update_session_action.md
+          - Stats:
+              - flow/actions/increment_action.md
+              - flow/actions/decrement_action.md
+              - flow/actions/increase_views_action.md
+              - flow/actions/increase_visits_action.md
+              - flow/actions/key_counter_action.md
+          - Connectors:
+              - flow/actions/zapier_webhook_action.md
+              - flow/actions/smtp_connector_action.md
+              - flow/actions/remote_call_action.md
+              - flow/actions/fullcontact_webhook_action.md
+              - flow/actions/rabbit_publisher_action.md
+              - flow/actions/send_pushover_msg_action.md
+              - flow/actions/weather_action.md
+              - flow/actions/oauth2_token_action.md
+              - flow/actions/send_to_influx_db_action.md
+              - flow/actions/rabbitmq_action.md
+              - flow/actions/fetch_from_airtable_action.md
+              - flow/actions/fetch_from_influxdb_action.md
+              - flow/actions/elasticsearch_query_action.md
+              - flow/password_generator_action.md
+              - flow/actions/contains_string_action.md
+              - flow/actions/ends_with_action.md
+              - flow/actions/starts_with_action.md
+              - flow/actions/weekdays_checker_action.md
+              - Databases:
+                  - flow/actions/mongo_query_action.md
+                  - flow/actions/mysql_connector_action.md
+                  - flow/actions/send_to_airtable_action.md
+              - Messagers:
+                  - flow/actions/send_to_slack_channel_action.md
+                  - flow/actions/discord_webhook_action.md
+                  - flow/actions/telegram/telegram_post_plugin.md
+              - Novu:
+                  - flow/actions/novu_plugin_action.md
+              - Elastic mail:
+                  - flow/actions/elastic_email_bulk_action.md
+                  - flow/actions/elastic_email_change_contact_status_action.md
+                  - flow/actions/elastic_email_contact_add_action.md
+              - Trello:
+                  - flow/actions/trello/add_trello_card_action.md
+                  - flow/actions/trello/add_trello_member_action.md
+                  - flow/actions/trello/delete_trello_card_action.md
+                  - flow/actions/trello/move_trello_card_action.md
+              - Mautic:
+                  - flow/actions/add_mautic_contact_action.md
+                  - flow/actions/fetch_mautic_contact_by_email_action.md
+                  - flow/actions/fetch_mautic_contact_by_id_action.md
+                  - flow/actions/edit_points_in_mautic_action.md
+                  - flow/actions/edit_segment_in_mautic_action.md
+              - Mixpanel:
+                  - flow/actions/fetch_mixpanel_funnel_action.md
+                  - flow/actions/send_to_mixpanel_action.md
+              - Mailchimp:
+                  - flow/actions/mailchimp_transactional_action.md
+                  - flow/actions/mailchimp_add_to_audience_action.md
+                  - flow/actions/mailchimp_remove_from_audience_action.md
+              - Sales force:
+                  - flow/actions/send_to_data_extension_action.md
+              - Active campaign:
+                  - flow/actions/fetch_ac_contact_by_email_action.md
+                  - flow/actions/add_active_campaign_contact_action.md
+              - Hubspot:
+                  - flow/actions/hubspot_get_company_action.md
+                  - flow/actions/hubspot_get_contact_action.md
+                  - flow/actions/hubspot_update_company_action.md
+                  - flow/actions/hubspot/hubspot_add_company_action.md
+                  - flow/actions/hubspot/hubspot_add_contact_action.md
+                  - flow/actions/hubspot_update_contact_action.md
+              - Sendgrid:
+                  - flow/actions/sendgrid_add_contact_to_list.md
+                  - flow/actions/sendgrid_add_to_global_suppression.md
+                  - flow/actions/sendgrid_send_email.md
+              - Google:
+                  - flow/actions/google_event_tracker_action.md
+                  - flow/actions/google_v4_event_tracker_action.md
+              - Matomo:
+                  - flow/actions/matomo/register_event.md
 
 
+          - Regex:
+              - flow/actions/regex/regex_validator_action.md
+              - flow/actions/regex/regex_match.md
+              - flow/actions/regex/regex_replace_action.md
 
-      - Filtering:
-          - running/filtering.md
-      - Notations:
-          - notations/dot_notation.md
-          - notations/logic_notation.md
-          - notations/templates.md
-          - notations/object_template.md
+          - Locations:
+              - flow/actions/geo_ip_locator.md
 
-      - Q&A:
-          - qa/how_to_track_clicked_links.md
-          - qa/how_to_copy_data_from_event_to_profile.md
-          - qa/how_to_replace_a_profile_in_workflow.md
-          - qa/how_to_use_own_profile_id.md
-          - qa/how_to_use_workflow_editor.md
-          - qa/how_to_store_utms.md
-          - qa/can_tracardi_import_data_from_csv.md
-          - qa/how_many_records_can_tracardi_store.md
-          - qa/how_to_fix_import_pending.md
-          - qa/how_to_fix_webhook_validation_error.md
-          - qa/how_to_get_javascript_to_put_on_page.md
-          - qa/how_to_integrate_with_webhook.md
-          - qa/how_to_pass_profile_id_from_domain_to_domain.md
-          - qa/how_to_quickly_copy_data_from_node_to_node_in_wf.md
-          - qa/how_tracardi_loads_profile.md
-          - qa/who_is_tracardi_for.md
-          - qa/can_i_send_marketing_campaigns.md
-          - qa/can_i_use_tracardi_for_free.md
-          - qa/can_tracardi_use_chatgpt.md
-          - qa/how_can_i_benefit_from_commercial_version.md
-          - qa/how_can_i_benefit_from_partnership_with_tracardi.md
-          - qa/how_can_i_filter_data.md
-          - qa/how_can_i_install_extensions.md
-          - qa/how_can_i_load_profile.md
-          - qa/how_can_i_load_session.md
-          - qa/how_can_i_use_reports.md
-          - qa/how_get_mailchimp_api_key_for_transactional_emails.md
-          - qa/how_profile_ event_and_session_ids_are_tied_up_together.md
-          - qa/how_to_add_segement_based_on_customer_visits.md
-          - qa/how_to_bind_event_to_a_click.md
-          - qa/how_to_check_registered_email_in_mailchimp.md
-          - qa/how_to_configure_tracardi_to_be_multi_tenant.md
-          - qa/how_to_delete_a_node.md
-          - qa/how_to_import_data_to_tracardi.md
-          - qa/how_to_import_data_with_python.md
-          - qa/how_to_personalize_messages.md
-          - qa/how_to_send_event_on_a_click_that_goes_to_external_page.md
-          - qa/how_to_send_mails_with_mailchimp.md
-          - qa/how_to_store_utms.md
-          - qa/how_to_upgrade_tracardi.md
-          - qa/how_tracardi_records_vistits.md
-          - qa/how_tracardi_uses_entities.md
-          - qa/i_get_error_api_invaild_from_mailchimp.md
-          - qa/my_javascript_is_not_sending_events.md
-          - qa/my_workflow_is_not_working.md
-          - qa/what_are_available_installation_types.md
-          - qa/what_are_examples_of_real_time_or_time_based_segmentations.md
-          - qa/what_are_main_differences_between_os_and_com.md
-          - qa/what_are_predefined_event_types.md
-          - qa/what_database_use_tracardi.md
-          - qa/what_is_dot_notation.md
-          - qa/what_is_profile.md
-          - qa/what_is_session.md
-          - qa/what_plugins_has_tracardi.md
-          - qa/what_types_of_segmentation_has_tracardi.md
-          - qa/when_i_know_if_the_event_was_processed.md
-          - qa/where_is_profile_visits_are_counted.md
-          - qa/why_this_is_a_security_risk_to_use_simple_profile_and_session_id.md
-          - qa/why_webhook_events_do_not_have_session_and_profile.md
-          - qa/bulk/available_extensions_with_description.md
-          - qa/bulk/available_extenstions.md
-          - qa/bulk/extension_questions.md
-          - qa/bulk/other_qa.md
-          - qa/bulk/plugins_questions.md
-          - qa/can_i_add_custom_event_timestamp.md
-          - qa/can_i_only_process_the_event.md
-          - qa/can_you_describe_tracardi_components.md
-          - qa/difference_between_major_and_minor_upgrades.md
-          - qa/do_i_have_to_define_custom_properties_upfront.md
-          - qa/do_i_need_license_for_saas.md
-          - qa/does_tracarid_have_its_own_backup_system.md
-          - qa/hot_to_use_reports.md
-          - qa/how_backups_are_made_in_tracardi.md
-          - qa/how_can_I_authorize_and_get_API KEY.md
-          - qa/how_do_i_setup_multi_tenant.md
-          - qa/how_live_segmentation_works_from_technical_point_of_view.md
-          - qa/how_pause_and_resume_works.md
-          - qa/how_post_segmentation_works.md
-          - qa/how_system_process_event_context.md
-          - qa/how_tenant_are_diffrenciated.md
-          - qa/how_to_aggregate_events_for_segmentation.md
-          - qa/how_to_automate _obtaining_the_API_key.md
-          - qa/how_to_automate_new_tenant_creation_in_tms.md
-          - qa/how_to_create_new_tenant.md
-          - qa/how_to_integrate_TMS_with_Tracardi.md
-          - qa/how_to_purge_events_sessions_profiles.md
-          - qa/how_tracard_bot_works.md
-          - qa/how_tracardi_is_upgraded.md
-          - qa/live_segmentation_does_not_change_profile.md
-          - qa/major_os_competitors.md
-          - qa/pricing_comparation.md
-          - qa/tenant_management_service_api.md
-          - qa/unomi_vs_tracardi.md
-          - qa/what_are_parts_of_tracardi.md
-          - qa/what_are_session-open_and_visit-open_meant_for.md
-          - qa/what_are_the_pros_and cons_of_multi-tenant setup.md
-          - qa/what_is_aux_data.md
-          - qa/what_is_customer_journey.md
-          - qa/what_is_ephemeral_event_source.md
-          - qa/what_is_event_context.md
-          - qa/what_is_event_property.md
-          - qa/what_is_event_tag.md
-          - qa/what_is_major_version_upgrade.md
-          - qa/what_is_minor_version_upgrade.md
-          - qa/what_is_misc_data.md
-          - qa/what_is_the_archtecture_of_tracardi.md
-          - qa/what_is_the_cost_of_tracardi.md
-          - qa/what_is_the_difference_between_event_traits_and_properties.md
-          - qa/what_is_the_difference_between_tracardi_and_segment.md
-          - qa/what_is_the_difference_between_zapier_and_tracardi.md
-          - qa/what_is_tms_reponsible_for.md
-          - qa/what_is_tracardi_worker_responsible_for.md
-          - qa/what_staging_means.md
-          - qa/when_can_i_use_tracardi_for_free.md
-          - qa/where_can_i_find_report_id.md
-          - qa/where_to_store_custom_properties.md
-          - qa/why_background_task_in_pending_state.md
-          - qa/why_do_I_have_session-opened.md
-          - qa/why_live_segmentation_does_not work.md
-          - qa/why_post_event_segmentation_does_not work.md
-          - qa/bulk/generic_tracardi_qa.md
-          - qa/bulk/license.md
-          - qa/bulk/questions_about_event_data.md
-          - qa/bulk/questions_about_profile_data.md
-          - qa/bulk/staging_server_qa.md
-          - qa/bulk/tracardi_installation.md
-          - qa/bulk/workflow.md
-          - qa/code/plugins.md
-          - qa/code/plugins1.md
-          - qa/errors/error_11.md
-          - qa/errors/error_12.md
-          - qa/errors/error_1.md
-          - qa/errors/error_10.md
-          - qa/errors/error_2.md
-          - qa/errors/error_3.md
-          - qa/errors/error_4.md
-          - qa/errors/error_5.md
-          - qa/errors/error_6.md
-          - qa/errors/error_7.md
-          - qa/errors/error_8.md
+          - Time:
+              - flow/actions/day_night_split_action.md
+              - flow/actions/local_time_span_action.md
+              - flow/actions/calculate_time_difference_action.md
+              - flow/actions/today_action.md
+
+          - Processing:
+              - flow/actions/url_parser_action.md
+              - flow/actions/string_splitter_action.md
+              - flow/actions/string_properties_action.md
+              - flow/actions/mapping_action.md
+
+          - Validators:
+              - flow/actions/validate_with_json_schema_action.md
+              - flow/actions/string_validator_action.md
+              - flow/actions/field_type_action.md
+
+          - Machine Learning:
+              - flow/actions/text_classification_action.md
+              - flow/actions/lang_detection_action.md
+              - flow/actions/sentiment_analysis_action.md
+              - flow/actions/corporate_reputation_action.md
+              - flow/actions/deep_categorization_action.md
+              - flow/actions/summarization_action.md
+              - flow/actions/topics_extraction_action.md
+
+          - UX:
+              - flow/actions/question_popup_action.md
+              - flow/actions/rating_popup_action.md
+              - flow/actions/contact_popup_action.md
+              - Chat:
+                  - flow/actions/chatwoot_widget_action.md
+                  - flow/actions/intercom_widget_action.md
+                  - flow/actions/livechat_widget_action.md
+                  - flow/actions/zendesk_widget_action.md
+
+          - Memory:
+              - flow/actions/write_to_memory_action.md
+              - flow/actions/read_from_memory_action.md
+              - flow/actions/memory/payload_memory_collector.md
+
+          - Consents:
+              - flow/actions/add_consents_action.md
+              - flow/actions/require_consents_action.md
+
+          - Errors:
+              - flow/actions/log_message_action.md
+              - flow/actions/throw_error_action.md
+
+
+
+  - Filtering:
+      - running/filtering.md
+  - Notations:
+      - notations/dot_notation.md
+      - notations/logic_notation.md
+      - notations/templates.md
+      - notations/object_template.md
+
+  - Q&A:
+     - System architecture:
+       - qa/how_tracardi_uses_entities.md
+       - qa/what_is_event_context.md
+       - qa/what_is_event_property.md
+       - qa/what_is_event_tag.md
+       - qa/what_is_aux_data.md
+       - qa/what_is_misc_data.md
+       - qa/what_is_session.md
+       - qa/what_is_profile.md
+
+     - Installation and upgrades:
+       - qa/how_to_upgrade_tracardi.md
+       - qa/what_is_major_version_upgrade.md
+       - qa/what_is_minor_version_upgrade.md
+       - qa/what_is_tracardi_worker_responsible_for.md
+       - qa/how_tracardi_is_upgraded.md
+       - qa/why_background_task_in_pending_state.md
+       - qa/how_to_automate_new_tenant_creation_in_tms.md
+       - qa/what_are_available_installation_types.md
+       - qa/difference_between_major_and_minor_upgrades.md
+       - qa/how_to_automate_obtaining_the_API_key.md
+       - qa/what_database_use_tracardi.md
+
+     - Integration:
+       - qa/where_to_place_the_javascript_integration_codes.md
+       - qa/how_to_integrate_with_webhook.md
+       - qa/how_to_get_javascript_to_put_on_page.md
+       - qa/how_to_use_own_profile_id.md
+       - qa/my_javascript_is_not_sending_events.md
+       - qa/why_webhook_events_do_not_have_session_and_profile.md
+
+
+       - Mailchimp:
+         - qa/how_get_mailchimp_api_key_for_transactional_emails.md
+         - qa/how_to_check_registered_email_in_mailchimp.md
+         - qa/how_to_send_mails_with_mailchimp.md
+         - qa/i_get_error_api_invaild_from_mailchimp.md
+
+     - Tracking:
+       - qa/how_to_track_clicked_links.md
+       - qa/how_to_bind_event_to_a_click.md
+       - qa/how_to_send_event_on_a_click_that_goes_to_external_page.md
+       - qa/how_tracardi_loads_profile.md
+       - qa/when_i_know_if_the_event_was_processed.md
+
+
+     - Data import:
+       - qa/can_tracardi_import_data_from_csv.md
+       - qa/how_to_import_data_to_tracardi.md
+       - qa/how_to_import_data_with_python.md
+
+     - Workflow:
+       - qa/how_to_replace_a_profile_in_workflow.md
+       - qa/how_to_use_workflow_editor.md
+       - qa/how_to_quickly_copy_data_from_node_to_node_in_wf.md
+       - qa/how_to_delete_a_node.md
+       - qa/my_workflow_is_not_working.md
+       - qa/what_plugins_has_tracardi.md
+       - Extensions and plugins:
+         - qa/how_can_i_install_extensions.md
+         - qa/bulk/available_extensions_with_description.md
+         - qa/bulk/available_extenstions.md
+         - qa/bulk/extension_questions.md
+         - qa/code/plugins.md
+         - qa/code/plugins1.md
+
+     - Profile and session:
+       - qa/how_to_copy_data_from_event_to_profile.md
+       - qa/how_can_i_load_profile.md
+       - qa/how_can_i_load_session.md
+       - qa/where_is_profile_visits_are_counted.md
+       - qa/how_profile_event_and_session_ids_are_tied_up_together.md
+       - qa/why_this_is_a_security_risk_to_use_simple_profile_and_session_id.md
+       - qa/why_do_I_have_session-opened.md
+
+     - Multi-tenancy:
+       - qa/how_do_i_setup_multi_tenant.md
+       - qa/how_to_configure_tracardi_to_be_multi_tenant.md
+       - qa/what_are_the_pros_and cons_of_multi-tenant_setup.md
+       - qa/how_do_i_setup_multi_tenant.md
+       - qa/how_tenant_are_diffrenciated.md
+       - qa/how_to_create_new_tenant.md
+       - qa/tenant_management_service_api.md
+       - qa/what_is_tms_reponsible_for.md
+       - qa/how_to_integrate_TMS_with_Tracardi.md
+
+     - Commercial version:
+       - qa/how_can_i_benefit_from_commercial_version.md
+       - qa/how_can_i_benefit_from_partnership_with_tracardi.md
+       - qa/what_are_main_differences_between_os_and_com.md
+       - qa/major_os_competitors.md
+       - qa/pricing_comparation.md
+
+       - Cost and Competitors:
+         - qa/what_is_the_cost_of_tracardi.md
+         - qa/what_is_the_difference_between_tracardi_and_segment.md
+         - qa/what_is_the_difference_between_zapier_and_tracardi.md
+         - qa/unomi_vs_tracardi.md
+
+     - Reporting:
+       - qa/how_can_i_use_reports.md
+       - qa/hot_to_use_reports.md
+       - qa/where_can_i_find_report_id.md
+
+     - Segmentation:
+         - qa/how_to_add_segement_based_on_customer_visits.md
+         - qa/what_types_of_segmentation_has_tracardi.md
+         - qa/why_post_event_segmentation_does_not work.md
+         - qa/what_are_examples_of_real_time_or_time_based_segmentations.md
+         - qa/why_live_segmentation_does_not_work.md
+         - qa/live_segmentation_does_not_change_profile.md
+         - qa/how_live_segmentation_works_from_technical_point_of_view.md
+         - qa/how_post_segmentation_works.md
+         - qa/how_to_aggregate_events_for_segmentation.md
+
+     - Backups:
+         - qa/does_tracarid_have_its_own_backup_system.md
+         - qa/how_backups_are_made_in_tracardi.md
+
+     - General:
+       - qa/how_to_store_utms.md
+       - qa/what_is_the_difference_between_event_traits_and_properties.md
+       - qa/how_many_records_can_tracardi_store.md
+       - qa/how_to_fix_import_pending.md
+       - qa/how_to_fix_webhook_validation_error.md
+       - qa/how_to_pass_profile_id_from_domain_to_domain.md
+       - qa/who_is_tracardi_for.md
+       - qa/can_i_send_marketing_campaigns.md
+       - qa/can_i_use_tracardi_for_free.md
+       - qa/can_tracardi_use_chatgpt.md
+       - qa/how_can_i_filter_data.md
+       - qa/can_i_add_custom_event_timestamp.md
+       - qa/can_i_only_process_the_event.md
+       - qa/can_you_describe_tracardi_components.md
+       - qa/do_i_have_to_define_custom_properties_upfront.md
+       - qa/do_i_need_license_for_saas.md
+       - qa/hot_to_use_reports.md
+       - qa/how_can_I_authorize_and_get_API_KEY.md
+       - qa/how_pause_and_resume_works.md
+       - qa/how_system_process_event_context.md
+       - qa/how_to_purge_events_sessions_profiles.md
+       - qa/how_tracard_bot_works.md
+       - qa/what_are_parts_of_tracardi.md
+       - qa/what_are_session-open_and_visit-open_meant_for.md
+       - qa/what_is_customer_journey.md
+       - qa/what_is_ephemeral_event_source.md
+       - qa/what_is_the_archtecture_of_tracardi.md
+       - qa/what_staging_means.md
+       - qa/when_can_i_use_tracardi_for_free.md
+       - qa/where_to_store_custom_properties.md
+
+       - qa/how_to_personalize_messages.md
+       - qa/how_tracardi_records_vistits.md
+       - qa/what_are_predefined_event_types.md
+       - qa/what_is_dot_notation.md
+
+     - Errors:
+       - qa/errors/error_11.md
+       - qa/errors/error_12.md
+       - qa/errors/error_1.md
+       - qa/errors/error_10.md
+       - qa/errors/error_2.md
+       - qa/errors/error_3.md
+       - qa/errors/error_4.md
+       - qa/errors/error_5.md
+       - qa/errors/error_6.md
+       - qa/errors/error_7.md
+       - qa/errors/error_8.md
 
   - api/index.md
   - Developers:
@@ -560,6 +586,8 @@ nav:
               - plugins/tutorial/part3.md
           - plugins/forms/list_of_field_types.md
 
+  - running/index.md
+  - trouble/index.md
   - support_us.md
   - attribution.md
   - software_license.md

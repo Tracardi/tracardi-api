@@ -1,4 +1,4 @@
-# Tracardi GUI
+# Running Tracardi GUI
 
 When everything is downloaded and installed open browser and go to http://127.0.0.1:8787 or IP where the Tracardi GUI is
 installed.
