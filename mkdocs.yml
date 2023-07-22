@@ -450,10 +450,20 @@ nav:
          - qa/how_tenant_are_diffrenciated.md
          - qa/how_to_create_new_tenant.md
          - Mutli-tenant management service (TMS):
-           - qa/waht_is_tms.md
+           - qa/what_is_tms.md
            - qa/tenant_management_service_api.md
            - qa/what_is_tms_reponsible_for.md
            - qa/how_to_integrate_TMS_with_Tracardi.md
+
+     - Licensing:
+        - qa/can_i_make_changes_to_code_under_com_license.md
+        - qa/example_of_not_allowed_usage_under_os.md
+        - qa/can_i_resell_com.md
+        - qa/can_i_use_system_for_my_own_project.md
+        - qa/com_basic_terms.md
+        - qa/com_license_vendor_lock.md
+        - qa/do_i_need_license_for_saas.md
+
 
      - Integration:
        - qa/where_to_place_the_javascript_integration_codes.md
@@ -546,7 +556,6 @@ nav:
        - qa/can_i_only_process_the_event.md
        - qa/can_you_describe_tracardi_components.md
        - qa/do_i_have_to_define_custom_properties_upfront.md
-       - qa/do_i_need_license_for_saas.md
        - qa/hot_to_use_reports.md
        - qa/how_can_I_authorize_and_get_API_KEY.md
        - qa/how_pause_and_resume_works.md

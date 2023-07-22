@@ -32,4 +32,4 @@ Licensor: Risto Kowaczewski
 
 * [Examples of allowed and not allowed usages under this license](../qa/example_of_not_allowed_usage_under_os.md) 
 * [Can I use Tracardi for my own project for free?](../qa/can_i_use_system_for_my_own_project.md)
-* [Can I create SAAS using Tracardi fro free?](../qa/do_i_need_license_for_saas.md)
+* [Do I need a commercial license to host Tracardi as SaaS?](../qa/do_i_need_license_for_saas.md)
