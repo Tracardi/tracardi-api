@@ -595,10 +595,13 @@ nav:
               - plugins/tutorial/part3.md
           - plugins/forms/list_of_field_types.md
 
+  - License:
+      - license/index.md
+      - license/os_license.md
+      - license/com_license.md
   - running/index.md
   - trouble/index.md
   - support_us.md
-  - attribution.md
   - software_license.md
   - documentation_license.md
 

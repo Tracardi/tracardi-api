@@ -1,3 +1,5 @@
+# Open-source license
+
 Tracardi is available under MIT with Common Clause.
 
 # MIT License
@@ -24,3 +26,10 @@ Software: Tracardi
 License: MIT
 
 Licensor: Risto Kowaczewski
+
+---
+## Q&A:
+
+* [Examples of allowed and not allowed usages under this license](../qa/example_of_not_allowed_usage_under_os.md) 
+* [Can I use Tracardi for my own project for free?](../qa/can_i_use_system_for_my_own_project.md)
+* [Can I create SAAS using Tracardi fro free?](../qa/do_i_need_license_for_saas.md)

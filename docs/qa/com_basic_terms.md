@@ -1,17 +1,3 @@
-# Can I make changes under commercial license?
-
-Under the commercial license agreement, the customer is permitted to modify the source code of the software. This allows
-for customization and adaptation of the software to meet specific requirements or preferences.
-
-# Can I sell Tracardi under standard license agreement?
-
-No. The standard agreement does state that the customer may not sell, lease, license, or sublicense the software or
-documentation.
-
-# When can I resell the Tracardi?
-
-You can sell tracardi when you sign a partner/reseller agreement.
-
 # What are the basic terms of Tracardi commercial agreement?
 
 The basic terms of the standard Tracardi commercial license agreement are as follows:
@@ -66,11 +52,3 @@ The basic terms of the standard Tracardi commercial license agreement are as fol
 Please note that this is a summary of the terms mentioned in the provided draft, and it is always advisable to review
 and seek legal advice on any specific agreement to ensure compliance with applicable laws and suitability for your
 particular situation.
-
-# Will I be vendor locked if I use Tracardi?
-
-Tracardi tries hard not to vendor lock its customers. They provide API integration, allowing you to create adapters and
-decouple from Tracardi in the future if needed. Tracardi does not host your data, so there is no risk of data loss when
-the agreement ends. Tracardi's flexibility allows you to add custom code to the code base, providing additional
-flexibility to meet your specific needs.
-
