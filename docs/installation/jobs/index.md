@@ -49,9 +49,8 @@ the job registers a "Session Inactive" event in the system.
 
 Other values for `QUALIFY_BY` include:
 
-- `inactive-profile`: Searches for inactive profiles, allowing users to define the time range and event type to trigger.
-- `inactive-session`: Looks for inactive sessions, indicating no events within the defined time frame.
-- `session-not-closed`: Searches for sessions that were not closed after a period of customer inactivity.
+- `profile-segmentation`: Looks for profiles to segment and runs segmentation.
+- `visit-end`: Searches for sessions that have no closed visits after a period of customer inactivity.
 
 
 #### Examples
@@ -80,7 +79,7 @@ docker run \
 -e REDIS_HOST=redis://<redis-ip>:6379 \
 -e REDIS_PASSWORD=password \
 -e RANGE="now-1h|now" \
--e QUALIFY_BY="session-not-closed" \
+-e QUALIFY_BY="visit-end" \
 -e SKIP_SECONDS=1800 \
 -e OPEN_EVENT_TYPE="visit-started" \
 -e CLOSE_EVENT_TYPE="visit-ended" \

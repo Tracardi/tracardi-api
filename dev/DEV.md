@@ -12,7 +12,7 @@ docker run -p 5601:5601 -m 4g -e ELASTICSEARCH_HOSTS=http://192.168.1.101:9200 d
 
 # Run local ElasticSearch
 docker run -p 9200:9200 -p 9300:9300 -m 8g -e "discovery.type=single-node" -v "/opt/esdata:/usr/share/elasticsearch/data" docker.elastic.co/elasticsearch/elasticsearch:7.13.2
-docker run -p 9200:9200 -p 9300:9300 -m 6g -e "discovery.type=single-node" docker.elastic.co/elasticsearch/elasticsearch:7.13.2
+docker run -p 9200:9200 -p 9300:9300 -m 6g -e "discovery.type=single-node" -e ES_JAVA_OPTS="-Xms512m -Xmx512m" docker.elastic.co/elasticsearch/elasticsearch:7.13.2
 
 # Run local redis
 docker run -p 6379:6379 redis redis-server --notify-keyspace-events Ex
