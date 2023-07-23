@@ -7,6 +7,7 @@ from tracardi.context import get_context
 from tracardi.domain.enum.production_draft import ProductionDraft
 from tracardi.domain.event_metadata import EventMetadata, EventPayloadMetadata
 from tracardi.domain.metadata import ProfileMetadata
+from tracardi.domain.named_entity import NamedEntity
 from tracardi.domain.payload.event_payload import EventPayload
 from tracardi.domain.payload.tracker_payload import TrackerPayload
 from tracardi.domain.time import EventTime, ProfileTime, Time
@@ -43,7 +44,7 @@ async def _load_record(id: str) -> Optional[FlowRecord]:
     return FlowRecord.create(await flow_db.load_by_id(id))
 
 
-async def _store_record(data: Entity):
+async def _store_record(data: NamedEntity):
     return await flow_db.save(data)
 
 
@@ -55,10 +56,14 @@ async def _deploy_production_flow(flow: Flow, flow_record: Optional[FlowRecord] 
         old_flow_record = flow_record
 
     flow_record = flow.get_production_workflow_record()
+
     if flow_record is None or old_flow_record is None:
         raise HTTPException(status_code=406, detail="Can not deploy missing draft workflow")
+
     flow_record.backup = old_flow_record.production
     flow_record.deployed = True
+    flow_record.timestamp = datetime.utcnow()
+
     return await _store_record(flow_record)
 
 
@@ -82,6 +87,7 @@ async def _upsert_flow_draft(draft: Flow, rearrange_nodes: Optional[bool] = Fals
         flow_record = draft.get_empty_workflow_record(draft.type)
 
     flow_record.draft = encrypt(draft.dict())
+    flow_record.timestamp = datetime.utcnow()
 
     result = await flow_db.save_record(flow_record)
 
