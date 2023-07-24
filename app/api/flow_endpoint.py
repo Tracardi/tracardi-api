@@ -135,7 +135,7 @@ async def load_flow_draft(id: str, response: Response):
     """
 
     flow_record = await flow_db.load_record(id)  # type: FlowRecord
-    print(flow_record)
+
     if flow_record is None:
         response.status_code = 404
         return None
