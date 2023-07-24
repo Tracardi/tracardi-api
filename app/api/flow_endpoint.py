@@ -57,12 +57,15 @@ async def _deploy_production_flow(flow: Flow, flow_record: Optional[FlowRecord] 
 
     flow_record = flow.get_production_workflow_record()
 
+    if old_flow_record.deploy_timestamp and flow_record.deploy_timestamp is None:
+        flow_record.deploy_timestamp = old_flow_record.deploy_timestamp
+
     if flow_record is None or old_flow_record is None:
         raise HTTPException(status_code=406, detail="Can not deploy missing draft workflow")
 
     flow_record.backup = old_flow_record.production
     flow_record.deployed = True
-    flow_record.timestamp = datetime.utcnow()
+    flow_record.deploy_timestamp = datetime.utcnow()
 
     return await _store_record(flow_record)
 
@@ -132,7 +135,7 @@ async def load_flow_draft(id: str, response: Response):
     """
 
     flow_record = await flow_db.load_record(id)  # type: FlowRecord
-
+    print(flow_record)
     if flow_record is None:
         response.status_code = 404
         return None
@@ -226,14 +229,17 @@ async def upsert_flow_details(flow_metadata: FlowMetaData):
         # create new
 
         flow_record = FlowRecord(**flow_metadata.dict())
+        flow_record.timestamp = datetime.utcnow()
         flow_record.draft = encrypt(Flow(
             id=flow_metadata.id,
+            timestamp=flow_record.timestamp,
             name=flow_metadata.name,
             description=flow_metadata.description,
             type=flow_metadata.type
         ).dict())
         flow_record.production = encrypt(Flow(
             id=flow_metadata.id,
+            timestamp=flow_record.timestamp,
             name=flow_metadata.name,
             description=flow_metadata.description,
             type=flow_metadata.type
