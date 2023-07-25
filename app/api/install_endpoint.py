@@ -124,10 +124,11 @@ async def install(credentials: Optional[Credentials]):
         if not License.has_service(MULTI_TENANT):
             raise HTTPException(status_code=403, detail="Installation forbidden. Multi-tenant installation is not "
                                                         "included in your license.")
-
-        mtm = MultiTenantManager()
-        await mtm.authorize(tracardi.multi_tenant_manager_api_key)
         context = get_context()
+        mtm = MultiTenantManager()
+        logger.info(f"Authorizing {context.tenant} for installation at {mtm.auth_endpoint}.")
+
+        await mtm.authorize(tracardi.multi_tenant_manager_api_key)
         tenant = await mtm.is_tenant_allowed(context.tenant)
         if not tenant:
             raise HTTPException(status_code=403, detail=f"Installation forbidden. Tenant [{context.tenant}] not allowed.")
