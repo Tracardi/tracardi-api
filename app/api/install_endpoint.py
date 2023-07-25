@@ -58,10 +58,15 @@ async def check_if_installation_complete():
     if tracardi.multi_tenant and (not is_schema_ok or not has_admin_account):
         if License.has_service(MULTI_TENANT):
             mtm = MultiTenantManager()
-            await mtm.authorize(tracardi.multi_tenant_manager_api_key)
             context = get_context()
+
+            logger.info(f"Authorizing {context.tenant} for installation at {mtm.auth_endpoint}.")
+
+            await mtm.authorize(tracardi.multi_tenant_manager_api_key)
+
             tenant = await mtm.is_tenant_allowed(context.tenant)
             if not tenant:
+                logger.warning(f"Authorizing failed for tenant `{context.tenant}`.")
                 return {
                     "schema_ok": False,
                     "admin_ok": False,
