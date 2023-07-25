@@ -36,17 +36,17 @@ def _get_context_object(scope) -> Context:
     if tenant is None:
         raise OSError(f"Can not find tenant for this URL. Reason: Hostname `{hostname}` must have 3 parts.")
 
-    if len(tenant) < 3:
-        raise OSError(f"Tenant name {tenant} is not correct. "
-                      f"Reason: Tenant name can not be shorted then 3 letters. "
-                      f"Your system is set-up to support multi-tenancy "
-                      f"that means access only through domain name is available.")
-
     if tenant.isnumeric():
-        raise OSError(f"Tenant name {tenant} is not correct. "
+        raise OSError(f"Tenant name `{tenant}` is not correct. "
                       f"Reason: Tenant name must not be a number. Your API URL is {hostname}."
                       f"Your system is set-up to support multi-tenancy "
                       f"that means access only through domain name is available. Scope: {scope}")
+
+    if len(tenant) < 3:
+        raise OSError(f"Tenant name `{tenant}` is not correct. "
+                      f"Reason: Tenant name can not be shorted then 3 letters. "
+                      f"Your system is set-up to support multi-tenancy "
+                      f"that means access only through domain name is available.")
 
     if not production:  # Staging as default
 

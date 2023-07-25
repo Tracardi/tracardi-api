@@ -135,6 +135,8 @@ async def install(credentials: Optional[Credentials]):
         if tenant.install_key and tenant.install_key != credentials.token:
             raise HTTPException(status_code=403, detail="Installation forbidden. Invalid installation token.")
 
+        logger.info(f"Tenant {context.tenant} authorized for installation.")
+
     else:
         if tracardi.installation_token and tracardi.installation_token != credentials.token:
             raise HTTPException(status_code=403, detail="Installation forbidden. Invalid installation token.")
