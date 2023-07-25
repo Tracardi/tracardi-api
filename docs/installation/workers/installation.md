@@ -14,14 +14,10 @@ To run the Migration and Import Worker, execute the following Docker command:
 ```bash
 docker run \
 -e REDIS_HOST=redis://<redis-ip>:6379 \
--e ELASTIC_VERIFY_CERTS=no \
--e ELASTIC_HOST=http://<elasticsearch-ip>:9200 \
-tracardi/worker:0.8.1
+tracardi/update-worker:0.8.1
 ```
 
-Please ensure that you replace `<redis-ip>` with the actual IP address of your Redis instance, the same goes
-for `<elasticsearch-ip>`. The environment variables required for this worker are the same as those used for
-the `tracardi/tracardi-api` Docker container.
+Please ensure that you replace `<redis-ip>` with the actual IP address of your Redis instance.
 
 ## 2. Commercial Worker for Segmentation and Mapping
 
