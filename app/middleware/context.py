@@ -44,9 +44,9 @@ def _get_context_object(scope) -> Context:
 
     if tenant.isnumeric():
         raise OSError(f"Tenant name {tenant} is not correct. "
-                      f"Reason: Tenant name must not be a number. "
+                      f"Reason: Tenant name must not be a number. Your API URL is {hostname}."
                       f"Your system is set-up to support multi-tenancy "
-                      f"that means access only through domain name is available.")
+                      f"that means access only through domain name is available. Scope: {scope}")
 
     if not production:  # Staging as default
 
@@ -77,7 +77,7 @@ class ContextRequestMiddleware:
                 if token:
                     _, token = token.split()
                     user = token2user.get(token)
-                    # This is dangerous mutation. Never do this in other places.
+                    # This is dangerous user mutation. Never do this in other places.
                     cm.get_context().user = user
 
             await self.app(scope, receive, send)
