@@ -60,7 +60,7 @@ async def check_if_installation_complete():
             mtm = MultiTenantManager()
             context = get_context()
 
-            logger.info(f"Authorizing {context.tenant} for installation at {mtm.auth_endpoint}.")
+            logger.info(f"Authorizing `{context.tenant}` for installation at {mtm.auth_endpoint}.")
 
             await mtm.authorize(tracardi.multi_tenant_manager_api_key)
 
@@ -131,7 +131,7 @@ async def install(credentials: Optional[Credentials]):
                                                         "included in your license.")
         context = get_context()
         mtm = MultiTenantManager()
-        logger.info(f"Authorizing {context.tenant} for installation at {mtm.auth_endpoint}.")
+        logger.info(f"Authorizing `{context.tenant}` for installation at {mtm.auth_endpoint}.")
 
         await mtm.authorize(tracardi.multi_tenant_manager_api_key)
         tenant = await mtm.is_tenant_allowed(context.tenant)
@@ -141,7 +141,7 @@ async def install(credentials: Optional[Credentials]):
         if tenant.install_key and tenant.install_key != credentials.token:
             raise HTTPException(status_code=403, detail="Installation forbidden. Invalid installation token.")
 
-        logger.info(f"Tenant {context.tenant} authorized for installation.")
+        logger.info(f"Tenant `{context.tenant}` authorized for installation.")
 
     else:
         if tracardi.installation_token and tracardi.installation_token != credentials.token:
