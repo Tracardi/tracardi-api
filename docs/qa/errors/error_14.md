@@ -37,5 +37,5 @@ the API URL. If you still experience issues please look for `Docker container in
 This document also answers the questions:
 
 * I see error: Status: undefined, Message: undefined, Details Error: Network Error, when selecting the API URL
-
+* I see error: Error connection to localhost:6379
 
