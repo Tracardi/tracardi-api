@@ -22,10 +22,16 @@ this problem, follow these steps:
 
 4. **Verify Elasticsearch connectivity**: Ensure that the Elasticsearch server is operational and accessible. The API
    should be able to establish a connection to the Elasticsearch server for proper functionality. If there are any
-   problems with Elasticsearch, it may prevent the API from functioning correctly.
+   problems with Elasticsearch, it may prevent the API from functioning correctly. Please note that connection
+   to `localhost:9200` is not possible when running docker. Use IP instead.
+
+5. **Verify Redis connectivity**: Ensure that the Redis server is operational and accessible. The API should be able to
+   establish a connection to the Redis server for proper functionality. If there are any problems with Redis, it may
+   prevent the API from functioning correctly. Please note that connection to `localhost:6379` is not possible when
+   running docker. Use IP instead.
 
 By following these steps, you can effectively troubleshoot and identify the cause of the "Network Error" when selecting
-the API URL.
+the API URL. If you still experience issues please look for `Docker container installation` in documentation. 
 
 ---
 This document also answers the questions:
