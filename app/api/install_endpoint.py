@@ -71,7 +71,7 @@ async def check_if_installation_complete():
                     "schema_ok": False,
                     "admin_ok": False,
                     "form_ok": False,
-                    "warning": f"Tenant [{context.tenant}] not allowed. Set MULTI_TENANT to \"no\"."
+                    "warning": f"Tenant [{context.tenant}] not allowed."
                 }
 
     return {
