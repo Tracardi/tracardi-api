@@ -36,7 +36,7 @@ def _get_context_object(scope) -> Context:
     if tenant is None:
         raise OSError(f"Can not find tenant for this URL. Reason: Hostname `{hostname}` must have 3 parts.")
 
-    if tenant.isnumeric():
+    if tracardi.multi_tenant and tenant.isnumeric():
         raise OSError(f"Tenant name `{tenant}` is not correct. "
                       f"Reason: Tenant name must not be a number. Your API URL is {hostname}."
                       f"Your system is set-up to support multi-tenancy "
