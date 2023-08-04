@@ -31,6 +31,13 @@ system_settings = [
     ),
     SystemSettings(
         **{
+            "label": "SYSTEM_EVENTS",
+            "value": tracardi.system_events,
+            "desc": "Default: Yes. Register system events like: profile-created, session-opened, etc."
+        }
+    ),
+    SystemSettings(
+        **{
             "label": "MULTI_TENANT",
             "value": tracardi.multi_tenant,
             "desc": "Default: No. Turns on multi tenancy feature for commercial versions."
