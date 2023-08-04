@@ -61,7 +61,7 @@ want to insert into plugin configuration. Please notice that this address __does
 
 #### Message recipient's email
 
-This is the destination email or emails. It can be in form of dot path to email address (for example **profile@pii.email**). 
+This is the destination email or emails. It can be in form of dot path to email address (for example **profile@data.contact.email**). 
 You can also insert the address itself. Please notice that merged profiles can have multiple values in one field - 
 if John Doe has two or more email addresses in his profile, then plugin will send the message to all of them.
 
@@ -80,16 +80,16 @@ Examples:
 ##### Example 1 - plain text
 
 ```text
-Hello {{profile@pii.name}}, your order will be dispatched in next two days.
+Hello {{profile@data.pii.firstname}}, your order will be dispatched in next two days.
 ```
 
-This message will have the **{{profile@pii.name}}** changed to the current profile's name, so John Doe will
+This message will have the **{{profile@data.pii.firstname}}** changed to the current profile's name, so John Doe will
 see **'Hello John, your order will be dispatched in next two days.'** in his message.
 
 ##### Example 2 - HTML
 
 ```html
-<h1>Hello {{profile@pii.name}}!</h1>
+<h1>Hello {{profile@data.pii.firstname}}!</h1>
 <p>Thanks for visiting our website on {{profile@metadata.time.visit.last}}!</p>
 <p style="color:red">To thank you, we send you a photo of cute dog. Enjoy:</p>
 <img src="<url-to-photo-of-cute-dog>"/>

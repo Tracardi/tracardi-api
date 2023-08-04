@@ -23,7 +23,7 @@ notation. For more information on this notation, check the Notations/Dot notatio
 
 ```json
 {
-  "mergeBy": ["profile@pii.email"]
+  "mergeBy": ["profile@data.contact.email"]
 }
 
 ```

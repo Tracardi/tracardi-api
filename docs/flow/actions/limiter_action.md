@@ -20,7 +20,7 @@ Example
 
 ```json
 {
-  "keys": ["workflow@id", "profile@pii.email", "custom-key"],
+  "keys": ["workflow@id", "profile@data.contact.email", "custom-key"],
   "limit": 10
   "ttl": 60
 }
