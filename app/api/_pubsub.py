@@ -1,11 +1,7 @@
 import asyncio
-
 import async_timeout
-
 import aioredis
-
-from tracardi.config import redis_config
-from tracardi.service.storage.redis_client import RedisClient, AsyncRedisClient
+from tracardi.service.storage.redis_client import AsyncRedisClient
 
 STOPWORD = "STOP"
 

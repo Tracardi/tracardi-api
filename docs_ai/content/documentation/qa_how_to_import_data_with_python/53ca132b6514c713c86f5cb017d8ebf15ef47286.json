@@ -1,0 +1,10 @@
+{
+  "file_name": "docs/qa/how_to_import_data_with_python.md",
+  "questions": [
+    "What is the path to the CSV file?",
+    "How to provide the path to the CSV file?",
+    "What is the name of the CSV file?",
+    "What are the other parameters for config?"
+  ],
+  "answer": "# Provide the path to your CSV fileconfig = ('file1.csv', 'phone-calls', 'id')"
+}

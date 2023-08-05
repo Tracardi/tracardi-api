@@ -9,12 +9,12 @@ from tracardi.service.notation.dict_traverser import DictTraverser
 from tracardi.service.notation.dot_accessor import DotAccessor
 
 from app.api.track.service.http import get_headers
-from tracardi.domain.api_instance import ApiInstance
 from tracardi.domain.entity import Entity
 from tracardi.domain.event_metadata import EventPayloadMetadata
 from tracardi.domain.payload.event_payload import EventPayload
 from tracardi.domain.time import Time
-from tracardi.service.storage.driver import storage
+from tracardi.service.storage.driver.elastic import event_redirect as event_redirect_db
+from tracardi.service.storage.driver.elastic import session as session_db
 from tracardi.service.tracker import track_event
 from tracardi.config import tracardi
 from tracardi.domain.payload.tracker_payload import TrackerPayload
@@ -32,12 +32,12 @@ router = APIRouter()
 
 
 async def parse_properties(request: Request):
-    if request.headers['Content-Type'] == 'application/json':
+    if request.headers.get('Content-Type', '') == 'application/json':
         try:
             return await request.json()
         except JSONDecodeError:
             return {}
-    elif request.headers['Content-Type'] in ['multipart/form-data', 'application/x-www-form-urlencoded']:
+    elif request.headers.get('Content-Type', '') in ['multipart/form-data', 'application/x-www-form-urlencoded']:
         return await request.form()
     else:
         return await request.body()
@@ -69,9 +69,6 @@ async def _track(tracker_payload: TrackerPayload, host: str, allowed_bridges):
         logger.error(message)
         raise HTTPException(detail=message,
                             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    finally:
-        api_instance = ApiInstance()
-        api_instance.increase_track_requests()
 
 
 @router.post("/track", tags=['collector'])
@@ -222,7 +219,7 @@ async def request_redirect(request: Request, redirect_id: str, session_id: Optio
     if session_id:
         session_id = session_id.strip()
     redirect_id = redirect_id.strip()
-    redirect_config = await storage.driver.event_redirect.load_by_id(redirect_id)
+    redirect_config = await event_redirect_db.load_by_id(redirect_id)
 
     if not redirect_config:
         raise HTTPException(status_code=404)
@@ -245,7 +242,7 @@ async def request_redirect(request: Request, redirect_id: str, session_id: Optio
 
     session = None
     if session_id:
-        session = await storage.driver.session.load_by_id(session_id)
+        session = await session_db.load_by_id(session_id)
 
     dot = DotAccessor(
         payload={

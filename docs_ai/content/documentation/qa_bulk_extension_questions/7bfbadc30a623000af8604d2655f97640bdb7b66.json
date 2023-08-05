@@ -1,0 +1,1 @@
+{"file_name": "docs/qa/bulk/extension_questions.md", "questions": ["What is the process to use MySQL with Tracardi?", "How to install the MySQL extension in Tracardi?", "How to access MySQL with Tracardi?"], "answer": "# Can Tracardi use MySQL ?\nYes. To use MySQL, install the extension MySQL in Resource/Extensions.", "hash": "7bfbadc30a623000af8604d2655f97640bdb7b66"}

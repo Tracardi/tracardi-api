@@ -1,0 +1,1 @@
+{"file_name": "docs/qa/bulk/plugins_questions.md", "questions": ["What is the HTML fetcher plugin?", "How to fetch an HTML page with Tracardi?", "What is the purpose of the HTML fetcher plugin?"], "answer": "# Can Tracardi fetch an HTML page?\nYes, it can with the \"HTML fetcher\" plugin.", "hash": "3113d9c07a24615fa80c90af91b94ee16590260e"}

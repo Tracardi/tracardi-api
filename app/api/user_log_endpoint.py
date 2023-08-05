@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
 from app.config import server
-from tracardi.service.storage.driver import storage
+from tracardi.service.storage.driver.elastic import user_log as user_log_db
 from pydantic import BaseModel
 from typing import Optional
 from .auth.permissions import Permissions
@@ -29,7 +29,7 @@ async def get_user_logs(page: Optional[int] = None, query: Optional[str] = None)
     start = page * page_size
     limit = page_size
     # todo ERROR this does not exist
-    result = await storage.driver.user_log.load_logs(start, limit, query)
+    result = await user_log_db.load_logs(start, limit, query)
     return {
         "total": result.total,
         "result": list(result)

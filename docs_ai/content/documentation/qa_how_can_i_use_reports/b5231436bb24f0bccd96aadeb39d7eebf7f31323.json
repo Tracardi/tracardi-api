@@ -1,0 +1,11 @@
+{
+  "file_name": "docs/qa/how_can_i_use_reports.md",
+  "questions": [
+    "How can I use reports in Tracardi?",
+    "What external analytical platforms can Tracardi integrate with?",
+    "What is Kibana and how can it be used with Tracardi?",
+    "What is the purpose of reports in Tracardi?"
+  ],
+  "answer": "# How can I use reports?\nReports in Tracardi serve as a means to analyze and extract valuable insights from the collected data. While Tracardi\nitself is not an analytical tool, it can integrate with external platforms like Tableau, Amplitude, Matomo, Google\nAnalytics, and others, allowing you to send data from Tracardi to these platforms for more sophisticated analysis and\nreport generation. This can be done by utilizing queues or other mechanisms for data transfer.\n\nKibana is another analytical tool that can be used with Tracardi. It is specifically designed to work with data stored\nin Elasticsearch, which is the underlying database technology used by Tracardi. Kibana provides powerful visualization\nand analysis capabilities, allowing you to explore and gain insights from the data stored in Elasticsearch.\n\nIn addition to integrating with external analytical platforms, Tracardi also offers its own reporting functionality. You\ncan use Reports in Tracardi to run Elasticsearch queries on the collected data. These queries can aggregate the data and\nprovide aggregated values for events, such as sums, averages, medians, or event counts based on specific properties. For\nexample, you could calculate the total sum of the \"amount\" property for purchase events associated with a particular\nprofile.\n\nOnce a report is created, it can be loaded into a workflow as an action. This means that you can use the report's\nresults as input for making decisions within the workflow. By leveraging reports in Tracardi, you can extract relevant\ninformation from the data and incorporate it into your decision-making processes.\n\nIn summary, reports in Tracardi serve the purpose of extracting aggregated data from the Tracardi database and utilizing\nit for decision-making within workflows. Additionally, Tracardi can integrate with external analytical platforms like\nTableau, Amplitude, Matomo, and Google Analytics to enable more advanced analysis and reporting capabilities.\n",
+  "hash": "b5231436bb24f0bccd96aadeb39d7eebf7f31323"
+}

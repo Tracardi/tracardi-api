@@ -5,7 +5,7 @@ from fastapi import Depends
 
 from tracardi.config import tracardi
 from tracardi.service.kql.autocomplete import KQLAutocomplete
-from tracardi.service.storage.driver import storage
+from tracardi.service.storage.driver.elastic import raw as raw_db
 from tracardi.domain.enum.indexes_histogram import IndexesHistogram
 from tracardi.domain.enum.indexes_search import IndexesSearch
 from tracardi.domain.sql_query import SqlQuery
@@ -40,7 +40,7 @@ async def autocomplete_kql(index: IndexesSearch, query: Optional[str] = ""):
 async def select_by_sql(index: IndexesSearch, query: Optional[SqlQuery] = None):
     if query is None:
         query = SqlQuery()
-    result = await storage.driver.raw.index(index.value).query_by_sql(query.where, start=0, limit=query.limit)
+    result = await raw_db.index(index.value).query_by_sql(query.where, start=0, limit=query.limit)
     return result.dict()
 
 
@@ -59,7 +59,7 @@ async def time_range_with_sql(index: IndexesHistogram, query: DatetimeRangePaylo
         page_size = 25
         query.start = page_size * page
         query.limit = page_size
-    return await storage.driver.raw.index(index.value).query_by_sql_in_time_range(query, query_type)
+    return await raw_db.index(index.value).query_by_sql_in_time_range(query, query_type)
 
 
 @router.post("/{index}/select/histogram",
@@ -70,4 +70,4 @@ async def histogram_with_sql(index: IndexesHistogram, query: DatetimeRangePayloa
     if query_type is None:
         query_type = tracardi.query_language
 
-    return await storage.driver.raw.index(index.value).histogram_by_sql_in_time_range(query, query_type, group_by)
+    return await raw_db.index(index.value).histogram_by_sql_in_time_range(query, query_type, group_by)

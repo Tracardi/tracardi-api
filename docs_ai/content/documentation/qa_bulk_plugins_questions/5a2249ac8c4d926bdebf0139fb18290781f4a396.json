@@ -1,0 +1,1 @@
+{"file_name": "docs/qa/bulk/plugins_questions.md", "questions": ["What is the Discard Event plugin?", "How to discard an event in Tracardi?", "How to prevent an event from being saved in Tracardi?"], "answer": "# Can Tracardi discard the current event and prevent it from being saved?\nYes. It can with the Discard Event plugin.", "hash": "5a2249ac8c4d926bdebf0139fb18290781f4a396"}

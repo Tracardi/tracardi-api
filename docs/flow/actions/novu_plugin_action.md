@@ -15,7 +15,7 @@ Example:
   },
   "template_name": "template_name",
   "subscriber_id": "profile@id",
-  "recipient_email": "profile@pii.email",
+  "recipient_email": "profile@data.contact.email",
   "payload": "{}"
 }
 ```

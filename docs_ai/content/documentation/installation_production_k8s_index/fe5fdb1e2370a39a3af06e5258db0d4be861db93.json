@@ -1,0 +1,9 @@
+{
+  "file_name": "docs/installation/production/k8s/index.md",
+  "questions": [
+    "What is the process for installing Kubernetes?",
+    "How to install Kubernetes without documentation?",
+    "What are the steps for installing Kubernetes?"
+  ],
+  "answer": "# Kubernetes installation\nNo documentation provided\n"
+}

@@ -28,7 +28,7 @@ for module_name, class_name, test_template in _yield_module_class():
             f"""
     mocker.patch(
         # api_call is from slow.py but imported to main.py
-        'tracardi.service.storage.driver.storage.driver.resource.load',
+        'tracardi.service.storage.driver.elastic.resource.load',
         return_value=Resource(
             id="test-resource",
             type="test",

@@ -9,7 +9,7 @@ from pydantic import ValidationError
 from app.api.auth.permissions import Permissions
 from tracardi.domain.entity import Entity
 from tracardi.domain.pro_service_form_data import TProMicroserviceCredentials, ProService, ProMicroService
-from tracardi.service.plugin.domain.register import Plugin
+from tracardi.service.plugin.domain.register import Plugin, MicroserviceConfig
 from tracardi.service.plugin.plugin_install import install_remote_plugin, install_plugin
 from app.api.domain.credentials import Credentials
 from tracardi.config import tracardi
@@ -17,7 +17,9 @@ from tracardi.domain.resource import Resource, ResourceRecord
 from tracardi.domain.sign_up_data import SignUpData, SignUpRecord
 from app.api.proto.tracard_pro_client import TracardiProClient
 from tracardi.exceptions.log_handler import log_handler
-from tracardi.service.storage.driver import storage
+from tracardi.service.storage.driver.elastic import resource as resource_db
+from tracardi.service.storage.driver.elastic import pro as pro_db
+from tracardi.service.storage.driver.elastic import action as action_db
 from app.config import server
 from tracardi.service.tracardi_http_client import HttpClient
 
@@ -36,7 +38,7 @@ tracardi_pro_client = TracardiProClient(host=tracardi.tracardi_pro_host,
 
 
 async def _store_resource_record(data: Entity):
-    return await storage.driver.resource.save(data)
+    return await resource_db.save(data)
 
 
 @router.get("/tpro/validate", tags=["tpro"], include_in_schema=server.expose_gui_api)
@@ -45,7 +47,7 @@ async def is_token_valid():
     Return None if not configured otherwise returns True if credentials are valid or False.
     """
     try:
-        result = await storage.driver.pro.read_pro_service_endpoint()
+        result = await pro_db.read_pro_service_endpoint()
 
     except ValidationError as e:
         logger.error(f"Validation error when reading pro service user data: {str(e)}")
@@ -69,12 +71,12 @@ async def tracardi_pro_sign_in(credentials: Credentials):
     """
     try:
         token, host = tracardi_pro_client.sign_in(credentials.username, credentials.password)
-        result = await storage.driver.pro.read_pro_service_endpoint()
+        result = await pro_db.read_pro_service_endpoint()
 
         # Save locally if data from remote differs with local data.
         if result is None or result.token != token:
             sign_up_record = SignUpRecord(id='0', token=token)
-            result = await storage.driver.pro.save_pro_service_endpoint(sign_up_record)
+            result = await pro_db.save_pro_service_endpoint(sign_up_record)
 
             if result.saved == 0:
                 raise ConnectionError("Could not save Tracardi Pro data.")
@@ -99,7 +101,7 @@ async def tracardi_pro_sign_up(sign_up_data: SignUpData):
         # todo save more contact data on Pro server
         token = tracardi_pro_client.sign_up(sign_up_data.username, sign_up_data.password)
         sign_up_record = SignUpRecord(id='0', token=token)
-        result = await storage.driver.pro.save_pro_service_endpoint(sign_up_record)
+        result = await pro_db.save_pro_service_endpoint(sign_up_record)
 
         if result.saved == 0:
             raise ConnectionError("Could not save Tracardi Pro endpoint.")
@@ -166,7 +168,7 @@ async def save_tracardi_pro_resource(pro: ProService):
 
         record = ResourceRecord.encode(resource)
         result['resource'] = await _store_resource_record(record)
-        await storage.driver.resource.refresh()
+        await resource_db.refresh()
 
     # Add plugins
 
@@ -176,7 +178,7 @@ async def save_tracardi_pro_resource(pro: ProService):
             plugin = Plugin(**plugin)
             response = await install_plugin(plugin.spec.module)
             result['plugin'].append(response)
-        await storage.driver.action.refresh()
+        await action_db.refresh()
 
     return result
 
@@ -201,7 +203,7 @@ async def save_tracardi_pro_microservice(pro: ProMicroService):
 
     record = ResourceRecord.encode(resource)
     result = await _store_resource_record(record)
-    await storage.driver.resource.refresh()
+    await resource_db.refresh()
 
     # Create plugin
 
@@ -222,6 +224,9 @@ async def save_tracardi_pro_microservice(pro: ProMicroService):
             plugin = Plugin(**data)
 
             plugin.metadata.name = resource.name
+
+            if plugin.spec.microservice is None:
+                plugin.spec.microservice = MicroserviceConfig.create()
 
             plugin.spec.microservice.service.id = pro.microservice.service.id
             plugin.spec.microservice.service.name = pro.microservice.service.name

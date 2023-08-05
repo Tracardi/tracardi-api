@@ -26,6 +26,51 @@ window.tracker.track("interest", {"Eletronics": ["Mobile phones", "Accessories"]
 window.tracker.track("page-view",{});
 ```
 
+## Forcing Profile ID
+
+In certain situations, you may want to send a specific profile ID to Tracardi that comes from your backend system. To
+enable this feature, static ID must be enabled in the event source that collects data, and the profile ID must be added
+to the script configuration.
+
+Here's an example:
+
+```html title="Example" linenums="1" hl_lines="15-17"
+
+<script>
+
+        !function(e){"object"==typeof exports&&"undefine...  
+
+        const options = {
+            tracker: {
+                url: {
+                    script: 'http://192.168.1.103:8686/tracker', 
+                    api: 'http://192.168.1.103:8686'
+                },
+                source: {
+                    id: "<your-event-source-id-HERE>" 
+                },
+                profile: {
+                    id: "<your-static-profile-id-HERE>" 
+                }
+            }
+        }
+</script>
+```
+
+It's important to note that this will send the provided profile ID regardless of whether a profile ID is already stored
+in the browser's local storage. If event source si not configured to allow static profile ID then System will try
+to load profile with provided ID - it will most probably fail and then it will generate the random ID. Please do
+not use this feature with events sources that has disabled static profile processing in events source. 
+
+!!! Warning
+
+    Please be aware that sending a profile ID that's easy to guess can be a security risk. Attackers can potentially guess
+    the ID and try to corrupt its data. Always use IDs like UUID4 to ensure security.
+
+!!! Notice
+
+    This feature is available from version 0.8.1 up.
+
 ## Binding directly to Page Elements
 
 You can also bind events directly to page elements, such as buttons, using JavaScript code. However, please note that in

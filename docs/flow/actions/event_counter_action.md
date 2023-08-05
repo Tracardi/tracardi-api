@@ -1,32 +1,65 @@
 # Event counter
 
-This plugin reads how many events of defined type were triggered within defined time.
+This plugin reads how many events of a defined type were triggered within a defined time.
 
-## Configuration
+## Description
 
-*Example*
-```
+The Event counter plugin is designed to count the number of events of a specific type that occurred within a specified
+time frame. It retrieves the event count based on the provided configuration and returns the result.
+
+This documentation is based on version 0.8.1 of the Event counter plugin.
+
+# Inputs and Outputs
+
+## Inputs
+
+The Event counter plugin accepts the following input:
+
+- **payload**: This port accepts a payload object.
+
+## Outputs
+
+The Event counter plugin provides the following outputs:
+
+- **payload**: Returns the number of events of the defined type.
+
+Example output:
+
+```json
 {
- "event_type": "page-view",
- "time_span": "-15m"
+  "events": 39
 }
 ```
 
-*  ___event_type___ - value should be a string containing type of event that user wants to count.
-*  ___time_span___ - should be a string containing time span which user wants to search in, for example using *"-1h30min"*
-   as *"time_span"* on 1st March 2022, 1:00 (a.m.) results in searching through all events that happened between 
-   28th February 2022, 23:30 and 1st March 2022, 1:00 (a.m.). Presence of *"-"* sign in timeSpan does not matter, 
-   since it is stripped anyway. For more details, 
-   visit [pytimeparse library documentation](https://pypi.org/project/pytimeparse/).
+# Configuration
 
+The Event counter plugin supports the following configuration parameters:
 
-## Output
+- **Event type**: Select the event type you would like to count.
+- **Time span**: Specify the time span to search for events. Use the format "-15minutes" to indicate a time span of 15
+  minutes in the past.
 
-Plugin outputs number of found events.
+# JSON Configuration
 
-Example:
-```
+Here is an example JSON configuration for the Event counter plugin:
+
+```json
 {
-    "events" : 39
+  "event_type": "page-view",
+  "time_span": "-15m"
 }
 ```
+
+# Required resources
+
+This plugin does not require external resources to be configured.
+
+# Errors
+
+The Event counter plugin may encounter the following errors:
+
+- **ValueError: Invalid time span**: This error occurs when the specified time span is invalid or cannot be parsed.
+  Ensure that the time span is formatted correctly, such as "-15m".
+- **Event type not specified**: This error occurs when the event type is not provided in the configuration. Make sure to
+  select an event type from the available options.
+

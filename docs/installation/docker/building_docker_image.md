@@ -32,3 +32,8 @@ docker run -p 8686:80 -e ELASTIC_HOST=http://<your-laptop-ip>:9200 tracardi-api
 !!! Tip 
     
     On windows you can use `ipconfig` command to find out your laptop IP.
+    
+---
+This documentation answers the following questions:
+    
+* How can I build a Tracardi docker image?

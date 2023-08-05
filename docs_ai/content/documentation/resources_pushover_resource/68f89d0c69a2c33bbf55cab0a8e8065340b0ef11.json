@@ -1,0 +1,1 @@
+{"file_name": "docs/resources/pushover_resource.md", "questions": ["What are the credentials needed to use the Pushover plugin?", "How to obtain a token for the Pushover plugin?", "What is a Pushover user key?"], "answer": "# Pushover Credentials\nTo use the pushover plugin you will need to provide a token and a pushover user key."}

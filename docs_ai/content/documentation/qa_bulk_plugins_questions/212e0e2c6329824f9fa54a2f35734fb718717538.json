@@ -1,0 +1,1 @@
+{"file_name": "docs/qa/bulk/plugins_questions.md", "questions": ["What is the \"Send e-mail via SMTP\" plugin?", "How to send an email via SMTP with Tracardi?", "How to enable the \"Send e-mail via SMTP\" plugin?"], "answer": "# Can Tracardi send an email via SMTP?\nYes, it can with the \"Send e-mail via SMTP\" plugin.", "hash": "212e0e2c6329824f9fa54a2f35734fb718717538"}

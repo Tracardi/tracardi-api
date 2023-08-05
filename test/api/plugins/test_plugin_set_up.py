@@ -34,7 +34,7 @@ async def test_should_set_up_plugin_telegram_post_action(mocker):
     
     mocker.patch(
         # api_call is from slow.py but imported to main.py
-        'tracardi.service.storage.driver.storage.driver.resource.load',
+        'tracardi.service.storage.driver.elastic.resource.load',
         return_value=Resource(
             id="test-resource",
             type="test",
@@ -59,7 +59,7 @@ async def test_should_set_up_plugin_google_analytics_event_tracker_action(mocker
     
     mocker.patch(
         # api_call is from slow.py but imported to main.py
-        'tracardi.service.storage.driver.storage.driver.resource.load',
+        'tracardi.service.storage.driver.elastic.resource.load',
         return_value=Resource(
             id="test-resource",
             type="test",
@@ -84,7 +84,7 @@ async def test_should_set_up_plugin_google_analytics_v4_event_tracker_action(moc
     
     mocker.patch(
         # api_call is from slow.py but imported to main.py
-        'tracardi.service.storage.driver.storage.driver.resource.load',
+        'tracardi.service.storage.driver.elastic.resource.load',
         return_value=Resource(
             id="test-resource",
             type="test",
@@ -127,18 +127,6 @@ async def test_should_set_up_plugin_contains_pattern_action():
                        module="tracardi.process_engine.action.v1.operations.contains_pattern.plugin", 
                        className="ContainsPatternAction")
     await plugin.set_up({'field': 'payload@field', 'pattern': 'all'})
-
-
-async def test_should_set_up_plugin_google_translate_action():
-    
-    module = import_package("tracardi.process_engine.action.v1.connectors.google.translate.plugin")
-    plugin_class = load_callable(module, "GoogleTranslateAction")
-    plugin = plugin_class()
-    plugin.node = Node(id="node-id", 
-                       name="test-node", 
-                       module="tracardi.process_engine.action.v1.connectors.google.translate.plugin", 
-                       className="GoogleTranslateAction")
-    await plugin.set_up({'text_to_translate': 'Hello', 'source_language': 'en', 'destination_language': 'en'})
 
 
 async def test_should_set_up_plugin_payload_memory_collector():
@@ -522,7 +510,7 @@ async def test_should_set_up_plugin_merge_profiles_action():
                        name="test-node", 
                        module="tracardi.process_engine.action.v1.operations.merge_profiles_action", 
                        className="MergeProfilesAction")
-    await plugin.set_up({'mergeBy': ['profile@pii.email']})
+    await plugin.set_up({'mergeBy': ['profile@data.contact.email']})
 
 
 async def test_should_set_up_plugin_update_profile_action():
@@ -961,7 +949,7 @@ async def test_should_set_up_plugin_remote_call_action(mocker):
     
     mocker.patch(
         # api_call is from slow.py but imported to main.py
-        'tracardi.service.storage.driver.storage.driver.resource.load',
+        'tracardi.service.storage.driver.elastic.resource.load',
         return_value=Resource(
             id="test-resource",
             type="test",
@@ -986,7 +974,7 @@ async def test_should_set_up_plugin_smtp_dispatcher_action(mocker):
     
     mocker.patch(
         # api_call is from slow.py but imported to main.py
-        'tracardi.service.storage.driver.storage.driver.resource.load',
+        'tracardi.service.storage.driver.elastic.resource.load',
         return_value=Resource(
             id="test-resource",
             type="test",
@@ -1143,7 +1131,7 @@ async def test_should_set_up_plugin_discord_web_hook_action(mocker):
     
     mocker.patch(
         # api_call is from slow.py but imported to main.py
-        'tracardi.service.storage.driver.storage.driver.resource.load',
+        'tracardi.service.storage.driver.elastic.resource.load',
         return_value=Resource(
             id="test-resource",
             type="test",
@@ -1168,7 +1156,7 @@ async def test_should_set_up_plugin_geo_i_p_action(mocker):
     
     mocker.patch(
         # api_call is from slow.py but imported to main.py
-        'tracardi.service.storage.driver.storage.driver.resource.load',
+        'tracardi.service.storage.driver.elastic.resource.load',
         return_value=Resource(
             id="test-resource",
             type="test",
@@ -1205,7 +1193,7 @@ async def test_should_set_up_plugin_token_getter(mocker):
     
     mocker.patch(
         # api_call is from slow.py but imported to main.py
-        'tracardi.service.storage.driver.storage.driver.resource.load',
+        'tracardi.service.storage.driver.elastic.resource.load',
         return_value=Resource(
             id="test-resource",
             type="test",
@@ -1230,7 +1218,7 @@ async def test_should_set_up_plugin_slack_poster(mocker):
     
     mocker.patch(
         # api_call is from slow.py but imported to main.py
-        'tracardi.service.storage.driver.storage.driver.resource.load',
+        'tracardi.service.storage.driver.elastic.resource.load',
         return_value=Resource(
             id="test-resource",
             type="test",
@@ -1255,7 +1243,7 @@ async def test_should_set_up_plugin_google_sheets_integrator_action(mocker):
     
     mocker.patch(
         # api_call is from slow.py but imported to main.py
-        'tracardi.service.storage.driver.storage.driver.resource.load',
+        'tracardi.service.storage.driver.elastic.resource.load',
         return_value=Resource(
             id="test-resource",
             type="test",
@@ -1280,7 +1268,7 @@ async def test_should_set_up_plugin_twitter_tweet_action(mocker):
     
     mocker.patch(
         # api_call is from slow.py but imported to main.py
-        'tracardi.service.storage.driver.storage.driver.resource.load',
+        'tracardi.service.storage.driver.elastic.resource.load',
         return_value=Resource(
             id="test-resource",
             type="test",
@@ -1346,7 +1334,7 @@ async def test_should_set_up_plugin_inject_profile_by_field():
                        name="test-node", 
                        module="tracardi.process_engine.action.v1.internal.inject_profile_by_field.plugin", 
                        className="InjectProfileByField")
-    await plugin.set_up({'field': 'pii.email', 'value': 'test@test.com'})
+    await plugin.set_up({'field': 'data.contact.email', 'value': 'test@test.com'})
 
 
 async def test_should_set_up_plugin_add_empty_profile_action():
@@ -1533,7 +1521,7 @@ async def test_should_set_up_plugin_git_hub_list_issues_action(mocker):
     
     mocker.patch(
         # api_call is from slow.py but imported to main.py
-        'tracardi.service.storage.driver.storage.driver.resource.load',
+        'tracardi.service.storage.driver.elastic.resource.load',
         return_value=Resource(
             id="test-resource",
             type="test",
@@ -1558,7 +1546,7 @@ async def test_should_set_up_plugin_git_hub_get_issue_action(mocker):
     
     mocker.patch(
         # api_call is from slow.py but imported to main.py
-        'tracardi.service.storage.driver.storage.driver.resource.load',
+        'tracardi.service.storage.driver.elastic.resource.load',
         return_value=Resource(
             id="test-resource",
             type="test",
@@ -1595,7 +1583,7 @@ async def test_should_set_up_plugin_elastic_search_fetcher(mocker):
     
     mocker.patch(
         # api_call is from slow.py but imported to main.py
-        'tracardi.service.storage.driver.storage.driver.resource.load',
+        'tracardi.service.storage.driver.elastic.resource.load',
         return_value=Resource(
             id="test-resource",
             type="test",
@@ -1620,7 +1608,7 @@ async def test_should_set_up_plugin_sms77_send_sms_action(mocker):
     
     mocker.patch(
         # api_call is from slow.py but imported to main.py
-        'tracardi.service.storage.driver.storage.driver.resource.load',
+        'tracardi.service.storage.driver.elastic.resource.load',
         return_value=Resource(
             id="test-resource",
             type="test",
@@ -1645,7 +1633,7 @@ async def test_should_set_up_plugin_influx_sender(mocker):
     
     mocker.patch(
         # api_call is from slow.py but imported to main.py
-        'tracardi.service.storage.driver.storage.driver.resource.load',
+        'tracardi.service.storage.driver.elastic.resource.load',
         return_value=Resource(
             id="test-resource",
             type="test",
@@ -1670,7 +1658,7 @@ async def test_should_set_up_plugin_influx_fetcher(mocker):
     
     mocker.patch(
         # api_call is from slow.py but imported to main.py
-        'tracardi.service.storage.driver.storage.driver.resource.load',
+        'tracardi.service.storage.driver.elastic.resource.load',
         return_value=Resource(
             id="test-resource",
             type="test",
@@ -1695,7 +1683,7 @@ async def test_should_set_up_plugin_elastic_email_contact_adder(mocker):
     
     mocker.patch(
         # api_call is from slow.py but imported to main.py
-        'tracardi.service.storage.driver.storage.driver.resource.load',
+        'tracardi.service.storage.driver.elastic.resource.load',
         return_value=Resource(
             id="test-resource",
             type="test",
@@ -1720,7 +1708,7 @@ async def test_should_set_up_plugin_elastic_email_contact_status_change(mocker):
     
     mocker.patch(
         # api_call is from slow.py but imported to main.py
-        'tracardi.service.storage.driver.storage.driver.resource.load',
+        'tracardi.service.storage.driver.elastic.resource.load',
         return_value=Resource(
             id="test-resource",
             type="test",
@@ -1745,7 +1733,7 @@ async def test_should_set_up_plugin_elastic_email_transactional_mail_sender(mock
     
     mocker.patch(
         # api_call is from slow.py but imported to main.py
-        'tracardi.service.storage.driver.storage.driver.resource.load',
+        'tracardi.service.storage.driver.elastic.resource.load',
         return_value=Resource(
             id="test-resource",
             type="test",
@@ -1770,7 +1758,7 @@ async def test_should_set_up_plugin_elastic_email_bulk_mail_sender(mocker):
     
     mocker.patch(
         # api_call is from slow.py but imported to main.py
-        'tracardi.service.storage.driver.storage.driver.resource.load',
+        'tracardi.service.storage.driver.elastic.resource.load',
         return_value=Resource(
             id="test-resource",
             type="test",
@@ -1795,7 +1783,7 @@ async def test_should_set_up_plugin_sendgrid_contact_adder(mocker):
     
     mocker.patch(
         # api_call is from slow.py but imported to main.py
-        'tracardi.service.storage.driver.storage.driver.resource.load',
+        'tracardi.service.storage.driver.elastic.resource.load',
         return_value=Resource(
             id="test-resource",
             type="test",
@@ -1820,7 +1808,7 @@ async def test_should_set_up_plugin_sendgrid_global_suppression_adder(mocker):
     
     mocker.patch(
         # api_call is from slow.py but imported to main.py
-        'tracardi.service.storage.driver.storage.driver.resource.load',
+        'tracardi.service.storage.driver.elastic.resource.load',
         return_value=Resource(
             id="test-resource",
             type="test",
@@ -1845,7 +1833,7 @@ async def test_should_set_up_plugin_sendgrid_e_mail_sender(mocker):
     
     mocker.patch(
         # api_call is from slow.py but imported to main.py
-        'tracardi.service.storage.driver.storage.driver.resource.load',
+        'tracardi.service.storage.driver.elastic.resource.load',
         return_value=Resource(
             id="test-resource",
             type="test",
@@ -1870,7 +1858,7 @@ async def test_should_set_up_plugin_postgre_s_q_l_connector_action(mocker):
     
     mocker.patch(
         # api_call is from slow.py but imported to main.py
-        'tracardi.service.storage.driver.storage.driver.resource.load',
+        'tracardi.service.storage.driver.elastic.resource.load',
         return_value=Resource(
             id="test-resource",
             type="test",
@@ -1895,7 +1883,7 @@ async def test_should_set_up_plugin_mongo_connector_action(mocker):
     
     mocker.patch(
         # api_call is from slow.py but imported to main.py
-        'tracardi.service.storage.driver.storage.driver.resource.load',
+        'tracardi.service.storage.driver.elastic.resource.load',
         return_value=Resource(
             id="test-resource",
             type="test",
@@ -1920,7 +1908,7 @@ async def test_should_set_up_plugin_mysql_connector_action(mocker):
     
     mocker.patch(
         # api_call is from slow.py but imported to main.py
-        'tracardi.service.storage.driver.storage.driver.resource.load',
+        'tracardi.service.storage.driver.elastic.resource.load',
         return_value=Resource(
             id="test-resource",
             type="test",
@@ -1945,7 +1933,7 @@ async def test_should_set_up_plugin_data_extension_sender(mocker):
     
     mocker.patch(
         # api_call is from slow.py but imported to main.py
-        'tracardi.service.storage.driver.storage.driver.resource.load',
+        'tracardi.service.storage.driver.elastic.resource.load',
         return_value=Resource(
             id="test-resource",
             type="test",
@@ -1982,7 +1970,7 @@ async def test_should_set_up_plugin_mqtt_publish_action(mocker):
     
     mocker.patch(
         # api_call is from slow.py but imported to main.py
-        'tracardi.service.storage.driver.storage.driver.resource.load',
+        'tracardi.service.storage.driver.elastic.resource.load',
         return_value=Resource(
             id="test-resource",
             type="test",
@@ -2007,7 +1995,7 @@ async def test_should_set_up_plugin_mix_panel_sender(mocker):
     
     mocker.patch(
         # api_call is from slow.py but imported to main.py
-        'tracardi.service.storage.driver.storage.driver.resource.load',
+        'tracardi.service.storage.driver.elastic.resource.load',
         return_value=Resource(
             id="test-resource",
             type="test",
@@ -2032,7 +2020,7 @@ async def test_should_set_up_plugin_mix_panel_funnel_fetcher(mocker):
     
     mocker.patch(
         # api_call is from slow.py but imported to main.py
-        'tracardi.service.storage.driver.storage.driver.resource.load',
+        'tracardi.service.storage.driver.elastic.resource.load',
         return_value=Resource(
             id="test-resource",
             type="test",
@@ -2057,7 +2045,7 @@ async def test_should_set_up_plugin_send_to_airtable_action(mocker):
     
     mocker.patch(
         # api_call is from slow.py but imported to main.py
-        'tracardi.service.storage.driver.storage.driver.resource.load',
+        'tracardi.service.storage.driver.elastic.resource.load',
         return_value=Resource(
             id="test-resource",
             type="test",
@@ -2082,7 +2070,7 @@ async def test_should_set_up_plugin_fetch_from_airtable_action(mocker):
     
     mocker.patch(
         # api_call is from slow.py but imported to main.py
-        'tracardi.service.storage.driver.storage.driver.resource.load',
+        'tracardi.service.storage.driver.elastic.resource.load',
         return_value=Resource(
             id="test-resource",
             type="test",
@@ -2107,7 +2095,7 @@ async def test_should_set_up_plugin_send_event_to_matomo_action(mocker):
     
     mocker.patch(
         # api_call is from slow.py but imported to main.py
-        'tracardi.service.storage.driver.storage.driver.resource.load',
+        'tracardi.service.storage.driver.elastic.resource.load',
         return_value=Resource(
             id="test-resource",
             type="test",
@@ -2132,7 +2120,7 @@ async def test_should_set_up_plugin_hub_spot_company_adder(mocker):
     
     mocker.patch(
         # api_call is from slow.py but imported to main.py
-        'tracardi.service.storage.driver.storage.driver.resource.load',
+        'tracardi.service.storage.driver.elastic.resource.load',
         return_value=Resource(
             id="test-resource",
             type="test",
@@ -2157,7 +2145,7 @@ async def test_should_set_up_plugin_hub_spot_contact_adder(mocker):
     
     mocker.patch(
         # api_call is from slow.py but imported to main.py
-        'tracardi.service.storage.driver.storage.driver.resource.load',
+        'tracardi.service.storage.driver.elastic.resource.load',
         return_value=Resource(
             id="test-resource",
             type="test",
@@ -2182,7 +2170,7 @@ async def test_should_set_up_plugin_hub_spot_company_getter(mocker):
     
     mocker.patch(
         # api_call is from slow.py but imported to main.py
-        'tracardi.service.storage.driver.storage.driver.resource.load',
+        'tracardi.service.storage.driver.elastic.resource.load',
         return_value=Resource(
             id="test-resource",
             type="test",
@@ -2207,7 +2195,7 @@ async def test_should_set_up_plugin_hub_spot_contact_getter(mocker):
     
     mocker.patch(
         # api_call is from slow.py but imported to main.py
-        'tracardi.service.storage.driver.storage.driver.resource.load',
+        'tracardi.service.storage.driver.elastic.resource.load',
         return_value=Resource(
             id="test-resource",
             type="test",
@@ -2232,7 +2220,7 @@ async def test_should_set_up_plugin_hub_spot_company_updater(mocker):
     
     mocker.patch(
         # api_call is from slow.py but imported to main.py
-        'tracardi.service.storage.driver.storage.driver.resource.load',
+        'tracardi.service.storage.driver.elastic.resource.load',
         return_value=Resource(
             id="test-resource",
             type="test",
@@ -2257,7 +2245,7 @@ async def test_should_set_up_plugin_hub_spot_contact_updater(mocker):
     
     mocker.patch(
         # api_call is from slow.py but imported to main.py
-        'tracardi.service.storage.driver.storage.driver.resource.load',
+        'tracardi.service.storage.driver.elastic.resource.load',
         return_value=Resource(
             id="test-resource",
             type="test",
@@ -2282,7 +2270,7 @@ async def test_should_set_up_plugin_full_contact_action(mocker):
     
     mocker.patch(
         # api_call is from slow.py but imported to main.py
-        'tracardi.service.storage.driver.storage.driver.resource.load',
+        'tracardi.service.storage.driver.elastic.resource.load',
         return_value=Resource(
             id="test-resource",
             type="test",
@@ -2307,7 +2295,7 @@ async def test_should_set_up_plugin_fetch_active_campaign_profile_by_email_actio
     
     mocker.patch(
         # api_call is from slow.py but imported to main.py
-        'tracardi.service.storage.driver.storage.driver.resource.load',
+        'tracardi.service.storage.driver.elastic.resource.load',
         return_value=Resource(
             id="test-resource",
             type="test",
@@ -2332,7 +2320,7 @@ async def test_should_set_up_plugin_send_to_active_campaign_action(mocker):
     
     mocker.patch(
         # api_call is from slow.py but imported to main.py
-        'tracardi.service.storage.driver.storage.driver.resource.load',
+        'tracardi.service.storage.driver.elastic.resource.load',
         return_value=Resource(
             id="test-resource",
             type="test",
@@ -2357,7 +2345,7 @@ async def test_should_set_up_plugin_rabbit_publisher_action(mocker):
     
     mocker.patch(
         # api_call is from slow.py but imported to main.py
-        'tracardi.service.storage.driver.storage.driver.resource.load',
+        'tracardi.service.storage.driver.elastic.resource.load',
         return_value=Resource(
             id="test-resource",
             type="test",
@@ -2382,7 +2370,7 @@ async def test_should_set_up_plugin_add_civi_contact_action(mocker):
     
     mocker.patch(
         # api_call is from slow.py but imported to main.py
-        'tracardi.service.storage.driver.storage.driver.resource.load',
+        'tracardi.service.storage.driver.elastic.resource.load',
         return_value=Resource(
             id="test-resource",
             type="test",
@@ -2407,7 +2395,7 @@ async def test_should_set_up_plugin_amplitude_send_event(mocker):
     
     mocker.patch(
         # api_call is from slow.py but imported to main.py
-        'tracardi.service.storage.driver.storage.driver.resource.load',
+        'tracardi.service.storage.driver.elastic.resource.load',
         return_value=Resource(
             id="test-resource",
             type="test",
@@ -2432,7 +2420,7 @@ async def test_should_set_up_plugin_aws_sqs_action(mocker):
     
     mocker.patch(
         # api_call is from slow.py but imported to main.py
-        'tracardi.service.storage.driver.storage.driver.resource.load',
+        'tracardi.service.storage.driver.elastic.resource.load',
         return_value=Resource(
             id="test-resource",
             type="test",
@@ -2457,7 +2445,7 @@ async def test_should_set_up_plugin_scheduler_plugin(mocker):
     
     mocker.patch(
         # api_call is from slow.py but imported to main.py
-        'tracardi.service.storage.driver.storage.driver.resource.load',
+        'tracardi.service.storage.driver.elastic.resource.load',
         return_value=Resource(
             id="test-resource",
             type="test",
@@ -2482,7 +2470,7 @@ async def test_should_set_up_plugin_novu_trigger_action(mocker):
     
     mocker.patch(
         # api_call is from slow.py but imported to main.py
-        'tracardi.service.storage.driver.storage.driver.resource.load',
+        'tracardi.service.storage.driver.elastic.resource.load',
         return_value=Resource(
             id="test-resource",
             type="test",
@@ -2500,14 +2488,14 @@ async def test_should_set_up_plugin_novu_trigger_action(mocker):
                        name="test-node", 
                        module="tracardi.process_engine.action.v1.connectors.novu.trigger.plugin", 
                        className="NovuTriggerAction")
-    await plugin.set_up({'payload': '{}', 'recipient_email': 'profile@pii.email', 'source': {'id': '', 'name': ''}, 'subscriber_id': 'profile@id', 'template': {'id': '', 'name': ''}})
+    await plugin.set_up({'payload': '{}', 'recipient_email': 'profile@data.contact.email', 'source': {'id': '', 'name': ''}, 'subscriber_id': 'profile@id', 'template': {'id': '', 'name': ''}})
 
 
 async def test_should_set_up_plugin_pushover_action(mocker):
     
     mocker.patch(
         # api_call is from slow.py but imported to main.py
-        'tracardi.service.storage.driver.storage.driver.resource.load',
+        'tracardi.service.storage.driver.elastic.resource.load',
         return_value=Resource(
             id="test-resource",
             type="test",
@@ -2532,7 +2520,7 @@ async def test_should_set_up_plugin_sentiment_analysis_action(mocker):
     
     mocker.patch(
         # api_call is from slow.py but imported to main.py
-        'tracardi.service.storage.driver.storage.driver.resource.load',
+        'tracardi.service.storage.driver.elastic.resource.load',
         return_value=Resource(
             id="test-resource",
             type="test",
@@ -2557,7 +2545,7 @@ async def test_should_set_up_plugin_language_detect_action(mocker):
     
     mocker.patch(
         # api_call is from slow.py but imported to main.py
-        'tracardi.service.storage.driver.storage.driver.resource.load',
+        'tracardi.service.storage.driver.elastic.resource.load',
         return_value=Resource(
             id="test-resource",
             type="test",
@@ -2582,7 +2570,7 @@ async def test_should_set_up_plugin_text_classification_action(mocker):
     
     mocker.patch(
         # api_call is from slow.py but imported to main.py
-        'tracardi.service.storage.driver.storage.driver.resource.load',
+        'tracardi.service.storage.driver.elastic.resource.load',
         return_value=Resource(
             id="test-resource",
             type="test",
@@ -2607,7 +2595,7 @@ async def test_should_set_up_plugin_corporate_reputation_plugin(mocker):
     
     mocker.patch(
         # api_call is from slow.py but imported to main.py
-        'tracardi.service.storage.driver.storage.driver.resource.load',
+        'tracardi.service.storage.driver.elastic.resource.load',
         return_value=Resource(
             id="test-resource",
             type="test",
@@ -2632,7 +2620,7 @@ async def test_should_set_up_plugin_topics_extraction_plugin(mocker):
     
     mocker.patch(
         # api_call is from slow.py but imported to main.py
-        'tracardi.service.storage.driver.storage.driver.resource.load',
+        'tracardi.service.storage.driver.elastic.resource.load',
         return_value=Resource(
             id="test-resource",
             type="test",
@@ -2657,7 +2645,7 @@ async def test_should_set_up_plugin_summarization_plugin(mocker):
     
     mocker.patch(
         # api_call is from slow.py but imported to main.py
-        'tracardi.service.storage.driver.storage.driver.resource.load',
+        'tracardi.service.storage.driver.elastic.resource.load',
         return_value=Resource(
             id="test-resource",
             type="test",
@@ -2682,7 +2670,7 @@ async def test_should_set_up_plugin_deep_categorization_plugin(mocker):
     
     mocker.patch(
         # api_call is from slow.py but imported to main.py
-        'tracardi.service.storage.driver.storage.driver.resource.load',
+        'tracardi.service.storage.driver.elastic.resource.load',
         return_value=Resource(
             id="test-resource",
             type="test",
@@ -2707,7 +2695,7 @@ async def test_should_set_up_plugin_mautic_contact_adder(mocker):
     
     mocker.patch(
         # api_call is from slow.py but imported to main.py
-        'tracardi.service.storage.driver.storage.driver.resource.load',
+        'tracardi.service.storage.driver.elastic.resource.load',
         return_value=Resource(
             id="test-resource",
             type="test",
@@ -2732,7 +2720,7 @@ async def test_should_set_up_plugin_mautic_contact_by_i_d_fetcher(mocker):
     
     mocker.patch(
         # api_call is from slow.py but imported to main.py
-        'tracardi.service.storage.driver.storage.driver.resource.load',
+        'tracardi.service.storage.driver.elastic.resource.load',
         return_value=Resource(
             id="test-resource",
             type="test",
@@ -2757,7 +2745,7 @@ async def test_should_set_up_plugin_mautic_contact_by_email_fetcher(mocker):
     
     mocker.patch(
         # api_call is from slow.py but imported to main.py
-        'tracardi.service.storage.driver.storage.driver.resource.load',
+        'tracardi.service.storage.driver.elastic.resource.load',
         return_value=Resource(
             id="test-resource",
             type="test",
@@ -2782,7 +2770,7 @@ async def test_should_set_up_plugin_mautic_points_editor(mocker):
     
     mocker.patch(
         # api_call is from slow.py but imported to main.py
-        'tracardi.service.storage.driver.storage.driver.resource.load',
+        'tracardi.service.storage.driver.elastic.resource.load',
         return_value=Resource(
             id="test-resource",
             type="test",
@@ -2807,7 +2795,7 @@ async def test_should_set_up_plugin_mautic_segment_editor(mocker):
     
     mocker.patch(
         # api_call is from slow.py but imported to main.py
-        'tracardi.service.storage.driver.storage.driver.resource.load',
+        'tracardi.service.storage.driver.elastic.resource.load',
         return_value=Resource(
             id="test-resource",
             type="test",
@@ -2832,7 +2820,7 @@ async def test_should_set_up_plugin_transactional_mail_sender(mocker):
     
     mocker.patch(
         # api_call is from slow.py but imported to main.py
-        'tracardi.service.storage.driver.storage.driver.resource.load',
+        'tracardi.service.storage.driver.elastic.resource.load',
         return_value=Resource(
             id="test-resource",
             type="test",
@@ -2857,7 +2845,7 @@ async def test_should_set_up_plugin_mail_chimp_audience_adder(mocker):
     
     mocker.patch(
         # api_call is from slow.py but imported to main.py
-        'tracardi.service.storage.driver.storage.driver.resource.load',
+        'tracardi.service.storage.driver.elastic.resource.load',
         return_value=Resource(
             id="test-resource",
             type="test",
@@ -2882,7 +2870,7 @@ async def test_should_set_up_plugin_mail_chimp_audience_remover(mocker):
     
     mocker.patch(
         # api_call is from slow.py but imported to main.py
-        'tracardi.service.storage.driver.storage.driver.resource.load',
+        'tracardi.service.storage.driver.elastic.resource.load',
         return_value=Resource(
             id="test-resource",
             type="test",
@@ -2907,7 +2895,7 @@ async def test_should_set_up_plugin_write_to_memory_action(mocker):
     
     mocker.patch(
         # api_call is from slow.py but imported to main.py
-        'tracardi.service.storage.driver.storage.driver.resource.load',
+        'tracardi.service.storage.driver.elastic.resource.load',
         return_value=Resource(
             id="test-resource",
             type="test",
@@ -2932,7 +2920,7 @@ async def test_should_set_up_plugin_read_from_memory_action(mocker):
     
     mocker.patch(
         # api_call is from slow.py but imported to main.py
-        'tracardi.service.storage.driver.storage.driver.resource.load',
+        'tracardi.service.storage.driver.elastic.resource.load',
         return_value=Resource(
             id="test-resource",
             type="test",

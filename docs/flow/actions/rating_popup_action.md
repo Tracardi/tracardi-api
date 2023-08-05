@@ -1,43 +1,94 @@
-# Show rating widget plugin
+# Rating Popup Plugin
 
 This plugin shows the rating widget to user. Rating widget allows user to rate something
 at scale from 1 to 5. Widget sends back an event with property **event@properties.rating** 
 containing an integer from 1 to 5, according to user rating.
 
-## Input
-This plugin takes any payload as input.
+## Description
 
-## Output
-This plugin returns given payload on port **payload** without any changes.
+The Rating Popup Plugin displays a customizable rating widget as a popup. The plugin allows you to configure the title, message, lifetime, positioning, styling, and reporting of the rating event. You can define the API URL to send the event with the rating, specify the event type, and choose whether to save the event or not.
 
-## Plugin configuration
+When the plugin is executed, it renders the rating widget with the configured settings. The payload object is passed through the plugin unchanged.
 
-#### With form
-- UIX source - provide a URL of API where this widget is located.
-  Usually, it's just Tracardi API URL.
-- API URL - provide a URL of API to send event back to.
-- Title - provide a title for your rating popup. This field does not support dotted notation.
-- Popup message - provide a template of message for your rating popup. This field supports dot templates.
-- Horizontal position - select a horizontal position for your rating popup.
-- Vertical position - select a vertical position for your rating popup.
-- Event type - type in a type of event that will be sent back from popup.
-- Save event - determine whether sent event should be saved or not. ON - save, OFF - do not save.
-- Popup lifetime - define a number of seconds for rating popup to be displayed. After this
-  number of seconds, it will disappear without any user interaction.
-- Dark theme - you can enable dark theme for your popup. ON - dark mode, OFF - bright mode.
+Version: 0.8.1
 
-#### Advanced configuration
+# Inputs and Outputs
+
+## Inputs
+
+- **payload** (dict): This input port accepts a payload object.
+
+## Outputs
+
+- **payload** (dict): This output port returns the given payload without any changes.
+
+# Configuration
+
+The Rating Popup Plugin supports the following configuration parameters:
+
+- **Widget configuration**
+  - **Title**: This text will become the title of your rating popup.
+  - **Popup message**: This is the message to be displayed in the rating popup. You can use a template here.
+  - **Popup lifetime**: Please provide the number of seconds for the rating popup to be displayed.
+
+- **Positioning**
+  - **Horizontal position**: This is the horizontal position of your popup. Choose from "Left", "Center", or "Right".
+  - **Vertical position**: This is the vertical position of your popup. Choose from "Top" or "Bottom".
+
+- **Styling**
+  - **Pop-up styling**: This field allows you to customize the appearance of the rating popup.
+  - **Title size**: This field allows you to set the size of the title.
+
+- **Reporting rating**
+  - **API URL**: Provide the URL of the Tracardi instance to send the event with the rating.
+  - **Event type**: Please provide the type of event to be sent back after selecting the rating.
+  - **Save event**: Determine whether the sent event should be saved or not.
+
+# JSON Configuration
+
+Here is an example of the JSON configuration for the Rating Popup Plugin:
+
 ```json
 {
-  "api_url": "<url-of-api-for-event-to-be-sent-to>",
-  "uix_source": "<url-of-uix-source>",
-  "title": "<popup-title>",
-  "message": "<popup-message>",
-  "lifetime": "<number-of-seconds-to-display>",
-  "horizontal_position": " left | center | right ",
-  "vertical_position": " top | bottom ",
-  "event_type": "<type-of-event-to-be-sent-back>",
-  "save_event": "<bool>",
-  "dark_theme": "<bool>"
+    "api_url": "http://localhost:8686",
+    "title": "My Rating",
+    "message": "Please rate your experience.",
+    "lifetime": "10",
+    "horizontal_position": "center",
+    "vertical_position": "bottom",
+    "event_type": "rating",
+    "save_event": true,
+    "styling": {
+        "margin": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0
+        },
+        "padding": {
+            "left": 20,
+            "top": 20,
+            "right": 20,
+            "bottom": 20
+        },
+        "color": {
+            "background": "rgba(255,255,255,0.95)",
+            "text": "rgba(0,0,0,1)"
+        },
+        "border": {
+            "size": 0,
+            "radius": 0,
+            "color": "black"
+        }
+    },
+    "title_size": "20"
 }
 ```
+
+# Required resources
+
+This plugin does not require external resources to be configured.
+
+# Errors
+
+This plugin does not generate any errors.

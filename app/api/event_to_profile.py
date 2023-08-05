@@ -1,11 +1,16 @@
+from uuid import uuid4
+
 from fastapi import APIRouter, Depends, HTTPException
 
 from app.api.auth.permissions import Permissions
 from app.config import server
 from app.service.grouping import group_records
 from tracardi.domain.event_to_profile import EventToProfile
-from tracardi.service.storage.driver import storage
+from tracardi.service.events import get_default_event_type_mapping
+from tracardi.service.storage.driver.elastic import event_to_profile as event_to_profile_db
 from typing import Optional
+
+from tracardi.service.string_manager import capitalize_event_type_id
 
 router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin", "developer"]))]
@@ -18,7 +23,7 @@ async def refresh_event_to_profile():
     """
     Refreshes event to profile index
     """
-    return await storage.driver.event_to_profile.refresh()
+    return await event_to_profile_db.refresh()
 
 
 @router.post("/event-to-profile", tags=["event-to-profile"], include_in_schema=server.expose_gui_api,
@@ -28,8 +33,8 @@ async def add_event_to_profile(event_to_profile: EventToProfile):
     Creates new event to profile record in database
     """
 
-    result = await storage.driver.event_to_profile.save(event_to_profile)
-    await storage.driver.event_to_profile.refresh()
+    result = await event_to_profile_db.save(event_to_profile)
+    await event_to_profile_db.refresh()
 
     if result.errors:
         raise ValueError(result.errors)
@@ -46,10 +51,43 @@ async def get_event_to_profile(event_type: str):
     Returns event to profile schema for given event type
     """
 
-    records = await storage.driver.event_to_profile.get_event_to_profile(event_type)
-    if records.total == 0:
+    records = []
+    build_in = get_default_event_type_mapping(event_type, "profile")
+    if build_in is not None:
+        build_in = {
+            'id': str(uuid4()),
+            'name': 'Build-in event to profile mapping',
+            'event_type': {'id': event_type, 'name': capitalize_event_type_id(event_type)},
+            'description': f"This is build-in system profile mapping for event type \"{event_type}\"",
+            'enabled': True,
+            'build_in': True,
+            'config': {},
+            'event_to_profile': [
+                {
+                    'event': {'value': item[0], 'ref': True},
+                    'op': item[1],
+                    'profile': {'value': source, 'ref': True}
+                } for source, item in build_in.items()
+            ],
+            'tags': ['General']}
+        records.append(build_in)
+
+    custom_records = await event_to_profile_db.get_event_to_profile(event_type)
+    if custom_records is not None:
+        custom_records = custom_records.dict()
+        for item in custom_records['result']:
+            item['build_in'] = False
+            records.append(item)
+
+    total = len(records)
+
+    if total == 0:
         raise HTTPException(status_code=404, detail=f"Event to profile coping schema for {event_type} not found.")
-    return records.dict()
+
+    return {
+        "total": total,
+        "result": records
+    }
 
 
 @router.get("/event-to-profile/{event_id}",
@@ -61,7 +99,7 @@ async def get_event_to_profile(event_id: str):
     Returns event to profile schema for given event id
     """
 
-    record = await storage.driver.event_to_profile.load_by_id(event_id)
+    record = await event_to_profile_db.load_by_id(event_id)
     if record is None:
         raise HTTPException(status_code=404,
                             detail=f"Event to profile coping schema for event id {event_id} not found.")
@@ -74,8 +112,8 @@ async def del_event_type_metadata(event_type: str):
     """
     Deletes event to profile schema for given event type
     """
-    result = await storage.driver.event_to_profile.del_event_type_metadata(event_type)
-    await storage.driver.event_to_profile.refresh()
+    result = await event_to_profile_db.del_event_type_metadata(event_type)
+    await event_to_profile_db.refresh()
 
     return {"deleted": 1 if result is not None and result["result"] == "deleted" else 0}
 
@@ -87,7 +125,7 @@ async def list_events_to_profiles(start: Optional[int] = 0, limit: Optional[int]
     List all of events to profiles.
     """
 
-    result = await storage.driver.event_to_profile.load_events_to_profiles(start, limit)
+    result = await event_to_profile_db.load_events_to_profiles(start, limit)
     return list(result)
 
 
@@ -97,5 +135,5 @@ async def list_events_to_profiles_by_tag(query: str = None, start: Optional[int]
     """
     Lists events to profiles coping schema by tag, according to given start (int), limit (int) and query (str)
     """
-    result = await storage.driver.event_to_profile.load_events_to_profiles(start, limit)
+    result = await event_to_profile_db.load_events_to_profiles(start, limit)
     return group_records(result, query, group_by='tags', search_by='name', sort_by='name')

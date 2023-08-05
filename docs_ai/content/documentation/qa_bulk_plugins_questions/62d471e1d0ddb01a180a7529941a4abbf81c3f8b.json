@@ -1,0 +1,1 @@
+{"file_name": "docs/qa/bulk/plugins_questions.md", "questions": ["What is the If plugin?", "How to conditionally run a branch of the workflow with Tracardi?", "What is the purpose of the If plugin?"], "answer": "# Can Tracardi conditionally run a branch of the workflow?\nYes. It can with the If plugin.", "hash": "62d471e1d0ddb01a180a7529941a4abbf81c3f8b"}

@@ -1,11 +1,43 @@
 import json
 import os
+from typing import Optional
+
 import requests
 from dotenv import load_dotenv
+
+from tracardi.config import tracardi
 from tracardi.domain.profile import Profile
 from tracardi.domain.session import Session, SessionMetadata
 
 load_dotenv()
+
+
+def get_tenant_name_from_host(hostname) -> Optional[str]:
+    parts = hostname.split(".")
+    if len(parts) >= 3:
+        _tenant_candidate = parts[0]
+        if len(_tenant_candidate) >= 3 and not _tenant_candidate.isnumeric():
+            return _tenant_candidate
+    return None
+
+
+def get_test_tenant():
+    if not tracardi.multi_tenant:
+        tenant = tracardi.version.name
+    else:
+        host = os.environ.get('HOST', None)
+        if host is None:
+            raise ValueError("Can not find HOST env. Set HOST for multi-tenant testing.")
+
+        parts = host.split("//")
+        if len(parts) > 1:
+            host = parts[1].strip(":")
+        tenant = get_tenant_name_from_host(host)
+
+    if tenant is None:
+        raise ValueError("Can not find tenant in HOST.")
+
+    return tenant
 
 
 class Endpoint:
@@ -96,5 +128,3 @@ def get_session(session_id):
 def get_profile(session_id):
     endpoint = Endpoint()
     return endpoint.get(f'/profile/{session_id}')
-
-

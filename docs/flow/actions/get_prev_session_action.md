@@ -1,25 +1,37 @@
-# Get previous session
+# Get Previous Session
 
-This plugin loads n-th last session of current profile and loads it into payload, where n is defined by the offset
-parameter.
+The "Get Previous Session" plugin in Tracardi is used to load the n-th last session of the current profile and inject it into the payload. This plugin is useful for retrieving information from previous sessions for segmentation and analysis purposes.
 
-## Input
+## Inputs and Outputs
 
-This plugin takes any payload as input.
+- **Input**: This plugin takes any payload as input.
 
-## Outputs
-
-* found - this port returns the session if it was found
-*not_found - this port returns given payload if the session was not found
+- **Output Ports**:
+  - **found**: This port returns the session information if the session was found.
+  - **not_found**: This port returns the given payload if the session was not found.
 
 ## Configuration
 
-- Offset - an integer between -10 and 0 inclusively, where 0 is current session, -1 is last session, etc.
+The "Get Previous Session" plugin has the following configuration option:
 
-#### Advanced configuration
+- **Offset**: This parameter determines the session offset, which is an integer value between -10 and 0 (inclusive). The offset specifies the number of sessions to go back from the current session. For example, an offset of -1 will return the last session, and an offset of -2 will return the second-to-last session.
+
+To configure the plugin, you can use the following JSON format:
 
 ```json
 {
   "offset": "<number-of-wanted-session-counting-from-current-one>"
 }
 ```
+
+## Example Usage
+
+Here's an example of how the "Get Previous Session" plugin can be used:
+
+```yaml
+- get_previous_session:
+    offset: -1
+```
+
+In this example, the plugin is configured to retrieve the last session of the current profile and inject it into the payload. The session information will be available on the "found" port.
+

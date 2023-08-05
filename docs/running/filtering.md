@@ -34,7 +34,7 @@ You can specify fields to search in the query syntax:
 * where the profile first name field contains Alice (note how we need to escape the space with a backslash)
 
     ```
-    profile.pii.first\ name:Alice
+    profile.data.pii.first\ name:Alice
     ```
 
 * where any of the fields __book.title__, __book.content__ or __book.date__ contains quick or brown (note how we need to escape the
@@ -190,14 +190,11 @@ the previous query could be rewritten as:
 ```
 
 
-# Summary 
-
+---
 This documentation answer the following questions:
 
-* How to search profile, session, and events in Tracardi GUI
-* What is filtering used for in Tracardi?
-* How does Tracardi's query parser work for filtering?
-* What is the filtering syntax in Tracardi?
-* What are wildcard searches, and how can they be used in Tracardi filtering?
-* What are some other types of searches and operators that can be used for filtering in Tracardi, such as regular expressions and boolean operators?
-
+* How to search for profile, session, and events in Tracardi GUI
+* How to search data in Tracardi?
+* How does Tracardi's query parser work?
+* What is a query condition?
+* What is the syntax for searching, filtering in Tracardi?

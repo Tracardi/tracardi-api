@@ -1,0 +1,1 @@
+{"file_name": "docs/qa/bulk/plugins_questions.md", "questions": ["What is the Inject payload plugin?", "How to create a new payload with Tracardi?", "How to use the Inject payload plugin?"], "answer": "# Can Tracardi create a new payload from the provided data?\nYes. It can with the Inject payload plugin.", "hash": "e02b5c712d69f938722254fe2c0c6690ed39710f"}

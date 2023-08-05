@@ -132,3 +132,17 @@ Notations that use dot notation:
 * [Object templates](object_template.md)
 * [Logic notation](logic_notation.md)
 
+---
+This documentation answers the following questions:
+
+* What is dot notation?
+* What is the purpose of dot notation in Tracardi?
+* What are the available sources for dot notation in Tracardi?
+* What is the format of dot notation in Tracardi?
+* What is the warning associated with dot notation in Tracardi?
+* How can a part of data be accessed using dot notation in Tracardi?
+* How can items in an array be accessed using dot notation in Tracardi?
+* Can objects embedded inside arrays be retrieved using dot notation in Tracardi?
+* How can I access profile data in tracardi?
+* How can I access event data in tracardi?
+* How can I access session data in tracardi?

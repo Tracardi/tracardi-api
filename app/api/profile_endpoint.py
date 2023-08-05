@@ -5,10 +5,10 @@ from fastapi import Depends
 from fastapi.responses import Response
 
 from tracardi.exceptions.exception import DuplicatedRecordException
-from tracardi.service.storage.driver import storage
 from tracardi.domain.profile import Profile
-from tracardi.service.storage.drivers.elastic.profile import deduplicate_profile
-from tracardi.service.storage.index import resources
+from tracardi.service.storage.driver.elastic import profile as profile_db
+from tracardi.service.storage.driver.elastic import event as event_db
+from tracardi.service.storage.index import Resource
 from .auth.permissions import Permissions
 from ..config import server
 
@@ -21,7 +21,7 @@ router = APIRouter(
             dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer", "maintainer"]))],
             include_in_schema=server.expose_gui_api)
 async def count_profiles():
-    return await storage.driver.profile.count()
+    return await profile_db.count()
 
 
 @router.post("/profiles/import", dependencies=[Depends(Permissions(roles=["admin"]))], tags=["profile"],
@@ -30,7 +30,7 @@ async def import_profiles(profiles: List[Profile]):
     """
     Saves given profiles (list of profiles) to database. Accessible by roles: "admin"
     """
-    return await storage.driver.profile.save_all(profiles)
+    return await profile_db.save_all(profiles)
 
 
 @router.get("/profiles/refresh", tags=["profile"], include_in_schema=server.expose_gui_api)
@@ -38,7 +38,7 @@ async def refresh_profile():
     """
     Refreshes profile index
     """
-    return await storage.driver.profile.refresh()
+    return await profile_db.refresh()
 
 
 @router.get("/profiles/flash", tags=["profile"], include_in_schema=server.expose_gui_api)
@@ -46,7 +46,7 @@ async def refresh_profile():
     """
     Flashes profile index
     """
-    return await storage.driver.profile.flush()
+    return await profile_db.flush()
 
 
 @router.get("/profile/{id}", tags=["profile"],
@@ -57,7 +57,7 @@ async def get_profile_by_id(id: str, response: Response) -> Optional[dict]:
     Returns profile with given ID (str)
     """
     try:
-        record = await storage.driver.profile.load_by_id(id)
+        record = await profile_db.load_by_id(id)
         if record is None:
             response.status_code = 404
             return None
@@ -66,7 +66,7 @@ async def get_profile_by_id(id: str, response: Response) -> Optional[dict]:
         result['_meta'] = record.get_meta_data()
         return result
     except DuplicatedRecordException as e:
-        await deduplicate_profile(id)
+        await profile_db.deduplicate_profile(id)
         raise e
 
 
@@ -79,8 +79,8 @@ async def delete_profile(id: str, response: Response):
     Deletes profile with given ID (str)
     """
     # Delete from all indices
-    index = resources.get_index_constant("profile")
-    result = await storage.driver.profile.delete_by_id(id, index=index.get_multi_storage_alias())
+    index = Resource().get_index_constant("profile")
+    result = await profile_db.delete_by_id(id, index=index.get_multi_storage_alias())
 
     if result['deleted'] == 0:
         response.status_code = 404
@@ -89,13 +89,31 @@ async def delete_profile(id: str, response: Response):
     return result
 
 
-@router.get("/profile/{profile_id}/by/{field}", tags=["event"], include_in_schema=server.expose_gui_api)
+@router.get("/profile/{profile_id}/by/{field}", tags=["profile"], include_in_schema=server.expose_gui_api)
 async def profile_data_by(profile_id: str, field: str, table: bool = False):
     bucket_name = f"by_{field}"
-    result = await storage.driver.event.aggregate_profile_events_by_field(profile_id,
-                                                                          field=field,
-                                                                          bucket_name=bucket_name)
+    result = await event_db.aggregate_profile_events_by_field(profile_id,
+                                                              field=field,
+                                                              bucket_name=bucket_name)
 
     if table:
         return {id: count for id, count in result.aggregations[bucket_name][0].items()}
     return [{"name": id, "value": count} for id, count in result.aggregations[bucket_name][0].items()]
+
+
+@router.get("/profiles/{qualify}/segment/{segment_names}", tags=["profile"], include_in_schema=server.expose_gui_api)
+async def find_profiles_by_segments(segment_names: str, qualify: str):
+
+    """
+    Returns profiles in given segments.
+
+    Segment names is a string with segment names, like: segment1,segment2
+    Qualify takes any string like: any or all
+    """
+
+    if qualify.lower() == 'any':
+        condition = 'should'
+    else:
+        condition = 'must'
+    records = await profile_db.load_profiles_by_segments(segment_names.split(','), condition=condition)
+    return records.dict()

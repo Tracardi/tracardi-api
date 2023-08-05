@@ -7,7 +7,7 @@ from tracardi.config import tracardi
 from tracardi.domain.enum.type_enum import TypeEnum
 from tracardi.exceptions.log_handler import log_handler
 from tracardi.service.setup.setup_resources import get_type_of_resources
-from tracardi.service.storage.driver import storage
+from tracardi.service.storage.driver.elastic import resource as resource_db
 from tracardi.service.wf.domain.named_entity import NamedEntity
 from app.service.grouper import search
 from tracardi.domain.resource import Resource, ResourceRecord
@@ -25,11 +25,11 @@ router = APIRouter(
 
 
 async def _load_record(id: str) -> Optional[ResourceRecord]:
-    return ResourceRecord.create(await storage.driver.resource.load_by_id(id))
+    return ResourceRecord.create(await resource_db.load_by_id(id))
 
 
 async def _store_record(data: ResourceRecord):
-    return await storage.driver.resource.save(data)
+    return await resource_db.save(data)
 
 
 @router.get("/resources/type/{type}",
@@ -64,7 +64,7 @@ async def list_resources_names_by_tag(tag: str):
     Returns list of resources that have defined tag. This list contains only id and name.
     """
 
-    result = await storage.driver.resource.load_by_tag(tag)
+    result = await resource_db.load_by_tag(tag)
     total = result.total
     result = [NamedEntity(**r) for r in result]
 
@@ -81,7 +81,7 @@ async def list_resources_by_tag(tag: str):
     """
     Returns list of resources that have defined tag. This list contains all data along with credentials.
     """
-    result = await storage.driver.resource.load_by_tag(tag)
+    result = await resource_db.load_by_tag(tag)
     total = result.total
     result = [ResourceRecord(**r).decode() for r in result]
 
@@ -95,7 +95,7 @@ async def list_resources_by_tag(tag: str):
             tags=["resource"],
             include_in_schema=server.expose_gui_api)
 async def list_resources():
-    result = await storage.driver.resource.load_all(limit=250)
+    result = await resource_db.load_all(limit=250)
     total = result.total
     result = [NamedEntity(**item) for item in result]
 
@@ -109,7 +109,7 @@ async def list_resources():
             tags=["resource"],
             include_in_schema=server.expose_gui_api)
 async def list_resources():
-    result = await storage.driver.resource.load_all()
+    result = await resource_db.load_all()
     total = result.total
     result = [ResourceRecord.construct(Resource.__fields_set__, **r).decode() for r in result]
 
@@ -123,7 +123,7 @@ async def list_resources():
             tags=["resource"],
             include_in_schema=server.expose_gui_api)
 async def list_resources(query: str = None):
-    result = await storage.driver.resource.load_all()
+    result = await resource_db.load_all()
 
     total = result.total
     result = [ResourceRecord.construct(Resource.__fields_set__, **r).decode() for r in result]
@@ -214,7 +214,7 @@ async def get_resource_by_id(id: str, response: Response) -> Optional[Resource]:
 async def upsert_resource(resource: Resource):
     record = ResourceRecord.encode(resource)
     result = await _store_record(record)
-    await storage.driver.resource.refresh()
+    await resource_db.refresh()
     return result
 
 
@@ -222,13 +222,13 @@ async def upsert_resource(resource: Resource):
                response_model=Optional[dict],
                include_in_schema=server.expose_gui_api)
 async def delete_resource(id: str, response: Response):
-    result = await storage.driver.resource.delete(id)
+    result = await resource_db.delete(id)
 
     if result is None:
         response.status_code = 404
         return None
 
-    await storage.driver.resource.refresh()
+    await resource_db.refresh()
     return result
 
 
@@ -236,11 +236,11 @@ async def delete_resource(id: str, response: Response):
             tags=["resource"],
             include_in_schema=server.expose_gui_api)
 async def refresh_resources():
-    return await storage.driver.resource.refresh()
+    return await resource_db.refresh()
 
 
 @router.get("/resources/flash",
             tags=["resource"],
             include_in_schema=server.expose_gui_api)
 async def refresh_resources():
-    return await storage.driver.resource.flush()
+    return await resource_db.flush()

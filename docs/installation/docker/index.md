@@ -24,6 +24,14 @@ You can do it with this command.
 docker run -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" docker.elastic.co/elasticsearch/elasticsearch:7.13.2
 ```
 
+!!! Warning
+
+    The provided docker command lacks a persistent volume, which means that when you stop the Docker container, 
+    all the data will be lost. If you wish to preserve the data between Docker container restarts, you can use the 
+    following command: `docker run -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" -v /path/on/host:/usr/share/elasticsearch/data docker.elastic.co/elasticsearch/elasticsearch:7.13.2`. 
+    To ensure data persistence, replace /path/on/host in the command with the directory path on your computer 
+    where you would like to store the Elasticsearch data.
+
 !!! Note
 
     Running one instance of elasticsaerch is not a production solution. For production purposes, 
@@ -92,7 +100,7 @@ docker run -p 8686:80 -e ELASTIC_HOST=https://user:password@<your-laptop-ip>:920
 Pull and run Tracardi Graphical User Interface.
 
 ```bash
-docker run -p 8787:80 -e API_URL=//127.0.0.1:8686 tracardi/tracardi-gui #(1)
+docker run -p 8787:80 tracardi/tracardi-gui #(1)
 ```
 
 1. If you want a certain version of docker image add version tag, e.g. `tracardi/tracardi-gui:0.7.1`
@@ -119,17 +127,9 @@ docker run -e REDIS_HOST=redis://<redis-ip>:6379 -d tracardi/update-worker:0.8.0
     Replace the `<redis-ip>` with the IP of the redis instance. Keep the version of worker the same as 
     `tracard/tracardi-api`
 
-## Start Tracardi Documentation
-
-Pull and run Tracardi Documentation. This is the documentation you are reading right now
-
-```bash
-docker run -p 8585:8585 tracardi/tracardi-docs
-```
-
 ## Tracardi Graphical User Interface
 
-Visit http://127.0.0.1:8787 and follow the instructions to set up Tracardi.
+Visit http://127.0.0.1:8787 and follow the instructions to set up Tracardi. When asked for Tracardi API type: http://127.0.0.1:8686. 
 
 ## System Documentation
 

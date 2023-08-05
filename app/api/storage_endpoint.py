@@ -1,10 +1,12 @@
 from typing import Optional
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 
 from app.api.auth.permissions import Permissions
 from app.config import server
-from tracardi.service.storage.driver import storage
+from tracardi.config import tracardi
+from tracardi.service.storage.driver.elastic import raw as raw_db
+from tracardi.service.storage.driver.elastic import snapshot as snapshot_db
 from tracardi.service.storage.elastic_client import ElasticClient
 from tracardi.service.storage.indices_manager import check_indices_mappings_consistency
 
@@ -32,11 +34,17 @@ async def check_indices_mapping_consistency():
 
 @router.get("/storage/mapping/{index}/metadata", tags=["storage"], include_in_schema=server.expose_gui_api,
             response_model=dict)
-async def get_index_mapping_metadata(index: str):
+async def get_index_mapping_metadata(index: str, filter: str = None):
     """
     Returns metadata of given index (str)
     """
-    result = await storage.driver.raw.get_mapping_fields(index)
+
+    # if tracardi.multi_tenant:
+    #     raise HTTPException(status_code=405, detail="This operation is not allowed for multi-tenant server.")
+
+    result = await raw_db.get_mapping_fields(index)
+    if filter is not None:
+        result = [item for item in result if item.startswith(filter) and item!=filter]
     return {"result": result, "total": len(result)}
 
 
@@ -45,7 +53,11 @@ async def get_index_mapping(index: str):
     """
     Returns mapping of given index (str)
     """
-    mapping = await storage.driver.raw.get_mapping(index)
+
+    if tracardi.multi_tenant:
+        raise HTTPException(status_code=405, detail="This operation is not allowed for multi-tenant server.")
+
+    mapping = await raw_db.get_mapping(index)
     return mapping.get_field_names()
 
 
@@ -55,7 +67,7 @@ async def storage_task_status(task_id: str):
     Returns the status of storage task.
     """
 
-    return await storage.driver.raw.task_status(task_id)
+    return await raw_db.task_status(task_id)
 
 
 @router.get("/storage/reindex/{source}/{destination}", tags=["storage"], include_in_schema=server.expose_gui_api)
@@ -64,7 +76,10 @@ async def reindex_data(source: str, destination: str, wait_for_completion: bool 
     Copies data from one index to another.
     """
 
-    return await storage.driver.raw.reindex(source, destination, wait_for_completion)
+    if tracardi.multi_tenant:
+        raise HTTPException(status_code=405, detail="This operation is not allowed for multi-tenant server.")
+
+    return await raw_db.reindex(source, destination, wait_for_completion)
 
 
 @router.delete("/storage/index/{index_name}", tags=["storage"], include_in_schema=server.expose_gui_api)
@@ -72,6 +87,9 @@ async def delete_index(index_name: str):
     """
     Deletes storage index
     """
+
+    if tracardi.multi_tenant:
+        raise HTTPException(status_code=405, detail="This operation is not allowed for multi-tenant server.")
 
     es = ElasticClient.instance()
     return await es.remove_index(index_name)
@@ -87,7 +105,10 @@ async def get_snapshot_repository(name: str):
     List repository snapshots
     """
 
-    return await storage.driver.snapshot.get_snapshot_repository(repo=name)
+    if tracardi.multi_tenant:
+        raise HTTPException(status_code=405, detail="This operation is not allowed for multi-tenant server.")
+
+    return await snapshot_db.get_snapshot_repository(repo=name)
 
 
 @router.get("/storage/snapshot-repository/status/{name}", tags=["storage"], include_in_schema=server.expose_gui_api,
@@ -97,4 +118,7 @@ async def get_snapshot_repository_status(name: Optional[str] = "_all"):
     Lists available snapshots withing the repository name. Use _all as a name to get all repos snapshots.
     """
 
-    return await storage.driver.snapshot.get_repository_snapshots(repo=name)
+    if tracardi.multi_tenant:
+        raise HTTPException(status_code=405, detail="This operation is not allowed for multi-tenant server.")
+
+    return await snapshot_db.get_repository_snapshots(repo=name)

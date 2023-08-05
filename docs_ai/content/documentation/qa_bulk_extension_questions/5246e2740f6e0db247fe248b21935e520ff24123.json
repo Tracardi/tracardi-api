@@ -1,0 +1,1 @@
+{"file_name": "docs/qa/bulk/extension_questions.md", "questions": ["What is the process to use InfluxDB with Tracardi?", "How to install InfluxDB extension in Tracardi?", "How to use InfluxDB with Tracardi?"], "answer": "# Can Tracardi use InfluxDB ?\nYes. To use InfluxDB, install the extension InfluxDB in Resource/Extensions.", "hash": "5246e2740f6e0db247fe248b21935e520ff24123"}

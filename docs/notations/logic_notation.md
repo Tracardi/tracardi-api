@@ -146,3 +146,17 @@ Functions can be used to convert value, for example to certain types.
 datetime.from_timestamp(payload@path.to.data) > datetime.from_timestamp(payload@path.to.time)
 ```
 
+
+---
+This documentation answers the following questions:
+
+* What is logic notation?
+* How to write a condition statement?
+* How is logic notation used in segment configuration and IF plugin actions?
+* What is the syntax for logic expressions?
+* Why is it important to use brackets when expressions have similar operators?
+* What is the correct way to structure a conditional statement to avoid ambiguity?
+* How are conditions resolved in logic notation?
+* What are some examples of operators that can be used in logic expressions?
+* What are some examples of value types that can be used in logic expressions?
+* How can functions be used to manipulate values in logic expressions?

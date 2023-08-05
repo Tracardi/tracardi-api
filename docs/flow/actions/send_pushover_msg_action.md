@@ -1,25 +1,56 @@
-# Pushover plugin
+# Pushover push
 
-This plugin sends a message to pushover service.
+Connects to Pushover app and pushes a message.
 
-# Requirements
+# Version
 
-To use this plugin you must register at https://pushover.net and obtain API_TOKEN and USER_KEY.
+Version 0.7.1
 
-# Configuration
+## Description
 
-THis plugin needs access to resource that will hold the information on PushOver credentials.
+The Pushover push plugin allows you to send a message to the Pushover service. It connects to the Pushover API and sends
+the specified message to the specified user. The plugin requires Pushover API credentials, including the API token and
+user key, which you can obtain by registering at https://pushover.net.
 
-## Resource configuration
+# Inputs and Outputs
+
+## Inputs
+
+This plugin does not take any input.
+
+## Outputs
+
+- **payload**: Returns the response from the Pushover API, including the status and request information.
+- **error**: Gets triggered if an error occurs while connecting to the Pushover API.
+
+Example output from the **payload** port:
 
 ```json
 {
-  "token": "<API_TOKEN from PushOver>",
-  "user": "<USER_KEY from PushOver>"
+  "status": 200,
+  "response": {
+    "status": 1,
+    "request": "c759f16e-c10a-4066-b91d-05fd06504790"
+  }
 }
 ```
 
-## Plugin configuration
+# Configuration
+
+The Pushover push plugin requires the following configuration:
+
+- **Resource**: Select or configure a resource that holds the Pushover API credentials. This resource should contain the
+  following information:
+    - **token**: The API token obtained from Pushover.
+    - **user**: The user key obtained from Pushover.
+
+- **Message**: Enter the message to be sent. The message can be a template that uses placeholders for data from the
+  profile. For example, if you want to include the name from the profile, you can use the
+  placeholder `{{profile@traits.private.pii.name}}`.
+
+# JSON Configuration
+
+Example JSON configuration for the Pushover push plugin:
 
 ```json
 {
@@ -31,24 +62,13 @@ THis plugin needs access to resource that will hold the information on PushOver 
 }
 ```
 
-Message can be a template that uses placeholders for data from profile. Above you can 
-see a simple template that when executed will replace `{{profile@traits.private.pii.name}}`
-with name (`traits.private.pii.name`) from profile.
+# Required resources
 
-# Input
+This plugin requires a resource to be configured that holds the Pushover API credentials.
 
-This plugin does not take any input
+# Errors
 
-# Output
+The following errors may occur:
 
-Output returns status and response body from PushOver service.
-
-```json
-{
-  "status": 200,
-  "body": {
-    "status": 1,
-    "request": "c759f16e-c10a-4066-b91d-05fd06504790"
-  }
-}
-```
+- **Could not connect to Pushover API**: This error occurs when the plugin is unable to connect to the Pushover API. The
+  error response includes the status code and the response from the API.

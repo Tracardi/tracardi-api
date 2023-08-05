@@ -14,14 +14,14 @@ class TokenMemory(metaclass=Singleton):
                                   .encode("utf-8")).hexdigest()
 
     def __setitem__(self, token, value):
-        self._redis.client.set(f"{self.instance_hash}-{token}", value, ex=self.ttl)
+        self._redis.set(f"{self.instance_hash}-{token}", value, ex=self.ttl)
 
     def __getitem__(self, token):
-        return self._redis.client.get(f"{self.instance_hash}-{token}")
+        return self._redis.get(f"{self.instance_hash}-{token}")
 
     def __delitem__(self, token):
-        self._redis.client.delete(f"{self.instance_hash}-{token}")
+        self._redis.delete(f"{self.instance_hash}-{token}")
 
     def refresh(self, token):
-        self._redis.client.expire(f"{self.instance_hash}-{token}", self.ttl)
+        self._redis.expire(f"{self.instance_hash}-{token}", self.ttl)
 

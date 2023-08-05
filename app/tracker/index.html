@@ -82,10 +82,13 @@
         window.tracker.track("purchase-order", {"id": "Sun glasses - Badoo", "price": 13.45})
         window.tracker.track("profile-interest", {"Vacation": 1})
         window.tracker.track("page-view", {"custom-data": "123ABCDFFG"},{"debugger": true});
-        window.tracker.track("personal-data", {
-            "id": "id",
-            "surname": "Doe",
-            "email": "john.doe@gmail.com",
+        window.tracker.track("profile-update", {
+            "pii": {
+              "firstname": "John",
+              "lastname": "Doe",
+              "name": "John \"Short\" Doe"
+            },
+            "contact": { "email": "john.doe@gmail.com", "address": {"town": "Berlin"}},
             "location": "Berlin/Germany"
         });
 
@@ -160,13 +163,15 @@ const options = {
 window.tracker.track("purchase-order", {product": "Sun glasses - Badoo", "price": 13.45})
 window.tracker.track("profile-interest", {"Vacation": 1})
 window.tracker.track("page-view", {"custom-data": 1});
-window.tracker.track("personal-data", {
-    "id": "id",
-    "name": "Joe",
-    "surname": "Doe",
-    "email": "john.doe@gmail.com",
-    "location": "Berlin/Germany"
-});
+window.tracker.track("profile-update", {
+            "pii": {
+              "firstname": "John",
+              "lastname": "Doe",
+              "name": "John \"Short\" Doe"
+            },
+            "contact": { "email": "john.doe@gmail.com", "address": {"town": "Berlin"}}
+            "location": "Berlin/Germany"
+        });
     </pre>
 
 <h2>TRACARDI response</h2>

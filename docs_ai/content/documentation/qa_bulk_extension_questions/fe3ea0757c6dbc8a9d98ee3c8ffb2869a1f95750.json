@@ -1,0 +1,1 @@
+{"file_name": "docs/qa/bulk/extension_questions.md", "questions": ["What is the process to use Redis with Tracardi?", "How to install the Redis extension in Tracardi?", "How to use Redis with Tracardi?"], "answer": "# Can Tracardi use Redis ?\nYes. To use Redis, install the extension Redis in Resource/Extensions.", "hash": "fe3ea0757c6dbc8a9d98ee3c8ffb2869a1f95750"}

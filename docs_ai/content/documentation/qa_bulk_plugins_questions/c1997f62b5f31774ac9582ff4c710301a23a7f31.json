@@ -1,0 +1,1 @@
+{"file_name": "docs/qa/bulk/plugins_questions.md", "questions": ["What is the capability of Tracardi with the Data validator plugin?"], "answer": "# Can Tracardi validate data such as email, URL, IPv4, date, time, int, float, phone number, EAN code?\nYes. It can with the Data validator plugin.", "hash": "c1997f62b5f31774ac9582ff4c710301a23a7f31"}

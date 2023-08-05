@@ -8,11 +8,11 @@ uvicorn app.main:application --reload --host 0.0.0.0 --port 8686 --ssl-keyfile s
 gunicorn -b 0.0.0.0:443 --keyfile ssl/key.pem --certfile ssl/cert.pem -k uvicorn.workers.UvicornWorker app.main:application
 
 # Run local Kibana
-docker run -p 5601:5601 -m 4g -e ELASTICSEARCH_HOSTS=http://192.168.1.106:9200 docker.elastic.co/kibana/kibana:7.13.2
+docker run -p 5601:5601 -m 4g -e ELASTICSEARCH_HOSTS=http://192.168.1.101:9200 docker.elastic.co/kibana/kibana:7.13.2
 
 # Run local ElasticSearch
 docker run -p 9200:9200 -p 9300:9300 -m 8g -e "discovery.type=single-node" -v "/opt/esdata:/usr/share/elasticsearch/data" docker.elastic.co/elasticsearch/elasticsearch:7.13.2
-docker run -p 9200:9200 -p 9300:9300 -m 6g -e "discovery.type=single-node" docker.elastic.co/elasticsearch/elasticsearch:7.13.2
+docker run -p 9200:9200 -p 9300:9300 -m 6g -e "discovery.type=single-node" -e ES_JAVA_OPTS="-Xms512m -Xmx512m" docker.elastic.co/elasticsearch/elasticsearch:7.13.2
 
 # Run local redis
 docker run -p 6379:6379 redis redis-server --notify-keyspace-events Ex
@@ -56,7 +56,7 @@ docker run -d -p 18123:8123 -p19000:9000 --ulimit nofile=262144:262144 clickhous
 # Run tracardi api with SSL
 
 docker run -v /home/risto/PycharmProjects/tracardi-api/ssl:/ssl -p 8686:443 -e USER_NAME=admin -e PASSWORD=admin -e WORKERS=2 -e ELASTIC_HOST=http://192.168.1.103:9200 -e GUNICORN_CMD_ARGS="--keyfile=/ssl/key.pem --certfile=/ssl/cert.pem" tracardi/tracardi-api-ssl
-docker run -p 8686:80 -e ELASTIC_HOST=http://192.168.1.106:9200 -e tracardi/tracardi-api:0.8.2-dev
+docker run -p 8686:80 -e ELASTIC_HOST=http://192.168.1.106:9200 -e tracardi/tracardi-api:0.8.1
 
 
 # Run GUI HTTPS and HTTP
@@ -106,3 +106,10 @@ docker run --rm --net=host landoop/fast-data-dev
 
 helm upgrade matomo --set service.ports.http=9080,service.ports.https=9443,externalDatabase.host=192.168.1.190,externalDatabase.user=root,externalDatabase.password=root bitnami/matomo
 
+# ISSUES:
+ Can't logi in:
+ 
+delete the user index and reinstall
+
+
+curl -k -X DELETE "https://elastic:0q2673s1zLAZ9IPi22CEBlq2@localhost:9200/080.fa73a.tracardi-user?pretty"

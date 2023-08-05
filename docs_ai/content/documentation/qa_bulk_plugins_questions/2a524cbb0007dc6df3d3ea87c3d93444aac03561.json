@@ -1,0 +1,1 @@
+{"file_name": "docs/qa/bulk/plugins_questions.md", "questions": ["What is the Inject event plugin?", "How to inject an event of a given ID into the payload using Tracardi?"], "answer": "# Can Tracardi inject an event of a given ID into the payload?\nYes. It can with the Inject event plugin.", "hash": "2a524cbb0007dc6df3d3ea87c3d93444aac03561"}

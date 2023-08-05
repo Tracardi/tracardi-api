@@ -1,0 +1,3 @@
+This plugin is used to fetch data from an Elasticsearch resource. It requires a configured Elasticsearch resource in Tracardi, which must include the URL, port, scheme, username, password, and verify_certs information. The plugin takes any payload as input and returns the search result on the port "result" if the search was successful, or an empty payload on the port "error" if an error occurs. 
+
+The configuration for the plugin includes form fields for the Elasticsearch resource, the Elasticsearch index, and the query. Additionally, the configuration can be set in JSON format, which includes the source name and ID, the index name, and the query.

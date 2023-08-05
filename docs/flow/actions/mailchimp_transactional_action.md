@@ -62,7 +62,7 @@ want to insert into plugin configuration. Please notice that this address __does
 
 #### Message recipient's email
 
-This is the destination email or emails. It can be in form of dot path to email address (for example **profile@pii.email**). 
+This is the destination email or emails. It can be in form of dot path to email address (for example **profile@data.contact.email**). 
 You can also insert the address itself. Please notice that merged profiles can have multiple values in one field - 
 if John Doe has two or more email addresses in his profile, then plugin will send the message to all of them.
 

@@ -1,0 +1,1 @@
+{"file_name": "docs/qa/bulk/plugins_questions.md", "questions": ["What is the \"Remote API call\" plugin?", "How to send an API request using Tracardi?", "How to use the \"Remote API call\" plugin?"], "answer": "# Can Tracardi send an API request?\nYes, Tracardi can send an API request using the \"Remote API call\" plugin", "hash": "6ebdeb2e3e8a196446c85daafafb63c735e30e9e"}

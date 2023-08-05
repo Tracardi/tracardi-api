@@ -1,0 +1,1 @@
+{"file_name": "docs/qa/bulk/plugins_questions.md", "questions": ["What is the \"Hash data\" plugin?", "How to hash data with Tracardi?", "What data can be hashed with Tracardi?"], "answer": "# Can Tracardi hash defined data, such as profile traits?\nYes, it can with the \"Hash data\" plugin.", "hash": "ee61ada3713a452e31c18248bfcf745ba2d11b95"}

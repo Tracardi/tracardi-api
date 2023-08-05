@@ -1,0 +1,1 @@
+{"file_name": "docs/resources/aws_resource.md", "questions": ["What is the process for installing AWS plugins?", "How to search for AWS plugins in Workflow editor?", "How to connect AWS to Tracardi?"], "answer": "# Plugins\nPlugins are automatically installed when you connect the AWS to Tracardi. Please search them in\nWorkflow editor by typing \"AWS\" or \"Amazon\"\n"}

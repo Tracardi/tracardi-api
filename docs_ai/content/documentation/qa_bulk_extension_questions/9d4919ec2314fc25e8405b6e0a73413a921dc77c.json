@@ -1,0 +1,1 @@
+{"file_name": "docs/qa/bulk/extension_questions.md", "questions": ["What is the process to use MQTT with Tracardi?", "How to install MQTT extension in Tracardi?", "Where to find MQTT extension for Tracardi?"], "answer": "# Can Tracardi use MQTT ?\nYes. To use MQTT, install the extension MQTT in Resource/Extensions.", "hash": "9d4919ec2314fc25e8405b6e0a73413a921dc77c"}

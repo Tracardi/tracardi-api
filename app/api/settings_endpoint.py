@@ -31,6 +31,20 @@ system_settings = [
     ),
     SystemSettings(
         **{
+            "label": "SYSTEM_EVENTS",
+            "value": tracardi.system_events,
+            "desc": "Default: Yes. Register system events like: profile-created, session-opened, etc."
+        }
+    ),
+    SystemSettings(
+        **{
+            "label": "MULTI_TENANT",
+            "value": tracardi.multi_tenant,
+            "desc": "Default: No. Turns on multi tenancy feature for commercial versions."
+        }
+    ),
+    SystemSettings(
+        **{
             "label": "RUN_HEARTBEAT_EVERY",
             "value": server.heartbeat_every,
             "desc": "Default: 300. The time each worker reports its health."
@@ -200,6 +214,14 @@ system_settings = [
     ),
     SystemSettings(
         **{
+            "label": "PRODUCTION",
+            "value": tracardi.version.production,
+            "desc": "This variable defines default API context. If it is set to \"production,\" "
+                    "the data will be accessible within the production GUI context."
+        }
+    ),
+    SystemSettings(
+        **{
             "label": "ELASTIC_HOST",
             "value": elastic.host,
             "desc": "Default: 127.0.0.1. This setting defines a IP address of elastic search instance. See Connecting "
@@ -222,7 +244,7 @@ system_settings = [
     ),
     SystemSettings(
         **{
-            "label": "INSTANCE_PREFIX",
+            "label": "TENANT_NAME",
             "value": tracardi.version.name,
             "desc": "Default: None. This setting defines a prefix for all tracardi indices."
         }

@@ -2,34 +2,21 @@ version: "3.7"
 services:
 
   tracardi-api:
-    image: tracardi/tracardi-api:0.8.2-dev
+    image: tracardi/tracardi-api:0.8.1-rc3
     environment:
       ELASTIC_HOST: http://elasticsearch:9200
       REDIS_HOST: redis://redis:6379
       LOGGING_LEVEL: info
+      DEMO: yes
+      PRODUCTION: no
     ports:
       - 8686:80
     depends_on:
       - redis
       - elasticsearch
 
-  tracardi-api-prod:
-    image: tracardi/tracardi-api:0.8.2-dev
-    environment:
-      ELASTIC_HOST: http://elasticsearch:9200
-      REDIS_HOST: redis://redis:6379
-      LOGGING_LEVEL: info
-      PRODUCTION: "yes"
-    ports:
-      - 18686:80
-    depends_on:
-      - redis
-      - elasticsearch
-
   tracardi-gui:
-    image: tracardi/tracardi-gui:0.8.2-dev
-    environment:
-      API_URL: http://tracardi-api:8686
+    image: tracardi/tracardi-gui:0.8.1-rc3
     ports:
       - 8787:80
     depends_on:
@@ -43,11 +30,17 @@ services:
       discovery.type: single-node
       xpack.security.enabled: "false"
       cluster.name: contextElasticSearch
+    volumes:
+      - elasticsearch-data:/usr/share/elasticsearch/data
 
   redis:
     image: redis
 
   worker:
-    image: tracardi/update-worker:0.8.2-dev
+    image: tracardi/update-worker:0.8.1-rc3
     environment:
       REDIS_HOST: redis://redis:6379
+
+volumes:
+  elasticsearch-data:
+    driver: local
