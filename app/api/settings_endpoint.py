@@ -388,6 +388,27 @@ system_settings = [
             "value": tracardi.save_logs,
             "desc": "Default: yes. When set to yes all logs will be saved n tracardi log."
         }
+    ),
+    SystemSettings(
+        **{
+            "label": "DISABLE_WORKFLOW",
+            "value": tracardi.disable_workflow,
+            "desc": "Default: no. Disables processing events by workflows."
+        }
+    ),
+    SystemSettings(
+        **{
+            "label": "DISABLE_EVENT_DESTINATIONS",
+            "value": tracardi.disable_event_destinations,
+            "desc": "Default: no. Disables dispatching events to destinations."
+        }
+    ),
+    SystemSettings(
+        **{
+            "label": "DISABLE_PROFILE_DESTINATIONS",
+            "value": tracardi.disable_profile_destinations,
+            "desc": "Default: no. Disables dispatching profiles to destinations."
+        }
     )
 ]
 
