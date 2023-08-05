@@ -159,7 +159,7 @@ system_settings = [
         **{
             "label": "ELASTIC_SAVE_POOL",
             "value": elastic.save_pool,
-            "desc": "Default: 0. Pool of records to be collected before saving to elastic. Default 0 means no polling."
+            "desc": "Default: 0. Pool of records to be collected before saving to elastic. Default 0 means no pooling."
         }
     ),
     SystemSettings(
