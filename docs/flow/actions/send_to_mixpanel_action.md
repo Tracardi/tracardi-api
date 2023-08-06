@@ -1,29 +1,28 @@
 # Send to MixPanel plugin
 
-This plugin ends processed event to given MixPanel project.
+This plugin sends currently processed event to given MixPanel project.
 
 ## Requirements
-This plugin requires MixPanel account, project and resource, containing project's token
-and server prefix. Service account credentials are not required for this particular plugin.
 
+This plugin requires MixPanel account, project and resource, containing project's token and server prefix. Service
+account credentials are not required for this particular plugin.
 
 ## Input
+
 This plugin takes any payload as input.
 
 ## Outputs
-This plugin returns given payload on port **success** if action was successful, or on
-port **error** if one occurs.
+
+This plugin returns given payload on port **success** if action was successful, or on port **error** if one occurs.
 
 ## Configuration
 
-#### Form fields
+### Form fields
 
-- MixPanel resource - Select your MixPanel resource, containing project's token and server
-  prefix (either EU or US)
-- Additional fields mapping - Here you can add custom mapping for your event. Feel free to use dotted
-  notation.
+- MixPanel resource - Select your MixPanel resource, containing project's token and server prefix (either EU or US)
+- Additional fields mapping - Here you can add custom mapping for your event. Feel free to use dotted notation.
 
-#### Advanced configuration
+### Advanced configuration
 
 ```json
 {
