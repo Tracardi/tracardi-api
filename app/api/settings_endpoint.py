@@ -398,6 +398,13 @@ system_settings = [
     ),
     SystemSettings(
         **{
+            "label": "DISABLE_SEGMENTATION_WF_TRIGGERS",
+            "value": tracardi.disable_segmentation_wf_triggers,
+            "desc": "Default: yes. Disables triggering events by profile added to segments."
+        }
+    ),
+    SystemSettings(
+        **{
             "label": "DISABLE_EVENT_DESTINATIONS",
             "value": tracardi.disable_event_destinations,
             "desc": "Default: no. Disables dispatching events to destinations."
