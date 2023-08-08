@@ -391,29 +391,29 @@ system_settings = [
     ),
     SystemSettings(
         **{
-            "label": "DISABLE_WORKFLOW",
-            "value": tracardi.disable_workflow,
+            "label": "ENABLE_WORKFLOW",
+            "value": tracardi.enable_workflow,
             "desc": "Default: no. Disables processing events by workflows."
         }
     ),
     SystemSettings(
         **{
-            "label": "DISABLE_SEGMENTATION_WF_TRIGGERS",
-            "value": tracardi.disable_segmentation_wf_triggers,
+            "label": "ENABLE_SEGMENTATION_WF_TRIGGERS",
+            "value": tracardi.enable_segmentation_wf_triggers,
             "desc": "Default: yes. Disables triggering events by profile added to segments."
         }
     ),
     SystemSettings(
         **{
-            "label": "DISABLE_EVENT_DESTINATIONS",
-            "value": tracardi.disable_event_destinations,
+            "label": "ENABLE_EVENT_DESTINATIONS",
+            "value": tracardi.enable_event_destinations,
             "desc": "Default: no. Disables dispatching events to destinations."
         }
     ),
     SystemSettings(
         **{
-            "label": "DISABLE_PROFILE_DESTINATIONS",
-            "value": tracardi.disable_profile_destinations,
+            "label": "ENABLE_PROFILE_DESTINATIONS",
+            "value": tracardi.enable_profile_destinations,
             "desc": "Default: no. Disables dispatching profiles to destinations."
         }
     )
