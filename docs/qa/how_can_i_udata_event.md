@@ -1,18 +1,19 @@
 # How can I update event?
 
-1. **Event Immutability:** Events are generally considered immutable, which means once they are created, their data
-   shouldn't be changed. This is because events represent a record of something that has happened, and altering them
-   could potentially compromise the accuracy and integrity of the historical data.
+Events are typically considered immutable once they are created, as they represent a historical record of something that
+occurred at a specific time. This immutability ensures data integrity and consistency. However, there are certain
+scenarios where you might need to update event-related information, and the methods you mentioned are examples of how
+this can be achieved:
 
-2. **Elasticsearch Query:** While events themselves are immutable, you can use Elasticsearch queries to update event
+1. **Elasticsearch Query:** While events themselves are immutable, you can use Elasticsearch queries to update event
    data.
 
-3. **Change event during processing:** In Tracardi, there is a plugin that allow you to perform transformations or
+2. **Change event during processing:** In Tracardi, there is a plugin that allow you to perform transformations or
    mappings on events in workflow. It is called `Copy data`. Confirm that you want to change event with `Update Event`
    action.
 
-4. **Post Collection Event to Event Mapping:** Commercial Tracardi provides a feature called "post collection
-   event to event mapping." This feature allows you copy values between event properties after its being collected.
+3. **Post Collection Event to Event Mapping:** Commercial Tracardi provides a feature called "post collection event to
+   event mapping." This feature allows you copy values between event properties after its being collected.
 
 ## Update event by query
 
