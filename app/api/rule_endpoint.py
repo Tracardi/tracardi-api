@@ -17,6 +17,44 @@ router = APIRouter(
 )
 
 
+@router.post("/rule", tags=["rule"], include_in_schema=server.expose_gui_api)
+async def upsert_rule(rule: Rule):
+    """
+    Adds new trigger rule to database
+    """
+
+    if rule.type == 'event-collect':
+        event_source = await event_source_db.load(rule.source.id)
+
+        if event_source is None:
+            raise HTTPException(status_code=422, detail='Incorrect source id: `{}`'.format(rule.source.id))
+
+    if not rule.name:
+        if rule.type == 'segment-add':
+            rule.name = f"Trigger \"{rule.flow.name}\" with segment \"{rule.segment.name}\""
+        elif rule.type == 'event-collect':
+            rule.name = f"Trigger \"{rule.flow.name}\" with event \"{rule.event_type.name}\""
+
+    if not rule.description:
+        if rule.type == 'segment-add':
+            rule.description = f"Triggers workflow: \"{rule.flow.name}\" when segment \"{rule.segment.name}\" " \
+                               f"is added to profile."
+        elif rule.type == 'event-collect':
+            rule.description = f"Triggers workflow: \"{rule.flow.name}\" when event \"{rule.event_type.name}\" " \
+                               f"is collected from source: \"{rule.source.name}\""
+
+    flow_record = await flow_db.load_record(rule.flow.id)
+    if flow_record is None:
+        new_flow = FlowMetaData(id=rule.flow.id, name=rule.flow.name, description="", type='collection')
+        await flow_db.save(new_flow)
+
+    result = await rule_db.save(rule)
+
+    await rule_db.refresh()
+
+    return result
+
+
 @router.get("/rule/{id}", tags=["rule"], response_model=Optional[Rule], include_in_schema=server.expose_gui_api)
 async def get_rule(id: str, response: Response):
     """
@@ -28,41 +66,6 @@ async def get_rule(id: str, response: Response):
     if result is None:
         response.status_code = 404
         return None
-
-    return result
-
-
-@router.post("/rule", tags=["rule"], include_in_schema=server.expose_gui_api)
-async def upsert_rule(rule: Rule):
-    """
-    Adds new rule to database
-    """
-    # Check if source id exists
-    event_source = await event_source_db.load(rule.source.id)
-
-    if event_source is None:
-        raise HTTPException(status_code=422, detail='Incorrect source id: `{}`'.format(rule.source.id))
-
-    if not rule.name:
-        rule.name = f"Route to {rule.flow.name}"
-
-    if not rule.description:
-        rule.description = f"Routing for event type: {rule.event_type.name} to workflow: {rule.flow.name} from source: {rule.source.name}"
-
-    flow_record = await flow_db.load_record(rule.flow.id)
-    add_flow_task = None
-    if flow_record is None:
-        new_flow = FlowMetaData(id=rule.flow.id, name=rule.flow.name, description="", type='collection')
-        add_flow_task = asyncio.create_task(flow_db.save(new_flow))
-
-    add_rule_task = asyncio.create_task(rule_db.save(rule))
-
-    if add_flow_task:
-        await add_flow_task
-
-    result = await add_rule_task
-
-    await rule_db.refresh()
 
     return result
 

@@ -4,6 +4,7 @@ from typing import Optional
 from fastapi import APIRouter
 from fastapi import Depends
 
+from tracardi.domain.named_entity import NamedEntity
 from tracardi.service.storage.driver.elastic import segment as segment_db
 from app.service.grouper import search
 from tracardi.domain.segment import Segment
@@ -92,6 +93,23 @@ async def get_segments(query: str = None):
     return {
         "total": total,
         "grouped": groups
+    }
+
+
+@router.get("/segments/metadata",
+            tags=["segment"],
+            include_in_schema=server.expose_gui_api)
+async def get_segments(name: str = ""):
+    """
+    Returns segments with match of given query (str) on name of event type
+    """
+    result = await segment_db.load_by_name(name)
+    total = result.total
+    result = [NamedEntity(**r) for r in result]
+
+    return {
+        "total": total,
+        "grouped": result
     }
 
 
