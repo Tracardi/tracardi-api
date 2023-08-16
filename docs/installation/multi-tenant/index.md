@@ -1,8 +1,7 @@
 # Creating a New Tenant using API Call
 
-This documentation outlines the process of automating the creation of a new tenant through the Tenant Management
-Service (TMS) API. To achieve this, you'll need an API Key associated with the TMS, which is generated during the
-installation of the TMS.
+This documentation outlines the process of automating the creation of a new tenant through the Tracardi API. To achieve
+this, you'll need an API Key associated with the TMS, which is generated during the installation of the TMS.
 
 ## Prerequisites
 
