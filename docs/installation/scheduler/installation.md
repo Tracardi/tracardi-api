@@ -27,7 +27,7 @@ docker run \
 -e MULTI_TENANT_MANAGER_URL=http://192.168.1.101:8080 \
 -e MULTI_TENANT_MANAGER_API_KEY=123 \
 -e MULTI_TENANT=yes \
-tracardi/com-tracardi-scheduler-worker:0.8.1-rc3
+tracardi/com-tracardi-scheduler-worker:0.8.1
 ```
 
 For non-multi-tenant setups, use the following Docker command:
@@ -36,7 +36,7 @@ For non-multi-tenant setups, use the following Docker command:
 docker run \
 -e ELASTIC_HOST=http://192.168.1.101:9200 \
 -e REDIS_HOST=192.168.1.101 \
-tracardi/com-tracardi-scheduler-worker:0.8.1-rc3
+tracardi/com-tracardi-scheduler-worker:0.8.1
 ```
 
 Please ensure that you replace the environment variable values (ELASTIC_HOST, REDIS_HOST, etc.) with the appropriate
