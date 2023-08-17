@@ -1,4 +1,4 @@
-## Building Tracardi docker image
+# Building Tracardi docker image
 
 Sometimes you will need to build a docker container yourself. 
 It is usually needed when you would like your docker server to run https requests. 

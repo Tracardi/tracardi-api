@@ -1,4 +1,4 @@
-# Tracardi Upgrades and System upgrade
+# Tracardi Upgrades
 
 This documentation provides information on how to upgrade Tracardi and perform data migration between versions. It also
 covers the process of updating the system and the precautions to take during the upgrade process.
@@ -16,7 +16,7 @@ docker pull tracardi/tracardi-api:<version>
 docker pull tracardi/tracardi-gui:<version>
 ```
 
-Then you can run it the same way as written in the [installation](installation/index.md) guide.
+Then you can run it the same way as written in the [installation](docker/index.md) guide.
 
 !!! Warning
 

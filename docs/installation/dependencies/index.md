@@ -4,7 +4,7 @@ This guide explains how to install the database and cache for Tracardi. Note tha
 production use. For a production-ready setup, consult the Elasticsearch and Redis documentation. This is intended for
 testing purposes only.
 
-## Start ElasticSearch database
+## ElasticSearch database
 
 Tracardi need elasticsearch as its backend. Please pull and run elasticsearch single node docker before you start
 Tracardi.

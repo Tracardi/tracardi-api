@@ -1,4 +1,4 @@
-# Installation of commercial version with docker compose
+# Commercial Tracardi with docker compose
 
 This guide provides a brief introduction on how to install and test the commercial version of Tracardi using
 docker-compose. Please note that this installation is not intended for production use, but rather for testing purposes

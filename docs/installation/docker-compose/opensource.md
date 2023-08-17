@@ -1,4 +1,4 @@
-# Docker compose install
+# Open-source Tracardi with docker compose
 
 ## Dependencies
 

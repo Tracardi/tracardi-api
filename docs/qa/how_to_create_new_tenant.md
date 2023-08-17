@@ -6,7 +6,7 @@ important to note that this approach is not a plug-and-play solution; rather, it
 journey, enabling you to delegate the finalization of the installation to your customers.
 
 If you're seeking a more streamlined installation process accomplished through a single API call, you can explore the
-full installation guide available [here](../installation/multi-tenant/index.md). This resource outlines the steps for
+full installation guide available [here](../configuration/multi-tenant/index.md). This resource outlines the steps for
 setting up a multi-tenant environment in a more automated manner.
 
 ### Prerequisites

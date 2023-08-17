@@ -67,31 +67,45 @@ nav:
       - getting_started/data_flow.md
   - Installation:
       - installation/index.md
-      - installation/upgrades.md
+      - Dependencies:
+          - installation/dependencies/index.md
+      - Docker Compose:
+          - installation/docker-compose/index.md
+          - installation/docker-compose/commercial.md
+          - installation/docker-compose/opensource.md
+
       - Docker:
           - installation/docker/index.md
-          - installation/docker/building_docker_image.md
+          - Building docker:
+            - installation/building/index.md
       - Source:
           - installation/source/index.md
       - Production:
           - installation/production/index.md
-          - installation/production/services.md
+          - installation/production/guide.md
+          - installation/production/docker/index.md
           - installation/production/k8s/index.md
-          - installation/staging/index.md
-      - Commercial:
-          - installation/commercial/index.md
+          - installation/production/services.md
+
+      - Jobs:
           - installation/jobs/index.md
+      - Workers:
           - installation/scheduler/installation.md
           - installation/workers/installation.md
+      - Upgrades:
+          - installation/upgrades.md
 
   - Configuration:
       - configuration/tracardi_configuration.md
       - configuration/best_practises.md
       - Elasticsearch:
+          - configuration/elasticsearch/elastic_https.md
           - configuration/elasticsearch/connecting_elasticsearch_cluster.md
           - configuration/elasticsearch/elastic_authentication.md
           - configuration/elasticsearch/elastic_max_connections.md
           - configuration/elasticsearch/elastic_sniffing.md
+      - Staging server:
+          - configuration/staging/index.md
       - configuration/tracardi_ssl.md
   - Integration:
       - API:
@@ -172,6 +186,11 @@ nav:
           - resources/ga4_tracker_resource.md
           - resources/github_resource.md
           - resources/ua3_tracker_resource.md
+          - resources/max_mind_resource.md
+          - resources/telegram_resource.md
+          - resources/commercial/twilio_resource.md
+          - resources/commercial/weaviate_resource.md
+
   # Workflow and its action plugins that can be used
   - Workflows:
       - flow/index.md
@@ -610,6 +629,5 @@ nav:
   - running/index.md
   - trouble/index.md
   - support_us.md
-  - software_license.md
   - documentation_license.md
 

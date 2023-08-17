@@ -1,4 +1,4 @@
-# Ways to install Tracardi
+# Tracardi Installation
 
 * [Using docker-compose](docker-compose/index.md)
 * [Using docker images](docker/index.md)
@@ -7,7 +7,7 @@
 # Installation types
 
 * [Production installation](production/index.md)
-* [Staging server](staging/index.md)
+* [Staging server](../configuration/staging/index.md)
 
 
 !!! Tip
