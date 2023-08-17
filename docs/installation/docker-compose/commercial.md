@@ -1,16 +1,18 @@
-# Installation of commercial version
+# Installation of commercial version with docker compose
 
 This guide provides a brief introduction on how to install and test the commercial version of Tracardi using
 docker-compose. Please note that this installation is not intended for production use, but rather for testing purposes
 only.
 
-In order to install commercial version you will need to login to docker hub with our credentials.
+In order to install commercial version you will need to log-in to docker hub with our credentials.
 
 ```
 docker login
 ```
 
 And paste the credentials that we have sent you.
+
+## Set up License Key
 
 Then create a file .env-docker and paste the LICENSE in it:
 
@@ -25,8 +27,17 @@ set -a
 source .env-docker
 ```
 
-Then run the com-docker-compose.yaml as docker compose file.
+## Clone Tracardi API
 
+```bash
+git clone https://github.com/Tracardi/tracardi-api.git
 ```
+
+## Run docker compose
+
+Go to TRACARDI API folder, and run one line command:
+
+```bash
+cd tracardi-api
 docker-compose -f com-docker-compose.yaml up
 ```

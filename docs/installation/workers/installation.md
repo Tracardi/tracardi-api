@@ -63,8 +63,14 @@ docker run \
 tracardi/com-tracardi-coping-worker:0.8.1
 ```
 
-## Additional Information
+## 5. Trigger Worker
 
-For more detailed information on the features and capabilities of the Scheduler Worker, please refer to the
-documentation pages that cover its functionalities. These pages will provide you with insights into effectively
-utilizing the Scheduler Worker to meet your specific use cases and requirements.
+The trigger worker is in charge of initiating workflows when a profile gets added to a specific segment.
+
+```bash
+docker run \
+-e ELASTIC_HOST=http://<elastic-ip>:9200 \
+-e REDIS_HOST=redis://<redis-ip>:6379 \
+-e LOGGING_LEVEL=info \
+tracardi/com-tracardi-trigger-worker:0.8.1
+```

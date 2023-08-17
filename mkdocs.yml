@@ -67,7 +67,6 @@ nav:
       - getting_started/data_flow.md
   - Installation:
       - installation/index.md
-      - installation/best_practises.md
       - installation/upgrades.md
       - Docker:
           - installation/docker/index.md
