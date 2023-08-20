@@ -84,10 +84,10 @@ container:
 docker run \
 -e ELASTIC_HOST=http://<elastic-ip>:9200 \
 -e REDIS_HOST=redis://<redis-ip>:6379 \
--e REDIS_PASSWORD=password \
+-e REDIS_PASSWORD=<password> \
 tracardi/com-tracardi-segmentation-job:0.8.1
 ```
 
-The Segmentation Job uses the same environment variables as `tracardi/tracardi-api`. Ensure that all the connections are
+The Segmentation Job uses the same environment variables as `tracardi/com-tracardi-api`. Ensure that all the connections are
 configured correctly.
 

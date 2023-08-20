@@ -13,8 +13,9 @@ Before initiating the installation process, ensure you have completed the follow
    archive. Extract the contents of this archive into a folder named "tracardi". You will also receive a Docker Hub
    login token, which is required to access the commercial Docker images. Additionally, make sure you have the Tracardi
    license key.
+3. **[Install ElasticSearch and Redis](../../dependencies/index.md)**: Elasticsearch and redis are required as database and cache. 
 
-3. **Elasticsearch and Redis Credentials**: Gather the username and password for Elasticsearch and the password for
+4. **Elasticsearch and Redis Credentials**: Gather the username and password for Elasticsearch and the password for
    Redis. These credentials will be necessary during the installation process.
 
 #### Namespace Creation

@@ -7,21 +7,48 @@ Make sure you have docker installed on your system.
 !!! Note
 
     The following instalation description use the latest tracardi container version. If you would like to install stable version 
-    of the system, what we strongly recommend, please add to `tracard/tracardi-api` a tag with version, e.g `tracardi/tracardi-api:0.8.1`. 
+    of the system, what we strongly recommend, please add to `tracard/com-tracardi-api` a tag with version, e.g `tracardi/com-tracardi-api:0.8.1`. 
     The same applies to `tracardi/tracardi-gui`. Keep the version of API and GUI the same. 
+
+## Access to commercial dockers
+
+When you buy a Tracardi license, you'll get a DockerHub token. This token lets you download the commercial dockers.
+
+Tracardi GUI looks the same in both the open-source and commercial versions. The only difference is the API.
+
+### Login to Docker Hub
+
+```bash
+docker login -u tracari -p <token>
+```
+
+### Set the LICENSE
+
+Then create a file .env-docker and paste the LICENSE in it:
+
+```
+API_LICENSE="paste license here"
+```
+
+When running linux:
+
+```
+set -a
+source .env-docker
+```
 
 ### Start Tracardi API
 
 Pull and run Tracardi backend.
 
 ```bash
-docker run -p 8686:80 -e ELASTIC_HOST=http://<your-laptop-ip>:9200 -e REDIS_HOST=redis://<your-laptop-ip>:6379 tracardi/tracardi-api #(1)
+docker run -p 8686:80 -e ELASTIC_HOST=http://<your-elastic-ip>:9200 -e REDIS_HOST=redis://<your-redis-ip>:6379 tracardi/com-tracardi-api #(1)
 ```
 
-1. Replace <your-laptop-ip> with your local laptop IP. 
+1. Replace <your-elastic-ip> with your elastic IP. Do the same with <your-redis-ip>
 
-Tracardi must connect to elasticsearch. To do that you have to set ELASTIC_HOST variable to reference your laptop's or
-server IP.
+Tracardi must connect to elasticsearch. To do that you have to set ELASTIC_HOST variable to reference your elasticsearch
+instance.
 
 !!! Warning "Waiting for application startup"
 
@@ -51,5 +78,5 @@ docker run -p 8787:80 tracardi/tracardi-gui #(1)
 
 ## Run Tracardi Graphical User Interface
 
-Visit http://127.0.0.1:8787 and follow the instructions to finish up the Tracardi set-up. 
-When asked for Tracardi API type: http://127.0.0.1:8686. 
+Visit http://127.0.0.1:8787 and follow the instructions to finish up the Tracardi set-up. When asked for Tracardi API
+type: http://127.0.0.1:8686. 

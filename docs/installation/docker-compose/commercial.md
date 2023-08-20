@@ -7,7 +7,7 @@ only.
 In order to install commercial version you will need to log-in to docker hub with our credentials.
 
 ```
-docker login
+docker login -u tracardi -p <token>
 ```
 
 And paste the credentials that we have sent you.

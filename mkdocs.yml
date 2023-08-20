@@ -69,6 +69,11 @@ nav:
       - installation/index.md
       - Dependencies:
           - installation/dependencies/index.md
+      - Open Source:
+          - installation/opensource/index.md
+      - Commercial:
+          - installation/commercial/index.md
+
       - Docker Compose:
           - installation/docker-compose/index.md
           - installation/docker-compose/commercial.md
