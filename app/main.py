@@ -32,7 +32,9 @@ from app.api import rule_endpoint, resource_endpoint, event_endpoint, \
     user_log_endpoint, \
     user_account_endpoint, \
     install_endpoint, \
-    delete_indices_endpoint, migration_endpoint, report_endpoint, live_segments_endpoint, \
+    delete_indices_endpoint, \
+    setting_endpoint, \
+    migration_endpoint, report_endpoint, live_segments_endpoint, \
     console_log_endpoint, event_type_mapping, \
     bridge_endpoint, entity_endpoint, staging_endpoint, customer_endpoint, event_to_profile
 from app.api.track import event_server_endpoint
@@ -280,6 +282,7 @@ application.include_router(event_to_profile.router)
 application.include_router(event_to_profile_copy.router)
 application.include_router(event_props_to_event_traits_copy.router)
 application.include_router(event_type_predefined.router)
+application.include_router(setting_endpoint.router)
 if License.has_service(MULTI_TENANT):
     application.include_router(tenant_install_endpoint.router)
 
