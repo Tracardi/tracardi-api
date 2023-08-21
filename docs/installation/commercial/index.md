@@ -1,4 +1,4 @@
-# Commercial Installation Guide for Tracardi
+# Commercial Installation
 
 This guide will provide step-by-step instructions for installing commercial Tracardi. Some aspects of this installation
 process are quite similar to the open-source installation.
@@ -7,31 +7,6 @@ process are quite similar to the open-source installation.
 
 To set up Commercial Tracardi, you'll need access to DockerHub token and a valid commercial license key. This information will
 be sent to you after purchase of the commercial license.
-
-## Authorizing installation
-
-### Login to docker hub
-
-```
-docker login -u tracardi -p <token>
-```
-
-And paste the credentials that we have sent you.
-
-### Set up License Key
-
-Then create a file .env-docker and paste the LICENSE in it:
-
-```
-API_LICENSE="paste license here"
-```
-
-When running linux:
-
-```
-set -a
-source .env-docker
-```
 
 ## Docker compose installation
 

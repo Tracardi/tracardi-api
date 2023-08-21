@@ -1,4 +1,4 @@
-# Open-Source Installation Guide for Tracardi
+# Open-Source Installation
 
 Welcome to the installation documentation for the open-source version of Tracardi. This guide will walk you through the
 process of installing Tracardi, which consists of three main components: API, GUI, and Update Worker.

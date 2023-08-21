@@ -23,6 +23,29 @@ Please ensure that you replace `<redis-ip>` with the actual IP address of your R
 
 ## Commercial workers
 
+In order to install commercial version you will need to log-in to docker hub with our credentials.
+
+```
+docker login -u tracardi -p <token>
+```
+
+And paste the credentials that we have sent you.
+
+## Set up License Key
+
+Then create a file .env-docker and paste the LICENSE in it:
+
+```
+API_LICENSE="paste license here"
+```
+
+When running linux:
+
+```
+set -a
+source .env-docker
+```
+
 ### 2. Segmentation and Mapping
 
 The Commercial Worker for Segmentation, Post-Collection Event Mapping, and Post-Collection Profile Mapping plays a vital

@@ -1,15 +1,7 @@
 # Tracardi Installation
 
-* [Using docker-compose](docker-compose/index.md)
-* [Using docker images](docker/index.md)
-* [Using source](source/index.md)
+There are three versions of tracardi. Select which one would you like to install:
 
-# Installation types
-
-* [Production installation](production/index.md)
-* [Staging server](../configuration/staging/index.md)
-
-
-!!! Tip
-
-    If you encounter errors when installing Tracardi, see [trouble shooting section](../trouble/index.md)
+* [Open-source](opensource/index.md)
+* [Commercial](commercial/index.md)
+* [Developer](development/index.md)

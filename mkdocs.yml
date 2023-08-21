@@ -69,34 +69,14 @@ nav:
       - installation/index.md
       - Dependencies:
           - installation/dependencies/index.md
+
       - Open Source:
           - installation/opensource/index.md
       - Commercial:
           - installation/commercial/index.md
+      - Development:
+          - installation/development/index.md
 
-      - Docker Compose:
-          - installation/docker-compose/index.md
-          - installation/docker-compose/commercial.md
-          - installation/docker-compose/opensource.md
-
-      - Docker:
-          - installation/docker/index.md
-          - Building docker:
-            - installation/building/index.md
-      - Source:
-          - installation/source/index.md
-      - Production:
-          - installation/production/index.md
-          - installation/production/guide.md
-          - installation/production/docker/index.md
-          - installation/production/k8s/index.md
-          - installation/production/services.md
-
-      - Jobs:
-          - installation/jobs/index.md
-      - Workers:
-          - installation/scheduler/installation.md
-          - installation/workers/installation.md
       - Upgrades:
           - installation/upgrades.md
 
