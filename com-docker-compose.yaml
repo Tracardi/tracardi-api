@@ -88,6 +88,13 @@ services:
       discovery.type: single-node
       xpack.security.enabled: "false"
       cluster.name: contextElasticSearch
+    volumes:
+      - type: volume
+        source: esdata
+        target: /usr/share/elasticsearch/data
 
   redis:
     image: redis
+
+volumes:
+  esdata:
