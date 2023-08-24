@@ -30,7 +30,7 @@ services:
       - redis
       - elasticsearch
 
-  gui:
+  tracardi-gui:
     image: tracardi/tracardi-gui:0.8.1
     ports:
       - 8787:80
