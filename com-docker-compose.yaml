@@ -1,7 +1,7 @@
 version: "3.7"
 services:
 
-  staging-api:
+  tracardi-staging-api:
     image: tracardi/com-tracardi-api:0.8.1
     environment:
       ELASTIC_HOST: http://elasticsearch:9200
@@ -16,7 +16,7 @@ services:
       - redis
       - elasticsearch
 
-  production-api:
+  tracardi-production-api:
     image: tracardi/com-tracardi-api:0.8.1
     environment:
       ELASTIC_HOST: http://elasticsearch:9200
@@ -35,7 +35,7 @@ services:
     ports:
       - 8787:80
     depends_on:
-      - tracardi-staging-api
+      - staging-api
 
   worker:
     image: tracardi/update-worker:0.8.1
