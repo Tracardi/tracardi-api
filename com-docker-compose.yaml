@@ -8,6 +8,9 @@ services:
       REDIS_HOST: redis://redis:6379
       LOGGING_LEVEL: info
       LICENSE: ${API_LICENSE}
+      ENABLE_SEGMENTATION_WF_TRIGGERS: "yes"
+      ENABLE_EVENT_DESTINATIONS: "yes"
+      ENABLE_PROFILE_DESTINATIONS: "yes"
       PRODUCTION: "no"
       TRACK_DEBUG: "yes"
     ports:
@@ -23,6 +26,9 @@ services:
       REDIS_HOST: redis://redis:6379
       LOGGING_LEVEL: info
       LICENSE: ${API_LICENSE}
+      ENABLE_SEGMENTATION_WF_TRIGGERS: "yes"
+      ENABLE_EVENT_DESTINATIONS: "yes"
+      ENABLE_PROFILE_DESTINATIONS: "yes"
       PRODUCTION: "yes"
     ports:
       - 8585:80
