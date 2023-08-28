@@ -2,7 +2,7 @@ version: "3.7"
 services:
 
   tracardi-staging-api:
-    image: tracardi/com-tracardi-api:0.8.1
+    image: tracardi/com-tracardi-api:0.8.2-dev
     environment:
       ELASTIC_HOST: http://elasticsearch:9200
       REDIS_HOST: redis://redis:6379
@@ -20,7 +20,7 @@ services:
       - elasticsearch
 
   tracardi-production-api:
-    image: tracardi/com-tracardi-api:0.8.1
+    image: tracardi/com-tracardi-api:0.8.2-dev
     environment:
       ELASTIC_HOST: http://elasticsearch:9200
       REDIS_HOST: redis://redis:6379
@@ -37,19 +37,19 @@ services:
       - elasticsearch
 
   tracardi-gui:
-    image: tracardi/tracardi-gui:0.8.1
+    image: tracardi/tracardi-gui:0.8.2-dev
     ports:
       - 8787:80
     depends_on:
       - staging-api
 
   worker:
-    image: tracardi/update-worker:0.8.1
+    image: tracardi/update-worker:0.8.2-dev
     environment:
       REDIS_HOST: redis://redis:6379
 
   segmentation-worker:
-    image: tracardi/com-tracardi-segmentation-worker:0.8.1
+    image: tracardi/com-tracardi-segmentation-worker:0.8.2-dev
     environment:
       ELASTIC_HOST: http://elasticsearch:9200
       REDIS_HOST: redis://redis:6379
@@ -57,7 +57,7 @@ services:
       LICENSE: ${API_LICENSE}
 
   scheduler-worker:
-    image: tracardi/com-tracardi-scheduler-worker:0.8.1
+    image: tracardi/com-tracardi-scheduler-worker:0.8.2-dev
     environment:
       ELASTIC_HOST: http://elasticsearch:9200
       REDIS_HOST: redis
@@ -69,7 +69,7 @@ services:
       - elasticsearch
 
   coping-worker:
-    image: tracardi/com-tracardi-coping-worker:0.8.1
+    image: tracardi/com-tracardi-coping-worker:0.8.2-dev
     environment:
       ELASTIC_HOST: http://elasticsearch:9200
       REDIS_HOST: redis://redis:6379
@@ -77,7 +77,7 @@ services:
       LICENSE: ${API_LICENSE}
 
   trigger-worker:
-    image: tracardi/com-tracardi-trigger-worker:0.8.1
+    image: tracardi/com-tracardi-trigger-worker:0.8.2-dev
     environment:
       ELASTIC_HOST: http://elasticsearch:9200
       REDIS_HOST: redis://redis:6379
