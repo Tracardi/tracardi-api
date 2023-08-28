@@ -67,32 +67,30 @@ nav:
       - getting_started/data_flow.md
   - Installation:
       - installation/index.md
-      - installation/best_practises.md
-      - installation/upgrades.md
-      - Docker:
-          - installation/docker/index.md
-          - installation/docker/building_docker_image.md
-      - Source:
-          - installation/source/index.md
-      - Production:
-          - installation/production/index.md
-          - installation/production/services.md
-          - installation/production/k8s/index.md
-          - installation/staging/index.md
+      - Dependencies:
+          - installation/dependencies/index.md
+
+      - Open Source:
+          - installation/opensource/index.md
       - Commercial:
           - installation/commercial/index.md
-          - installation/jobs/index.md
-          - installation/scheduler/installation.md
-          - installation/workers/installation.md
+      - Development:
+          - installation/development/index.md
+
+      - Upgrades:
+          - installation/upgrades.md
 
   - Configuration:
       - configuration/tracardi_configuration.md
       - configuration/best_practises.md
       - Elasticsearch:
+          - configuration/elasticsearch/elastic_https.md
           - configuration/elasticsearch/connecting_elasticsearch_cluster.md
           - configuration/elasticsearch/elastic_authentication.md
           - configuration/elasticsearch/elastic_max_connections.md
           - configuration/elasticsearch/elastic_sniffing.md
+      - Staging server:
+          - configuration/staging/index.md
       - configuration/tracardi_ssl.md
   - Integration:
       - API:
@@ -173,6 +171,11 @@ nav:
           - resources/ga4_tracker_resource.md
           - resources/github_resource.md
           - resources/ua3_tracker_resource.md
+          - resources/max_mind_resource.md
+          - resources/telegram_resource.md
+          - resources/commercial/twilio_resource.md
+          - resources/commercial/weaviate_resource.md
+
   # Workflow and its action plugins that can be used
   - Workflows:
       - flow/index.md
@@ -611,6 +614,5 @@ nav:
   - running/index.md
   - trouble/index.md
   - support_us.md
-  - software_license.md
   - documentation_license.md
 

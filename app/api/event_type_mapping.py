@@ -20,22 +20,22 @@ router = APIRouter(
 
 @router.put("/mapping/refresh", tags=["event-type"], include_in_schema=server.expose_gui_api,
             response_model=dict)
-async def refresh_event_type_metadata():
+async def refresh_event_type_mapping():
     """
-    Refreshes event type metadata
+    Refreshes event type mapping
     """
     return await event_management_db.refresh()
 
 
 @router.post("/mapping", tags=["event-type"], include_in_schema=server.expose_gui_api,
              response_model=dict)
-async def add_event_type_metadata(event_type_metadata: EventTypeMetadata):
+async def add_event_type_mapping(event_mapping: EventTypeMetadata):
     """
-    Creates new event type metadata in database
+    Creates new event type mapping in database
     """
 
     # Save tags
-    result = await event_management_db.save(event_type_metadata)
+    result = await event_management_db.save(event_mapping)
     await event_management_db.refresh()
 
     if result.errors:
@@ -44,8 +44,8 @@ async def add_event_type_metadata(event_type_metadata: EventTypeMetadata):
     # Update events for new tags in background
 
     task = event_db.update_tags(
-        event_type=event_type_metadata.event_type,
-        tags=event_type_metadata.tags)
+        event_type=event_mapping.event_type,
+        tags=event_mapping.tags)
 
     asyncio.create_task(task)
 
@@ -76,7 +76,7 @@ async def list_event_type_metadata(event_type: str):
         }
         records.append(build_in)
 
-    record = await event_management_db.get_event_type_metadata(event_type)
+    record = await event_management_db.get_event_type_mapping(event_type)
     if record is not None:
         record['build-in'] = False
         records.append(record)
@@ -94,12 +94,12 @@ async def list_event_type_metadata(event_type: str):
             tags=["event-type"],
             include_in_schema=server.expose_gui_api,
             response_model=dict)
-async def get_event_type_metadata(event_type: str):
+async def get_event_type_mapping(event_type: str):
     """
     Return custom event type mapping for given event type
     """
 
-    record = await event_management_db.get_event_type_metadata(event_type)
+    record = await event_management_db.get_event_type_mapping(event_type)
 
     if not record:
         raise HTTPException(status_code=404, detail=f"Mapping for event type [{event_type}] not found.")
@@ -113,28 +113,17 @@ async def del_event_type_metadata(event_type: str):
     """
     Deletes event type metadata for given event type
     """
-    result = await event_management_db.del_event_type_metadata(event_type)
+    result = await event_management_db.del_event_type_mapping(event_type)
     await event_management_db.refresh()
 
     return {"deleted": 1 if result is not None and result["result"] == "deleted" else 0}
 
 
-# @router.get("/mappings", tags=["event-type"], include_in_schema=server.expose_gui_api,
-#             response_model=list)
-# async def list_event_type_mappings(start: Optional[int] = 0, limit: Optional[int] = 200):
-#     """
-#     List of event type mappings.
-#     """
-#
-#     result = await event_management_db.load_events_type_metadata(start, limit)
-#     return list(result)
-
-
 @router.get("/search/mappings", tags=["event-type"], include_in_schema=server.expose_gui_api,
             response_model=dict)
-async def list_event_type_metadatas_by_tag(query: str = None, start: Optional[int] = 0, limit: Optional[int] = 200):
+async def list_event_type_mappings_by_tag(query: str = None, start: Optional[int] = 0, limit: Optional[int] = 200):
     """
     Lists event type metadata by tag, according to given start (int), limit (int) and query (str)
     """
-    result = await event_management_db.load_events_type_metadata(start, limit)
+    result = await event_management_db.load_events_type_mapping(start, limit)
     return group_records(result, query, group_by='tags', search_by='name', sort_by='name')
