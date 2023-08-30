@@ -36,7 +36,7 @@ class TokenDb:
 
     def set(self, user: User) -> str:
         token = self._get_token(user)
-        self._token_memory[token] = user.json()
+        self._token_memory[token] = user.model_dump_json()
         return token
 
     def refresh(self, user: User) -> str:
