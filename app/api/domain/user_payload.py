@@ -1,5 +1,5 @@
 from typing import List, Optional
-from pydantic import BaseModel, validator
+from pydantic import field_validator, BaseModel
 from tracardi.service.valiadator import validate_email
 from datetime import datetime
 
@@ -12,7 +12,8 @@ class UserPayload(BaseModel):
     disabled: bool = False
     expiration_date: Optional[str] = None
 
-    @validator("email")
+    @field_validator("email")
+    @classmethod
     def validate_email(cls, value):
         if not validate_email(value):
             raise ValueError("Given e-mail is invalid.")
