@@ -1,7 +1,7 @@
 pip>=21.2.4
-fastapi[all]==0.99.0
+fastapi[all]>=0.103.0
 uvicorn[standard]>=0.22.0
-pydantic==1.10.11
+pydantic>=2.3.0
 aiofiles==22.1.0
 aioredis==2.0.1
 hiredis==2.2.3
