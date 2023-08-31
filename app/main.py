@@ -332,4 +332,4 @@ async def app_shutdown():
 if __name__ == "__main__":
     import uvicorn
 
-    uvicorn.run("app.main:application", host="0.0.0.0", port=8686, log_level='info', workers=1)
+    uvicorn.run("app.main:application", host="0.0.0.0", port=18686, log_level='info', workers=1)
