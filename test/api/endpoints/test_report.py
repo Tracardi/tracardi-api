@@ -37,14 +37,14 @@ def test_should_work():
             query={"query": {"term": {"type": "{{type}}"}}},
             tags=["tag1", "tag2"]
         )
-        result = endpoint.post("/report/test", data={"report": report.dict(), "params": {"type": event_type}})
+        result = endpoint.post("/report/test", data={"report": report.model_dump(), "params": {"type": event_type}})
         assert result.status_code == 200
         result = result.json()
 
         assert result["result"] != []
         assert all([record["type"] == event_type for record in result["result"]])
 
-        result = endpoint.post("/report", data=report.dict())
+        result = endpoint.post("/report", data=report.model_dump())
         assert result.status_code == 200
 
         result = endpoint.get("/report/@test-report")

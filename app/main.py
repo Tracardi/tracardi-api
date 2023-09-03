@@ -1,4 +1,5 @@
-import os, sys
+import os
+import sys
 import traceback
 from datetime import datetime
 
@@ -111,7 +112,7 @@ if License.has_license():
 
     print(f"Services {list(license.get_service_ids())}", flush=True)
 else:
-    print(f"License: MIT + “Commons Clause” License Condition v1.0", flush=True)
+    print("License: MIT + “Commons Clause” License Condition v1.0", flush=True)
 
 tags_metadata = [
     {

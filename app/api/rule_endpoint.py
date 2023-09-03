@@ -1,4 +1,3 @@
-import asyncio
 from typing import List, Optional
 
 from fastapi import APIRouter, Response, HTTPException, Depends
@@ -102,7 +101,7 @@ async def refresh_rules():
 
 
 @router.get("/rules/flash", tags=["rules"], include_in_schema=server.expose_gui_api)
-async def refresh_rules():
+async def flash_rules():
     """
     Flushes rules index
     """
@@ -119,7 +118,7 @@ async def get_rules_by_tag(query: str = None, start: int = 0, limit: int = 100) 
 
 
 @router.get("/rules/by_event_type/{event_type}", tags=["rules"], response_model=dict, include_in_schema=server.expose_gui_api)
-async def get_rules_by_tag(event_type: str) -> dict:
+async def get_rules_by_event_type(event_type: str) -> dict:
     """
     Lists rules by event types
     """

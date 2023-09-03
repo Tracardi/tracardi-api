@@ -91,6 +91,6 @@ async def upsert_live_segment(segment: LiveSegment):
     Adds new live segment to database
     """
     segment.timestamp = datetime.utcnow()
-    result = await live_segment_db.save(segment.dict())
+    result = await live_segment_db.save(segment.model_dump())
     await live_segment_db.refresh()
     return result

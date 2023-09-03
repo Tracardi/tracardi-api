@@ -134,7 +134,7 @@ async def get_available_services(query: Optional[str] = "", category: Optional[s
 
 
 @router.get("/tpro/plugin/{module}", tags=["tpro"], include_in_schema=server.expose_gui_api)
-async def get_available_services(module: str):
+async def get_available_plugin_modules(module: str):
     """
     Returns available Tracardi PRO services
     """

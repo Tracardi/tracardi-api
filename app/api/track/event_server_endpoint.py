@@ -86,7 +86,7 @@ async def track(tracker_payload: TrackerPayload, request: Request, profile_less:
 
 
 @router.post("/collect/{event_type}/{source_id}/{session_id}", tags=['collector'])
-async def track_post_webhook(event_type: str, source_id: str, request: Request, session_id: Optional[str] = None):
+async def track_post_webhook_with_session(event_type: str, source_id: str, request: Request, session_id: Optional[str] = None):
     """
     Collects data from request POST and adds event type. It stays profile-less if no session provided.
     Session is saved when event is not profile less.
@@ -256,7 +256,7 @@ async def request_redirect(request: Request, redirect_id: str, session_id: Optio
             "params": dict(request.query_params),
             "body": body
         },
-        session=session.dict() if session else None
+        session=session.model_dump() if session else None
     )
     converter = DictTraverser(dot)
 

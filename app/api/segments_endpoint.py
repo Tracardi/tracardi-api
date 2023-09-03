@@ -99,7 +99,7 @@ async def get_segments(query: str = None):
 @router.get("/segments/metadata",
             tags=["segment"],
             include_in_schema=server.expose_gui_api)
-async def get_segments(name: str = ""):
+async def get_segments_metadata(name: str = ""):
     """
     Returns segments with match of given query (str) on name of event type
     """
@@ -121,6 +121,6 @@ async def upsert_segment(segment: Segment):
     """
     Adds new segment to database
     """
-    result = await segment_db.save(segment.dict())
+    result = await segment_db.save(segment.model_dump())
     await segment_db.refresh()
     return result

@@ -46,7 +46,7 @@ async def add_event_to_profile(event_to_profile: EventToProfile):
             tags=["event-type"],
             include_in_schema=server.expose_gui_api,
             response_model=dict)
-async def get_event_to_profile(event_type: str):
+async def get_event_to_profile_by_event_type(event_type: str):
     """
     Returns event to profile schema for given event type
     """
@@ -94,7 +94,7 @@ async def get_event_to_profile(event_type: str):
             tags=["event-type"],
             include_in_schema=server.expose_gui_api,
             response_model=dict)
-async def get_event_to_profile(event_id: str):
+async def get_event_to_profile_by_event_id(event_id: str):
     """
     Returns event to profile schema for given event id
     """

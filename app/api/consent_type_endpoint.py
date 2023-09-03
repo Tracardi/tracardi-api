@@ -16,7 +16,7 @@ async def add_consent_type(data: ConsentType):
     """
     Adds new consent type to the database. Accessible for roles: "admin", "marketer", "developer"
     """
-    result = await consent_type_db.add_consent(id=data.name.lower().replace(" ", "-"), **data.dict())
+    result = await consent_type_db.add_consent(id=data.name.lower().replace(" ", "-"), **data.model_dump())
     await consent_type_db.refresh()
     return result
 

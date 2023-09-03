@@ -17,7 +17,7 @@ router = APIRouter(
 @router.get("/session/count/online", tags=["session"],
             dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer", "maintainer"]))],
             include_in_schema=server.expose_gui_api)
-async def count_sessions():
+async def count_sessions_online():
     result = await session_db.count_online()
     return {
         "events": result.total,
@@ -80,7 +80,7 @@ async def get_sessions_by_channel():
 @router.get("/sessions/count/by_resolution", tags=["session"],
             dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer", "maintainer"]))],
             include_in_schema=server.expose_gui_api)
-async def get_sessions_by_channel():
+async def get_sessions_by_resolution():
     bucket_name = 'sessions_by_resolution'
     result = await _aggregate_session(bucket_name, by='device.resolution', buckets_size=20)
 

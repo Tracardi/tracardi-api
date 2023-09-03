@@ -1,6 +1,6 @@
 from uuid import uuid4
 from test.utils import Endpoint, get_test_tenant
-from tracardi.context import Context, ServerContext, get_context
+from tracardi.context import Context, ServerContext
 
 with ServerContext(Context(production=False, tenant=get_test_tenant())):
     from tracardi.domain.resource import ResourceCredentials
@@ -26,7 +26,7 @@ with ServerContext(Context(production=False, tenant=get_test_tenant())):
                     test=credentials, production=credentials
                 )
 
-                create_resource(resource_id, "api", config=credentials.dict())
+                create_resource(resource_id, "api", config=credentials.model_dump())
 
                 response = endpoint.get(f'/resource/{resource_id}')
                 assert response.status_code == 200

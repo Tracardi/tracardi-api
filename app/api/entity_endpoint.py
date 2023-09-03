@@ -15,7 +15,7 @@ router = APIRouter(
 @router.post("/entity/{index}", tags=["entity"], include_in_schema=server.expose_gui_api)
 async def create_entity_index(index: str, mapping: EntityIndexMapping):
     index = f"entity-{index}"
-    return await raw_db.create_index(index, mapping.dict(by_alias=True))
+    return await raw_db.create_index(index, mapping.model_dump(by_alias=True))
 
 
 @router.get("/entity/{index}/mapping", tags=["entity"], include_in_schema=server.expose_gui_api)

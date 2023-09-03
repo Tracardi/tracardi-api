@@ -97,7 +97,7 @@ def test_source_rule_and_flow():
         flow += append_trait('payload') >> end('payload')
         flow += increase_views('payload') >> end('payload')
 
-        assert endpoint.post('/flow/production', data=flow.dict()).status_code == 200
+        assert endpoint.post('/flow/production', data=flow.model_dump()).status_code == 200
 
         copy_trait2 = action(CopyTraitAction, init={
             "traits": {
@@ -121,7 +121,7 @@ def test_source_rule_and_flow():
         flow += increase_views('payload') >> end('payload')
         flow += increase_visits('payload') >> end('payload')
 
-        assert endpoint.post('/flow/production', data=flow.dict()).status_code == 200
+        assert endpoint.post('/flow/production', data=flow.model_dump()).status_code == 200
         assert endpoint.get('/flows/refresh').status_code == 200
 
         # Send event
@@ -150,7 +150,7 @@ def test_source_rule_and_flow():
         response = endpoint.post("/track", data=payload)
         assert response.status_code == 200
         result = response.json()
-        assert endpoint.get(f'/profiles/refresh').status_code == 200
+        assert endpoint.get('/profiles/refresh').status_code == 200
 
         # New profile id is returned
         profile_id = result['profile']['id']
@@ -167,11 +167,11 @@ def test_source_rule_and_flow():
         profile_id = result['id']
 
     finally:
-        assert endpoint.get(f'/profiles/refresh').status_code == 200
-        assert endpoint.get(f'/sessions/refresh').status_code == 200
-        assert endpoint.get(f'/rules/refresh').status_code == 200
-        assert endpoint.get(f'/flows/refresh').status_code == 200
-        assert endpoint.get(f'/event-sources/refresh').status_code == 200
+        assert endpoint.get('/profiles/refresh').status_code == 200
+        assert endpoint.get('/sessions/refresh').status_code == 200
+        assert endpoint.get('/rules/refresh').status_code == 200
+        assert endpoint.get('/flows/refresh').status_code == 200
+        assert endpoint.get('/event-sources/refresh').status_code == 200
 
         assert endpoint.delete(f'/profile/{profile_id}').status_code in [200, 404]
         assert endpoint.delete(f'/flow/{flow_id_1}').status_code in [200, 404]

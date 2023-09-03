@@ -56,7 +56,7 @@ async def events_refresh_index():
 
 
 @router.get("/events/flush", tags=["event"], include_in_schema=server.expose_gui_api)
-async def events_refresh_index():
+async def events_flush_index():
     """
     Flushes event index.
     """
@@ -69,7 +69,7 @@ async def count_events():
 
 
 @router.get("/event/avg/requests", tags=["event"], include_in_schema=server.expose_gui_api)
-async def count_events():
+async def average_events():
     result = await event_db.count(query={
         "query": {
             "range": {
@@ -153,7 +153,7 @@ async def aggregate_event_device_geo_location():
 
 
 @router.get("/events/by_os_name", tags=["event"], include_in_schema=server.expose_gui_api)
-async def aggregate_event_device_geo_location():
+async def aggregate_event_device_by_os():
     """
     Returns number of events grouped by operation system name
     """
@@ -177,7 +177,7 @@ async def aggregate_event_resolution():
 
 
 @router.get("/events/by_source", tags=["event"], include_in_schema=server.expose_gui_api)
-async def aggregate_event_tags(buckets_size: int = 30):
+async def aggregate_event_by_source(buckets_size: int = 30):
     """
     Returns number of events grouped by event source
     """
@@ -186,7 +186,7 @@ async def aggregate_event_tags(buckets_size: int = 30):
 
 # todo not used -  not in tests
 @router.get("/events/heatmap_by_profile/profile/{profile_id}", tags=["event"], include_in_schema=server.expose_gui_api)
-async def event_types(profile_id: str):
+async def event_types_by_profile_id(profile_id: str):
     """
     Returns events heatmap for profile with given ID
     """
@@ -195,7 +195,7 @@ async def event_types(profile_id: str):
 
 # todo not used -  not in tests
 @router.get("/events/heatmap", tags=["event"], include_in_schema=server.expose_gui_api)
-async def event_types():
+async def event_types_heatmap():
     """
     Returns number of events grouped by event time
     """

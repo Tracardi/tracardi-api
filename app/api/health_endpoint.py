@@ -16,7 +16,7 @@ async def post_healthcheck(r: Request):
             "json": await r.json(),
             "body": await r.body()
         }
-    except JSONDecodeError as e:
+    except JSONDecodeError:
         return await r.body()
 
 
@@ -31,7 +31,7 @@ async def get_healthcheck(r: Request):
             "json": await r.json(),
             "body": await r.body()
         }
-    except JSONDecodeError as e:
+    except JSONDecodeError:
         return await r.body()
 
 
@@ -46,7 +46,7 @@ async def put_healthcheck(r: Request):
             "json": await r.json(),
             "body": await r.body()
         }
-    except JSONDecodeError as e:
+    except JSONDecodeError:
         return await r.body()
 
 
@@ -61,7 +61,7 @@ async def delete_healthcheck(r: Request):
             "json": await r.json(),
             "body": await r.body()
         }
-    except JSONDecodeError as e:
+    except JSONDecodeError:
         return await r.body()
 
 

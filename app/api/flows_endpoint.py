@@ -17,7 +17,7 @@ router = APIRouter(
 
 @router.get("/flows/entity", tags=["flow"],
             include_in_schema=server.expose_gui_api)
-async def get_flows(type: Optional[str] = None, limit: int = 500):
+async def get_flows_entities(type: Optional[str] = None, limit: int = 500):
     """
     Loads flows according to given limit (int) parameter
     """

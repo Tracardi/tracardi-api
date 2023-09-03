@@ -1,6 +1,4 @@
 import threading
-
-from time import time, sleep
 from uuid import uuid4
 
 from tracardi.process_engine.action.v1.flow.start.start_action import StartAction
@@ -76,7 +74,7 @@ def should_correctly_update_profile_on_concurrent_events():
             flow += start('payload') >> increase_views('payload')
             flow += increase_views('payload') >> end('payload')
 
-            assert endpoint.post('/flow/production', data=flow.dict()).status_code == 200
+            assert endpoint.post('/flow/production', data=flow.model_dump()).status_code == 200
             assert endpoint.get('/flows/refresh').status_code == 200
 
             # Send event

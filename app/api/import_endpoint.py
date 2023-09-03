@@ -30,10 +30,12 @@ async def run_import(import_id: str, name: str = None, debug: bool = True):
 
         import_configuration = await import_config_db.load(import_id)
         if import_configuration is None:
-            raise HTTPException(status_code=404, detail=f"No import source configuration found for id {import_id}")
+            raise HTTPException(status_code=404, 
+                                detail=f"No import source configuration found for id {import_id}")
 
         if import_configuration.enabled is False:
-            raise HTTPException(status_code=409, detail=f"Selected import source is disabled")
+            raise HTTPException(status_code=409, 
+                                detail="Selected import source is disabled")
 
         module = import_configuration.module.split(".")
         package = import_package(".".join(module[:-1]))

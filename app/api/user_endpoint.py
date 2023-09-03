@@ -158,7 +158,7 @@ async def add_user(user_payload: UserPayload):
         expiration_timestamp = user_payload.get_expiration_date()
         result = await user_db.add_user(
             User(
-                **user_payload.dict(),
+                **user_payload.model_dump(),
                 id=str(uuid4()),
                 expiration_timestamp=expiration_timestamp
             )

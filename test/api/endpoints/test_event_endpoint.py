@@ -148,7 +148,7 @@ def test_should_return_event_meta():
 
 
 def test_should_return_events_by_type():
-    response = endpoint.get(f'/events/by_type')
+    response = endpoint.get('/events/by_type')
     assert response.status_code == 200
     result = response.json()
 
@@ -161,7 +161,7 @@ def test_should_return_events_by_type():
     response, _, event_id1, profile_id1 = _make_event(event_type, session_id=session_id, source_id=source_id)
 
     try:
-        response = endpoint.get(f'/events/by_type')
+        response = endpoint.get('/events/by_type')
         assert response.status_code == 200
         result = response.json()
         result = {item['name']: item['value'] for item in result}
@@ -182,7 +182,7 @@ def test_should_return_events_by_type():
 
 
 def test_should_return_events_by_tag():
-    response = endpoint.get(f'/events/by_tag')
+    response = endpoint.get('/events/by_tag')
     assert response.status_code == 200
     result = response.json()
 
@@ -208,7 +208,7 @@ def test_should_return_events_by_tag():
     assert response.status_code == 200
 
     try:
-        response = endpoint.get(f'/events/by_tag')
+        response = endpoint.get('/events/by_tag')
         assert response.status_code == 200
         result = response.json()
         result = {item['name']: item['value'] for item in result}
@@ -234,7 +234,7 @@ def test_should_return_events_by_tag():
 
 
 def test_should_return_events_by_status():
-    response = endpoint.get(f'/events/by_status')
+    response = endpoint.get('/events/by_status')
     assert response.status_code == 200
     result = response.json()
 
@@ -247,7 +247,7 @@ def test_should_return_events_by_status():
     response, _, event_id1, profile_id1 = _make_event(event_type, session_id=session_id, source_id=source_id)
 
     try:
-        response = endpoint.get(f'/events/by_status')
+        response = endpoint.get('/events/by_status')
         assert response.status_code == 200
         result = response.json()
         result = {item['name']: item['value'] for item in result}
@@ -269,7 +269,7 @@ def test_should_return_events_by_status():
 
 
 def test_should_return_events_by_source():
-    response = endpoint.get(f'/events/by_source?buckets_size=100')
+    response = endpoint.get('/events/by_source?buckets_size=100')
     assert response.status_code == 200
     result = response.json()
 
@@ -282,7 +282,7 @@ def test_should_return_events_by_source():
     response, _, event_id1, profile_id1 = _make_event(event_type, session_id=session_id, source_id=source_id)
 
     try:
-        response = endpoint.get(f'/events/by_source?buckets_size=100')
+        response = endpoint.get('/events/by_source?buckets_size=100')
         assert response.status_code == 200
         result = response.json()
         result = {item['name']: item['value'] for item in result}

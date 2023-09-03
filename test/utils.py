@@ -98,7 +98,7 @@ def create_session(session_id, profile_id=None):
     else:
         session = Session(id=session_id, metadata=SessionMetadata())
 
-    session = json.loads(session.json())
+    session = json.loads(session.model_dump_json())
 
     endpoint = Endpoint()
     response = endpoint.post("/sessions/import", data=[session])

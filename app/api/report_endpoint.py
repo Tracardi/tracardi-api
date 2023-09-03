@@ -8,7 +8,6 @@ from typing import Optional
 from tracardi.domain.report import Report
 from app.api.domain.report_test_payload import ReportTestPayload
 from tracardi.service.report_manager import ReportManager
-from tracardi.domain.named_entity import NamedEntity
 
 
 router = APIRouter(
@@ -21,7 +20,7 @@ async def load_report_entities():
     """
     Returns list of reports as named entities. Roles: admin, developer, marketer
     """
-    return {"result": [NamedEntity(**report.dict()).dict() for report in await report_db.load_all()]}
+    return {"result": [dict(id=report.id, name=report.name) for report in await report_db.load_all()]}
 
 
 @router.get("/report/{id}", tags=["report"], include_in_schema=server.expose_gui_api)

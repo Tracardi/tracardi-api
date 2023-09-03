@@ -91,7 +91,7 @@ async def _upsert_flow_draft(draft: Flow, rearrange_nodes: Optional[bool] = Fals
     if flow_record is None:
         flow_record = draft.get_empty_workflow_record(draft.type)
 
-    flow_record.draft = encrypt(draft.dict())
+    flow_record.draft = encrypt(draft.model_dump())
     flow_record.timestamp = datetime.utcnow()
 
     result = await flow_db.save_record(flow_record)
@@ -230,7 +230,7 @@ async def upsert_flow_details(flow_metadata: FlowMetaData):
 
         # create new
 
-        flow_record = FlowRecord(**flow_metadata.dict())
+        flow_record = FlowRecord(**flow_metadata.model_dump())
         flow_record.timestamp = datetime.utcnow()
         flow_record.draft = encrypt(Flow(
             id=flow_metadata.id,
@@ -238,14 +238,14 @@ async def upsert_flow_details(flow_metadata: FlowMetaData):
             name=flow_metadata.name,
             description=flow_metadata.description,
             type=flow_metadata.type
-        ).dict())
+        ).model_dump())
         flow_record.production = encrypt(Flow(
             id=flow_metadata.id,
             timestamp=flow_record.timestamp,
             name=flow_metadata.name,
             description=flow_metadata.description,
             type=flow_metadata.type
-        ).dict())
+        ).model_dump())
 
     else:
 
@@ -253,7 +253,7 @@ async def upsert_flow_details(flow_metadata: FlowMetaData):
 
         draft_flow = flow_record.get_draft_workflow()
         draft_flow.name = flow_metadata.name
-        flow_record.draft = encrypt(draft_flow.dict())
+        flow_record.draft = encrypt(draft_flow.model_dump())
 
         flow_record.name = flow_metadata.name
         flow_record.description = flow_metadata.description
@@ -265,7 +265,7 @@ async def upsert_flow_details(flow_metadata: FlowMetaData):
 
 @router.post("/flow/draft/metadata", tags=["flow"], response_model=BulkInsertResult,
              include_in_schema=server.expose_gui_api)
-async def upsert_flow_details(flow_metadata: FlowMetaData):
+async def upsert_flow_draft_details(flow_metadata: FlowMetaData):
     """
     Adds new draft metadata to flow with defined ID (str)
     """
@@ -288,7 +288,7 @@ async def upsert_flow_details(flow_metadata: FlowMetaData):
         draft_workflow.projects = flow_metadata.projects
         draft_workflow.type = flow_metadata.type
 
-        flow_record.draft = encrypt(draft_workflow.dict())
+        flow_record.draft = encrypt(draft_workflow.model_dump())
 
     result = await _store_record(flow_record)
     await flow_db.refresh()
@@ -432,8 +432,8 @@ async def debug_flow(flow: FlowGraph, event_id: Optional[str] = None):
         console_log.append(console)
 
     return {
-        'logs': [log.dict() for log in console_log],
-        "debugInfo": flow_invoke_result.debug_info.dict(),
+        'logs': [log.model_dump() for log in console_log],
+        "debugInfo": flow_invoke_result.debug_info.model_dump(),
         "update": profile_save_result,
         "ux": ux
     }

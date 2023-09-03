@@ -7,7 +7,7 @@ from ..config import server
 from ..service.grouping import group_records
 from tracardi.service.storage.driver.elastic import setting as setting_db
 from typing import Optional
-from tracardi.domain.named_entity import NamedEntity
+
 
 router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer"]))]
@@ -19,7 +19,7 @@ async def load_setting_entities(type: str):
     """
     Returns list of setting as named entities.
     """
-    return {"result": [NamedEntity(**report.dict()).dict() for report in await setting_db.load_all(type)]}
+    return {"result": [dict(id=report.id, name=report.name) for report in await setting_db.load_all(type)]}
 
 
 @router.get("/setting/{type}/{id}", tags=["setting"], include_in_schema=server.expose_gui_api)

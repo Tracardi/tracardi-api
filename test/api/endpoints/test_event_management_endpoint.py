@@ -60,7 +60,7 @@ def test_get_validation_schemas():
         result = response.json()
         assert result['id'] == event_type
 
-        response = endpoint.get(f"/event-type/management")
+        response = endpoint.get("/event-type/management")
         assert response.status_code == 200
 
     finally:

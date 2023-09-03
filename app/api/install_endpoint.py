@@ -58,7 +58,7 @@ async def install_demo_data():
 
         await raw_db.bulk_upsert(
             Resource().get_index_constant('event-source').get_write_index(),
-            list(add_ids([event_source.dict()])))
+            list(add_ids([event_source.model_dump()])))
 
         await event_source_db.refresh()
 

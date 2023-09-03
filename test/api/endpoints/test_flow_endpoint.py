@@ -45,12 +45,12 @@ def test_should_return_404_on_delete_flow_if_none():
 
 
 def test_should_refresh_flow():
-    assert endpoint.get(f'/flows/refresh').status_code == 200
+    assert endpoint.get('/flows/refresh').status_code == 200
 
 
 def test_should_not_fail_on_rearrange():
     data = Flow(id=str(uuid4()), name="test", type='collection')
-    assert endpoint.post(f'/flow/draft/nodes/rearrange', data=json.loads(data.json())).status_code == 200
+    assert endpoint.post('/flow/draft/nodes/rearrange', data=json.loads(data.model_dump_json())).status_code == 200
 
 
 def check_flow_bool(id, lock, type='lock', field='lock'):
@@ -240,7 +240,7 @@ def test_flow_code_api():
         flow = Flow.build("Test wf as a code", id=id)
         flow += start('payload') >> end('payload')
 
-        response = endpoint.post('/flow/draft', data=flow.dict())
+        response = endpoint.post('/flow/draft', data=flow.model_dump())
         assert response.status_code == 200
         result = response.json()
         assert result['saved'] == 1
@@ -266,8 +266,8 @@ def test_should_save_draft_metadata():
                 "General"
             ]
         }
-        assert endpoint.post(f'/flow/draft/metadata', data=payload).status_code == 200
-        assert endpoint.get(f'/flows/refresh').status_code == 200
+        assert endpoint.post('/flow/draft/metadata', data=payload).status_code == 200
+        assert endpoint.get('/flows/refresh').status_code == 200
 
         response = endpoint.get(f'/flow/draft/{flow_id}')
         assert response.status_code == 200
@@ -286,7 +286,7 @@ def test_should_not_make_production_flow_out_of_missing_workflow():
     flow = Flow.build("Workflow", id=flow_id)
     flow += start('payload') >> end('payload')
 
-    response = endpoint.post('/flow/production', data=flow.dict())
+    response = endpoint.post('/flow/production', data=flow.model_dump())
     assert response.status_code == 406
 
 
@@ -302,11 +302,11 @@ def test_should_restore_production_flow():
         flow += start('payload') >> end1('payload')
 
         # Make draft
-        assert endpoint.post('/flow/draft', data=flow.dict()).status_code == 200
+        assert endpoint.post('/flow/draft', data=flow.model_dump()).status_code == 200
 
         # Make production
 
-        assert endpoint.post('/flow/production', data=flow.dict()).status_code == 200
+        assert endpoint.post('/flow/production', data=flow.model_dump()).status_code == 200
 
         # Change draft
         flow1 = Flow.build("Workflow changed", id=flow_id)
@@ -315,7 +315,7 @@ def test_should_restore_production_flow():
 
         # Rearrange
 
-        response = endpoint.post(f'/flow/draft/nodes/rearrange', data=json.loads(flow1.json()))
+        response = endpoint.post('/flow/draft/nodes/rearrange', data=json.loads(flow1.model_dump_json()))
         assert response.status_code == 200
         rearranged_flow = response.json()
 
@@ -325,7 +325,7 @@ def test_should_restore_production_flow():
 
         # Make production
 
-        assert endpoint.post('/flow/production', data=flow1.dict()).status_code == 200
+        assert endpoint.post('/flow/production', data=flow1.model_dump()).status_code == 200
 
         # Get production
 
@@ -360,7 +360,7 @@ def test_should_not_restore_draft_from_production_if_no_production():
 
         # Make draft
 
-        assert endpoint.post('/flow/draft', data=flow.dict()).status_code == 200
+        assert endpoint.post('/flow/draft', data=flow.model_dump()).status_code == 200
 
         # Get draft
 
@@ -375,7 +375,7 @@ def test_should_not_restore_draft_from_production_if_no_production():
         flow1 += start('payload') >> end1('payload')
         flow1 += start('payload') >> end2('payload')
 
-        assert endpoint.post('/flow/draft', data=flow1.dict()).status_code == 200
+        assert endpoint.post('/flow/draft', data=flow1.model_dump()).status_code == 200
 
         # Check if draft changed
 
@@ -409,11 +409,11 @@ def test_should_restore_draft_from_production_flow():
 
         # Make draft
 
-        assert endpoint.post('/flow/draft', data=flow.dict()).status_code == 200
+        assert endpoint.post('/flow/draft', data=flow.model_dump()).status_code == 200
 
         # Make production
 
-        assert endpoint.post('/flow/production', data=flow.dict()).status_code == 200
+        assert endpoint.post('/flow/production', data=flow.model_dump()).status_code == 200
 
         # Get draft
 
@@ -428,7 +428,7 @@ def test_should_restore_draft_from_production_flow():
         flow1 += start('payload') >> end1('payload')
         flow1 += start('payload') >> end2('payload')
 
-        assert endpoint.post('/flow/draft', data=flow1.dict()).status_code == 200
+        assert endpoint.post('/flow/draft', data=flow1.model_dump()).status_code == 200
 
         # Check if draft changed
 
@@ -546,9 +546,9 @@ def test_should_debug_workflow():
 
         # Make draft
 
-        assert endpoint.post('/flow/draft', data=flow.dict()).status_code == 200
+        assert endpoint.post('/flow/draft', data=flow.model_dump()).status_code == 200
 
-        response = endpoint.post('/flow/debug', data=flow.dict())
+        response = endpoint.post('/flow/debug', data=flow.model_dump())
         assert response.status_code == 200
         result = response.json()
         assert 'logs' in result

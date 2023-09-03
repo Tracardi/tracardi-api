@@ -124,7 +124,7 @@ async def list_resources():
 @router.get("/resources/by_type",
             tags=["resource"],
             include_in_schema=server.expose_gui_api)
-async def list_resources(query: str = None):
+async def list_resources_by_type(query: str = None):
     result = await resource_db.load_all()
 
     total = result.total
@@ -165,7 +165,7 @@ async def set_resource_property_on(id: str):
     record = await _load_record(id)
     if record:
         resource = record.decode()
-        resource_data = resource.dict()
+        resource_data = resource.model_dump()
         resource_data['enabled'] = True
         resource = Resource.construct(_fields_set=resource.__fields_set__, **resource_data)
         record = ResourceRecord.encode(resource)
@@ -184,7 +184,7 @@ async def set_resource_property_off(id: str):
 
     if record:
         resource = record.decode()
-        resource_data = resource.dict()
+        resource_data = resource.model_dump()
         resource_data['enabled'] = False
         resource = Resource.construct(_fields_set=resource.__fields_set__, **resource_data)
         record = ResourceRecord.encode(resource)

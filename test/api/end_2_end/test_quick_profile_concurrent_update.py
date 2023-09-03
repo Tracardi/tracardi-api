@@ -70,7 +70,7 @@ def test_source_rule_and_flow():
         flow += start('payload') >> increase_views('payload')
         flow += increase_views('payload') >> end('payload')
 
-        assert endpoint.post('/flow/production', data=flow.dict()).status_code == 200
+        assert endpoint.post('/flow/production', data=flow.model_dump()).status_code == 200
         assert endpoint.get('/flows/refresh').status_code == 200
 
         # Send event
@@ -101,7 +101,7 @@ def test_source_rule_and_flow():
             assert response.status_code == 200
             result = response.json()
 
-            assert endpoint.get(f'/profiles/refresh').status_code == 200
+            assert endpoint.get('/profiles/refresh').status_code == 200
 
             return result
 
@@ -144,11 +144,11 @@ def test_source_rule_and_flow():
         assert result['stats']['views'] == max_concurrent_threads + 2
 
     finally:
-        assert endpoint.get(f'/profiles/refresh').status_code == 200
-        assert endpoint.get(f'/sessions/refresh').status_code == 200
-        assert endpoint.get(f'/rules/refresh').status_code == 200
-        assert endpoint.get(f'/flows/refresh').status_code == 200
-        assert endpoint.get(f'/event-sources/refresh').status_code == 200
+        assert endpoint.get('/profiles/refresh').status_code == 200
+        assert endpoint.get('/sessions/refresh').status_code == 200
+        assert endpoint.get('/rules/refresh').status_code == 200
+        assert endpoint.get('/flows/refresh').status_code == 200
+        assert endpoint.get('/event-sources/refresh').status_code == 200
 
         if profile_id is not None:
             # Delete profile

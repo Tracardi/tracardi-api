@@ -98,7 +98,7 @@ async def validate_plugin_configuration(plugin_id: str,
             }) as client:
                 async with client.post(
                         url=microservice_url,
-                        json=config.dict()) as remote_response:
+                        json=config.model_dump()) as remote_response:
                     return JSONResponse(
                         status_code=remote_response.status,
                         content=jsonable_encoder(await remote_response.json())

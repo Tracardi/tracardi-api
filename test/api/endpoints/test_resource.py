@@ -34,7 +34,7 @@ def create_resource(id, type, name="Test", config=None):
         name=name,
         credentials=config
     )
-    resource = json.loads(resource.json())
+    resource = json.loads(resource.model_dump_json())
     response = endpoint.post('/resource', data=resource)
 
     assert response.status_code

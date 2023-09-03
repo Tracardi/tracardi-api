@@ -33,7 +33,7 @@ async def edit_user_account(payload: UserSoftEditPayload,
 
         saved, new_user = await update_user(
             user.id,
-            UserPayload(**payload.dict(),
+            UserPayload(**payload.model_dump(),
                         roles=user.roles,
                         disabled=user.disabled,
                         email=user.email)

@@ -33,7 +33,7 @@ def test_should_create_and_delete_live_segment():
         assert segment.name == 'Test segment'
         assert segment.enabled
 
-        response = endpoint.get(f'/segments/live')
+        response = endpoint.get('/segments/live')
         assert response.status_code == 200
         result = response.json()
 

@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List
 
 from app.api.auth.permissions import Permissions
 from tracardi.config import elastic, redis_config, tracardi, memory_cache

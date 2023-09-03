@@ -1,14 +1,9 @@
 import logging
-from collections import defaultdict
-
-from fastapi import APIRouter, HTTPException, Depends, Response
+from fastapi import APIRouter, Depends
 from tracardi.config import tracardi
-from tracardi.domain.event_source import EventSource
 from tracardi.exceptions.log_handler import log_handler
-from tracardi.service.events import cache_predefined_event_types, get_predefined_event_types, \
+from tracardi.service.events import get_predefined_event_types, \
     get_default_event_type_schema
-from tracardi.service.storage.driver.elastic import event_source as event_source_db
-from app.service.grouper import search
 from .auth.permissions import Permissions
 from ..config import server
 
@@ -43,10 +38,12 @@ async def list_build_in_event_types(query: str = None):
     if query is not None and len(query) > 0:
         query = query.lower()
         if query:
-            result = [{"id": definition['id'], "name": definition['name'], "description": definition['description']} for _, definition in result if
+            result = [{"id": definition['id'], "name": definition['name'], "description": definition['description']} for
+                      _, definition in result if
                       query in definition['name'].lower() or query in definition['description'].lower()]
     else:
-        result = [{"id": definition['id'], "name": definition['name'], "description": definition['description']} for _, definition in result]
+        result = [{"id": definition['id'], "name": definition['name'], "description": definition['description']} for
+                  _, definition in result]
 
     return {
         "total": total,

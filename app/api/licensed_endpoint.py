@@ -20,22 +20,22 @@ def get_router(prefix):
 
     @router.get("/{path:path}",
                 include_in_schema=server.expose_gui_api)
-    async def licensed():
+    async def get_licensed():
         raise HTTPException(status_code=402, detail="No license. This is licensed feature.")
 
     @router.post("/{path:path}",
                  include_in_schema=server.expose_gui_api)
-    async def licensed():
+    async def post_licensed():
         raise HTTPException(status_code=402, detail="No license. This is licensed feature.")
 
     @router.delete("/{path:path}",
                    include_in_schema=server.expose_gui_api)
-    async def licensed():
+    async def delete_licensed():
         raise HTTPException(status_code=402, detail="No license. This is licensed feature.")
 
     @router.put("/{path:path}",
                 include_in_schema=server.expose_gui_api)
-    async def licensed():
+    async def put_licensed():
         raise HTTPException(status_code=402, detail="No license. This is licensed feature.")
 
     endpoint = namedtuple("endpoint", "router")

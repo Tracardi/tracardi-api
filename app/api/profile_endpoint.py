@@ -44,7 +44,7 @@ async def refresh_profile():
 
 
 @router.get("/profiles/flash", tags=["profile"], include_in_schema=server.expose_gui_api)
-async def refresh_profile():
+async def flash_profile():
     """
     Flashes profile index
     """
