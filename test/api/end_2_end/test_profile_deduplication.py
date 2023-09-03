@@ -1,5 +1,8 @@
 from tracardi.context import ServerContext, Context
 from test.utils import get_test_tenant
+from tracardi.domain.session import Session
+from tracardi.service.storage.cache.model import load as cache_load
+
 
 with ServerContext(Context(production=False, tenant=get_test_tenant())):
 
@@ -158,7 +161,9 @@ with ServerContext(Context(production=False, tenant=get_test_tenant())):
                 await session_db.refresh()
                 await event_db.refresh()
 
+                cache_load(model=Session, id=profile_id)
                 await session_db.load_by_id(session_id)
+                cache_load(model=Profile, id=profile_id)
                 await profile_db.load_by_id(profile_id)
 
             finally:
@@ -206,6 +211,7 @@ with ServerContext(Context(production=False, tenant=get_test_tenant())):
 
             with pytest.raises(DuplicatedRecordException):
                 # Trows error duplicate record
+                cache_load(model=Profile, id=profile_id)
                 await profile_db.load_by_id(profile_id)
 
             # When record is duplicated also session gets duplicated
@@ -227,6 +233,7 @@ with ServerContext(Context(production=False, tenant=get_test_tenant())):
 
             await profile_db.refresh()
 
+            cache_load(model=Profile, id=profile_id)
             record = await profile_db.load_by_id(profile_id)
             assert record is not None
             assert record.get_meta_data() is not None
@@ -264,6 +271,7 @@ with ServerContext(Context(production=False, tenant=get_test_tenant())):
             assert session1 == session2
 
             with pytest.raises(DuplicatedRecordException):
+                cache_load(model=Profile, id=profile_id)
                 await profile_db.load_by_id(profile_id)
 
             # When record is duplicated also session gets duplicated
@@ -303,7 +311,9 @@ with ServerContext(Context(production=False, tenant=get_test_tenant())):
                 await event_db.refresh()
 
                 # Should be no errors
+                cache_load(model=Profile, id=profile_id)
                 await profile_db.load_by_id(profile_id)
+                cache_load(model=Session, id=session_id)
                 await session_db.load_by_id(session_id)
 
                 for event_id in events1 + events2:

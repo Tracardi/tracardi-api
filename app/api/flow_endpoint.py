@@ -34,6 +34,8 @@ from tracardi.domain.session import Session, SessionMetadata, SessionTime
 from tracardi.domain.value_object.bulk_insert_result import BulkInsertResult
 from .auth.permissions import Permissions
 from ..config import server
+from tracardi.service.storage.cache.model import load as cache_load
+
 
 router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin", "developer"]))]
@@ -354,6 +356,7 @@ async def debug_flow(flow: FlowGraph, event_id: Optional[str] = None):
         source = event.source
 
         if event.has_profile():
+            cache_load(model=Profile, id=event.profile.id)
             profile = await profile_db.load_by_id(event.profile.id)
             if profile is None:
                 raise ValueError(f"Could not find profile id {event.profile.id} attached to event id {event_id}. "

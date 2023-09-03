@@ -11,6 +11,8 @@ from tracardi.service.storage.driver.elastic import event as event_db
 from tracardi.service.storage.index import Resource
 from .auth.permissions import Permissions
 from ..config import server
+from tracardi.service.storage.cache.model import load as cache_load
+
 
 router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer", "maintainer"]))]
@@ -57,6 +59,7 @@ async def get_profile_by_id(id: str, response: Response) -> Optional[dict]:
     Returns profile with given ID (str)
     """
     try:
+        cache_load(model=Profile, id=id)
         record = await profile_db.load_by_id(id)
         if record is None:
             response.status_code = 404
