@@ -45,10 +45,10 @@ def test_should_register_correct_event():
         assert 'event' in result
         assert 'ids' in result['event']
 
-        assert len(result['event']['ids']) == 4  # 2 events + Profile Created, Session Opened.
+        assert len(result['event']['ids']) == 5  # 2 events + Profile Created, Session Opened, Visit Created.
         session_id = result['session']['id']
         try:
-            endpoint.get(f'/events/refresh')
+            endpoint.get('/events/refresh')
 
             # Event 1
 
@@ -61,13 +61,13 @@ def test_should_register_correct_event():
                 if _result['event']['type'] == "test-event-2":
                     assert _result['event']['context']['test'] == 2
 
-            endpoint.get(f'/sessions/refresh')
+            endpoint.get('/sessions/refresh')
             response = endpoint.get(f'/session/{session_id}')
             _result = response.json()
             assert 'id' in _result
             assert _result['id'] == session_id
 
-            endpoint.get(f'/profiles/refresh')
+            endpoint.get('/profiles/refresh')
             response = endpoint.get(f'/profile/{profile_id}')
             _result = response.json()
             assert 'id' in _result

@@ -49,10 +49,10 @@ async def get_token(login_form_data: OAuth2PasswordRequestForm = Depends(),
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="Access forbidden")
 
-        # try:
-        token = await auth.login(login_form_data.username, login_form_data.password)
-        # except Exception as e:
-        #     raise HTTPException(status_code=400, detail=str(e))
+        try:
+            token = await auth.login(login_form_data.username, login_form_data.password)
+        except Exception as e:
+            raise HTTPException(status_code=400, detail=str(e))
 
         return token
 
@@ -89,7 +89,10 @@ async def get_user_preference(key: str,
     return pref
 
 
-@router.post("/user/preference/{key}", tags=["user"], include_in_schema=server.expose_gui_api, response_model=dict)
+@router.post("/user/preference/{key}", 
+             tags=["user"], 
+             include_in_schema=server.expose_gui_api, 
+             response_model=BulkInsertResult)
 async def set_user_preference(key: str, preference: Union[dict, str, int, float],
                               user: User = Depends(Permissions(["admin", "developer", "marketer", "maintainer"]))):
     """
