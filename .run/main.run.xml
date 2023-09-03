@@ -1,0 +1,127 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="main" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
+    <module name="tracardi-api" />
+    <option name="INTERPRETER_OPTIONS" value="" />
+    <option name="PARENT_ENVS" value="true" />
+    <envs>
+      <env name="PYTHONUNBUFFERED" value="1" />
+      <env name="_ELASTIC_HOST" value="https://elastic:NX499fCnF3431F9a6xoC0mQU@192.168.1.190:9200" />
+      <env name="_ELASTIC_HTTP_AUTH_PASSWORD" value="NX499fCnF3431F9a6xoC0mQU" />
+      <env name="_ELASTIC_HTTP_AUTH_USERNAME" value="elastic" />
+      <env name="_ELASTIC_SCHEME" value="https" />
+      <env name="_MONITOR_LOGS_EVENT_TYPE" value="internal-error" />
+      <env name="_REDIS_PASSWORD" value="efbfe6e6fa7fa2f5d0ad6f266dd9e6fa" />
+      <env name="_TRACARDI_PRO_HOST" value="localhost" />
+      <env name="_TRACARDI_SCHEDULER_HOST" value="146.190.8.29" />
+      <env name="DEBUG_MAKE_SLOWER_RESPONSES" value="0" />
+      <env name="ELASTIC_PORT" value="9200" />
+      <env name="ELASTIC_VERIFY_CERTS" value="no" />
+      <env name="EXPOSE_GUI_API" value="yes" />
+      <env name="LOGGING_LEVEL" value="ERROR" />
+      <env name="PASSWORD" value="admin" />
+      <env name="POSTPONE_DESTINATION_SYNC" value="20" />
+      <env name="REDIS_HOST" value="redis://localhost:6379" />
+      <env name="RESET_PLUGINS" value="yes" />
+      <env name="SYNC_PROFILE_TRACKS" value="yes" />
+      <env name="TOKENS_IN_REDIS" value="yes" />
+      <env name="TRACK_DEBUG" value="yes" />
+      <env name="CONFIG" value="config.yaml" />
+      <env name="SESSION_CACHE_TTL" value="60" />
+      <env name="EVENT_VALIDATION_CACHE_TTL" value="60" />
+      <env name="_INSTALLATION_TOKEN" value="risto" />
+      <env name="SOURCE_CACHE_TTL" value="60" />
+      <env name="ELASTIC_LOGGIN_LEVEL" value="error" />
+      <env name="LICENSE" value="EiUNs84iQHe9ASlSyMBOHHjcpmjgu1d2Cky7JMHvf/Bz/jE/TvP3dbucpm+nD2m//WM7rBNMT/56mh+m2ccB1hCo1sx5LLax+JxX87cL8rN8TTeVHrRRdgWPGoFizcB16YDRvHK07Ebz9abQXtyk5h21pfWaSwFjISBPCIsbQrRu5NazhOWO/pTjmugQdjRQS7XVCIukAMTcQNwdLKhxpV6CxTvaTq/vR8wp/pMYM5eYGyAOM0pVhkpQQK8NnRYp7Hf27NuLANu2syi9EGWFmDoDiRXQoCM3G1olTJz5L2vrGeRy/o/tVEbc1nD4ohpwGcV5ZK4LkWr78l3f7NdGB9xRZ86ljpLafTxZA4LmiGDWktLCtXS8o8e1+fg87WgcuqhyaxvzQDWAiDJIaC0ml4V5JL5e/wBZhEThFQIAAA==4H949seI4A2Iav6eab2WcQ2C5/317W7Q9Sf214db5M9Q4ycGer0zaKcY5dcQ3iaI4212304" />
+      <env name="PRODUCTION" value="no" />
+      <env name="__ELASTIC_HOST" value="http://192.168.1.101:9200" />
+      <env name="DEMO" value="yes" />
+      <env name="MULTI_TENANT" value="no" />
+      <env name="MULTI_TENANT_MANAGER_URL" value="http://localhost:8080" />
+      <env name="MULTI_TENANT_MANAGER_API_KEY" value="123" />
+      <env name="EVENT_POOL" value="0" />
+      <env name="SAVE_LOGS" value="no" />
+    </envs>
+    <option name="SDK_HOME" value="" />
+    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/app" />
+    <option name="IS_MODULE_SDK" value="true" />
+    <option name="ADD_CONTENT_ROOTS" value="true" />
+    <option name="ADD_SOURCE_ROOTS" value="true" />
+    <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+    <EXTENSION ID="net.ashald.envfile">
+      <option name="IS_ENABLED" value="false" />
+      <option name="IS_SUBST" value="false" />
+      <option name="IS_PATH_MACRO_SUPPORTED" value="false" />
+      <option name="IS_IGNORE_MISSING_FILES" value="false" />
+      <option name="IS_ENABLE_EXPERIMENTAL_INTEGRATIONS" value="false" />
+      <ENTRIES>
+        <ENTRY IS_ENABLED="true" PARSER="runconfig" />
+      </ENTRIES>
+    </EXTENSION>
+    <option name="SCRIPT_NAME" value="$PROJECT_DIR$/app/main.py" />
+    <option name="PARAMETERS" value="" />
+    <option name="SHOW_COMMAND_LINE" value="false" />
+    <option name="EMULATE_TERMINAL" value="false" />
+    <option name="MODULE_MODE" value="false" />
+    <option name="REDIRECT_INPUT" value="false" />
+    <option name="INPUT_FILE" value="" />
+    <method v="2" />
+  </configuration>
+  <configuration default="false" name="main" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
+    <module name="tracardi-api" />
+    <option name="INTERPRETER_OPTIONS" value="" />
+    <option name="PARENT_ENVS" value="true" />
+    <envs>
+      <env name="PYTHONUNBUFFERED" value="1" />
+      <env name="_ELASTIC_HOST" value="https://elastic:NX499fCnF3431F9a6xoC0mQU@192.168.1.190:9200" />
+      <env name="_ELASTIC_VERIFY_CERTS" value="no" />
+      <env name="_MAXMIND_ACCOUNT_ID" value="596687" />
+      <env name="_MAXMIND_LICENSE_KEY" value="ehiKRvACRzeXnjwZ" />
+      <env name="_REDIS_HOST" value="redis://192.168.1.190:11111" />
+      <env name="_REDIS_PASSWORD" value="5BlpzS6rRC" />
+      <env name="_REDIS_PORT" value="11111" />
+      <env name="DEMO" value="yes" />
+      <env name="LICENSE" value="Rf2wW4EOBbp160iJFGLYjlNfpyka5N1L2wWuRxH6eMhz+L593X7ebH/slstp8/30JuOvvS373QY2X+142n7abM0/xBoC5oqIXli88L49S/8pmPX22F2blMLdMgvkyB1ohAgtd4MigVLIPLy0/fAGe5mT0vJlRSulLjMlcI0EVCyBkCIoNdRamafSDT3+ulzifrEV9caMASuU1jJQ7QVaRXbpVtqspNbnDd0d5aUuGle0tcalWAUZhkAzR+iRArTZRp0hBgx6R9WeL5G/ycpiTzOyVJgx6XXZAH3MDlitzkYTWfnGLuPJVGpeUWIKKr2DlchA/hFaSQwYqUWZEpnLDf0th12ifXhAZXS3MUMycotDVmCqDYb6BLlw1XxHx+n4cog54cqmjClyJd9RCYgKQu/ibjcLZhimhXRjz7Y8CbAuDybXOHPB7myvQBIHuNZVnFFUBneS/6zuziCX88qqNIpSMpSQBahHzzZ7QKrNeldsPMfd5Wf9s9D+IaDB2UqZfgc5u2xOE5iDy/YQBdUjyHZDD7thEf1GHtHgt1TBmO2qWn3baJ5PrypBEgreL+r1cLFnHvuywsaZlXxGatXDbVddcZv7cHXE0Wtzqz4+/gE4d+t7PgMAAA==6H047s9I7A4L0Z0X776mcQcC2/80e2aSdvdW85cb4M3Q9yfF3X585X0wbX8A2IdS4233354" />
+      <env name="LOGGING_LEVEL" value="WARNING" />
+      <env name="MULTI_TENANT" value="no" />
+      <env name="MULTI_TENANT_MANAGER_API_KEY" value="1" />
+      <env name="MULTI_TENANT_MANAGER_URL" value="http://localhost:8080" />
+      <env name="PRODUCTION" value="no" />
+      <env name="SYSTEM_EVENTS" value="no" />
+      <env name="ELASTIC_SAVE_POOL" value="0" />
+      <env name="ENABLE_SEGMENTATION_WF_TRIGGERS" value="yes" />
+      <env name="TRACK_DEBUG" value="no" />
+      <env name="ENABLE_WORKFLOW" value="no" />
+      <env name="ENABLE_EVENT_VALIDATION" value="no" />
+      <env name="ENABLE_EVENT_SOURCE_CHECK" value="no" />
+      <env name="ENABLE_PROFILE_IMMEDIATE_FLUSH" value="yes" />
+      <env name="SAVE_LOGS" value="no" />
+      <env name="ENABLE_PROFILE_DESTINATIONS" value="no" />
+      <env name="ENABLE_EVENT_DESTINATIONS" value="no" />
+      <env name="ENABLE_IDENTIFICATION_POINT" value="no" />
+      <env name="ENABLE_POST_EVENT_SEGMENTATION" value="no" />
+    </envs>
+    <option name="SDK_HOME" value="" />
+    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/app" />
+    <option name="IS_MODULE_SDK" value="true" />
+    <option name="ADD_CONTENT_ROOTS" value="true" />
+    <option name="ADD_SOURCE_ROOTS" value="true" />
+    <EXTENSION ID="net.ashald.envfile">
+      <option name="IS_ENABLED" value="false" />
+      <option name="IS_SUBST" value="false" />
+      <option name="IS_PATH_MACRO_SUPPORTED" value="false" />
+      <option name="IS_IGNORE_MISSING_FILES" value="false" />
+      <option name="IS_ENABLE_EXPERIMENTAL_INTEGRATIONS" value="false" />
+      <ENTRIES>
+        <ENTRY IS_ENABLED="true" PARSER="runconfig" />
+      </ENTRIES>
+    </EXTENSION>
+    <option name="SCRIPT_NAME" value="$PROJECT_DIR$/app/main.py" />
+    <option name="PARAMETERS" value="" />
+    <option name="SHOW_COMMAND_LINE" value="false" />
+    <option name="EMULATE_TERMINAL" value="false" />
+    <option name="MODULE_MODE" value="false" />
+    <option name="REDIRECT_INPUT" value="false" />
+    <option name="INPUT_FILE" value="" />
+    <method v="2" />
+  </configuration>
+</component>
