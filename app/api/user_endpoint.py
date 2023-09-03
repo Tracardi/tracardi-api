@@ -5,6 +5,7 @@ from fastapi import APIRouter, Depends, HTTPException, Header, Response
 from tracardi.context import ServerContext, get_context
 from tracardi.domain.user import User
 from app.config import server
+from tracardi.domain.value_object.bulk_insert_result import BulkInsertResult
 from tracardi.service.storage.driver.elastic import user as user_db
 from pydantic import BaseModel
 from typing import Optional, Union
@@ -30,7 +31,9 @@ router = APIRouter(
 auth_router = APIRouter()
 
 
-@auth_router.post("/user/token", tags=["user", "authorization"], include_in_schema=server.expose_gui_api)
+@auth_router.post("/user/token", 
+                  tags=["user", "authorization"], 
+                  include_in_schema=server.expose_gui_api)
 async def get_token(login_form_data: OAuth2PasswordRequestForm = Depends(),
                     auth: Authentication = Depends(get_authentication)):
     """
@@ -146,7 +149,9 @@ async def flush_users():
     return await user_db.flush()
 
 
-@router.post("/user", tags=["user"], include_in_schema=server.expose_gui_api, response_model=dict)
+@router.post("/user", tags=["user"], 
+             include_in_schema=server.expose_gui_api, 
+             response_model=BulkInsertResult)
 async def add_user(user_payload: UserPayload):
 
     """

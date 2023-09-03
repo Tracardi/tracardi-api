@@ -1,5 +1,6 @@
 from uuid import uuid4
 
+from tracardi.domain.event_source import EventSource
 from .test_event_endpoint import _make_event
 from test.utils import Endpoint
 from tracardi.domain.report import Report
@@ -9,9 +10,9 @@ endpoint = Endpoint()
 
 def test_should_work():
 
-    event_source = dict(
+    event_source = EventSource(
         id="@test-source",
-        bridge={"id": 1, "name": "API"},
+        bridge={"id": "1", "name": "API"},
         type="rest",
         name="Test",
         timestamp="2022-01-07T16:18:09.278Z",
@@ -19,7 +20,7 @@ def test_should_work():
         config={}
     )
 
-    response = endpoint.post('/event-source', data=event_source)
+    response = endpoint.post('/event-source', data=event_source.model_dump())
     assert response.status_code in [200]
 
     event_type = str(uuid4())

@@ -28,8 +28,10 @@ async def _store_record(data: Entity):
     return await action_db.save(data)
 
 
-@router.get("/flow/action/plugin/{id}", tags=["flow", "action"],
-            response_model=FlowActionPlugin, include_in_schema=server.expose_gui_api)
+@router.get("/flow/action/plugin/{id}", 
+            tags=["flow", "action"],
+            response_model=FlowActionPlugin, 
+            include_in_schema=server.expose_gui_api)
 async def get_plugin(id: str):
     """
     Returns FlowActionPlugin object.

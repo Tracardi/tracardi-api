@@ -2,6 +2,7 @@ from typing import Optional
 
 from fastapi import APIRouter, Response, Depends
 
+from tracardi.domain.value_object.bulk_insert_result import BulkInsertResult
 from tracardi.service.setup.setup_resources import get_destinations
 from tracardi.service.storage.driver.elastic import destination as destination_db
 from tracardi.service.storage.driver.elastic import resource as resource_db
@@ -15,7 +16,7 @@ router = APIRouter(
 )
 
 
-@router.post("/destination", tags=["destination"], response_model=dict,
+@router.post("/destination", tags=["destination"], response_model=BulkInsertResult,
              include_in_schema=server.expose_gui_api)
 async def save_destination(destination: Destination):
     """

@@ -42,7 +42,7 @@ def _make_event(type, properties=None, session_id=None, source_id=None):
     assert endpoint.get('/profiles/refresh').status_code == 200
 
     result = response.json()
-
+    print(result)
     event_id = result['event']['ids'][0]
     profile_id = result['profile']['id']
 
@@ -77,7 +77,7 @@ def test_should_count_events():
         result = response.json()
         count1 = result['count']
 
-        assert count1 == count + 3  # Event: Test, Profile Create, Session Created.
+        assert count1 == count + 4  # Event: Test, Profile Create, Session Opened, Visit started.
 
     finally:
         response = endpoint.delete(f'/event/{event_id}')
@@ -201,7 +201,7 @@ def test_should_return_events_by_tag():
         "event_type": event_type,
         "tags": [event_tag]
     }
-    response = endpoint.post("/event-type/management", data)
+    response = endpoint.post("/event-type/mapping", data)
     assert response.status_code == 200
     sleep(1)
     response = endpoint.get("/events/refresh")

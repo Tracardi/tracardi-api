@@ -10,7 +10,7 @@ def test_should_handle_multiple_sessions():
     start_token = endpoint.token
 
     try:
-
+        user_id = None
         data = {
             "password": user_pass,
             "full_name": "full name",
@@ -54,5 +54,6 @@ def test_should_handle_multiple_sessions():
 
     finally:
         endpoint.auth(user_email, user_pass)
-        endpoint.delete(f"/user/{user_id}")
+        if user_id:
+            endpoint.delete(f"/user/{user_id}")
         endpoint.set_token(start_token)

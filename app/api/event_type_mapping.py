@@ -7,6 +7,7 @@ from app.api.auth.permissions import Permissions
 from app.config import server
 from app.service.grouping import group_records
 from tracardi.domain.event_type_metadata import EventTypeMetadata
+from tracardi.domain.value_object.bulk_insert_result import BulkInsertResult
 from tracardi.service.events import get_default_event_type_mapping
 from tracardi.service.storage.driver.elastic import event_management as event_management_db
 from tracardi.service.storage.driver.elastic import event as event_db
@@ -28,7 +29,7 @@ async def refresh_event_type_mapping():
 
 
 @router.post("/mapping", tags=["event-type"], include_in_schema=server.expose_gui_api,
-             response_model=dict)
+             response_model=BulkInsertResult)
 async def add_event_type_mapping(event_mapping: EventTypeMetadata):
     """
     Creates new event type mapping in database
@@ -93,7 +94,7 @@ async def list_event_type_metadata(event_type: str):
 @router.get("/mapping/{event_type}",
             tags=["event-type"],
             include_in_schema=server.expose_gui_api,
-            response_model=dict)
+            response_model=Optional[dict])
 async def get_event_type_mapping(event_type: str):
     """
     Return custom event type mapping for given event type

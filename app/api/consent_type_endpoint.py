@@ -1,9 +1,12 @@
+from typing import Optional
+
 from fastapi import APIRouter, Depends
 from app.api.auth.permissions import Permissions
 from app.config import server
 from app.service.grouping import group_records
 
 from tracardi.domain.consent_type import ConsentType
+from tracardi.domain.value_object.bulk_insert_result import BulkInsertResult
 from tracardi.service.storage.driver.elastic import consent_type as consent_type_db
 
 router = APIRouter()
@@ -11,7 +14,7 @@ router = APIRouter()
 
 @router.post("/consent/type", tags=["consent"],
              dependencies=[Depends(Permissions(roles=["admin", "marketer", "developer"]))],
-             include_in_schema=server.expose_gui_api, response_model=dict)
+             include_in_schema=server.expose_gui_api, response_model=BulkInsertResult)
 async def add_consent_type(data: ConsentType):
     """
     Adds new consent type to the database. Accessible for roles: "admin", "marketer", "developer"
@@ -23,7 +26,7 @@ async def add_consent_type(data: ConsentType):
 
 @router.get("/consent/type/{consent_id}", dependencies=[Depends(Permissions(roles=["admin", "marketer", "developer"]))],
             tags=["consent"], include_in_schema=server.expose_gui_api,
-            response_model=dict)
+            response_model=Optional[dict])
 async def get_consent_type(consent_id: str):
     """
     Returns consent type with given id (lowercase name with dashes instead of spaces).

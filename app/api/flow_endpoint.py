@@ -46,11 +46,11 @@ async def _load_record(id: str) -> Optional[FlowRecord]:
     return FlowRecord.create(await flow_db.load_by_id(id))
 
 
-async def _store_record(data: NamedEntity):
+async def _store_record(data: NamedEntity) -> BulkInsertResult:
     return await flow_db.save(data)
 
 
-async def _deploy_production_flow(flow: Flow, flow_record: Optional[FlowRecord] = None):
+async def _deploy_production_flow(flow: Flow, flow_record: Optional[FlowRecord] = None) -> BulkInsertResult:
 
     if flow_record is None:
         old_flow_record = await flow_db.load_record(flow.id)
@@ -59,11 +59,11 @@ async def _deploy_production_flow(flow: Flow, flow_record: Optional[FlowRecord] 
 
     flow_record = flow.get_production_workflow_record()
 
-    if old_flow_record.deploy_timestamp and flow_record.deploy_timestamp is None:
-        flow_record.deploy_timestamp = old_flow_record.deploy_timestamp
-
     if flow_record is None or old_flow_record is None:
         raise HTTPException(status_code=406, detail="Can not deploy missing draft workflow")
+
+    if old_flow_record.deploy_timestamp and flow_record.deploy_timestamp is None:
+        flow_record.deploy_timestamp = old_flow_record.deploy_timestamp
 
     flow_record.backup = old_flow_record.production
     flow_record.deployed = True
@@ -104,7 +104,10 @@ async def flow_refresh():
     return await flow_db.refresh()
 
 
-@router.post("/flow/draft/nodes/rearrange", tags=["flow"], response_model=dict, include_in_schema=server.expose_gui_api)
+@router.post("/flow/draft/nodes/rearrange", 
+             tags=["flow"], 
+             response_model=Flow, 
+             include_in_schema=server.expose_gui_api)
 async def rearrange_flow(flow: Flow):
     """
     Rearranges the send workflow nodes.
@@ -120,7 +123,10 @@ async def rearrange_flow(flow: Flow):
     return flow
 
 
-@router.post("/flow/draft", tags=["flow"], response_model=BulkInsertResult, include_in_schema=server.expose_gui_api)
+@router.post("/flow/draft", 
+             tags=["flow"], 
+             response_model=BulkInsertResult, 
+             include_in_schema=server.expose_gui_api)
 async def upsert_flow_draft(draft: Flow, rearrange_nodes: Optional[bool] = False):
     result, flow_record = await _upsert_flow_draft(draft, rearrange_nodes)
 
@@ -153,7 +159,9 @@ async def load_flow_draft(id: str, response: Response):
     return flow_record.get_empty_workflow(id)
 
 
-@router.get("/flow/production/{id}", tags=["flow"], response_model=Optional[Flow],
+@router.get("/flow/production/{id}",
+            tags=["flow"], 
+            response_model=Optional[Flow],
             include_in_schema=server.expose_gui_api)
 async def get_flow(id: str, response: Response):
     """
@@ -197,7 +205,9 @@ async def restore_production_flow_backup(id: str, production_draft: ProductionDr
         return flow_record.get_draft_workflow()
 
 
-@router.post("/flow/production", tags=["flow"], response_model=BulkInsertResult,
+@router.post("/flow/production", 
+             tags=["flow"], 
+             response_model=BulkInsertResult,
              include_in_schema=server.expose_gui_api)
 async def deploy_production_flow(flow: Flow):
     """
@@ -207,7 +217,10 @@ async def deploy_production_flow(flow: Flow):
     return await _deploy_production_flow(flow)
 
 
-@router.get("/flow/metadata/{id}", tags=["flow"], response_model=FlowRecord, include_in_schema=server.expose_gui_api)
+@router.get("/flow/metadata/{id}", 
+            tags=["flow"], 
+            response_model=FlowRecord, 
+            include_in_schema=server.expose_gui_api)
 async def get_flow_details(id: str):
     """
     Returns flow metadata of flow with given ID (str)
@@ -220,7 +233,10 @@ async def get_flow_details(id: str):
     return flow_record
 
 
-@router.post("/flow/metadata", tags=["flow"], response_model=BulkInsertResult, include_in_schema=server.expose_gui_api)
+@router.post("/flow/metadata", 
+             tags=["flow"], 
+             response_model=BulkInsertResult, 
+             include_in_schema=server.expose_gui_api)
 async def upsert_flow_details(flow_metadata: FlowMetaData):
     """
     Adds new flow metadata for flow with given id (str)
@@ -439,7 +455,9 @@ async def debug_flow(flow: FlowGraph, event_id: Optional[str] = None):
     }
 
 
-@router.delete("/flow/{id}", tags=["flow"], response_model=Optional[dict], include_in_schema=server.expose_gui_api)
+@router.delete("/flow/{id}", tags=["flow"], 
+               response_model=Optional[dict], 
+               include_in_schema=server.expose_gui_api)
 async def delete_flow(id: str, response: Response):
     """
     Deletes flow with given id (str)

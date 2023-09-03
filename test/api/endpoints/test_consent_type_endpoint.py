@@ -16,6 +16,7 @@ def _add_consent_type(name='test-name', data=None):
             "auto_revoke": "15m"
         }
     response = endpoint.post("/consent/type", data)
+    print(response.json())
     assert response.status_code == 200
 
     return response
