@@ -78,9 +78,11 @@ else:
 if License.has_service(LICENSE):
     from com_tracardi.endpoint import event_to_profile_copy
     from com_tracardi.endpoint import event_props_to_event_traits_copy
+    from com_tracardi.endpoint import metric_endpoint
 else:
     event_to_profile_copy = get_router(prefix="/events/copy")
     event_props_to_event_traits_copy = get_router(prefix="/events/index")
+    metric_endpoint = get_router(prefix="/metric")
 
 
 if License.has_service(MULTI_TENANT):
@@ -277,6 +279,7 @@ application.include_router(entity_endpoint.router)
 application.include_router(consent_data_compliance_endpoint.router)
 application.include_router(identification_point_endpoint.router)
 application.include_router(scheduler_endpoint.router)
+application.include_router(metric_endpoint.router)
 application.include_router(staging_endpoint.router)
 application.include_router(customer_endpoint.router)
 application.include_router(event_to_profile.router)
