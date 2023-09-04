@@ -1,6 +1,7 @@
 from uuid import uuid4
 from test.utils import Endpoint, get_test_tenant
 from tracardi.context import Context, ServerContext
+from tracardi.process_engine.action.v1.connectors.api_call.model.configuration import RemoteCallConfiguration
 
 with ServerContext(Context(production=False, tenant=get_test_tenant())):
     from tracardi.domain.resource import ResourceCredentials
@@ -39,18 +40,19 @@ with ServerContext(Context(production=False, tenant=get_test_tenant())):
                     "endpoint": "/healthcheck",
                     "method": "post",
                     "timeout": 1,
-                    "headers": [
-                        ("Authorization", endpoint.token),
-                    ],
+                    "headers": {"Authorization": endpoint.token},
                     "body": {"type": "plain/text", "content": "test body"}
                 }
+                
+                init = RemoteCallConfiguration(**init)
+                
                 payload = {}
-                response = run_plugin(RemoteCallAction, init, payload, node=Node(id="1", className="classname", module="module"))
+                response = run_plugin(RemoteCallAction, init.model_dump(), payload, node=Node(id="1", className="classname", module="module"))
                 result = response.output
 
                 assert result.port == 'response'
                 assert result.value['status'] == 200
-                assert result.value['content'] == init['body']['content']
+                assert result.value['content'] == init.body.content
             finally:
                 assert endpoint.delete(f'/resource/{resource_id}').status_code in [200, 404]
 
