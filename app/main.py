@@ -1,6 +1,7 @@
 import os, sys
 import traceback
 from datetime import datetime
+import sentry_sdk
 
 from app.middleware.context import ContextRequestMiddleware
 from tracardi.service.license import License, SCHEDULER, IDENTIFICATION, COMPLIANCE, RESHAPING, REDIRECTS, VALIDATOR, \
@@ -286,6 +287,18 @@ application.include_router(setting_endpoint.router)
 if License.has_service(MULTI_TENANT):
     application.include_router(tenant_install_endpoint.router)
 
+if server.performance_tracking:
+    sentry_sdk.init(
+        dsn="https://9c7c026fcfb5f9bd0ee63eec492316ab@o1093519.ingest.sentry.io/4505827219734528",
+        # Set traces_sample_rate to 1.0 to capture 100%
+        # of transactions for performance monitoring.
+        # We recommend adjusting this value in production.
+        traces_sample_rate=1.0,
+        # Set profiles_sample_rate to 1.0 to profile 100%
+        # of sampled transactions.
+        # We recommend adjusting this value in production.
+        profiles_sample_rate=1.0,
+    )
 
 @application.on_event("startup")
 async def app_starts():
