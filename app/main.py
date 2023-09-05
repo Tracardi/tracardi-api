@@ -300,6 +300,7 @@ if server.performance_tracking:
         profiles_sample_rate=1.0,
     )
 
+
 @application.on_event("startup")
 async def app_starts():
     logger.info(f"TRACARDI version {str(tracardi.version)} set-up starts.")
