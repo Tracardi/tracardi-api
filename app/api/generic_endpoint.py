@@ -4,7 +4,7 @@ from fastapi import APIRouter
 from fastapi import Depends
 
 from tracardi.config import tracardi
-from tracardi.service.kql.autocomplete import KQLAutocomplete
+from tracardi.service.query.autocomplete import KQLAutocomplete
 from tracardi.service.storage.driver.elastic import raw as raw_db
 from tracardi.domain.enum.indexes_histogram import IndexesHistogram
 from tracardi.domain.enum.indexes_search import IndexesSearch
