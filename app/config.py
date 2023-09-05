@@ -13,6 +13,7 @@ class ServerConfig:
         self.expose_gui_api = (env['EXPOSE_GUI_API'].lower() == "yes") if 'EXPOSE_GUI_API' in env else True
         self.x_forwarded_ip_header = env['USE_X_FORWARDED_IP'] if 'USE_X_FORWARDED_IP' in env else None
         self.api_docs = (env['API_DOCS'].lower() == "yes") if 'API_DOCS' in env else True
+        self.performance_tracking = env.get('PERFORMANCE_TRACKING', 'yes').lower() == "yes"
 
 
 server = ServerConfig(os.environ)
