@@ -4,24 +4,24 @@
     <option name="INTERPRETER_OPTIONS" value="" />
     <option name="PARENT_ENVS" value="true" />
     <envs>
-      <env name="PYTHONUNBUFFERED" value="1" />
-      <env name="LICENSE" value="MBgbeu5hpd72DQwYZZS0qTLZdrVV3n3J7EqTI8bfL2y+51/z8zT/XNbreXo9f2n9Y1/rcZlgerG38/w0zTYakLMjl7MLo7COwve8NHu/Yv6h/073lD66YmcH1RIDlRwhp0pgmBz1jLUrzrd7Qj1YU4k7RS7sOXioIn5QJFBWBAlZOvYgVutGP/W0BDq6nUp3rSWJ4FINQOwQcosFAlUXcjKJQhut57ePE8bgd5sb+di1QY7FhhUHqkyAxugTS4g9bfZi60FH7vowLXKS5AwQAwKNd95TEDy1VrEKOVf+27ZcQK+X3fqYUo0xg8d8H9cjKFqE8QrfeyvEkTe7vLffKx1xp6OhpLEOEOUxrqiDFEIHzuZl3PDY5EZPSzX0jR6WbCot9w4qJcL4kQxFCkNzmooKWgptvt1ufwFHCSH9FQIAAA==5H040s6IdA8C8+593m0G8Q9Cd/3033aR4wcW145jaIdQ9w6G041F4c6Z7z4bdmdW4219328" />
-      <env name="DEMO" value="yes" />
-      <env name="PRODUCTION" value="yes" />
-      <env name="MULTI_TENANT" value="yes" />
-      <env name="MULTI_TENANT_MANAGER_URL" value="http://localhost:8080" />
-      <env name="MULTI_TENANT_MANAGER_API_KEY" value="1" />
-      <env name="LOGGING_LEVEL" value="info" />
       <env name="_ELASTIC_HOST" value="https://elastic:NX499fCnF3431F9a6xoC0mQU@192.168.1.190:9200" />
       <env name="_ELASTIC_VERIFY_CERTS" value="no" />
-      <env name="_REDIS_HOST" value="redis://192.168.1.190:11111" />
-      <env name="_REDIS_PORT" value="11111" />
-      <env name="_REDIS_PASSWORD" value="5BlpzS6rRC" />
-      <env name="MAXMIND_LICENSE_KEY" value="ehiKRvACRzeXnjwZ" />
-      <env name="MAXMIND_ACCOUNT_ID" value="596687" />
-      <env name="SKIP_SECONDS" value="1" />
       <env name="_QUALIFY_BY" value="profile-segmentation" />
+      <env name="_REDIS_HOST" value="redis://192.168.1.190:11111" />
+      <env name="_REDIS_PASSWORD" value="5BlpzS6rRC" />
+      <env name="_REDIS_PORT" value="11111" />
+      <env name="DEMO" value="yes" />
+      <env name="LICENSE" value="MBgbeu5hpd72DQwYZZS0qTLZdrVV3n3J7EqTI8bfL2y+51/z8zT/XNbreXo9f2n9Y1/rcZlgerG38/w0zTYakLMjl7MLo7COwve8NHu/Yv6h/073lD66YmcH1RIDlRwhp0pgmBz1jLUrzrd7Qj1YU4k7RS7sOXioIn5QJFBWBAlZOvYgVutGP/W0BDq6nUp3rSWJ4FINQOwQcosFAlUXcjKJQhut57ePE8bgd5sb+di1QY7FhhUHqkyAxugTS4g9bfZi60FH7vowLXKS5AwQAwKNd95TEDy1VrEKOVf+27ZcQK+X3fqYUo0xg8d8H9cjKFqE8QrfeyvEkTe7vLffKx1xp6OhpLEOEOUxrqiDFEIHzuZl3PDY5EZPSzX0jR6WbCot9w4qJcL4kQxFCkNzmooKWgptvt1ufwFHCSH9FQIAAA==5H040s6IdA8C8+593m0G8Q9Cd/3033aR4wcW145jaIdQ9w6G041F4c6Z7z4bdmdW4219328" />
+      <env name="LOGGING_LEVEL" value="info" />
+      <env name="MAXMIND_ACCOUNT_ID" value="596687" />
+      <env name="MAXMIND_LICENSE_KEY" value="ehiKRvACRzeXnjwZ" />
+      <env name="MULTI_TENANT" value="no" />
+      <env name="MULTI_TENANT_MANAGER_API_KEY" value="1" />
+      <env name="MULTI_TENANT_MANAGER_URL" value="http://localhost:8080" />
       <env name="NO_EVENTS_WITHIN_LAST" value="1s" />
+      <env name="PRODUCTION" value="yes" />
+      <env name="PYTHONUNBUFFERED" value="1" />
+      <env name="SKIP_SECONDS" value="1" />
     </envs>
     <option name="SDK_HOME" value="" />
     <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/../com-tracardi/com_job/heartbeat" />
@@ -35,7 +35,7 @@
       <option name="IS_IGNORE_MISSING_FILES" value="false" />
       <option name="IS_ENABLE_EXPERIMENTAL_INTEGRATIONS" value="false" />
       <ENTRIES>
-        <ENTRY IS_ENABLED="true" PARSER="runconfig" />
+        <ENTRY IS_ENABLED="true" PARSER="runconfig" IS_EXECUTABLE="false" />
       </ENTRIES>
     </EXTENSION>
     <option name="SCRIPT_NAME" value="$PROJECT_DIR$/../com-tracardi/com_job/heartbeat/start.py" />
