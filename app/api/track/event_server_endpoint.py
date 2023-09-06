@@ -85,6 +85,19 @@ async def track(tracker_payload: TrackerPayload, request: Request, profile_less:
                         allowed_bridges=['rest'])
 
 
+@router.put("/track", tags=['collector'])
+async def track_async(tracker_payload: TrackerPayload, request: Request, profile_less: bool = False):
+
+    tracker_payload.set_headers(dict(request.headers))
+    tracker_payload.profile_less = profile_less
+
+    # validate source
+
+    # validate event and reshape event
+
+    # queue for saving and processing
+
+
 @router.post("/collect/{event_type}/{source_id}/{session_id}", tags=['collector'])
 async def track_post_webhook_with_session(event_type: str, source_id: str, request: Request, session_id: Optional[str] = None):
     """
