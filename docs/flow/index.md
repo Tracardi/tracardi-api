@@ -41,7 +41,29 @@ to production. The old production workflow is saved in case we need to revoke th
 
 ## Workflow internal state
 
-Workflow has an internal state that is referenced in each action node. Please read about actions and the state they 
-hold in [Action's Core Definitions](actions/index.md)
+The concept of the "Workflow Internal State" is central to understanding how each workflow operates within a given
+context. Workflow runs in a context of curren event, profile, and session.
+
+1. **Event**: Events are the triggers for workflow actions. When an event is sent, it carries essential information,
+   including either a "profile_id" or a "session_id," along with the event type and its associated properties.
+
+2. **Event Loading**: When an event is received, the system retrieves the current profile using the provided
+   identifier (profile_id or session_id). This step ensures that the system knows which profile is associated with the
+   event.
+
+3. **Assignment to Nodes**: The retrieved profile, along with the session and event data, is then assigned to each
+   relevant node within the workflow. This means that the workflow maintains an internal state, and this state is
+   referenced in each action node. As the workflow progresses, this internal state can change.
+
+4. **Dynamic State**: Throughout the execution of the workflow, the state of the event, profile, and session may undergo
+   alterations as various actions are performed. These changes reflect the dynamic nature of workflows, where the
+   information associated with the profile, session, and event can be modified based on the sequence of actions.
+
+5. **Persistent Storage**: It's important to note that when the workflow ends, any changes made to the
+   profile, session, and event are saved back to the system. This ensures that the updated information is preserved for
+   future reference or processing.
+
+In summary, the "Workflow Internal State" refers to the dynamic and evolving set of data that includes events,
+profiles, and sessions within a workflow.  Please read about actions and the state they hold in [Action's Core Definitions](actions/index.md)
 
 
