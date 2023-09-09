@@ -8,7 +8,7 @@ and pass it to destination domain. However, the profile must first exist in the 
 System then will recognize that the profile already exists and is redirected from other domain and will 
 connect the same profile to the customer even if customer never visited this page before.
 
-Please note that default behaviour without `passing of profile ID` enabled would be to create a random profile ID
+Please note that default behaviour (without `passing of profile ID` enabled) would be to create a random profile ID
 if customer never visited the page before. And later merge the profile if customer provides data that can be used 
 for this. 
 
@@ -36,7 +36,7 @@ contain the current profile ID, source ID respectively, if the A.href URL end wi
 in `trackExternalLinks`. In our example it is 'example.com' and ,
 'tracardi.com'.
 
-Here is the explanation how Tracardi treats referenced profiles and session IDs.
+Here is the explanation how Tracardi treats referenced profiles IDs.
 
 Tracardi checks if there is referer data containing a profile ID and source ID. If it exists and is valid, it merges the
 referred profile with the existing profile in the local storage on the visited page (domain). If there is no existing
