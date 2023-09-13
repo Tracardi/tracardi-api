@@ -85,7 +85,7 @@ part.
 
 19. If the profile's last device geo information is empty, indicating that no geo location has been assigned yet, the
     code fetches the geo location using the MaxMind API. It creates a `GeoLiteCredentials` object with the MaxMind
-    license key and account ID and calls the `get_geo_location` function with the session's device IP address.
+    license key and account ID and calls the `get_geo_maxmind_location` function with the session's device IP address.
 
 20. The fetched geo location is assigned to the profile's last device geo information, ensuring that it reflects the
     newly obtained geo location.
