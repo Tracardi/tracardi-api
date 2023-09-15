@@ -80,12 +80,12 @@
       <env name="_REDIS_PORT" value="11111" />
       <env name="DEMO" value="yes" />
       <env name="ELASTIC_SAVE_POOL" value="0" />
-      <env name="ENABLE_EVENT_DESTINATIONS" value="no" />
-      <env name="ENABLE_EVENT_SOURCE_CHECK" value="no" />
+      <env name="ENABLE_EVENT_DESTINATIONS" value="yes" />
+      <env name="ENABLE_EVENT_SOURCE_CHECK" value="yes" />
       <env name="ENABLE_EVENT_VALIDATION" value="yes" />
-      <env name="ENABLE_IDENTIFICATION_POINT" value="no" />
-      <env name="ENABLE_POST_EVENT_SEGMENTATION" value="no" />
-      <env name="ENABLE_PROFILE_DESTINATIONS" value="no" />
+      <env name="ENABLE_IDENTIFICATION_POINT" value="yes" />
+      <env name="ENABLE_POST_EVENT_SEGMENTATION" value="yes" />
+      <env name="ENABLE_PROFILE_DESTINATIONS" value="yes" />
       <env name="ENABLE_PROFILE_IMMEDIATE_FLUSH" value="yes" />
       <env name="ENABLE_SEGMENTATION_WF_TRIGGERS" value="yes" />
       <env name="ENABLE_WORKFLOW" value="yes" />
