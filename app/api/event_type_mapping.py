@@ -8,7 +8,7 @@ from app.config import server
 from app.service.grouping import group_records
 from tracardi.domain.event_type_metadata import EventTypeMetadata
 from tracardi.domain.value_object.bulk_insert_result import BulkInsertResult
-from tracardi.service.events import get_default_event_type_mapping
+from tracardi.service.events import get_default_mappings_for
 from tracardi.service.storage.driver.elastic import event_management as event_management_db
 from tracardi.service.storage.driver.elastic import event as event_db
 from typing import Optional
@@ -64,7 +64,7 @@ async def list_event_type_metadata(event_type: str):
 
     records = []
 
-    build_in = get_default_event_type_mapping(event_type, "copy")
+    build_in = get_default_mappings_for(event_type, "copy")
     if build_in is not None:
         build_in = {
             'id': str(uuid4()),

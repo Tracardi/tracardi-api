@@ -6,7 +6,7 @@ from app.api.auth.permissions import Permissions
 from app.config import server
 from app.service.grouping import group_records
 from tracardi.domain.event_to_profile import EventToProfile
-from tracardi.service.events import get_default_event_type_mapping
+from tracardi.service.events import get_default_mappings_for
 from tracardi.service.storage.driver.elastic import event_to_profile as event_to_profile_db
 from typing import Optional
 
@@ -52,7 +52,7 @@ async def get_event_to_profile_by_event_type(event_type: str):
     """
 
     records = []
-    build_in = get_default_event_type_mapping(event_type, "profile")
+    build_in = get_default_mappings_for(event_type, "profile")
     if build_in is not None:
         build_in = {
             'id': str(uuid4()),
