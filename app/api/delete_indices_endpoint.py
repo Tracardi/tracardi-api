@@ -1,5 +1,4 @@
 from fastapi import APIRouter, Depends, HTTPException
-from app.config import server
 from tracardi.config import tracardi
 from tracardi.service.storage.driver.elastic import raw as raw_db
 from .auth.permissions import Permissions
@@ -11,7 +10,7 @@ router = APIRouter(
 )
 
 
-@router.delete("/indices/version/{version}", tags=["index"], include_in_schema=server.expose_gui_api)
+@router.delete("/indices/version/{version}", tags=["index"], include_in_schema=tracardi.expose_gui_api)
 async def delete_old_indices(version: str, codename: Optional[str] = None):
 
     version = Version(version=version, name=codename)

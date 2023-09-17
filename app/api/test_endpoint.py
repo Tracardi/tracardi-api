@@ -1,12 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException
 
-from tracardi.config import tracardi
 from tracardi.service.storage.index import Resource
 from tracardi.service.storage.redis_client import RedisClient
 from tracardi.service.storage.elastic_client import ElasticClient
 
 from app.api.auth.permissions import Permissions
-from app.config import server
+from tracardi.config import tracardi
 # from app.service.data_generator import generate_fake_data, generate_random_date
 # from tracardi.domain.event_source import EventSource
 # from tracardi.service.storage.driver.elastic import event_source as event_source_db
@@ -19,7 +18,7 @@ router = APIRouter(
 
 
 # # Not in tests
-# @router.get("/test/resource", tags=["test"], include_in_schema=server.expose_gui_api)
+# @router.get("/test/resource", tags=["test"], include_in_schema=tracardi.expose_gui_api)
 # async def create_test_data():
 #     """
 #     Creates test resource data and saves it to database. Accessible for roles: "admin"
@@ -35,7 +34,7 @@ router = APIRouter(
 
 
 # # not in test
-# @router.get("/test/data", tags=["test"], include_in_schema=server.expose_gui_api)
+# @router.get("/test/data", tags=["test"], include_in_schema=tracardi.expose_gui_api)
 # async def make_fake_data():
 #     """
 #     Creates fake data and saves it to database. Accessible for roles: "admin"
@@ -48,7 +47,7 @@ router = APIRouter(
 #             await raw_db.index(index).upsert(record)
 
 
-@router.get("/test/redis", tags=["test"], include_in_schema=server.expose_gui_api)
+@router.get("/test/redis", tags=["test"], include_in_schema=tracardi.expose_gui_api)
 async def ping_redis():
     """
     Tests connection between Redis instance and Tracardi instance. Accessible for roles: "admin"
@@ -59,7 +58,7 @@ async def ping_redis():
         raise ConnectionError("Redis did not respond.")
 
 
-@router.get("/test/elasticsearch", tags=["test"], include_in_schema=server.expose_gui_api)
+@router.get("/test/elasticsearch", tags=["test"], include_in_schema=tracardi.expose_gui_api)
 async def get_es_cluster_health():
     """
     Tests connection between Elasticsearch and Tracardi by returning cluster info. Accessible for roles: "admin"
@@ -70,7 +69,7 @@ async def get_es_cluster_health():
     return health
 
 
-@router.get("/test/elasticsearch/indices", tags=["test"], include_in_schema=server.expose_gui_api)
+@router.get("/test/elasticsearch/indices", tags=["test"], include_in_schema=tracardi.expose_gui_api)
 async def get_es_indices():
     """
     Returns list of indices in elasticsearch cluster. Accessible for roles: "admin"

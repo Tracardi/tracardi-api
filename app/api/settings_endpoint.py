@@ -69,7 +69,7 @@ system_settings = [
     SystemSettings(
         **{
             "label": "EXPOSE_GUI_API",
-            "value": server.expose_gui_api,
+            "value": tracardi.expose_gui_api,
             "desc": "Expose GUI API or not, defaults to True, "
                     "can be changed by setting to 'yes' (then it's True) or 'no', "
                     "which makes it False."
@@ -425,7 +425,7 @@ router = APIRouter(
 
 # todo remove after 2023-10-01
 # @router.get("/system/setting/{name}", tags=["system"],
-#             include_in_schema=server.expose_gui_api,
+#             include_in_schema=tracardi.expose_gui_api,
 #             response_model=Optional[SystemSettings])
 # async def get_system_settings(name: str) -> Optional[SystemSettings]:
 #     """
@@ -438,7 +438,7 @@ router = APIRouter(
 
 
 @router.get("/system/settings", tags=["system"],
-            include_in_schema=server.expose_gui_api,
+            include_in_schema=tracardi.expose_gui_api,
             response_model=List[SystemSettings])
 async def get_system_settings() -> List[SystemSettings]:
     """

@@ -33,7 +33,7 @@ from tracardi.domain.profile import Profile
 from tracardi.domain.session import Session, SessionMetadata, SessionTime
 from tracardi.domain.value_object.bulk_insert_result import BulkInsertResult
 from .auth.permissions import Permissions
-from ..config import server
+from tracardi.config import tracardi
 from tracardi.service.storage.cache.model import load as cache_load
 
 
@@ -99,7 +99,7 @@ async def _upsert_flow_draft(draft: Flow, rearrange_nodes: Optional[bool] = Fals
     return result, flow_record
 
 
-@router.get("/flows/refresh", tags=["flow"], include_in_schema=server.expose_gui_api)
+@router.get("/flows/refresh", tags=["flow"], include_in_schema=tracardi.expose_gui_api)
 async def flow_refresh():
     return await flow_db.refresh()
 
@@ -107,7 +107,7 @@ async def flow_refresh():
 @router.post("/flow/draft/nodes/rearrange", 
              tags=["flow"], 
              response_model=Flow, 
-             include_in_schema=server.expose_gui_api)
+             include_in_schema=tracardi.expose_gui_api)
 async def rearrange_flow(flow: Flow):
     """
     Rearranges the send workflow nodes.
@@ -126,7 +126,7 @@ async def rearrange_flow(flow: Flow):
 @router.post("/flow/draft", 
              tags=["flow"], 
              response_model=BulkInsertResult, 
-             include_in_schema=server.expose_gui_api)
+             include_in_schema=tracardi.expose_gui_api)
 async def upsert_flow_draft(draft: Flow, rearrange_nodes: Optional[bool] = False):
     result, flow_record = await _upsert_flow_draft(draft, rearrange_nodes)
 
@@ -136,7 +136,7 @@ async def upsert_flow_draft(draft: Flow, rearrange_nodes: Optional[bool] = False
     return result
 
 
-@router.get("/flow/draft/{id}", tags=["flow"], response_model=Optional[Flow], include_in_schema=server.expose_gui_api)
+@router.get("/flow/draft/{id}", tags=["flow"], response_model=Optional[Flow], include_in_schema=tracardi.expose_gui_api)
 async def load_flow_draft(id: str, response: Response):
     """
     Loads draft version of flow with given ID (str)
@@ -162,7 +162,7 @@ async def load_flow_draft(id: str, response: Response):
 @router.get("/flow/production/{id}",
             tags=["flow"], 
             response_model=Optional[Flow],
-            include_in_schema=server.expose_gui_api)
+            include_in_schema=tracardi.expose_gui_api)
 async def get_flow(id: str, response: Response):
     """
     Returns production version of flow with given ID (str)
@@ -180,7 +180,7 @@ async def get_flow(id: str, response: Response):
 
 
 @router.get("/flow/{production_draft}/{id}/restore", tags=["flow"], response_model=Flow,
-            include_in_schema=server.expose_gui_api)
+            include_in_schema=tracardi.expose_gui_api)
 async def restore_production_flow_backup(id: str, production_draft: ProductionDraft):
     """
     Returns previous version of production flow with given ID (str)
@@ -208,7 +208,7 @@ async def restore_production_flow_backup(id: str, production_draft: ProductionDr
 @router.post("/flow/production", 
              tags=["flow"], 
              response_model=BulkInsertResult,
-             include_in_schema=server.expose_gui_api)
+             include_in_schema=tracardi.expose_gui_api)
 async def deploy_production_flow(flow: Flow):
     """
         Creates production version of workflow. If there is a draft version of the workflow it is overwritten
@@ -220,7 +220,7 @@ async def deploy_production_flow(flow: Flow):
 @router.get("/flow/metadata/{id}", 
             tags=["flow"], 
             response_model=FlowRecord, 
-            include_in_schema=server.expose_gui_api)
+            include_in_schema=tracardi.expose_gui_api)
 async def get_flow_details(id: str):
     """
     Returns flow metadata of flow with given ID (str)
@@ -236,7 +236,7 @@ async def get_flow_details(id: str):
 @router.post("/flow/metadata", 
              tags=["flow"], 
              response_model=BulkInsertResult, 
-             include_in_schema=server.expose_gui_api)
+             include_in_schema=tracardi.expose_gui_api)
 async def upsert_flow_details(flow_metadata: FlowMetaData):
     """
     Adds new flow metadata for flow with given id (str)
@@ -280,7 +280,7 @@ async def upsert_flow_details(flow_metadata: FlowMetaData):
 
 
 @router.post("/flow/draft/metadata", tags=["flow"], response_model=BulkInsertResult,
-             include_in_schema=server.expose_gui_api)
+             include_in_schema=tracardi.expose_gui_api)
 async def upsert_flow_draft_details(flow_metadata: FlowMetaData):
     """
     Adds new draft metadata to flow with defined ID (str)
@@ -313,7 +313,7 @@ async def upsert_flow_draft_details(flow_metadata: FlowMetaData):
 
 @router.get("/flow/{id}/lock/{lock}", tags=["flow"],
             response_model=BulkInsertResult,
-            include_in_schema=server.expose_gui_api)
+            include_in_schema=tracardi.expose_gui_api)
 async def update_flow_lock(id: str, lock: str):
     flow_record = await _load_record(id)
 
@@ -325,7 +325,7 @@ async def update_flow_lock(id: str, lock: str):
 
 
 @router.post("/flow/debug", tags=["flow"],
-             include_in_schema=server.expose_gui_api)
+             include_in_schema=tracardi.expose_gui_api)
 async def debug_flow(flow: FlowGraph, event_id: Optional[str] = None):
     """
         Debugs flow sent in request body
@@ -457,7 +457,7 @@ async def debug_flow(flow: FlowGraph, event_id: Optional[str] = None):
 
 @router.delete("/flow/{id}", tags=["flow"], 
                response_model=Optional[dict], 
-               include_in_schema=server.expose_gui_api)
+               include_in_schema=tracardi.expose_gui_api)
 async def delete_flow(id: str, response: Response):
     """
     Deletes flow with given id (str)

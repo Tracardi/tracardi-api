@@ -10,7 +10,7 @@ from tracardi.service.storage.driver.elastic import profile as profile_db
 from tracardi.service.storage.driver.elastic import event as event_db
 from tracardi.service.storage.index import Resource
 from .auth.permissions import Permissions
-from ..config import server
+from tracardi.config import tracardi
 from tracardi.service.storage.cache.model import load as cache_load
 
 
@@ -21,13 +21,13 @@ router = APIRouter(
 
 @router.get("/profile/count", tags=["profile"],
             dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer", "maintainer"]))],
-            include_in_schema=server.expose_gui_api)
+            include_in_schema=tracardi.expose_gui_api)
 async def count_profiles():
     return await profile_db.count()
 
 
 @router.post("/profiles/import", dependencies=[Depends(Permissions(roles=["admin"]))], tags=["profile"],
-             include_in_schema=server.expose_gui_api)
+             include_in_schema=tracardi.expose_gui_api)
 async def import_profiles(profiles: List[Profile]):
     """
     Saves given profiles (list of profiles) to database. Accessible by roles: "admin"
@@ -35,7 +35,7 @@ async def import_profiles(profiles: List[Profile]):
     return await profile_db.save_all(profiles)
 
 
-@router.get("/profiles/refresh", tags=["profile"], include_in_schema=server.expose_gui_api)
+@router.get("/profiles/refresh", tags=["profile"], include_in_schema=tracardi.expose_gui_api)
 async def refresh_profile():
     """
     Refreshes profile index
@@ -43,7 +43,7 @@ async def refresh_profile():
     return await profile_db.refresh()
 
 
-@router.get("/profiles/flash", tags=["profile"], include_in_schema=server.expose_gui_api)
+@router.get("/profiles/flash", tags=["profile"], include_in_schema=tracardi.expose_gui_api)
 async def flash_profile():
     """
     Flashes profile index
@@ -53,7 +53,7 @@ async def flash_profile():
 
 @router.get("/profile/{id}", tags=["profile"],
             dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer"]))],
-            include_in_schema=server.expose_gui_api)
+            include_in_schema=tracardi.expose_gui_api)
 async def get_profile_by_id(id: str, response: Response) -> Optional[dict]:
     """
     Returns profile with given ID (str)
@@ -76,7 +76,7 @@ async def get_profile_by_id(id: str, response: Response) -> Optional[dict]:
 @router.delete("/profile/{id}", tags=["profile"],
                dependencies=[Depends(Permissions(roles=["admin", "developer"]))],
                response_model=Optional[dict],
-               include_in_schema=server.expose_gui_api)
+               include_in_schema=tracardi.expose_gui_api)
 async def delete_profile(id: str, response: Response):
     """
     Deletes profile with given ID (str)
@@ -92,7 +92,7 @@ async def delete_profile(id: str, response: Response):
     return result
 
 
-@router.get("/profile/{profile_id}/by/{field}", tags=["profile"], include_in_schema=server.expose_gui_api)
+@router.get("/profile/{profile_id}/by/{field}", tags=["profile"], include_in_schema=tracardi.expose_gui_api)
 async def profile_data_by(profile_id: str, field: str, table: bool = False):
     bucket_name = f"by_{field}"
     result = await event_db.aggregate_profile_events_by_field(profile_id,
@@ -104,7 +104,7 @@ async def profile_data_by(profile_id: str, field: str, table: bool = False):
     return [{"name": id, "value": count} for id, count in result.aggregations[bucket_name][0].items()]
 
 
-@router.get("/profiles/{qualify}/segment/{segment_names}", tags=["profile"], include_in_schema=server.expose_gui_api)
+@router.get("/profiles/{qualify}/segment/{segment_names}", tags=["profile"], include_in_schema=tracardi.expose_gui_api)
 async def find_profiles_by_segments(segment_names: str, qualify: str):
 
     """

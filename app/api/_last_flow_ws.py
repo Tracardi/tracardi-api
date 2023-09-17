@@ -1,7 +1,4 @@
 import asyncio
-import json
-
-import aioredis
 from fastapi import APIRouter, Depends
 from websockets.exceptions import ConnectionClosedOK
 
@@ -9,7 +6,6 @@ from app.api.auth.permissions import Permissions
 from typing import Optional
 from fastapi import WebSocket, WebSocketDisconnect
 
-from tracardi.config import redis_config
 from tracardi.service.storage.redis_client import RedisClient
 
 router = APIRouter(

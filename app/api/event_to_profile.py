@@ -3,7 +3,7 @@ from uuid import uuid4
 from fastapi import APIRouter, Depends, HTTPException
 
 from app.api.auth.permissions import Permissions
-from app.config import server
+from tracardi.config import tracardi
 from app.service.grouping import group_records
 from tracardi.domain.event_to_profile import EventToProfile
 from tracardi.service.events import get_default_mappings_for
@@ -17,7 +17,7 @@ router = APIRouter(
 )
 
 
-@router.put("/event-to-profile/refresh", tags=["event-to-profile"], include_in_schema=server.expose_gui_api,
+@router.put("/event-to-profile/refresh", tags=["event-to-profile"], include_in_schema=tracardi.expose_gui_api,
             response_model=dict)
 async def refresh_event_to_profile():
     """
@@ -26,7 +26,7 @@ async def refresh_event_to_profile():
     return await event_to_profile_db.refresh()
 
 
-@router.post("/event-to-profile", tags=["event-to-profile"], include_in_schema=server.expose_gui_api,
+@router.post("/event-to-profile", tags=["event-to-profile"], include_in_schema=tracardi.expose_gui_api,
              response_model=dict)
 async def add_event_to_profile(event_to_profile: EventToProfile):
     """
@@ -44,7 +44,7 @@ async def add_event_to_profile(event_to_profile: EventToProfile):
 
 @router.get("/event-to-profiles/type/{event_type}",
             tags=["event-type"],
-            include_in_schema=server.expose_gui_api,
+            include_in_schema=tracardi.expose_gui_api,
             response_model=dict)
 async def get_event_to_profile_by_event_type(event_type: str):
     """
@@ -92,7 +92,7 @@ async def get_event_to_profile_by_event_type(event_type: str):
 
 @router.get("/event-to-profile/{event_id}",
             tags=["event-type"],
-            include_in_schema=server.expose_gui_api,
+            include_in_schema=tracardi.expose_gui_api,
             response_model=dict)
 async def get_event_to_profile_by_event_id(event_id: str):
     """
@@ -106,7 +106,7 @@ async def get_event_to_profile_by_event_id(event_id: str):
     return record
 
 
-@router.delete("/event-to-profile/{event_type}", tags=["event-type"], include_in_schema=server.expose_gui_api,
+@router.delete("/event-to-profile/{event_type}", tags=["event-type"], include_in_schema=tracardi.expose_gui_api,
                response_model=dict)
 async def del_event_type_metadata(event_type: str):
     """
@@ -118,7 +118,7 @@ async def del_event_type_metadata(event_type: str):
     return {"deleted": 1 if result is not None and result["result"] == "deleted" else 0}
 
 
-@router.get("/events-to-profiles", tags=["event-type"], include_in_schema=server.expose_gui_api,
+@router.get("/events-to-profiles", tags=["event-type"], include_in_schema=tracardi.expose_gui_api,
             response_model=list)
 async def list_events_to_profiles(start: Optional[int] = 0, limit: Optional[int] = 10):
     """
@@ -129,7 +129,7 @@ async def list_events_to_profiles(start: Optional[int] = 0, limit: Optional[int]
     return list(result)
 
 
-@router.get("/events-to-profiles/by_tag", tags=["event-type"], include_in_schema=server.expose_gui_api,
+@router.get("/events-to-profiles/by_tag", tags=["event-type"], include_in_schema=tracardi.expose_gui_api,
             response_model=dict)
 async def list_events_to_profiles_by_tag(query: str = None, start: Optional[int] = 0, limit: Optional[int] = 10):
     """

@@ -4,7 +4,7 @@ from uuid import uuid4
 from fastapi import APIRouter, Depends, HTTPException
 
 from app.api.auth.permissions import Permissions
-from app.config import server
+from tracardi.config import tracardi
 from app.service.grouping import group_records
 from tracardi.domain.event_type_metadata import EventTypeMetadata
 from tracardi.domain.value_object.bulk_insert_result import BulkInsertResult
@@ -19,7 +19,7 @@ router = APIRouter(
 )
 
 
-@router.put("/mapping/refresh", tags=["event-type"], include_in_schema=server.expose_gui_api,
+@router.put("/mapping/refresh", tags=["event-type"], include_in_schema=tracardi.expose_gui_api,
             response_model=dict)
 async def refresh_event_type_mapping():
     """
@@ -28,7 +28,7 @@ async def refresh_event_type_mapping():
     return await event_management_db.refresh()
 
 
-@router.post("/mapping", tags=["event-type"], include_in_schema=server.expose_gui_api,
+@router.post("/mapping", tags=["event-type"], include_in_schema=tracardi.expose_gui_api,
              response_model=BulkInsertResult)
 async def add_event_type_mapping(event_mapping: EventTypeMetadata):
     """
@@ -55,7 +55,7 @@ async def add_event_type_mapping(event_mapping: EventTypeMetadata):
 
 @router.get("/mappings/{event_type}",
             tags=["event-type"],
-            include_in_schema=server.expose_gui_api,
+            include_in_schema=tracardi.expose_gui_api,
             response_model=dict)
 async def list_event_type_metadata(event_type: str):
     """
@@ -93,7 +93,7 @@ async def list_event_type_metadata(event_type: str):
 
 @router.get("/mapping/{event_type}",
             tags=["event-type"],
-            include_in_schema=server.expose_gui_api,
+            include_in_schema=tracardi.expose_gui_api,
             response_model=Optional[dict])
 async def get_event_type_mapping(event_type: str):
     """
@@ -108,7 +108,7 @@ async def get_event_type_mapping(event_type: str):
     return record
 
 
-@router.delete("/mapping/{event_type}", tags=["event-type"], include_in_schema=server.expose_gui_api,
+@router.delete("/mapping/{event_type}", tags=["event-type"], include_in_schema=tracardi.expose_gui_api,
                response_model=dict)
 async def del_event_type_metadata(event_type: str):
     """
@@ -120,7 +120,7 @@ async def del_event_type_metadata(event_type: str):
     return {"deleted": 1 if result is not None and result["result"] == "deleted" else 0}
 
 
-@router.get("/search/mappings", tags=["event-type"], include_in_schema=server.expose_gui_api,
+@router.get("/search/mappings", tags=["event-type"], include_in_schema=tracardi.expose_gui_api,
             response_model=dict)
 async def list_event_type_mappings_by_tag(query: str = None, start: Optional[int] = 0, limit: Optional[int] = 200):
     """

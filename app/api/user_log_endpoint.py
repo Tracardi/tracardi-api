@@ -1,9 +1,10 @@
 from fastapi import APIRouter, Depends
-from app.config import server
+from tracardi.config import tracardi
 from tracardi.service.storage.driver.elastic import user_log as user_log_db
 from pydantic import BaseModel
 from typing import Optional
 from .auth.permissions import Permissions
+from ..config import server
 
 
 class LogPayload(BaseModel):
@@ -16,7 +17,7 @@ router = APIRouter(
 )
 
 
-@router.get("/user-logs/page/{page}", tags=["user-logs"], include_in_schema=server.expose_gui_api, response_model=dict)
+@router.get("/user-logs/page/{page}", tags=["user-logs"], include_in_schema=tracardi.expose_gui_api, response_model=dict)
 async def get_user_logs(page: Optional[int] = None, query: Optional[str] = None):
     """
     Returns user logs according to given parameters

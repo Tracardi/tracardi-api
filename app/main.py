@@ -179,7 +179,7 @@ application = FastAPI(
     description="The TRACARDI open-source customer data platform provides exceptional control over customer "
                 "data through its comprehensive set of features.",
     version=str(tracardi.version),
-    openapi_tags=tags_metadata if server.expose_gui_api else None,
+    openapi_tags=tags_metadata if tracardi.expose_gui_api else None,
     docs_url='/docs' if server.api_docs else None,
     redoc_url='/redoc' if server.api_docs else None,
     contact={

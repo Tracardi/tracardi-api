@@ -13,7 +13,7 @@ from tracardi.domain.record.flow_action_plugin_record import FlowActionPluginRec
 from tracardi.domain.settings import Settings
 from tracardi.domain.value_object.bulk_insert_result import BulkInsertResult
 from .auth.permissions import Permissions
-from ..config import server
+from tracardi.config import tracardi
 
 router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin", "developer"]))]
@@ -31,7 +31,7 @@ async def _store_record(data: Entity):
 @router.get("/flow/action/plugin/{id}", 
             tags=["flow", "action"],
             response_model=FlowActionPlugin, 
-            include_in_schema=server.expose_gui_api)
+            include_in_schema=tracardi.expose_gui_api)
 async def get_plugin(id: str):
     """
     Returns FlowActionPlugin object.
@@ -44,7 +44,7 @@ async def get_plugin(id: str):
 
 
 @router.get("/flow/action/plugin/{id}/hide/{state}", tags=["flow", "action"],
-            response_model=BulkInsertResult, include_in_schema=server.expose_gui_api)
+            response_model=BulkInsertResult, include_in_schema=tracardi.expose_gui_api)
 async def get_plugin_state(id: str, state: YesNo):
     """
     Returns FlowActionPlugin object.
@@ -58,7 +58,7 @@ async def get_plugin_state(id: str, state: YesNo):
 
 
 @router.get("/flow/action/plugin/{id}/enable/{state}", tags=["flow", "action"],
-            response_model=BulkInsertResult, include_in_schema=server.expose_gui_api)
+            response_model=BulkInsertResult, include_in_schema=tracardi.expose_gui_api)
 async def set_plugin_enabled_disabled(id: str, state: YesNo):
     """
     Sets FlowActionPlugin enabled or disabled.
@@ -72,7 +72,7 @@ async def set_plugin_enabled_disabled(id: str, state: YesNo):
 
 
 @router.put("/flow/action/plugin/{id}/icon/{icon}", tags=["flow", "action"], response_model=BulkInsertResult,
-            include_in_schema=server.expose_gui_api)
+            include_in_schema=tracardi.expose_gui_api)
 async def edit_plugin_icon(id: str, icon: str):
     """
     Edits icon for action with given ID
@@ -86,7 +86,7 @@ async def edit_plugin_icon(id: str, icon: str):
 
 
 @router.put("/flow/action/plugin/{id}/name/{name}", tags=["flow", "action"], response_model=BulkInsertResult,
-            include_in_schema=server.expose_gui_api)
+            include_in_schema=tracardi.expose_gui_api)
 async def edit_plugin_name(id: str, name: str):
     """
     Edits name for action with given ID
@@ -100,7 +100,7 @@ async def edit_plugin_name(id: str, name: str):
 
 
 @router.delete("/flow/action/plugin/{id}", tags=["flow", "action"],
-               response_model=dict, include_in_schema=server.expose_gui_api)
+               response_model=dict, include_in_schema=tracardi.expose_gui_api)
 async def delete_plugin(id: str):
     """
     Deletes FlowActionPlugin object.
@@ -114,7 +114,7 @@ async def delete_plugin(id: str):
 
 
 @router.post("/flow/action/plugin", tags=["flow", "action"],
-             response_model=BulkInsertResult, include_in_schema=server.expose_gui_api)
+             response_model=BulkInsertResult, include_in_schema=tracardi.expose_gui_api)
 async def upsert_plugin(action: FlowActionPlugin):
     """
     Upserts workflow action plugin. Action plugin id is a hash of its module and className so
@@ -131,7 +131,7 @@ async def upsert_plugin(action: FlowActionPlugin):
 
 
 @router.get("/flow/action/plugins", tags=["flow", "action"],
-            include_in_schema=server.expose_gui_api)
+            include_in_schema=tracardi.expose_gui_api)
 async def get_plugins_list(flow_type: Optional[str] = None, query: Optional[str] = None):
     """
     Returns a list of available plugins.
