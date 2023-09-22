@@ -106,6 +106,18 @@ docker run --rm --net=host landoop/fast-data-dev
 
 helm upgrade matomo --set service.ports.http=9080,service.ports.https=9443,externalDatabase.host=192.168.1.190,externalDatabase.user=root,externalDatabase.password=root bitnami/matomo
 
+
+# Pulsar
+
+docker run -it \
+-p 6650:6650 \
+-p 8080:8080 \
+--mount source=pulsardata,target=/pulsar/data \
+--mount source=pulsarconf,target=/pulsar/conf \
+apachepulsar/pulsar:3.1.0 \
+bin/pulsar standalone
+
+
 # ISSUES:
  Can't logi in:
  
