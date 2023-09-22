@@ -73,7 +73,6 @@
     <envs>
       <env name="_ELASTIC_HOST" value="https://elastic:NX499fCnF3431F9a6xoC0mQU@192.168.1.190:9200" />
       <env name="_ELASTIC_VERIFY_CERTS" value="no" />
-      <env name="LICENSE" value="Rf2wW4EOBbp160iJFGLYjlNfpyka5N1L2wWuRxH6eMhz+L593X7ebH/slstp8/30JuOvvS373QY2X+142n7abM0/xBoC5oqIXli88L49S/8pmPX22F2blMLdMgvkyB1ohAgtd4MigVLIPLy0/fAGe5mT0vJlRSulLjMlcI0EVCyBkCIoNdRamafSDT3+ulzifrEV9caMASuU1jJQ7QVaRXbpVtqspNbnDd0d5aUuGle0tcalWAUZhkAzR+iRArTZRp0hBgx6R9WeL5G/ycpiTzOyVJgx6XXZAH3MDlitzkYTWfnGLuPJVGpeUWIKKr2DlchA/hFaSQwYqUWZEpnLDf0th12ifXhAZXS3MUMycotDVmCqDYb6BLlw1XxHx+n4cog54cqmjClyJd9RCYgKQu/ibjcLZhimhXRjz7Y8CbAuDybXOHPB7myvQBIHuNZVnFFUBneS/6zuziCX88qqNIpSMpSQBahHzzZ7QKrNeldsPMfd5Wf9s9D+IaDB2UqZfgc5u2xOE5iDy/YQBdUjyHZDD7thEf1GHtHgt1TBmO2qWn3baJ5PrypBEgreL+r1cLFnHvuywsaZlXxGatXDbVddcZv7cHXE0Wtzqz4+/gE4d+t7PgMAAA==6H047s9I7A4L0Z0X776mcQcC2/80e2aSdvdW85cb4M3Q9yfF3X585X0wbX8A2IdS4233354" />
       <env name="_MAXMIND_ACCOUNT_ID" value="596687" />
       <env name="_MAXMIND_LICENSE_KEY" value="ehiKRvACRzeXnjwZ" />
       <env name="_REDIS_HOST" value="redis://192.168.1.190:11111" />
@@ -90,6 +89,7 @@
       <env name="ENABLE_PROFILE_IMMEDIATE_FLUSH" value="yes" />
       <env name="ENABLE_SEGMENTATION_WF_TRIGGERS" value="yes" />
       <env name="ENABLE_WORKFLOW" value="yes" />
+      <env name="LICENSE" value="Rf2wW4EOBbp160iJFGLYjlNfpyka5N1L2wWuRxH6eMhz+L593X7ebH/slstp8/30JuOvvS373QY2X+142n7abM0/xBoC5oqIXli88L49S/8pmPX22F2blMLdMgvkyB1ohAgtd4MigVLIPLy0/fAGe5mT0vJlRSulLjMlcI0EVCyBkCIoNdRamafSDT3+ulzifrEV9caMASuU1jJQ7QVaRXbpVtqspNbnDd0d5aUuGle0tcalWAUZhkAzR+iRArTZRp0hBgx6R9WeL5G/ycpiTzOyVJgx6XXZAH3MDlitzkYTWfnGLuPJVGpeUWIKKr2DlchA/hFaSQwYqUWZEpnLDf0th12ifXhAZXS3MUMycotDVmCqDYb6BLlw1XxHx+n4cog54cqmjClyJd9RCYgKQu/ibjcLZhimhXRjz7Y8CbAuDybXOHPB7myvQBIHuNZVnFFUBneS/6zuziCX88qqNIpSMpSQBahHzzZ7QKrNeldsPMfd5Wf9s9D+IaDB2UqZfgc5u2xOE5iDy/YQBdUjyHZDD7thEf1GHtHgt1TBmO2qWn3baJ5PrypBEgreL+r1cLFnHvuywsaZlXxGatXDbVddcZv7cHXE0Wtzqz4+/gE4d+t7PgMAAA==6H047s9I7A4L0Z0X776mcQcC2/80e2aSdvdW85cb4M3Q9yfF3X585X0wbX8A2IdS4233354" />
       <env name="LOGGING_LEVEL" value="WARNING" />
       <env name="MULTI_TENANT" value="no" />
       <env name="MULTI_TENANT_MANAGER_API_KEY" value="1" />
