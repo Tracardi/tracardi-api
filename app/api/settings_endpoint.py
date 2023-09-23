@@ -157,20 +157,6 @@ system_settings = [
     ),
     SystemSettings(
         **{
-            "label": "ELASTIC_SAVE_POOL",
-            "value": elastic.save_pool,
-            "desc": "Default: 0. Pool of records to be collected before saving to elastic. Default 0 means no pooling."
-        }
-    ),
-    SystemSettings(
-        **{
-            "label": "ELASTIC_SAVE_POOL_TTL",
-            "value": elastic.save_pool_ttl,
-            "desc": "Default: 5. How many seconds pool waits before being purged."
-        }
-    ),
-    SystemSettings(
-        **{
             "label": "SYNC_PROFILE_TRACKS_MAX_REPEATS",
             "value": tracardi.sync_profile_tracks_max_repeats,
             "desc": "Maximum number of repeated requests the must be synchronized. If this number is crossed then "
