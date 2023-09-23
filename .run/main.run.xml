@@ -79,7 +79,7 @@
       <env name="_REDIS_PASSWORD" value="5BlpzS6rRC" />
       <env name="_REDIS_PORT" value="11111" />
       <env name="DEMO" value="yes" />
-      <env name="ELASTIC_SAVE_POOL" value="0" />
+      <env name="ELASTIC_SAVE_POOL" value="" />
       <env name="ENABLE_EVENT_DESTINATIONS" value="yes" />
       <env name="ENABLE_EVENT_SOURCE_CHECK" value="yes" />
       <env name="ENABLE_EVENT_VALIDATION" value="no" />
