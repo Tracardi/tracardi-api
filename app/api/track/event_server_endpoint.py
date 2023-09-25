@@ -1,10 +1,10 @@
-import asyncio
 import logging
 from json import JSONDecodeError
 from typing import Optional
 
 from fastapi import APIRouter, Request, status, HTTPException
 from fastapi.responses import RedirectResponse
+
 from tracardi.service.notation.dict_traverser import DictTraverser
 from tracardi.service.notation.dot_accessor import DotAccessor
 
@@ -291,11 +291,10 @@ async def request_redirect(request: Request, redirect_id: str, session_id: Optio
 
     tracker_payload.set_headers(dict(request.headers))
     tracker_payload.profile_less = True if not session else False
-    asyncio.create_task(
-        _track(
+    await _track(
             tracker_payload,
             get_ip_address(request),
             allowed_bridges=['redirect']
-        ))
+        )
 
     return RedirectResponse(redirect_config.url)
