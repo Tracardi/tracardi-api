@@ -82,6 +82,7 @@ if License.has_service(LICENSE):
     from com_tracardi.endpoint import event_to_profile_copy
     from com_tracardi.endpoint import event_props_to_event_traits_copy
     from com_tracardi.endpoint import metric_endpoint
+    from com_tracardi.config import com_tracardi_settings
 else:
     event_to_profile_copy = get_router(prefix="/events/copy")
     event_props_to_event_traits_copy = get_router(prefix="/events/index")
@@ -309,6 +310,10 @@ if server.performance_tracking:
 @application.on_event("startup")
 async def app_starts():
     logger.info(f"TRACARDI version {str(tracardi.version)} set-up starts.")
+    if License.has_license():
+        logger.info(f"TRACARDI async storing:  {com_tracardi_settings.async_storing}.")
+        logger.info(f"TRACARDI async workflow:  {tracardi.async_workflow}.")
+        logger.info(f"TRACARDI async event destinations:  {tracardi.async_destinations}.")
     await wait_for_connection(no_of_tries=10)
     logger.info("TRACARDI set-up finished.")
     logger.info(f"TRACARDI version {str(tracardi.version)} ready to operate.")
