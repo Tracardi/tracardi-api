@@ -51,7 +51,7 @@ async def install_demo_data():
             name="Test random data",
             channel="Internal",
             description="Internal event source for random data.",
-            bridge=NamedEntity(**open_rest_source_bridge.dict()),
+            bridge=NamedEntity(**open_rest_source_bridge.model_dump()),
             timestamp=datetime.datetime.utcnow(),
             tags=["internal"],
             groups=["Internal"]
