@@ -75,6 +75,9 @@
       <env name="_ELASTIC_VERIFY_CERTS" value="no" />
       <env name="_MAXMIND_ACCOUNT_ID" value="596687" />
       <env name="_MAXMIND_LICENSE_KEY" value="ehiKRvACRzeXnjwZ" />
+      <env name="_PULSAR_AUTH_TOKEN" value="eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2OTU3MTc0NzYsImlzcyI6ImRhdGFzdGF4Iiwic3ViIjoiY2xpZW50OzY3MGVlODcyLTFlMjEtNGEwMy1hZGRjLTZkM2Q5NzFlZGRjODtiWGt0ZEdWemRDMHg7YzQxZjM5NmUzZSIsInRva2VuaWQiOiJjNDFmMzk2ZTNlIn0.l7F3xtPdeH-de1InolSYNENuVHMjM-NYc929sa50HVwNxXFf53OFvUOxKxgOi5cFUeiSYnlhwyBvTWi8xIIQO1sxCWLSPoQ7DBhJCC5vmAy8jWy-u40ecb0H45jT_zpXKsZ-UFZYks214Z9RWV43uCWCoiEjH06nOhKpgSTOQ10rZvz5r3jUzSpxYT9pUjEs80-dHglsgoijd2rdiRC6Fbd0QoNysIjDUUH46qPFIcRmg6YRd-Tx4Mq8RlTQfrf5VCjQu9zGJaRA2GXtvbOSOT0XVV2DNtrgH6ylvCf0ai3OmrUMezPXwqp17FyKHtX7k1HvWJp0Rr8U4Und5y5DRQ" />
+      <env name="_PULSAR_COLLECTOR_TOPIC" value="persistent://my-test-1/default/test" />
+      <env name="_PULSAR_HOST" value="pulsar+ssl://pulsar-gcp-europewest1.streaming.datastax.com:6651" />
       <env name="_REDIS_HOST" value="redis://192.168.1.190:11111" />
       <env name="_REDIS_PASSWORD" value="5BlpzS6rRC" />
       <env name="_REDIS_PORT" value="11111" />
@@ -90,11 +93,12 @@
       <env name="ENABLE_SEGMENTATION_WF_TRIGGERS" value="yes" />
       <env name="ENABLE_WORKFLOW" value="yes" />
       <env name="LICENSE" value="Rf2wW4EOBbp160iJFGLYjlNfpyka5N1L2wWuRxH6eMhz+L593X7ebH/slstp8/30JuOvvS373QY2X+142n7abM0/xBoC5oqIXli88L49S/8pmPX22F2blMLdMgvkyB1ohAgtd4MigVLIPLy0/fAGe5mT0vJlRSulLjMlcI0EVCyBkCIoNdRamafSDT3+ulzifrEV9caMASuU1jJQ7QVaRXbpVtqspNbnDd0d5aUuGle0tcalWAUZhkAzR+iRArTZRp0hBgx6R9WeL5G/ycpiTzOyVJgx6XXZAH3MDlitzkYTWfnGLuPJVGpeUWIKKr2DlchA/hFaSQwYqUWZEpnLDf0th12ifXhAZXS3MUMycotDVmCqDYb6BLlw1XxHx+n4cog54cqmjClyJd9RCYgKQu/ibjcLZhimhXRjz7Y8CbAuDybXOHPB7myvQBIHuNZVnFFUBneS/6zuziCX88qqNIpSMpSQBahHzzZ7QKrNeldsPMfd5Wf9s9D+IaDB2UqZfgc5u2xOE5iDy/YQBdUjyHZDD7thEf1GHtHgt1TBmO2qWn3baJ5PrypBEgreL+r1cLFnHvuywsaZlXxGatXDbVddcZv7cHXE0Wtzqz4+/gE4d+t7PgMAAA==6H047s9I7A4L0Z0X776mcQcC2/80e2aSdvdW85cb4M3Q9yfF3X585X0wbX8A2IdS4233354" />
-      <env name="LOGGING_LEVEL" value="WARNING" />
+      <env name="LOGGING_LEVEL" value="INFO" />
       <env name="MULTI_TENANT" value="no" />
       <env name="MULTI_TENANT_MANAGER_API_KEY" value="1" />
       <env name="MULTI_TENANT_MANAGER_URL" value="http://localhost:8080" />
       <env name="PRODUCTION" value="no" />
+      <env name="PULSAR_HOST" value="pulsar://localhost:6650" />
       <env name="PYTHONUNBUFFERED" value="1" />
       <env name="SAVE_LOGS" value="yes" />
       <env name="SYSTEM_EVENTS" value="yes" />
