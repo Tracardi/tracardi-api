@@ -5,6 +5,7 @@ Tracardi is a customer data platform that's open-source and has been in active d
 mission is to assist businesses in tailoring their sales to meet customer needs better through automation. To kick off
 Hacktoberfest, we've created an introductory video to help you get acquainted with us.
 
+https://youtu.be/fnxYYUVjYbI?si=yaXtWdfk5zUpz7XZ
 [![Video](https://github.com/Tracardi/tracardi-api/assets/16271564/5841a1bb-0ee7-4dff-82c3-0c97adcaf500)](https://youtu.be/fnxYYUVjYbI?si=yaXtWdfk5zUpz7XZ)
 
 If you're interested in being part of our project, visit our repos on GitHub:
