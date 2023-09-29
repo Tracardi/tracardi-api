@@ -14,8 +14,13 @@ If you're interested in being part of our project, visit our repos on GitHub:
 * API - http://github.com/tracardi-api
 * Graphical User Interface - http://github.com/tracardi-api
 
-or get in touch with us on social media (Twitter, LinkedIn, Youtube, Facebook)
+or get in touch with us on social media:
 
+* http://twitter.com/tracardi
+* https://www.linkedin.com/company/tracardi/
+* http://www.youtube.com/@tracardi
+* http://www.facebook.com/tracardi
+* 
 **Who can get involved**:
 
 Absolutely anyone! 🔥
