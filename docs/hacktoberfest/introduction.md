@@ -20,14 +20,14 @@ or get in touch with us on social media:
 * http://www.youtube.com/@tracardi
 * http://www.facebook.com/tracardi
 
-**Who can get involved**:
+****Who can get involved**:
 
 Absolutely anyone! 🔥
 
 - If you're not a technical expert, you can still help by checking our demo for spelling errors or contributing to our
   documentation.
 - If you enjoy coding, we'll provide you with a suitable task.
-- If you're a fan of open-source and want to show your love ❤️ for what we do on social media, it makes a tremendous
+- If you're a fan of open-source and want to show your love ❤️ for what we do share Tracardi on social media, it makes a tremendous
   difference (please tag us so we can respond).
 
 **How to contribute**:
@@ -38,9 +38,9 @@ For developers:
 
 - Pick an issue tagged hacktoberfest
 - Fork the repository and start working on your branch
-- Create a Pull Request to the original repo and wait for a code review
+- Create a Pull Request to the original repo and wait for a code review**
 
-For everyone:
+For everyone else:
 
 - Go to https://github.com/Tracardi/tracardi-api/blob/0.8.2-dev/docs/hacktoberfest/for_documentators.md
 

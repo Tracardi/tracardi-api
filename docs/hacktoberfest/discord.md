@@ -27,7 +27,7 @@ Absolutely anyone! :fire:
 - If you're not a technical expert, you can still help by checking our demo for spelling errors or contributing to our
   documentation.
 - If you enjoy coding, we'll provide you with a suitable task.
-- If you're a fan of open-source and want to show your love :heart: for what we do on social media, it makes a tremendous
+- If you're a fan of open-source and want to show your love :heart: for what we do share Tracardi on social media, it makes a tremendous
   difference (please tag us so we can respond).
 
 **How to contribute**:
@@ -40,7 +40,7 @@ For developers:
 - Fork the repository and start working on your branch
 - Create a Pull Request to the original repo and wait for a code review
 
-For everyone:
+For everyone else:
 
 - Go to https://github.com/Tracardi/tracardi-api/blob/0.8.2-dev/docs/hacktoberfest/for_documentators.md
 
