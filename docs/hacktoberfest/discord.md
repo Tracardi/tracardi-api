@@ -15,10 +15,10 @@ If you're interested in being part of our project, visit our repos on GitHub:
 
 or get in touch with us on social media:
 
-* http://twitter.com/tracardi
-* https://www.linkedin.com/company/tracardi/
-* http://www.youtube.com/@tracardi
-* http://www.facebook.com/tracardi
+* Twitter
+* Linkedin
+* Youtube
+* Facebook
 
 **Who can get involved**:
 
