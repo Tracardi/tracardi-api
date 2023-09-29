@@ -28,7 +28,7 @@ Absolutely anyone! 🔥
   documentation.
 - If you enjoy coding, we'll provide you with a suitable task.
 - If you're a fan of open-source and want to show your love ❤️ for what we do share Tracardi on social media, it makes a tremendous
-  difference (please tag us so we can respond).
+  difference (please tag us (@tracardi) so we can respond).
 
 **How to contribute**:
 
