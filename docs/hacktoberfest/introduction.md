@@ -6,8 +6,10 @@ mission is to assist businesses in tailoring their sales to meet customer needs 
 Hacktoberfest, we've created an introductory video to help you get acquainted with us.
 
 https://youtu.be/fnxYYUVjYbI?si=yaXtWdfk5zUpz7XZ
+![Screenshot from 2023-09-29 12-24-56](https://github.com/Tracardi/tracardi-api/assets/16271564/0f649acd-1fcf-4e3b-8012-3da8be4d5bbb)
 
 If you're interested in being part of our project, visit our repos on GitHub:
+
 
 * Library - http://github.com/tracardi
 * API - http://github.com/tracardi-api
