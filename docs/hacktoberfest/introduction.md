@@ -7,7 +7,7 @@ Hacktoberfest, we've created an introductory video to help you get acquainted wi
 
 https://youtu.be/fnxYYUVjYbI
 [![Watch the video](https://github.com/Tracardi/tracardi-api/assets/16271564/5841a1bb-0ee7-4dff-82c3-0c97adcaf500)](https://youtu.be/fnxYYUVjYbI)
-[![Watch the video](https://img.youtube.com/vi/T-D1KVIuvjA/maxresdefault.jpg)](https://youtu.be/T-D1KVIuvjA)
+[![Watch the video](https://img.youtube.com/vi/fnxYYUVjYbI/maxresdefault.jpg)](https://youtu.be/fnxYYUVjYbI)
 
 If you're interested in being part of our project, visit our repos on GitHub:
 
