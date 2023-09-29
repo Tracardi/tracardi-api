@@ -103,6 +103,7 @@
       <env name="SAVE_LOGS" value="yes" />
       <env name="SYSTEM_EVENTS" value="yes" />
       <env name="TRACK_DEBUG" value="yes" />
+      <env name="ASYNC_STORING" value="yes" />
     </envs>
     <option name="SDK_HOME" value="" />
     <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/app" />
