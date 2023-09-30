@@ -9,16 +9,11 @@ https://github.com/Tracardi/tracardi-api/blob/0.8.2-dev/docs/hacktoberfest/intro
 
 If you're interested in being part of our project, visit our repos on GitHub:
 
-* Library - http://github.com/tracardi
-* API - http://github.com/tracardi-api
-* Graphical User Interface - http://github.com/tracardi-api
+* Library - http://github.com/tracardi/tracardi
+* API - http://github.com/tracardi/tracardi-api
+* Graphical User Interface - http://github.com/tracardi/tracardi-gui
 
-or get in touch with us on social media:
-
-* Twitter
-* Linkedin
-* Youtube
-* Facebook
+or get in touch with us on social media (Twitter, Linkedin, Youtube, Facebook)
 
 **Who can get involved**:
 
@@ -33,15 +28,8 @@ Absolutely anyone! :fire:
 **How to contribute**:
 
 - :star: the repository (preferably all)
-
-For developers:
-
 - Pick an issue tagged hacktoberfest
 - Fork the repository and start working on your branch
 - Create a Pull Request to the original repo and wait for a code review
-
-For everyone else:
-
-- Go to https://github.com/Tracardi/tracardi-api/blob/0.8.2-dev/docs/hacktoberfest/for_documentators.md
 
 Thank you very much for your enthusiasm and help in making the Tracardi Project even better! :rocket: 
