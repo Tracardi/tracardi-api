@@ -16,16 +16,6 @@ password: hacktoberfest
 To kickstart your journey, we invite you to visit our YouTube channel
 at http://www.youtube.com/@tracardi, where you'll find valuable insights into Tracardi's fundamentals.
 
-We've curated a series of videos designed to assist you:
-
-* Video 1
-* Video 2
-* Video 3
-
-Additionally, there's a video that will acquaint you with our documentation repository.
-
-* Video 1
-
 Feel free to share your contributions on Twitter, YouTube, and Facebook. When you tag us, we make sure to share and
 retweet your posts. For more community interactions and discussions, join our (Slack community)[http://track.tracardi.com/redirect/d81c184a-eb5d-4f9e-b0f0-4b62bf7066dd/127fd020-8de9-4bbb-861c-e82f56d3bdd5].
 
