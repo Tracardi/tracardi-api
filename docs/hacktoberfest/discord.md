@@ -7,29 +7,23 @@ Hacktoberfest, we've created an introductory video to help you get acquainted wi
 
 https://github.com/Tracardi/tracardi-api/blob/0.8.2-dev/docs/hacktoberfest/introduction.md
 
-If you're interested in being part of our project, visit our repos on GitHub:
+We prepared for your some issues that are tailored for the beginners (with video documentation of the task):
 
-* Library - http://github.com/tracardi/tracardi
-* API - http://github.com/tracardi/tracardi-api
-* Graphical User Interface - http://github.com/tracardi/tracardi-gui
+* https://github.com/Tracardi/tracardi/issues/819
+* https://github.com/Tracardi/tracardi/issues/818 (there a plenty of undocumented plugins - pick one and say in comment which one you picked)
+* 
 
-or get in touch with us on social media (Twitter, Linkedin, Youtube, Facebook)
+And for more experienced Python developers:
 
-**Who can get involved**:
-
-Absolutely anyone! :fire:
-
-- If you're not a technical expert, you can still help by checking our demo for spelling errors or contributing to our
-  documentation.
-- If you enjoy coding, we'll provide you with a suitable task.
-- If you're a fan of open-source and want to show your love :heart: for what we do share Tracardi on social media, it makes a tremendous
-  difference (please tag us so we can respond).
+* https://github.com/Tracardi/tracardi/issues/727
+* https://github.com/Tracardi/tracardi/issues/730
 
 **How to contribute**:
 
 - :star: the repository (preferably all)
-- Pick an issue tagged hacktoberfest
+- Pick an issue (from: http://github.com/tracardi/tracardi or http://github.com/tracardi/tracardi-api) tagged hacktoberfest
 - Fork the repository and start working on your branch
 - Create a Pull Request to the original repo and wait for a code review
+- Share your achievements on the social media
 
 Thank you very much for your enthusiasm and help in making the Tracardi Project even better! :rocket: 
