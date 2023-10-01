@@ -1,17 +1,16 @@
 import os, sys
 import traceback
 from datetime import datetime
+import sentry_sdk
 
 from app.middleware.context import ContextRequestMiddleware
 from tracardi.service.license import License, SCHEDULER, IDENTIFICATION, COMPLIANCE, RESHAPING, REDIRECTS, VALIDATOR, \
-    LICENSE
+    LICENSE, MULTI_TENANT
 
 _local_dir = os.path.dirname(__file__)
 sys.path.append(f"{_local_dir}/api/proto/stubs")
 
 import logging
-import asyncio
-from random import randint
 from starlette.responses import JSONResponse
 from time import time
 from app.config import server
@@ -34,7 +33,9 @@ from app.api import rule_endpoint, resource_endpoint, event_endpoint, \
     user_log_endpoint, \
     user_account_endpoint, \
     install_endpoint, \
-    delete_indices_endpoint, migration_endpoint, report_endpoint, live_segments_endpoint, \
+    delete_indices_endpoint, \
+    setting_endpoint, \
+    migration_endpoint, report_endpoint, live_segments_endpoint, \
     console_log_endpoint, event_type_mapping, \
     bridge_endpoint, entity_endpoint, staging_endpoint, customer_endpoint, event_to_profile
 from app.api.track import event_server_endpoint
@@ -80,6 +81,11 @@ if License.has_service(LICENSE):
 else:
     event_to_profile_copy = get_router(prefix="/events/copy")
     event_props_to_event_traits_copy = get_router(prefix="/events/index")
+
+
+if License.has_service(MULTI_TENANT):
+    from com_tracardi.endpoint import tenant_install_endpoint
+
 
 logging.basicConfig(level=logging.ERROR)
 logger = logging.getLogger(__name__)
@@ -266,7 +272,6 @@ application.include_router(event_validator_endpoint.router)
 application.include_router(console_log_endpoint.router)
 application.include_router(event_type_mapping.router)
 application.include_router(event_source_redirects.router)
-# application.include_router(last_flow_ws.router)
 application.include_router(bridge_endpoint.router)
 application.include_router(entity_endpoint.router)
 application.include_router(consent_data_compliance_endpoint.router)
@@ -278,6 +283,22 @@ application.include_router(event_to_profile.router)
 application.include_router(event_to_profile_copy.router)
 application.include_router(event_props_to_event_traits_copy.router)
 application.include_router(event_type_predefined.router)
+application.include_router(setting_endpoint.router)
+if License.has_service(MULTI_TENANT):
+    application.include_router(tenant_install_endpoint.router)
+
+if server.performance_tracking:
+    sentry_sdk.init(
+        dsn="https://9c7c026fcfb5f9bd0ee63eec492316ab@o1093519.ingest.sentry.io/4505827219734528",
+        # Set traces_sample_rate to 1.0 to capture 100%
+        # of transactions for performance monitoring.
+        # We recommend adjusting this value in production.
+        traces_sample_rate=1.0,
+        # Set profiles_sample_rate to 1.0 to profile 100%
+        # of sampled transactions.
+        # We recommend adjusting this value in production.
+        profiles_sample_rate=1.0,
+    )
 
 
 @application.on_event("startup")
@@ -325,4 +346,4 @@ async def app_shutdown():
 if __name__ == "__main__":
     import uvicorn
 
-    uvicorn.run("app.main:application", host="0.0.0.0", port=8686, log_level='info')
+    uvicorn.run("app.main:application", host="0.0.0.0", port=8686, log_level='info', workers=1)

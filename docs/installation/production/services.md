@@ -12,6 +12,7 @@ Scheduler    | Service for rescheduling delayed events.
 Scheduler Worker    | Service responsible for executing delayed events.
 Segmentation Job    | Periodically runs and checks for profiles to run through segmentation process.
 Segmentation Worker    | Runs defined segmentation process.
+Trigger Worker    | Runs when a profile is segmented and a workflow should be triggered.
 Update and Migration    | Set of workers for system migration and data import.
 Bridges    | Services for collecting data from different channels, bridges transportation protocol to Tracardi event source.
 
@@ -91,6 +92,10 @@ The Segmentation Worker runs a defined segmentation process.
 ### Functionality:
 
 The Segmentation Worker is responsible for running the defined segmentation process in the system.
+
+## Trigger Worker
+
+The Trigger Worker runs every time a profile is added to the segment and there is a defined workflow that should be triggered.
 
 ## Update and Migration
 

@@ -1,4 +1,3 @@
-import asyncio
 import logging
 from json import JSONDecodeError
 from typing import Optional
@@ -44,6 +43,10 @@ async def parse_properties(request: Request):
 
 
 async def _track(tracker_payload: TrackerPayload, host: str, allowed_bridges):
+
+    if tracker_payload.source.id.startswith("@"):
+        raise PermissionError("Internal event sources are not allowed via API.")
+
     try:
         return await track_event(
             tracker_payload,
@@ -73,6 +76,7 @@ async def _track(tracker_payload: TrackerPayload, host: str, allowed_bridges):
 
 @router.post("/track", tags=['collector'])
 async def track(tracker_payload: TrackerPayload, request: Request, profile_less: bool = False):
+
     tracker_payload.set_headers(dict(request.headers))
     tracker_payload.profile_less = profile_less
     return await _track(tracker_payload,
@@ -118,6 +122,7 @@ async def track_get_webhook(event_type: str, source_id: str, request: Request, s
     Collects data from request GET and adds event type. It stays profile-less if no session provided.
     Session is saved when event is not profile less.
     """
+
     try:
         properties = url_query_params_to_dict(request.url.query)
     except JSONDecodeError:
@@ -149,6 +154,7 @@ async def track_get_webhook(event_type: str, source_id: str, request: Request):
     Collects data from request GET and adds event type. It stays profile-less if no session provided.
     Session is saved when event is not profile less.
     """
+
     try:
         properties = url_query_params_to_dict(request.url.query)
     except JSONDecodeError:
@@ -271,11 +277,10 @@ async def request_redirect(request: Request, redirect_id: str, session_id: Optio
 
     tracker_payload.set_headers(dict(request.headers))
     tracker_payload.profile_less = True if not session else False
-    asyncio.create_task(
-        _track(
+    await _track(
             tracker_payload,
             get_ip_address(request),
             allowed_bridges=['redirect']
-        ))
+        )
 
     return RedirectResponse(redirect_config.url)

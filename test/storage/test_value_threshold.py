@@ -2,6 +2,7 @@ import asyncio
 
 from time import sleep
 
+from tracardi.context import ServerContext, Context
 from tracardi.service.value_threshold_manager import ValueThresholdManager
 
 
@@ -70,11 +71,12 @@ async def _should_pass_threshold_after_ttl():
 
 def test_value_threshold():
     async def main():
-        await _should_save_and_load_value_threshold()
-        await _should_pass_threshold_once()
-        await _should_pass_threshold_with_every_change()
-        await _should_pass_threshold_once_on_object()
-        await _should_pass_threshold_once_on_condition()
-        await _should_pass_threshold_after_ttl()
+        with ServerContext(Context(production=False)):
+            await _should_save_and_load_value_threshold()
+            await _should_pass_threshold_once()
+            await _should_pass_threshold_with_every_change()
+            await _should_pass_threshold_once_on_object()
+            await _should_pass_threshold_once_on_condition()
+            await _should_pass_threshold_after_ttl()
 
     asyncio.new_event_loop().run_until_complete(main())

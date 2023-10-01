@@ -24,7 +24,10 @@ async def get_data_bridges():
     """
     Returns list of available data bridges
     """
-    result = await bridge_db.load_all()
+
+    # Todo Changes for the next major version
+
+    result = await bridge_db.load_all()  # todo add sort={"name": "asc"} and change name to keyword
 
     result = [
         {
@@ -34,9 +37,12 @@ async def get_data_bridges():
             "manual": bridge['manual'] if 'manual' in bridge else None
         } for bridge in result
     ]
+
+    # Todo then remove the sorting
+
     return {
         "total": len(result),
-        "result": result
+        "result": sorted(result, key=lambda x: x['name'])
     }
 
 

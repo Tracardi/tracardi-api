@@ -2,15 +2,24 @@
 
 ## Introduction
 
-A segment is a group of customer profiles that have been identified as having similar characteristics or behaviors. It is the result of segmenting customer profiles. Segmentation is the process of dividing a customer base into smaller groups with similar characteristics. These segments can be described by a simple logical rule or by more complex AI models.
+A segment is a group of customer profiles that have been identified as having similar characteristics or behaviors. It
+is the result of segmenting customer profiles. Segmentation is the process of dividing a customer base into smaller
+groups with similar characteristics. These segments can be described by a simple logical rule or by more complex AI
+models.
 
-In the Tracardi system, a segment is a part of the customer profile, and it can be used in the segmentation workflow. A segment is typically represented by a simple sentence that describes the group, for example "Customers with a high volume of purchases". This group of customers, who have a high volume of purchases, can be targeted with specific marketing campaigns or other customer-centric actions based on their behavior and characteristics.
+In the Tracardi system, a segment is a part of the customer profile, and it can be used in the segmentation workflow. A
+segment is typically represented by a simple sentence that describes the group, for example "Customers with a high
+volume of purchases". This group of customers, who have a high volume of purchases, can be targeted with specific
+marketing campaigns or other customer-centric actions based on their behavior and characteristics.
 
 ## How to segment
 
-The segmentation process is started automatically after each update of profile data, or it can be initiated manually within a workflow by placing the action "Segment profile".
+The segmentation process is started automatically after each update of profile data, or it can be initiated manually
+within a workflow by placing the action "Segment profile".
 
-In the Tracardi, the criteria for segmentation are defined in the segmentation tab. This means that when a segmentation is defined, it can be used in multiple workflows without the need to change anything in the workflows themselves. If segmentation is enabled, it will be run automatically after each workflow is completed.
+In the Tracardi, the criteria for segmentation are defined in the segmentation tab. This means that when a segmentation
+is defined, it can be used in multiple workflows without the need to change anything in the workflows themselves. If
+segmentation is enabled, it will be run automatically after each workflow is completed.
 
 ## Segmentation
 

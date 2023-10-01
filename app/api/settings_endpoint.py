@@ -31,6 +31,13 @@ system_settings = [
     ),
     SystemSettings(
         **{
+            "label": "SYSTEM_EVENTS",
+            "value": tracardi.system_events,
+            "desc": "Default: Yes. Register system events like: profile-created, session-opened, etc."
+        }
+    ),
+    SystemSettings(
+        **{
             "label": "MULTI_TENANT",
             "value": tracardi.multi_tenant,
             "desc": "Default: No. Turns on multi tenancy feature for commercial versions."
@@ -152,7 +159,7 @@ system_settings = [
         **{
             "label": "ELASTIC_SAVE_POOL",
             "value": elastic.save_pool,
-            "desc": "Default: 0. Pool of records to be collected before saving to elastic. Default 0 means no polling."
+            "desc": "Default: 0. Pool of records to be collected before saving to elastic. Default 0 means no pooling."
         }
     ),
     SystemSettings(
@@ -381,6 +388,34 @@ system_settings = [
             "value": tracardi.save_logs,
             "desc": "Default: yes. When set to yes all logs will be saved n tracardi log."
         }
+    ),
+    SystemSettings(
+        **{
+            "label": "ENABLE_WORKFLOW",
+            "value": tracardi.enable_workflow,
+            "desc": "Default: no. Disables processing events by workflows."
+        }
+    ),
+    SystemSettings(
+        **{
+            "label": "ENABLE_SEGMENTATION_WF_TRIGGERS",
+            "value": tracardi.enable_segmentation_wf_triggers,
+            "desc": "Default: yes. Disables triggering events by profile added to segments."
+        }
+    ),
+    SystemSettings(
+        **{
+            "label": "ENABLE_EVENT_DESTINATIONS",
+            "value": tracardi.enable_event_destinations,
+            "desc": "Default: no. Disables dispatching events to destinations."
+        }
+    ),
+    SystemSettings(
+        **{
+            "label": "ENABLE_PROFILE_DESTINATIONS",
+            "value": tracardi.enable_profile_destinations,
+            "desc": "Default: no. Disables dispatching profiles to destinations."
+        }
     )
 ]
 
@@ -388,21 +423,21 @@ router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin", "developer"]))]
 )
 
+# todo remove after 2023-10-01
+# @router.get("/system/setting/{name}", tags=["system"],
+#             include_in_schema=server.expose_gui_api,
+#             response_model=Optional[SystemSettings])
+# async def get_system_settings(name: str) -> Optional[SystemSettings]:
+#     """
+#     Returns setting with given name (str)
+#     """
+#     for setting in system_settings:
+#         if setting.label == name:
+#             return setting
+#     return None
 
-@router.get("/setting/{name}", tags=["settings"],
-            include_in_schema=server.expose_gui_api,
-            response_model=Optional[SystemSettings])
-async def get_system_settings(name: str) -> Optional[SystemSettings]:
-    """
-    Returns setting with given name (str)
-    """
-    for setting in system_settings:
-        if setting.label == name:
-            return setting
-    return None
 
-
-@router.get("/settings", tags=["settings"],
+@router.get("/system/settings", tags=["system"],
             include_in_schema=server.expose_gui_api,
             response_model=List[SystemSettings])
 async def get_system_settings() -> List[SystemSettings]:

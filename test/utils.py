@@ -8,7 +8,6 @@ from dotenv import load_dotenv
 from tracardi.config import tracardi
 from tracardi.domain.profile import Profile
 from tracardi.domain.session import Session, SessionMetadata
-from tracardi.service.string_manager import remove_non_alpha
 
 load_dotenv()
 
@@ -16,7 +15,7 @@ load_dotenv()
 def get_tenant_name_from_host(hostname) -> Optional[str]:
     parts = hostname.split(".")
     if len(parts) >= 3:
-        _tenant_candidate = remove_non_alpha(parts[0])
+        _tenant_candidate = parts[0]
         if len(_tenant_candidate) >= 3 and not _tenant_candidate.isnumeric():
             return _tenant_candidate
     return None

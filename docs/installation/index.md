@@ -1,13 +1,7 @@
-# Installation types
+# Tracardi Installation
 
-There are basically 3 ways to install Tracardi:
+There are three versions of tracardi. Select which one would you like to install:
 
-* [From docker image](docker/index.md)
-* [From source](source/index.md)
-* [Production installation](production/index.md)
-* [Staging server](staging/index.md)
-
-
-!!! Tip
-
-    If you encounter errors when installing Tracardi, see [trouble shooting section](../trouble/index.md)
+* [Open-source](opensource/index.md)
+* [Commercial](commercial/index.md)
+* [Developer](development/index.md)

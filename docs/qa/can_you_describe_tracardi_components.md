@@ -16,16 +16,7 @@ This is technical documentation of source code and dockers.
 - Source: com-tracardi/com_job/heartbeat
 - Github: https://github.com/Tracardi/com-tracardi
 - Docker: tracardi/com-heartbeat-job
-- Description: This job is responsible for running some defined event on all profiles. It has defined strategies such
-  as:
-    - inactive-profile: Gets profiles if no event happened in `wait_period` time and there was no event
-      type `event_type` E.g. This allows to raise for example an event `inactive` if no activity on profile in 2 days
-      and no `inactive` event available in all profile events.
-    - inactive-session:  Gets session if no event happened in `wait_period` time and there was no event
-      type `event_type`. E.g. This allows to raise for example an event `inactive` if no activity in 15 min and
-      no `inactive` event available within the session
-    - session-not-closed: Gets all profiles if there is no event for a defined period (15 min) and raise `session closed`
-      event.
+- Description: This job is responsible for running some defined event on all profiles. 
 
 ### Live Segmentation
 

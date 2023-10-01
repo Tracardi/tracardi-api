@@ -46,11 +46,6 @@ properties, setting the status as "pending" and the retry count as 2.
 
 ## Does the Pause Event Impact Performance When the Workflow Runs for Several Days?
 
-When a pause event is triggered in a workflow and the workflow continues running for several days, it is natural to
-wonder if this pause has any impact on performance.
-
----
-
 The pause event does not directly impact the performance of the current event process. When you pause an event, it is
 sent to a background scheduled task and placed in a queue for completion. This means that the current event process
 continues without being affected by the pause.

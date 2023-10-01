@@ -1,13 +1,12 @@
-import re
 from typing import Optional
 
 from tracardi.config import tracardi
 from tracardi.context import Context, ServerContext
 from starlette.types import ASGIApp, Receive, Scope, Send
 from app.api.auth.user_db import token2user
-from tracardi.service.license import License
+from tracardi.service.license import License, MULTI_TENANT
 
-if License.has_license():
+if License.has_license() and License.has_service(MULTI_TENANT):
     from com_tracardi.service.tenant_manager import get_tenant_name_from_scope
 else:
     from tracardi.service.tenant_manager import get_tenant_name_from_scope
@@ -35,9 +34,19 @@ def _get_context_object(scope) -> Context:
     tenant, hostname = get_tenant_name_from_scope(scope)
 
     if tenant is None:
-        raise OSError(f"Can not find tenant for this URL. Reason: Tenant name can not be shorted then 3 letters "
-                      f"and must not contain numbers. Your system is set-up to support multi-tenancy "
+        raise OSError(f"Can not find tenant for this URL. Reason: Hostname `{hostname}` must have 3 parts.")
+
+    if tracardi.multi_tenant and tenant.isnumeric():
+        raise OSError(f"Tenant name `{tenant}` is not correct. "
+                      f"Reason: Tenant name must not be a number. Your API URL is {hostname}."
+                      f"Your system is set-up to support multi-tenancy "
                       f"that means access only through domain name is available. Scope: {scope}")
+
+    if len(tenant) < 3:
+        raise OSError(f"Tenant name `{tenant}` is not correct. "
+                      f"Reason: Tenant name can not be shorted then 3 letters. "
+                      f"Your system is set-up to support multi-tenancy "
+                      f"that means access only through domain name is available.")
 
     if not production:  # Staging as default
 
@@ -68,7 +77,7 @@ class ContextRequestMiddleware:
                 if token:
                     _, token = token.split()
                     user = token2user.get(token)
-                    # This is dangerous mutation. Never do this in other places.
+                    # This is dangerous user mutation. Never do this in other places.
                     cm.get_context().user = user
 
             await self.app(scope, receive, send)

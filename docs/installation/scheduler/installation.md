@@ -3,9 +3,9 @@
 The Scheduler is an essential component of the commercial Tracardi platform. Certain functionalities within Tracardi,
 such as the "Pause and Resume", or "Run In Background" plugin and any time-based triggers, rely on the Scheduler.
 
-To successfully run the Scheduler, you will need to set up two Docker containers:
+To successfully run the Scheduler, you will need to set up the following Docker containers:
 
-* tracardi/com-tracardi-scheduler-worker: This container processes triggers.
+* __tracardi/com-tracardi-scheduler-worker__: This container processes triggers.
 
 ## Starting the Docker Containers
 
@@ -22,21 +22,21 @@ Use the following example Docker command to start the worker container:
 
 ```bash
 docker run \
--e ELASTIC_HOST=http://192.168.1.101:9200 \
--e REDIS_HOST=192.168.1.101 \
--e MULTI_TENANT_MANAGER_URL=http://192.168.1.101:8080 \
+-e ELASTIC_HOST=http://<es-host>:9200 \
+-e REDIS_HOST=<redis-host> \
+-e MULTI_TENANT_MANAGER_URL=http://<tms-host>:8080 \
 -e MULTI_TENANT_MANAGER_API_KEY=123 \
 -e MULTI_TENANT=yes \
-tracardi/com-tracardi-scheduler-worker:0.8.1-rc3
+tracardi/com-tracardi-scheduler-worker:0.8.1
 ```
 
 For non-multi-tenant setups, use the following Docker command:
 
 ```bash
 docker run \
--e ELASTIC_HOST=http://192.168.1.101:9200 \
--e REDIS_HOST=192.168.1.101 \
-tracardi/com-tracardi-scheduler-worker:0.8.1-rc3
+-e ELASTIC_HOST=http://<es-host>:9200 \
+-e REDIS_HOST=<redis-host> \
+tracardi/com-tracardi-scheduler-worker:0.8.1
 ```
 
 Please ensure that you replace the environment variable values (ELASTIC_HOST, REDIS_HOST, etc.) with the appropriate
