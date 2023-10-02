@@ -30,6 +30,13 @@ Absolutely anyone! 🔥
 - If you're a fan of open-source and want to show your love ❤️ for what we do share Tracardi on social media, it makes a tremendous
   difference (please tag us (@tracardi) so we can respond).
 
+**Why should you contribute?**
+
+- We are beginner-friendly – we publish videos to instruct you how to do things
+- It is a fantastic opportunity to dive into open-source coding
+- You can collaborate with a supportive community of developers and get grow your Python or React skills
+- You can make an impact as the project is actively used
+
 **How to contribute**:
 
 - ⭐ the repository (preferably all)
