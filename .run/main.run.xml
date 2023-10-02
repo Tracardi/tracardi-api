@@ -81,6 +81,7 @@
       <env name="_REDIS_HOST" value="redis://192.168.1.190:11111" />
       <env name="_REDIS_PASSWORD" value="5BlpzS6rRC" />
       <env name="_REDIS_PORT" value="11111" />
+      <env name="ASYNC_STORING" value="yes" />
       <env name="DEMO" value="yes" />
       <env name="ELASTIC_SAVE_POOL" value="" />
       <env name="ENABLE_EVENT_DESTINATIONS" value="yes" />
@@ -103,7 +104,7 @@
       <env name="SAVE_LOGS" value="yes" />
       <env name="SYSTEM_EVENTS" value="yes" />
       <env name="TRACK_DEBUG" value="yes" />
-      <env name="ASYNC_STORING" value="yes" />
+      <env name="ASYNC_STORE_BUFFER_TIMEOUT" value="7000" />
     </envs>
     <option name="SDK_HOME" value="" />
     <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/app" />

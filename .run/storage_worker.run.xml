@@ -5,7 +5,7 @@
     <option name="PARENT_ENVS" value="true" />
     <envs>
       <env name="_PULSAR_AUTH_TOKEN" value="eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbiJ9.YYrU_ft-JUwQAHhAxbXvtm8FsPApc3R5TLHBR4YRrQ7NILFDZePqAxqadRKhQzOOeMzebgSOno5yEZdIG1b_JzKEpdFU2YYjZTOdX1zX4KoU2WglPijW8DMLZVD-bMy23m3F81b9Fk5GCsRXCWJOG8uCaNrs7lCk2d6WYUOnbmzPA-mjke8Cz3bcwxPVxH--eoFnzXfZkQvuKJNe6d653XPFmziTmfQ2Aenhprb6uP74FzSUen0BjoJMTwTkIR91hYz4W9q_wSG9k8F2VTylAvNNRFI_IdAUSbxrOVsIYMBn6mWzy4JdWDK5AV0CGBg5PKkocftuCPgaAVmCiS9ARw" />
-      <env name="CONSUMER_TYPE" value="session" />
+      <env name="CONSUMER_TYPE" value="profile" />
       <env name="LOGGING_LEVEL" value="info" />
       <env name="PULSAR_HOST" value="pulsar://192.168.1.107:6650" />
       <env name="PYTHONUNBUFFERED" value="1" />
