@@ -10,7 +10,7 @@ session_id = str(uuid4())
 
 assert _create_event_source(source_id, 'rest').status_code == 200
 
-for _ in range(60):
+for _ in range(6000):
 
     session_id = str(uuid4())
 
