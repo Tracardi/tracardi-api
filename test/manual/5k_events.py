@@ -5,14 +5,14 @@ from test.utils import Endpoint
 
 endpoint = Endpoint()
 
-source_id = str(uuid4())
+source_id = "850b12c1-cd04-4d09-b9a4-e7c961bcb224"
 session_id = str(uuid4())
+profile_id = "12e947df-f26c-4640-9bf3-61a177011320"
 
-assert _create_event_source(source_id, 'rest').status_code == 200
-
-for _ in range(6000):
+for _ in range(3):
 
     session_id = str(uuid4())
+    print(profile_id)
 
     payload1 = {
         "source": {
@@ -20,6 +20,9 @@ for _ in range(6000):
         },
         "session": {
             "id": session_id
+        },
+        "profile": {
+            "id": profile_id
         },
         "events": [
             {
@@ -38,6 +41,9 @@ for _ in range(6000):
         },
         "session": {
             "id": session_id
+        },
+        "profile": {
+            "id": profile_id
         },
         "events": [
             {
