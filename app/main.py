@@ -82,6 +82,7 @@ if License.has_service(LICENSE):
     from com_tracardi.endpoint import event_to_profile_copy
     from com_tracardi.endpoint import event_props_to_event_traits_copy
     from com_tracardi.endpoint import metric_endpoint
+    from com_tracardi.config import com_tracardi_settings
 else:
     event_to_profile_copy = get_router(prefix="/events/copy")
     event_props_to_event_traits_copy = get_router(prefix="/events/index")
@@ -179,7 +180,7 @@ application = FastAPI(
     description="The TRACARDI open-source customer data platform provides exceptional control over customer "
                 "data through its comprehensive set of features.",
     version=str(tracardi.version),
-    openapi_tags=tags_metadata if server.expose_gui_api else None,
+    openapi_tags=tags_metadata if tracardi.expose_gui_api else None,
     docs_url='/docs' if server.api_docs else None,
     redoc_url='/redoc' if server.api_docs else None,
     contact={
@@ -309,6 +310,8 @@ if server.performance_tracking:
 @application.on_event("startup")
 async def app_starts():
     logger.info(f"TRACARDI version {str(tracardi.version)} set-up starts.")
+    if License.has_license():
+        logger.info(f"TRACARDI async processing:  {com_tracardi_settings.async_processing}.")
     await wait_for_connection(no_of_tries=10)
     logger.info("TRACARDI set-up finished.")
     logger.info(f"TRACARDI version {str(tracardi.version)} ready to operate.")

@@ -3,6 +3,7 @@ from typing import Optional
 from fastapi import APIRouter, Depends
 from app.api.auth.permissions import Permissions
 from app.config import server
+from tracardi.config import tracardi
 from tracardi.service.storage.driver.elastic import log as log_db
 
 router = APIRouter(
@@ -10,8 +11,8 @@ router = APIRouter(
 )
 
 
-@router.get("/logs/page/{page}", tags=["logs"], include_in_schema=server.expose_gui_api)
-@router.get("/logs", tags=["logs"], include_in_schema=server.expose_gui_api)
+@router.get("/logs/page/{page}", tags=["logs"], include_in_schema=tracardi.expose_gui_api)
+@router.get("/logs", tags=["logs"], include_in_schema=tracardi.expose_gui_api)
 async def get_logs(page: Optional[int] = None, query: Optional[str] = None):
     """
     Returns list of all Tracardi API logs. Accessible by roles: "admin"

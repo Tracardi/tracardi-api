@@ -12,7 +12,6 @@ from tracardi.domain.pro_service_form_data import TProMicroserviceCredentials, P
 from tracardi.service.plugin.domain.register import Plugin, MicroserviceConfig
 from tracardi.service.plugin.plugin_install import install_remote_plugin, install_plugin
 from app.api.domain.credentials import Credentials
-from tracardi.config import tracardi
 from tracardi.domain.resource import Resource, ResourceRecord
 from tracardi.domain.sign_up_data import SignUpData, SignUpRecord
 from app.api.proto.tracard_pro_client import TracardiProClient
@@ -20,7 +19,7 @@ from tracardi.exceptions.log_handler import log_handler
 from tracardi.service.storage.driver.elastic import resource as resource_db
 from tracardi.service.storage.driver.elastic import pro as pro_db
 from tracardi.service.storage.driver.elastic import action as action_db
-from app.config import server
+from tracardi.config import tracardi
 from tracardi.service.tracardi_http_client import HttpClient
 
 logging.basicConfig(level=logging.ERROR)
@@ -41,7 +40,7 @@ async def _store_resource_record(data: Entity):
     return await resource_db.save(data)
 
 
-@router.get("/tpro/validate", tags=["tpro"], include_in_schema=server.expose_gui_api)
+@router.get("/tpro/validate", tags=["tpro"], include_in_schema=tracardi.expose_gui_api)
 async def is_token_valid():
     """
     Return None if not configured otherwise returns True if credentials are valid or False.
@@ -64,7 +63,7 @@ async def is_token_valid():
     return token is not None
 
 
-@router.post("/tpro/sign_in", tags=["tpro"], include_in_schema=server.expose_gui_api)
+@router.post("/tpro/sign_in", tags=["tpro"], include_in_schema=tracardi.expose_gui_api)
 async def tracardi_pro_sign_in(credentials: Credentials):
     """
     Handles signing in to Tracardi PRO service
@@ -92,7 +91,7 @@ async def tracardi_pro_sign_in(credentials: Credentials):
         raise HTTPException(detail=str(e), status_code=403)  # Must be 403 because 401 logs out gui
 
 
-@router.post("/tpro/sign_up", tags=["tpro"], include_in_schema=server.expose_gui_api, response_model=bool)
+@router.post("/tpro/sign_up", tags=["tpro"], include_in_schema=tracardi.expose_gui_api, response_model=bool)
 async def tracardi_pro_sign_up(sign_up_data: SignUpData):
     """
     Handles signing up to Tracardi PRO service
@@ -114,7 +113,7 @@ async def tracardi_pro_sign_up(sign_up_data: SignUpData):
             status_code=403)  # Must be 403 because 401 logs out gui
 
 
-@router.get("/tpro/available_services", tags=["tpro"], include_in_schema=server.expose_gui_api)
+@router.get("/tpro/available_services", tags=["tpro"], include_in_schema=tracardi.expose_gui_api)
 async def get_available_services(query: Optional[str] = "", category: Optional[str] = ""):
     """
     Returns available Tracardi PRO services
@@ -133,7 +132,7 @@ async def get_available_services(query: Optional[str] = "", category: Optional[s
         raise HTTPException(detail=e.details(), status_code=403 if e.code().name == 'UNAUTHENTICATED' else 500)
 
 
-@router.get("/tpro/plugin/{module}", tags=["tpro"], include_in_schema=server.expose_gui_api)
+@router.get("/tpro/plugin/{module}", tags=["tpro"], include_in_schema=tracardi.expose_gui_api)
 async def get_available_plugin_modules(module: str):
     """
     Returns available Tracardi PRO services
@@ -146,7 +145,7 @@ async def get_available_plugin_modules(module: str):
         raise HTTPException(detail=e.details(), status_code=403 if e.code().name == 'UNAUTHENTICATED' else 500)
 
 
-@router.post("/tpro/install", tags=["tpro"], include_in_schema=server.expose_gui_api)
+@router.post("/tpro/install", tags=["tpro"], include_in_schema=tracardi.expose_gui_api)
 async def save_tracardi_pro_resource(pro: ProService):
     """
     Adds new Tracardi PRO resource
@@ -183,7 +182,7 @@ async def save_tracardi_pro_resource(pro: ProService):
     return result
 
 
-@router.post("/tpro/install/microservice", tags=["tpro"], include_in_schema=server.expose_gui_api)
+@router.post("/tpro/install/microservice", tags=["tpro"], include_in_schema=tracardi.expose_gui_api)
 async def save_tracardi_pro_microservice(pro: ProMicroService):
     """
     Adds new Tracardi PRO resource

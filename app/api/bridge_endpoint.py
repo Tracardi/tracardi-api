@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 
 from app.api.auth.permissions import Permissions
-from app.config import server
+from tracardi.config import tracardi
 
 from tracardi.service.storage.driver.elastic import bridge as bridge_db
 
@@ -10,7 +10,7 @@ router = APIRouter(
 )
 
 
-@router.get("/bridges", tags=["bridge"], include_in_schema=server.expose_gui_api)
+@router.get("/bridges", tags=["bridge"], include_in_schema=tracardi.expose_gui_api)
 async def get_data_bridges():
     """
     Returns list of available data bridges
@@ -19,7 +19,7 @@ async def get_data_bridges():
     return result.dict()
 
 
-@router.get("/bridges/entity", tags=["bridge"], include_in_schema=server.expose_gui_api)
+@router.get("/bridges/entity", tags=["bridge"], include_in_schema=tracardi.expose_gui_api)
 async def get_data_bridges():
     """
     Returns list of available data bridges
@@ -46,7 +46,7 @@ async def get_data_bridges():
     }
 
 
-@router.get("/bridge/{bridge_id}", tags=["bridge"], include_in_schema=server.expose_gui_api)
+@router.get("/bridge/{bridge_id}", tags=["bridge"], include_in_schema=tracardi.expose_gui_api)
 async def get_data_bridges(bridge_id: str):
     """
     Returns data bridge

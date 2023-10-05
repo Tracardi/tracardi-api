@@ -251,7 +251,7 @@ Here is the full code:
                 if profile.data.devices.last.geo.is_empty():
                     # If last geo of a profile is empty
 
-                    _geo = await get_geo_location(GeoLiteCredentials(
+                    _geo = await get_geo_maxmind_location(GeoLiteCredentials(
                         license=maxmind_license_key,
                         accountId=maxmind_account_id), ip=session.device.ip)
 
@@ -263,7 +263,7 @@ Here is the full code:
                     logger.info(f"Fetching GEO location for {session.device.ip}")
 
                     try:
-                        _geo = await get_geo_location(GeoLiteCredentials(
+                        _geo = await get_geo_maxmind_location(GeoLiteCredentials(
                             license=maxmind_license_key,
                             accountId=maxmind_account_id), ip=session.device.ip)
 

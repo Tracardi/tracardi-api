@@ -4,7 +4,6 @@ from fastapi import Depends, HTTPException, status, Request
 from fastapi.security import OAuth2PasswordBearer
 
 from app.api.auth.user_db import token2user
-from app.config import server
 from tracardi.config import tracardi
 from tracardi.exceptions.log_handler import log_handler
 
@@ -22,8 +21,8 @@ class Permissions:
 
     async def __call__(self, request: Request, token: str = Depends(oauth2_scheme)):
 
-        if not server.expose_gui_api or token is None:
-            if not server.expose_gui_api:
+        if not tracardi.expose_gui_api or token is None:
+            if not tracardi.expose_gui_api:
                 logger.warning("Unauthorized access to disabled API.")
             else:
                 logger.warning("Unauthorized access with empty token.")

@@ -3,10 +3,11 @@ import logging
 import os
 from typing import Optional
 from fastapi import APIRouter, HTTPException
+
+from app.config import server
 from tracardi.domain.payload.tracker_payload import TrackerPayload
 from tracardi.service.installation import install_system, check_installation
 from tracardi.service.tracker import track_event
-from app.config import server
 from tracardi.config import tracardi
 from tracardi.domain.credentials import Credentials
 from tracardi.domain.event_source import EventSource
@@ -26,7 +27,7 @@ logger.setLevel(tracardi.logging_level)
 logger.addHandler(log_handler)
 
 
-@router.get("/install", tags=["installation"], include_in_schema=server.expose_gui_api, response_model=dict)
+@router.get("/install", tags=["installation"], include_in_schema=tracardi.expose_gui_api, response_model=dict)
 async def check_if_installation_complete():
     """
     Returns list of missing and updated indices
@@ -34,12 +35,12 @@ async def check_if_installation_complete():
     return await check_installation()
 
 
-@router.get("/install/plugins", tags=["installation"], include_in_schema=server.expose_gui_api, response_model=dict)
+@router.get("/install/plugins", tags=["installation"], include_in_schema=tracardi.expose_gui_api, response_model=dict)
 async def install_plugins():
     return await install_default_plugins()
 
 
-@router.get("/install/demo", tags=["installation"], include_in_schema=server.expose_gui_api)
+@router.get("/install/demo", tags=["installation"], include_in_schema=tracardi.expose_gui_api)
 async def install_demo_data():
     # Demo
     if os.environ.get("DEMO", None) == 'yes':
@@ -50,7 +51,7 @@ async def install_demo_data():
             name="Test random data",
             channel="Internal",
             description="Internal event source for random data.",
-            bridge=NamedEntity(**open_rest_source_bridge.dict()),
+            bridge=NamedEntity(**open_rest_source_bridge.model_dump()),
             timestamp=datetime.datetime.utcnow(),
             tags=["internal"],
             groups=["Internal"]
@@ -71,7 +72,7 @@ async def install_demo_data():
                 allowed_bridges=['internal'])
 
 
-@router.post("/install", tags=["installation"], include_in_schema=server.expose_gui_api)
+@router.post("/install", tags=["installation"], include_in_schema=tracardi.expose_gui_api)
 async def install(credentials: Optional[Credentials]):
 
     try:

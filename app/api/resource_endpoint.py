@@ -3,7 +3,6 @@ from collections import defaultdict
 from typing import Optional
 from fastapi import APIRouter, Depends, Response
 
-from tracardi.config import tracardi
 from tracardi.domain.enum.type_enum import TypeEnum
 from tracardi.exceptions.log_handler import log_handler
 from tracardi.service.setup.setup_resources import get_type_of_resources
@@ -13,7 +12,7 @@ from app.service.grouper import search
 from tracardi.domain.resource import Resource, ResourceRecord
 from tracardi.domain.value_object.bulk_insert_result import BulkInsertResult
 from .auth.permissions import Permissions
-from ..config import server
+from tracardi.config import tracardi
 
 logger = logging.getLogger(__name__)
 logger.setLevel(tracardi.logging_level)
@@ -35,7 +34,7 @@ async def _store_record(data: ResourceRecord):
 @router.get("/resources/type/{type}",
             tags=["resource"],
             response_model=dict,
-            include_in_schema=server.expose_gui_api)
+            include_in_schema=tracardi.expose_gui_api)
 async def resource_types_list(type: TypeEnum) -> dict:
     """
     Returns a list of source types. Each source requires a source type to define what kind of data is
@@ -60,7 +59,7 @@ async def resource_types_list(type: TypeEnum) -> dict:
 
 @router.get("/resources/entity/tag/{tag}",
             tags=["resource"],
-            include_in_schema=server.expose_gui_api)
+            include_in_schema=tracardi.expose_gui_api)
 async def list_resources_names_by_tag(tag: str):
     """
     Returns list of resources that have defined tag. This list contains only id and name.
@@ -78,7 +77,7 @@ async def list_resources_names_by_tag(tag: str):
 
 @router.get("/resources/tag/{tag}",
             tags=["resource"],
-            include_in_schema=server.expose_gui_api)
+            include_in_schema=tracardi.expose_gui_api)
 async def list_resources_by_tag(tag: str):
     """
     Returns list of resources that have defined tag. This list contains all data along with credentials.
@@ -95,7 +94,7 @@ async def list_resources_by_tag(tag: str):
 
 @router.get("/resources/entity",
             tags=["resource"],
-            include_in_schema=server.expose_gui_api)
+            include_in_schema=tracardi.expose_gui_api)
 async def list_resources():
     result = await resource_db.load_all(limit=250)
     total = result.total
@@ -109,11 +108,11 @@ async def list_resources():
 
 @router.get("/resources",
             tags=["resource"],
-            include_in_schema=server.expose_gui_api)
+            include_in_schema=tracardi.expose_gui_api)
 async def list_resources():
     result = await resource_db.load_all()
     total = result.total
-    result = [ResourceRecord.construct(Resource.__fields_set__, **r).decode() for r in result]
+    result = [ResourceRecord(**r).decode() for r in result]
 
     return {
         "total": total,
@@ -123,12 +122,12 @@ async def list_resources():
 
 @router.get("/resources/by_type",
             tags=["resource"],
-            include_in_schema=server.expose_gui_api)
+            include_in_schema=tracardi.expose_gui_api)
 async def list_resources_by_type(query: str = None):
     result = await resource_db.load_all()
 
     total = result.total
-    result = [ResourceRecord.construct(Resource.__fields_set__, **r).decode() for r in result]
+    result = [ResourceRecord(**r).decode() for r in result]
 
     # Filtering
     if query is not None and len(query) > 0:
@@ -160,14 +159,14 @@ async def list_resources_by_type(query: str = None):
 @router.get("/resource/{id}/enabled/on",
             tags=["resource"],
             response_model=dict,
-            include_in_schema=server.expose_gui_api)
+            include_in_schema=tracardi.expose_gui_api)
 async def set_resource_property_on(id: str):
     record = await _load_record(id)
     if record:
         resource = record.decode()
         resource_data = resource.model_dump()
         resource_data['enabled'] = True
-        resource = Resource.construct(_fields_set=resource.__fields_set__, **resource_data)
+        resource = Resource(**resource_data)
         record = ResourceRecord.encode(resource)
 
         return await _store_record(record)
@@ -178,7 +177,7 @@ async def set_resource_property_on(id: str):
 @router.get("/resource/{id}/enabled/off",
             tags=["resource"],
             response_model=dict,
-            include_in_schema=server.expose_gui_api)
+            include_in_schema=tracardi.expose_gui_api)
 async def set_resource_property_off(id: str):
     record = await _load_record(id)
 
@@ -186,7 +185,7 @@ async def set_resource_property_off(id: str):
         resource = record.decode()
         resource_data = resource.model_dump()
         resource_data['enabled'] = False
-        resource = Resource.construct(_fields_set=resource.__fields_set__, **resource_data)
+        resource = Resource(**resource_data)
         record = ResourceRecord.encode(resource)
 
         return await _store_record(record)
@@ -195,7 +194,7 @@ async def set_resource_property_off(id: str):
 @router.get("/resource/{id}",
             tags=["resource"],
             response_model=Optional[Resource],
-            include_in_schema=server.expose_gui_api)
+            include_in_schema=tracardi.expose_gui_api)
 async def get_resource_by_id(id: str, response: Response) -> Optional[Resource]:
     """
     Returns source data with given id.
@@ -212,7 +211,7 @@ async def get_resource_by_id(id: str, response: Response) -> Optional[Resource]:
 
 @router.post("/resource", tags=["resource"],
              response_model=BulkInsertResult,
-             include_in_schema=server.expose_gui_api)
+             include_in_schema=tracardi.expose_gui_api)
 async def upsert_resource(resource: Resource):
     record = ResourceRecord.encode(resource)
     result = await _store_record(record)
@@ -222,7 +221,7 @@ async def upsert_resource(resource: Resource):
 
 @router.delete("/resource/{id}", tags=["resource"],
                response_model=Optional[dict],
-               include_in_schema=server.expose_gui_api)
+               include_in_schema=tracardi.expose_gui_api)
 async def delete_resource(id: str, response: Response):
     result = await resource_db.delete(id)
 
@@ -236,13 +235,13 @@ async def delete_resource(id: str, response: Response):
 
 @router.get("/resources/refresh",
             tags=["resource"],
-            include_in_schema=server.expose_gui_api)
+            include_in_schema=tracardi.expose_gui_api)
 async def refresh_resources():
     return await resource_db.refresh()
 
 
 @router.get("/resources/flash",
             tags=["resource"],
-            include_in_schema=server.expose_gui_api)
+            include_in_schema=tracardi.expose_gui_api)
 async def refresh_resources():
     return await resource_db.flush()

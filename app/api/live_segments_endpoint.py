@@ -10,7 +10,7 @@ from tracardi.service.storage.driver.elastic import live_segment as live_segment
 from app.service.grouper import search
 from tracardi.domain.value_object.bulk_insert_result import BulkInsertResult
 from .auth.permissions import Permissions
-from ..config import server
+from tracardi.config import tracardi
 
 router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer"]))]
@@ -19,7 +19,7 @@ router = APIRouter(
 
 @router.get("/segment/live/{id}",
             tags=["segment"],
-            include_in_schema=server.expose_gui_api)
+            include_in_schema=tracardi.expose_gui_api)
 async def get_live_segment(id: str) -> Optional[LiveSegment]:
     """
     Returns live segment with given ID (str)
@@ -29,7 +29,7 @@ async def get_live_segment(id: str) -> Optional[LiveSegment]:
 
 @router.delete("/segment/live/{id}",
                tags=["segment"],
-               include_in_schema=server.expose_gui_api)
+               include_in_schema=tracardi.expose_gui_api)
 async def delete_live_segment(id: str):
     """
     Deletes live segment with given ID (str)
@@ -41,7 +41,7 @@ async def delete_live_segment(id: str):
 
 @router.get("/segments/live/refresh",
             tags=["segment"],
-            include_in_schema=server.expose_gui_api)
+            include_in_schema=tracardi.expose_gui_api)
 async def refresh_live_segments():
     """
     Refreshes live segments index
@@ -51,7 +51,7 @@ async def refresh_live_segments():
 
 @router.get("/segments/live",
             tags=["segment"],
-            include_in_schema=server.expose_gui_api)
+            include_in_schema=tracardi.expose_gui_api)
 async def get_live_segments(query: str = None):
     """
     Returns live segments with match of given query (str) on name of event type
@@ -85,7 +85,7 @@ async def get_live_segments(query: str = None):
 @router.post("/segment/live",
              tags=["segment"],
              response_model=BulkInsertResult,
-             include_in_schema=server.expose_gui_api)
+             include_in_schema=tracardi.expose_gui_api)
 async def upsert_live_segment(segment: LiveSegment):
     """
     Adds new live segment to database

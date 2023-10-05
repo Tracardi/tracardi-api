@@ -1,11 +1,11 @@
 from json import JSONDecodeError
 from fastapi import APIRouter, Request
-from app.config import server
+from tracardi.config import tracardi
 
 router = APIRouter()
 
 
-@router.post("/healthcheck", tags=["health"], include_in_schema=server.expose_gui_api)
+@router.post("/healthcheck", tags=["health"], include_in_schema=tracardi.expose_gui_api)
 async def post_healthcheck(r: Request):
     """
     Enables you to see if API responds to HTTP POST requests
@@ -20,7 +20,7 @@ async def post_healthcheck(r: Request):
         return await r.body()
 
 
-@router.get("/healthcheck", tags=["health"], include_in_schema=server.expose_gui_api)
+@router.get("/healthcheck", tags=["health"], include_in_schema=tracardi.expose_gui_api)
 async def get_healthcheck(r: Request):
     """
        Enables you to see if API responds to HTTP GET requests
@@ -35,7 +35,7 @@ async def get_healthcheck(r: Request):
         return await r.body()
 
 
-@router.put("/healthcheck", tags=["health"], include_in_schema=server.expose_gui_api)
+@router.put("/healthcheck", tags=["health"], include_in_schema=tracardi.expose_gui_api)
 async def put_healthcheck(r: Request):
     """
        Enables you to see if API responds to HTTP PUT requests
@@ -50,7 +50,7 @@ async def put_healthcheck(r: Request):
         return await r.body()
 
 
-@router.delete("/healthcheck", tags=["health"], include_in_schema=server.expose_gui_api)
+@router.delete("/healthcheck", tags=["health"], include_in_schema=tracardi.expose_gui_api)
 async def delete_healthcheck(r: Request):
     """
        Enables you to see if API responds to HTTP DELETE requests

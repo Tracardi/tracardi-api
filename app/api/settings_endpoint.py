@@ -69,7 +69,7 @@ system_settings = [
     SystemSettings(
         **{
             "label": "EXPOSE_GUI_API",
-            "value": server.expose_gui_api,
+            "value": tracardi.expose_gui_api,
             "desc": "Expose GUI API or not, defaults to True, "
                     "can be changed by setting to 'yes' (then it's True) or 'no', "
                     "which makes it False."
@@ -153,20 +153,6 @@ system_settings = [
             "label": "EVENT_METADATA_CACHE_TTL",
             "value": memory_cache.event_metadata_cache_ttl,
             "desc": "Default: 2. Set cache time for event tagging, indexing, etc. configuration. Set 0 for no caching."
-        }
-    ),
-    SystemSettings(
-        **{
-            "label": "ELASTIC_SAVE_POOL",
-            "value": elastic.save_pool,
-            "desc": "Default: 0. Pool of records to be collected before saving to elastic. Default 0 means no pooling."
-        }
-    ),
-    SystemSettings(
-        **{
-            "label": "ELASTIC_SAVE_POOL_TTL",
-            "value": elastic.save_pool_ttl,
-            "desc": "Default: 5. How many seconds pool waits before being purged."
         }
     ),
     SystemSettings(
@@ -425,7 +411,7 @@ router = APIRouter(
 
 # todo remove after 2023-10-01
 # @router.get("/system/setting/{name}", tags=["system"],
-#             include_in_schema=server.expose_gui_api,
+#             include_in_schema=tracardi.expose_gui_api,
 #             response_model=Optional[SystemSettings])
 # async def get_system_settings(name: str) -> Optional[SystemSettings]:
 #     """
@@ -438,7 +424,7 @@ router = APIRouter(
 
 
 @router.get("/system/settings", tags=["system"],
-            include_in_schema=server.expose_gui_api,
+            include_in_schema=tracardi.expose_gui_api,
             response_model=List[SystemSettings])
 async def get_system_settings() -> List[SystemSettings]:
     """

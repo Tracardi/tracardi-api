@@ -1,0 +1,37 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="storage_worker" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
+    <module name="com-tracardi" />
+    <option name="INTERPRETER_OPTIONS" value="" />
+    <option name="PARENT_ENVS" value="true" />
+    <envs>
+      <env name="_PULSAR_AUTH_TOKEN" value="eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbiJ9.YYrU_ft-JUwQAHhAxbXvtm8FsPApc3R5TLHBR4YRrQ7NILFDZePqAxqadRKhQzOOeMzebgSOno5yEZdIG1b_JzKEpdFU2YYjZTOdX1zX4KoU2WglPijW8DMLZVD-bMy23m3F81b9Fk5GCsRXCWJOG8uCaNrs7lCk2d6WYUOnbmzPA-mjke8Cz3bcwxPVxH--eoFnzXfZkQvuKJNe6d653XPFmziTmfQ2Aenhprb6uP74FzSUen0BjoJMTwTkIR91hYz4W9q_wSG9k8F2VTylAvNNRFI_IdAUSbxrOVsIYMBn6mWzy4JdWDK5AV0CGBg5PKkocftuCPgaAVmCiS9ARw" />
+      <env name="CONSUMER_TYPE" value="profile" />
+      <env name="LOGGING_LEVEL" value="info" />
+      <env name="PULSAR_HOST" value="pulsar://192.168.1.107:6650" />
+      <env name="PYTHONUNBUFFERED" value="1" />
+    </envs>
+    <option name="SDK_HOME" value="" />
+    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/../com-tracardi/com_worker/tracker/consumers/pulsar" />
+    <option name="IS_MODULE_SDK" value="true" />
+    <option name="ADD_CONTENT_ROOTS" value="true" />
+    <option name="ADD_SOURCE_ROOTS" value="true" />
+    <EXTENSION ID="net.ashald.envfile">
+      <option name="IS_ENABLED" value="false" />
+      <option name="IS_SUBST" value="false" />
+      <option name="IS_PATH_MACRO_SUPPORTED" value="false" />
+      <option name="IS_IGNORE_MISSING_FILES" value="false" />
+      <option name="IS_ENABLE_EXPERIMENTAL_INTEGRATIONS" value="false" />
+      <ENTRIES>
+        <ENTRY IS_ENABLED="true" PARSER="runconfig" IS_EXECUTABLE="false" />
+      </ENTRIES>
+    </EXTENSION>
+    <option name="SCRIPT_NAME" value="$PROJECT_DIR$/../com-tracardi/com_worker/tracker/consumers/pulsar/storage/storage_worker.py" />
+    <option name="PARAMETERS" value="" />
+    <option name="SHOW_COMMAND_LINE" value="false" />
+    <option name="EMULATE_TERMINAL" value="false" />
+    <option name="MODULE_MODE" value="false" />
+    <option name="REDIRECT_INPUT" value="false" />
+    <option name="INPUT_FILE" value="" />
+    <method v="2" />
+  </configuration>
+</component>

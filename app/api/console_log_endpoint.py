@@ -1,9 +1,7 @@
-from pprint import pprint
-
 from fastapi import APIRouter, Depends
 
 from app.api.auth.permissions import Permissions
-from app.config import server
+from tracardi.config import tracardi
 from tracardi.domain.console import Console
 
 from tracardi.service.storage.driver.elastic import console_log as console_log_db
@@ -11,7 +9,7 @@ from tracardi.service.storage.driver.elastic import console_log as console_log_d
 router = APIRouter()
 
 
-@router.get("/event/logs/{event_id}", tags=["console_log"], include_in_schema=server.expose_gui_api)
+@router.get("/event/logs/{event_id}", tags=["console_log"], include_in_schema=tracardi.expose_gui_api)
 async def get_event_logs(event_id: str, sort: str = None):
     """
     Returns event logs for event with given ID
@@ -30,7 +28,7 @@ async def get_event_logs(event_id: str, sort: str = None):
 
 
 @router.get("/node/logs/{node_id}", tags=["console_log"],
-            include_in_schema=server.expose_gui_api)
+            include_in_schema=tracardi.expose_gui_api)
 async def get_node_logs(node_id: str, sort: str = None):
     """
     Returns node console log.
@@ -50,7 +48,7 @@ async def get_node_logs(node_id: str, sort: str = None):
 
 
 @router.get("/flow/logs/{flow_id}", tags=["console_log"],
-            include_in_schema=server.expose_gui_api)
+            include_in_schema=tracardi.expose_gui_api)
 async def get_flow_logs(flow_id: str, sort: str = None):
     """
     Returns flow console log.
@@ -70,7 +68,7 @@ async def get_flow_logs(flow_id: str, sort: str = None):
 
 @router.get("/profile/logs/{id}", tags=["profile"],
             dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer"]))],
-            include_in_schema=server.expose_gui_api)
+            include_in_schema=tracardi.expose_gui_api)
 async def get_profile_logs(id: str, sort: str = None):
     """
     Gets logs for profile with given ID (str)

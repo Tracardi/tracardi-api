@@ -8,7 +8,7 @@ from tracardi.service.storage.driver.elastic import destination as destination_d
 from tracardi.service.storage.driver.elastic import resource as resource_db
 from tracardi.domain.destination import Destination, DestinationRecord
 from .auth.permissions import Permissions
-from ..config import server
+from tracardi.config import tracardi
 from ..service.grouping import group_records
 
 router = APIRouter(
@@ -17,7 +17,7 @@ router = APIRouter(
 
 
 @router.post("/destination", tags=["destination"], response_model=BulkInsertResult,
-             include_in_schema=server.expose_gui_api)
+             include_in_schema=tracardi.expose_gui_api)
 async def save_destination(destination: Destination):
     """
     Upserts destination data.
@@ -30,7 +30,7 @@ async def save_destination(destination: Destination):
 
 
 @router.get("/destination/{id}", tags=["destination"], response_model=Optional[Destination],
-            include_in_schema=server.expose_gui_api)
+            include_in_schema=tracardi.expose_gui_api)
 async def get_destination(id: str, response: Response):
     """
     Returns destination or None if destination does not exist.
@@ -45,7 +45,7 @@ async def get_destination(id: str, response: Response):
 
 
 @router.get("/destinations", tags=["destination"], response_model=dict,
-            include_in_schema=server.expose_gui_api)
+            include_in_schema=tracardi.expose_gui_api)
 async def get_destinations_list():
     """
     Returns destinations.
@@ -55,7 +55,7 @@ async def get_destinations_list():
     return storage_result.dict()
 
 
-@router.get("/destinations/type", tags=["destination"], response_model=dict, include_in_schema=server.expose_gui_api)
+@router.get("/destinations/type", tags=["destination"], response_model=dict, include_in_schema=tracardi.expose_gui_api)
 async def get_destinations_type_list():
     """
     Returns destination types.
@@ -63,13 +63,13 @@ async def get_destinations_type_list():
     return {key: value for key, value in get_destinations()}
 
 
-@router.get("/destinations/by_tag", tags=["destination"], response_model=dict, include_in_schema=server.expose_gui_api)
+@router.get("/destinations/by_tag", tags=["destination"], response_model=dict, include_in_schema=tracardi.expose_gui_api)
 async def get_destinations_by_tag(query: str = None, start: int = 0, limit: int = 100) -> dict:
     result = await destination_db.load_all(start, limit=limit)
     return group_records(result, query, group_by='tags', search_by='name', sort_by='name')
 
 
-@router.delete("/destination/{id}", tags=["destination"], include_in_schema=server.expose_gui_api)
+@router.delete("/destination/{id}", tags=["destination"], include_in_schema=tracardi.expose_gui_api)
 async def delete_destination(id: str, response: Response):
     """
     Deletes destination with given id
@@ -86,7 +86,7 @@ async def delete_destination(id: str, response: Response):
 
 @router.get("/destinations/entity",
             tags=["resource"],
-            include_in_schema=server.expose_gui_api)
+            include_in_schema=tracardi.expose_gui_api)
 async def list_destination_resources():
     data, total = await resource_db.load_destinations()
     result = {r.id: r for r in data if r.is_destination()}

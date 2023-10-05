@@ -8,7 +8,7 @@ uvicorn app.main:application --reload --host 0.0.0.0 --port 8686 --ssl-keyfile s
 gunicorn -b 0.0.0.0:443 --keyfile ssl/key.pem --certfile ssl/cert.pem -k uvicorn.workers.UvicornWorker app.main:application
 
 # Run local Kibana
-docker run -p 5601:5601 -m 4g -e ELASTICSEARCH_HOSTS=http://192.168.1.101:9200 docker.elastic.co/kibana/kibana:7.13.2
+docker run -p 5601:5601 -m 4g -e ELASTICSEARCH_HOSTS=http://192.168.1.107:9200 docker.elastic.co/kibana/kibana:7.13.2
 
 # Run local ElasticSearch
 docker run -p 9200:9200 -p 9300:9300 -m 8g -e "discovery.type=single-node" -v "/opt/esdata:/usr/share/elasticsearch/data" docker.elastic.co/elasticsearch/elasticsearch:7.13.2
@@ -105,6 +105,16 @@ docker run --rm --net=host landoop/fast-data-dev
 # Matomo
 
 helm upgrade matomo --set service.ports.http=9080,service.ports.https=9443,externalDatabase.host=192.168.1.190,externalDatabase.user=root,externalDatabase.password=root bitnami/matomo
+
+
+# Pulsar
+
+docker run -it \
+-p 6650:6650 \
+-p 8080:8080 \
+apachepulsar/pulsar:3.1.0 \
+bin/pulsar standalone
+
 
 # ISSUES:
  Can't logi in:

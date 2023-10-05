@@ -6,7 +6,6 @@ from tracardi.domain.version import Version
 from tracardi.service.storage.driver.elastic import raw as raw_db
 from tracardi.service.storage.indices_manager import check_indices_mappings_consistency
 from app.api.auth.permissions import Permissions
-from app.config import server
 from tracardi.domain.migration_payload import MigrationPayload
 from tracardi.process_engine.migration.migration_manager import MigrationManager, MigrationNotFoundException
 from tracardi.service.url_constructor import construct_elastic_url
@@ -18,7 +17,7 @@ router = APIRouter(
 
 
 # todo can not find usages
-@router.get("/migration/check/from/{version}", tags=["migration"], include_in_schema=server.expose_gui_api)
+@router.get("/migration/check/from/{version}", tags=["migration"], include_in_schema=tracardi.expose_gui_api)
 async def check_migration_consistency(version: str):
 
     """
@@ -76,7 +75,7 @@ async def check_migration_consistency(version: str):
     }
 
 
-@router.post("/migration", tags=["migration"], include_in_schema=server.expose_gui_api)
+@router.post("/migration", tags=["migration"], include_in_schema=tracardi.expose_gui_api)
 async def run_migration(migration: MigrationPayload):
     try:
         tenant = get_context().tenant
@@ -103,7 +102,7 @@ async def run_migration(migration: MigrationPayload):
         raise HTTPException(status_code=404, detail=str(e))
 
 
-@router.get("/migration/{from_db_version}", tags=["migration"], include_in_schema=server.expose_gui_api)
+@router.get("/migration/{from_db_version}", tags=["migration"], include_in_schema=tracardi.expose_gui_api)
 async def get_migration_schemas(from_db_version: str, from_tenant_name: str = None):
 
     if from_tenant_name is None:
@@ -124,6 +123,6 @@ async def get_migration_schemas(from_db_version: str, from_tenant_name: str = No
         raise HTTPException(status_code=404, detail=str(e))
 
 
-@router.get("/migrations", tags=["migration"], include_in_schema=server.expose_gui_api, response_model=list)
+@router.get("/migrations", tags=["migration"], include_in_schema=tracardi.expose_gui_api, response_model=list)
 async def get_migrations_for_current_version():
     return MigrationManager.get_available_migrations_for_version(tracardi.version)
