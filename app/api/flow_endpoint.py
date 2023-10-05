@@ -420,20 +420,10 @@ async def debug_flow(flow: FlowGraph, event_id: Optional[str] = None):
     profile_save_result = None
     try:
         # Store logs in one console log
-        for log in flow_invoke_result.log_list:
-            console = Console(
-                origin="node",
-                event_id=get_entity_id(flow_invoke_result.event),
-                flow_id=flow.id,
-                profile_id=get_entity_id(flow_invoke_result.profile),
-                node_id=log.node_id,
-                module=log.module,
-                class_name=log.class_name,
-                type=log.type,
-                message=log.message,
-                traceback=log.traceback
-            )
-            console_log.append(console)
+        console_log.append_event_log_list(
+            get_entity_id(flow_invoke_result.event),
+            flow.id,
+            flow_invoke_result.log_list)
 
     except StorageException as e:
         console = Console(
