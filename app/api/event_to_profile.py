@@ -6,6 +6,7 @@ from app.api.auth.permissions import Permissions
 from tracardi.config import tracardi
 from app.service.grouping import group_records
 from tracardi.domain.event_to_profile import EventToProfile
+from tracardi.domain.value_object.bulk_insert_result import BulkInsertResult
 from tracardi.service.events import get_default_mappings_for
 from tracardi.service.storage.driver.elastic import event_to_profile as event_to_profile_db
 from typing import Optional
@@ -27,7 +28,7 @@ async def refresh_event_to_profile():
 
 
 @router.post("/event-to-profile", tags=["event-to-profile"], include_in_schema=tracardi.expose_gui_api,
-             response_model=dict)
+             response_model=BulkInsertResult)
 async def add_event_to_profile(event_to_profile: EventToProfile):
     """
     Creates new event to profile record in database
