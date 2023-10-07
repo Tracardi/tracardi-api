@@ -174,18 +174,6 @@ system_settings = [
     ),
     SystemSettings(
         **{
-            "label": "POSTPONE_DESTINATION_SYNC",
-            "value": tracardi.postpone_destination_sync,
-            "desc": "Postpone destination synchronisation. Default 0, means do not wait. Destinations are called only "
-                    "when the profile is changed. If there is a stream of changes then with every change of profile "
-                    "synchronisation will be triggered. To avoid unnecessary calls to external systems you can set this "
-                    "variable to eg. 60 seconds and Tracardi will wait between 60 and 120 seconds after the last "
-                    "change of profile before it will trigger destination synchronisation. This features requires "
-                    "REDIS."
-        }
-    ),
-    SystemSettings(
-        **{
             "label": "STORAGE_DRIVER",
             "value": tracardi.storage_driver,
             "desc": "The name of storage driver, defaults to 'elastic'."

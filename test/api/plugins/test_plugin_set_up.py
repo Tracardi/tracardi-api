@@ -1457,18 +1457,6 @@ async def test_should_set_up_plugin_require_consents_action():
     await plugin.set_up({'consent_ids': [], 'require_all': False})
 
 
-async def test_should_set_up_plugin_postpone_event_action():
-    
-    module = import_package("tracardi.process_engine.action.v1.flow.postpone_event.plugin")
-    plugin_class = load_callable(module, "PostponeEventAction")
-    plugin = plugin_class()
-    plugin.node = Node(id="node-id", 
-                       name="test-node", 
-                       module="tracardi.process_engine.action.v1.flow.postpone_event.plugin", 
-                       className="PostponeEventAction")
-    await plugin.set_up({'event_type': 'type', 'source': {'id': 'x', 'name': 'x'}, 'event_properties': '{}', 'delay': 60})
-
-
 async def test_should_set_up_plugin_contains_string_action():
     
     module = import_package("tracardi.process_engine.action.v1.contains_string_action")

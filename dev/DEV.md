@@ -1,7 +1,7 @@
 # Run local server
 
 uvicorn app.main:application --reload --host 0.0.0.0 --port 8686 --workers 25 --log-level warning
-PYTHONPATH=/home/risto/PycharmProjects/tracardi LOGGING_LEVEL=warning POSTPONE_DESTINATION_SYNC=6 uvicorn app.main:application --reload --host 0.0.0.0 --port 8686 --workers 25 --log-level warning
+PYTHONPATH=/home/risto/PycharmProjects/tracardi LOGGING_LEVEL=warning uvicorn app.main:application --reload --host 0.0.0.0 --port 8686 --workers 25 --log-level warning
 gunicorn -b 0.0.0.0:8686 -k uvicorn.workers.UvicornWorker app.main:application
 
 uvicorn app.main:application --reload --host 0.0.0.0 --port 8686 --ssl-keyfile ssl/key.pem --ssl-certfile ssl/cert.pem  --ssl-keyfile-password 12345
@@ -67,7 +67,7 @@ docker run -p 443:443 -p 80:80 -e API_URL=//127.0.0.1:8686 tracardi/tracardi-gui
 docker run --rm -it -p 8000:8000 -v ${PWD}:/docs squidfunk/mkdocs-material
 
 
-docker run -p 8686:80 -e ELASTIC_HOST=http://192.168.1.103:9200 -e USER_NAME=admin -e PASSWORD=admin -e POSTPONE_DESTINATION_SYNC=6 -e LOGGING_LEVEL=info -e REDIS_HOST=redis://192.168.1.103:6379 tracardi/tracardi-api
+docker run -p 8686:80 -e ELASTIC_HOST=http://192.168.1.103:9200 -e USER_NAME=admin -e PASSWORD=admin -e LOGGING_LEVEL=info -e REDIS_HOST=redis://192.168.1.103:6379 tracardi/tracardi-api
 
 # minio
 docker run -p 9000:9000 -p 9001:9001 -e "MINIO_ROOT_USER=admin" -e "MINIO_ROOT_PASSWORD=admin" minio/minio server /data --console-address :9001
