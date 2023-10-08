@@ -1,21 +1,27 @@
-# RoadMap for the latest releases
+# RoadMap
 
-## Commercial version
+## Short-Term Objectives
 
-* Fully distributed environment
-  - Create 5 stream of data (profiles, sessions, events, workflows, destinations) that any commany can connect with and create its own data processors and integrations
-  - Perofomenace tweeks
+* Establish a Fully Distributed Environment
+  - Develop five distinct data streams (profiles, sessions, events, workflows, destinations) that can be seamlessly connected by any company to create their custom data processors and integrations.
+  - Implement performance enhancements.
+  - Incorporate Apache Pulsar into the system.
 
-* Marketers oriented GUI
-  - Add unified segments list with examples of segmented profiles
-  - Unify all segmentations
-  - Ability to auto sync profiles with the profile destinations
-  - 
+* Enhance Marketer-Focused User Interface
+  - Introduce a unified segments list, including illustrative examples of segmented profiles.
+  - Standardize all segmentation processes.
+  - Enable manual synchronization of profiles with profile destinations.
 
-* Simplification of workflow editor
-  - Add availability to see the event, profile, session in a dedicated window
+* Streamline Workflow Editor
+  - Provide the option to view events, profiles, and sessions in a dedicated window for improved workflow management.
 
+## Long-Term Objectives
 
-## Long term goals
- -  Add background data enhancers. enhance data with comapny information, social media information, email signatures, etc.
- - 
+* Introduce Background Data Enhancements
+  - Enhance data with additional information such as company details, social media profiles, email signatures, and more.
+
+* Implement a Comprehensive SQL Warehouse
+  - Replace the current external Warehouse system with a fully-fledged, integrated SQL Warehouse.
+
+* Integrate a Marketing Automation Solution
+  - Develop an in-house marketing automation solution to replace external Marketing Automation tools.
