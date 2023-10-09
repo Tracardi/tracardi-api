@@ -115,11 +115,28 @@ docker run -it \
 apachepulsar/pulsar:3.1.0 \
 bin/pulsar standalone
 
+SYNC
+
+docker run -p 8686:80 \
+-e ELASTIC_HOST=http://192.168.1.104:9200 \
+-e REDIS_HOST=redis://192.168.1.104:6379 \
+tracardi/tracardi-api:0.8.2-rc1
+
+
+ASYNC
+
+docker run -p 8686:80 \
+-e ELASTIC_HOST=http://192.168.1.104:9200 \
+-e REDIS_HOST=redis://192.168.1.104:6379 \
+-e PULSAR_HOST=pulsar://192.168.1.104:6650 \
+-e LICENSE=<license> \
+-e ASYNC_PROCESSING=yes \
+-e LOCK_ON_DATA_COMPUTATION=no \
+tracardi/com-tracardi-api:0.8.2-rc1
+
 
 # ISSUES:
  Can't logi in:
  
 delete the user index and reinstall
 
-
-curl -k -X DELETE "https://elastic:0q2673s1zLAZ9IPi22CEBlq2@localhost:9200/080.fa73a.tracardi-user?pretty"

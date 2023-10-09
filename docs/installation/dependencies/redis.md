@@ -1,6 +1,6 @@
 # Redis docker installation
 
-Start it with:
+Start standalone version of redis with:
 
 ```
 docker run -p 6379:6379 redis

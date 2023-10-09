@@ -81,12 +81,13 @@
       <env name="_REDIS_HOST" value="redis://192.168.1.190:11111" />
       <env name="_REDIS_PASSWORD" value="5BlpzS6rRC" />
       <env name="_REDIS_PORT" value="11111" />
-      <env name="ASYNC_STORING" value="yes" />
+      <env name="ASYNC_PROCESSING" value="no" />
+      <env name="ASYNC_STORE_BUFFER_TIMEOUT" value="7000" />
       <env name="DEMO" value="yes" />
       <env name="ELASTIC_SAVE_POOL" value="" />
       <env name="ENABLE_EVENT_DESTINATIONS" value="yes" />
       <env name="ENABLE_EVENT_SOURCE_CHECK" value="yes" />
-      <env name="ENABLE_EVENT_VALIDATION" value="no" />
+      <env name="ENABLE_EVENT_VALIDATION" value="yes" />
       <env name="ENABLE_IDENTIFICATION_POINT" value="yes" />
       <env name="ENABLE_POST_EVENT_SEGMENTATION" value="yes" />
       <env name="ENABLE_PROFILE_DESTINATIONS" value="yes" />
@@ -101,10 +102,9 @@
       <env name="PRODUCTION" value="no" />
       <env name="PULSAR_HOST" value="pulsar://localhost:6650" />
       <env name="PYTHONUNBUFFERED" value="1" />
-      <env name="SAVE_LOGS" value="yes" />
+      <env name="SAVE_LOGS" value="no" />
       <env name="SYSTEM_EVENTS" value="yes" />
-      <env name="TRACK_DEBUG" value="yes" />
-      <env name="ASYNC_STORE_BUFFER_TIMEOUT" value="7000" />
+      <env name="TRACK_DEBUG" value="no" />
     </envs>
     <option name="SDK_HOME" value="" />
     <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/app" />
