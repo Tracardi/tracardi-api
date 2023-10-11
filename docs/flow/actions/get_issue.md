@@ -50,7 +50,6 @@ timeout = 5 seconds
 # Call the GitHub Issue Retrieval component
 issue, error = retrieve_github_issue(resource_config, owner, repository_name, issue_id, timeout)
 
-```python
 
 if issue:
     print("GitHub Issue Title:", issue["title"])
