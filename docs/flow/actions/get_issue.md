@@ -39,6 +39,8 @@ The GitHub Issue Retrieval component is designed to fetch a single issue from a 
 
 Here's an example of how you can use the GitHub Issue Retrieval component in Python:
 
+```python
+
 resource_config = "https://api.github.com"
 owner = "example_user"
 repository_name = "example_repo"
