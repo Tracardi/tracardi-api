@@ -102,9 +102,9 @@
       <env name="PRODUCTION" value="no" />
       <env name="PULSAR_HOST" value="pulsar://localhost:6650" />
       <env name="PYTHONUNBUFFERED" value="1" />
-      <env name="SAVE_LOGS" value="no" />
+      <env name="SAVE_LOGS" value="yes" />
       <env name="SYSTEM_EVENTS" value="yes" />
-      <env name="TRACK_DEBUG" value="no" />
+      <env name="TRACK_DEBUG" value="yes" />
     </envs>
     <option name="SDK_HOME" value="" />
     <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/app" />
