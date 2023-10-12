@@ -75,7 +75,7 @@ Plugin(
                     name="If condition statement",  # Form field for configuring the "condition" key in the init
                     description="Provide a condition for the IF statement. If the condition is met, the payload "
                                 "will be returned on the TRUE port; otherwise, the FALSE port is triggered.",
-                    # Description of the configuration key
+                    # Description of the configuration key. FormComponent.type describes the form field type used to imput data. 
                     component=FormComponent(type="textarea", props={"label": "condition"})
                 ),
                 ...
@@ -130,8 +130,26 @@ Please use the above information to create clear and understandable documentatio
 If you see the code that does this:
 
 ```python
+# Get DotAccessor
 dot = self._get_dot_accessor(payload)
+# Lets assume that self.config.some-configuration = "event@path.to.property". 
+# It replace doted notation ("event@path.to.property") with value form event that is in path.to.property
+# And assigns it to value variable. 
+value = dot[self.config.some-configuration]
+```
+
+It means that it parses `some-propery` from the configuration (which is usually the dictionary) and replaces the dot notated values that reference the internet data of workflow. 
+
+
+
+If you see the code that does this:
+
+```python
+# Get DotAccessor
+dot = self._get_dot_accessor(payload)
+# Get traverser that goes through the dict and finds doted notation like this "key": "event@path.to.property"
 converter = DictTraverser(dot)
+# Replace "event@path.to.property" with value form event that is in path.to.property
 converter.reshape(self.config.some-property)
 ```
 
@@ -163,7 +181,7 @@ Use this template to generate the documentation:
 
 # Inputs and Outputs
 
-<Put here information about input and outputs with examples if possible.>
+<Put here information about input and outputs with examples. Put if possible exmples in JSON format of input and output values. Mention if the plugin can start the workflow.>
 
 
 # Configuration
@@ -185,80 +203,153 @@ and after the error the description when it may occur.>
 
 ```
 
+# What are the limitation of MD markup in the response
+
+There is only one, do not use `` in the response. So `some text` is not allowed. If you to stress some text use __some text__ instead.
+
 ---
 Here is the full plugin code:
 
-from uuid import uuid4
-from tracardi.domain.entity import Entity
-from tracardi.domain.event import EventSession
-from tracardi.domain.session import Session, SessionMetadata
-from tracardi.domain.value_object.operation import Operation
-from tracardi.service.plugin.domain.register import Plugin, Spec, MetaData, Documentation, PortDoc
-from tracardi.service.plugin.domain.result import Result
+```python
 from tracardi.service.plugin.runner import ActionRunner
-from tracardi.service.storage.driver.elastic import session as session_db
+from tracardi.service.plugin.domain.result import Result
+from tracardi.service.plugin.domain.config import PluginConfig
+from tracardi.service.plugin.domain.register import Plugin, Spec, MetaData, Form, FormGroup, FormField, FormComponent, \
+    PortDoc, Documentation
 
 
-class AddEmptySessionAction(ActionRunner):
+class Configuration(PluginConfig):
+    set1: str
+    set2: str
+    operation: str
 
-    async def run(self, payload: dict, in_edge=None) -> Result:
 
-        session = Session(
-                id=str(uuid4()),
-                profile=Entity(id=self.profile.id) if self.profile is not None else None,
-                metadata=SessionMetadata(),
-                operation=Operation(update=True)
-            )
-        self.session = session
-        self.event.session = EventSession(
-                id=session.id,
-                start=session.metadata.time.insert,
-                duration=session.metadata.time.duration
-            )
-        self.event.operation.update = True
-        self.execution_graph.set_sessions(session)
-        await session_db.save(session)
+def validate(config: dict):
+    return Configuration(**config)
 
-        self.set_tracker_option("saveSession", True)
 
-        return Result(port='payload', value=payload)
+class SetOperationPlugin(ActionRunner):
+    config: Configuration
+
+    async def set_up(self, config):
+        self.config = validate(config)
+
+    async def run(self, payload, in_edge=None):
+        dot = self._get_dot_accessor(payload)
+        set1 = set(dot[self.config.set1])
+        set2 = set(dot[self.config.set2])
+
+        operation = self.config.operation.lower()
+
+        try:
+            if operation == "intersection":
+                result_set = list(set1.intersection(set2))
+            elif operation == "union":
+                result_set = list(set1.union(set2))
+            elif operation == "difference":
+                result_set = list(set1.difference(set2))
+            elif operation == "symmetric_difference":
+                result_set = list(set1.symmetric_difference(set2))
+            elif operation == "is_subset":
+                result_set = set1.issubset(set2)
+            elif operation == "is_superset":
+                result_set = set1.issuperset(set2)
+            else:
+                raise ValueError("Invalid operation specified.")
+
+            return Result(port="result", value={"result": result_set})
+
+        except Exception as e:
+            return Result(port="error", value={"message": str(e)})
 
 
 def register() -> Plugin:
     return Plugin(
-        start=False,
         spec=Spec(
             module=__name__,
-            className='AddEmptySessionAction',
-            inputs=["payload"],
-            outputs=['payload'],
-            version='0.7.0',
-            license="MIT",
-            author="Risto Kowaczewski",
-            init=None,
-            form=None,
-
+            className=SetOperationPlugin.__name__,
+            init={
+                "set1": "",
+                "set2": "",
+                "operation": "intersection"
+            },
+            form=Form(groups=[
+                FormGroup(
+                    name="Plugin Configuration",
+                    fields=[
+                        FormField(
+                            id="set1",
+                            name="Set 1",
+                            description="Reference to the first set data.",
+                            component=FormComponent(type="dotPath", props={"label": "Set 1"})
+                        ),
+                        FormField(
+                            id="set2",
+                            name="Set 2",
+                            description="Reference to the second set data.",
+                            component=FormComponent(type="dotPath", props={"label": "Set 2"})
+                        ),
+                        FormField(
+                            id="operation",
+                            name="Set Operation",
+                            description="Select the set operation to perform.",
+                            component=FormComponent(type="select", props={
+                                "label": "Set Operation",
+                                "items": {
+                                    "intersection": "Intersection",
+                                    "union": "Union",
+                                    "difference": "Difference",
+                                    "symmetric_difference": "Symmetric Difference",
+                                    "is_subset": "Is Subset",
+                                    "is_superset": "Is Superset"
+                                }
+                            })
+                        )
+                    ]
+                ),
+            ]),
+            inputs=['payload'],
+            outputs=["result", "error"],
+            version='8.2.0',
+            license="MIT + CC",
+            author="Risto Kowaczewski"
         ),
         metadata=MetaData(
-            name='Create empty session',
-            desc='Ads new session to the event. Empty session gets created with random id.',
-            icon='session',
-            group=["Operations"],
-            keywords=['new', 'add', 'create'],
+            name="Set Operation Plugin",
+            desc='Perform set operations on two sets of data.',
+            group=["Data Processing"],
             documentation=Documentation(
-                inputs={
-                    "payload": PortDoc(desc="This port takes payload object.")
-                },
+                inputs={"payload": PortDoc(desc="Input payload.")},
                 outputs={
-                    "payload": PortDoc(desc="Returns input payload.")
+                    "result": PortDoc(desc="Result of the set operation."),
+                    "error": PortDoc(desc="Error message if an exception occurs.")
                 }
             )
         )
     )
-
+```
 
 
 Available manual:
 
-None
+The plugin use and operation definition and two sets. Sets data can be referenced from the internal state of workflow. 
+Usually the value is as list so convert them to sets. Then use the operation that can be:
+
+Intersection: To find the common elements between two sets, you can use the intersection() method or the & operator. For example, if you have two sets, set1 and set2, you can find their intersection as intersection_set = set1.intersection(set2) or intersection_set = set1 & set2.
+
+Union: To find the combined set of unique elements from two sets, you can use the union() method or the | operator. For example, if you have two sets, set1 and set2, you can find their union as union_set = set1.union(set2) or union_set = set1 | set2.
+
+Difference: To find the elements that exist in one set but not in another, you can use the difference() method or the - operator. For example, if you have two sets, set1 and set2, you can find the elements that are in set1 but not in set2 as difference_set = set1.difference(set2) or difference_set = set1 - set2.
+
+Symmetric Difference: To find the elements that exist in either of the sets but not in both, you can use the symmetric_difference() method or the ^ operator. For example, if you have two sets, set1 and set2, you can find the symmetric difference as symmetric_difference_set = set1.symmetric_difference(set2) or symmetric_difference_set = set1 ^ set2.
+
+Subset Check: You can check if one set is a subset of another using the issubset() method or the <= operator. For example, if you have two sets, set1 and set2, you can check if set1 is a subset of set2 as is_subset = set1.issubset(set2) or is_subset = set1 <= set2.
+
+Superset Check: You can check if one set is a superset of another using the issuperset() method or the >= operator. For example, if you have two sets, set1 and set2, you can check if set1 is a superset of set2 as is_superset = set1.issuperset(set2) or is_superset = set1 >= set2.
+
+and calculate the result. Then return the result on the port named `result`. If there is an error
+return its message on the error port.
+
+Include all necessary classes and functions like Configuration, registration, validation, etc in one file.
+Plugin must return data only on ports. Do not write any explanation just code.
 
