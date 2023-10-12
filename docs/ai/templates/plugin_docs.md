@@ -211,145 +211,228 @@ There is only one, do not use `` in the response. So `some text` is not allowed.
 Here is the full plugin code:
 
 ```python
-from tracardi.service.plugin.runner import ActionRunner
+from tracardi.service.plugin.domain.register import Plugin, Spec, Form, FormGroup, FormField, FormComponent, MetaData, \
+    Documentation, PortDoc
+from json import JSONDecodeError
 from tracardi.service.plugin.domain.result import Result
+from tracardi.service.plugin.runner import ActionRunner
+from tracardi.domain.resources.google_analytics_id import GoogleAnalyticsCredentials
+from tracardi.service.storage.driver.elastic import resource as resource_db
+from tracardi.service.tracardi_http_client import HttpClient
+
+from .model.configuration import Configuration
+
+from typing import Any
+
+from pydantic import field_validator
+
+from tracardi.domain.named_entity import NamedEntity
 from tracardi.service.plugin.domain.config import PluginConfig
-from tracardi.service.plugin.domain.register import Plugin, Spec, MetaData, Form, FormGroup, FormField, FormComponent, \
-    PortDoc, Documentation
 
 
 class Configuration(PluginConfig):
-    set1: str
-    set2: str
-    operation: str
+    source: NamedEntity
+    category: str
+    action: str
+    label: str
+    value: Any = None
 
 
+    @field_validator('category')
+    @classmethod
+    def check_if_category_filled(cls, value):
+        if not value:
+            raise ValueError("Category field cannot be empty.")
+        return value
+
+    @field_validator('action')
+    @classmethod
+    def check_if_action_filled(cls, value):
+        if not value:
+            raise ValueError("Action field cannot be empty.")
+        return value
+
+
+    
 def validate(config: dict):
     return Configuration(**config)
 
 
-class SetOperationPlugin(ActionRunner):
+class GoogleAnalyticsEventTrackerAction(ActionRunner):
+    credentials: GoogleAnalyticsCredentials
     config: Configuration
 
-    async def set_up(self, config):
-        self.config = validate(config)
+    async def set_up(self, init):
+        config = validate(init)
+        resource = await resource_db.load(config.source.id)
 
-    async def run(self, payload, in_edge=None):
+        self.config = config
+        self.credentials = resource.credentials.get_credentials(self, output=GoogleAnalyticsCredentials)
+
+    async def run(self, payload: dict, in_edge=None) -> Result:
         dot = self._get_dot_accessor(payload)
-        set1 = set(dot[self.config.set1])
-        set2 = set(dot[self.config.set2])
+        url = 'https://www.google-analytics.com/collect'
 
-        operation = self.config.operation.lower()
+        params = {
+            "v": "1",
+            "tid": self.credentials.google_analytics_id,
+            "cid": self.profile.id if self.profile else 'unknown',
+            "t": "event",
+            "ec": dot[self.config.category],
+            "ea": dot[self.config.action],
+            "el": dot[self.config.label],
+            "ev": int(dot[self.config.value]),
+        }
 
-        try:
-            if operation == "intersection":
-                result_set = list(set1.intersection(set2))
-            elif operation == "union":
-                result_set = list(set1.union(set2))
-            elif operation == "difference":
-                result_set = list(set1.difference(set2))
-            elif operation == "symmetric_difference":
-                result_set = list(set1.symmetric_difference(set2))
-            elif operation == "is_subset":
-                result_set = set1.issubset(set2)
-            elif operation == "is_superset":
-                result_set = set1.issuperset(set2)
-            else:
-                raise ValueError("Invalid operation specified.")
+        async with HttpClient(self.node.on_connection_error_repeat) as client:
+            async with client.post(
+                    url=url,
+                    data=params,
+            ) as response:
+                try:
+                    content = await response.json(content_type=None)
+                except JSONDecodeError:
+                    content = await response.text()
 
-            return Result(port="result", value={"result": result_set})
-
-        except Exception as e:
-            return Result(port="error", value={"message": str(e)})
+                result = {
+                    "status": response.status,
+                    "content": content
+                }
+                if response.status in [200, 201, 202, 203]:
+                    return Result(port="response", value=result)
+                else:
+                    return Result(port="error", value=result)
 
 
 def register() -> Plugin:
     return Plugin(
+        start=False,
         spec=Spec(
-            module=__name__,
-            className=SetOperationPlugin.__name__,
-            init={
-                "set1": "",
-                "set2": "",
-                "operation": "intersection"
-            },
-            form=Form(groups=[
-                FormGroup(
-                    name="Plugin Configuration",
-                    fields=[
-                        FormField(
-                            id="set1",
-                            name="Set 1",
-                            description="Reference to the first set data.",
-                            component=FormComponent(type="dotPath", props={"label": "Set 1"})
-                        ),
-                        FormField(
-                            id="set2",
-                            name="Set 2",
-                            description="Reference to the second set data.",
-                            component=FormComponent(type="dotPath", props={"label": "Set 2"})
-                        ),
-                        FormField(
-                            id="operation",
-                            name="Set Operation",
-                            description="Select the set operation to perform.",
-                            component=FormComponent(type="select", props={
-                                "label": "Set Operation",
-                                "items": {
-                                    "intersection": "Intersection",
-                                    "union": "Union",
-                                    "difference": "Difference",
-                                    "symmetric_difference": "Symmetric Difference",
-                                    "is_subset": "Is Subset",
-                                    "is_superset": "Is Superset"
-                                }
-                            })
-                        )
-                    ]
-                ),
-            ]),
+            module='tracardi.process_engine.action.v1.connectors.google.analytics.plugin',
+            className='GoogleAnalyticsEventTrackerAction',
             inputs=['payload'],
-            outputs=["result", "error"],
-            version='8.2.0',
-            license="MIT + CC",
-            author="Risto Kowaczewski"
+            outputs=['response', 'error'],
+            verions="0.7.3",
+            license='MIT',
+            author='Mateusz Zitaruk',
+            init={
+                'source': {'id': '', 'name': ''},
+                'category': '',
+                'action': '',
+                'label': '',
+                'value': 0,
+            },
+            manual='google_event_tracker_action',
+            form=Form(
+                groups=[
+                    FormGroup(
+                        name="Google analytics event tracker configuration",
+                        fields=[
+                            FormField(
+                                id='source',
+                                name='Google Universal Analytics Tracking ID',
+                                description='Select Google Universal Analytics resource. Credentials from selected resource '
+                                            'will be used to authorize your account.',
+                                component=FormComponent(type='resource', props={
+                                    'label': 'resource',
+                                    'tag': 'google'
+                                })
+                            ),
+                            FormField(
+                                id='category',
+                                name='Event category',
+                                description='Please type data you would like to use as your event category name.',
+                                component=FormComponent(type='dotPath',
+                                                        props={
+                                                            'label': 'Payload field',
+                                                            'defaultSourceValue': 'event'}
+                                                        )
+                            ),
+                            FormField(
+                                id='action',
+                                name='Action name',
+                                description='Please type data you would like to use as your event action name.',
+                                component=FormComponent(type='dotPath',
+                                                        props={
+                                                            'label': 'Payload field',
+                                                            'defaultSourceValue': 'event'})
+                            ),
+                            FormField(
+                                id='label',
+                                name='Event label',
+                                description='Please type data you would like to use as your event label name.',
+                                component=FormComponent(type='dotPath', props={
+                                                            'label': 'Payload field',
+                                                            'defaultSourceValue': 'event'})
+                            ),
+                            FormField(
+                                id='value',
+                                name='Event value',
+                                description='Please type data you would like to use as your event value.',
+                                component=FormComponent(type='dotPath', props={
+                                                            'label': 'Payload field',
+                                                            'defaultSourceValue': 'event'})
+                            )
+                        ]
+                    )
+                ]
+            )
         ),
         metadata=MetaData(
-            name="Set Operation Plugin",
-            desc='Perform set operations on two sets of data.',
-            group=["Data Processing"],
+            name='Google UA events',
+            desc='Send your customized event to Google Universal Analytics event tracker',
+            brand='Google',
+            icon='google',
+            group=['Google'],
             documentation=Documentation(
-                inputs={"payload": PortDoc(desc="Input payload.")},
+                inputs={
+                    'payload': PortDoc(desc='This port takes payload object.')
+                },
                 outputs={
-                    "result": PortDoc(desc="Result of the set operation."),
-                    "error": PortDoc(desc="Error message if an exception occurs.")
+                    'response': PortDoc(desc='This port returns response status and content.'),
+                    'error': PortDoc(desc='This port returns error if request will fail')
                 }
             )
         )
     )
+
 ```
 
 
 Available manual:
 
-The plugin use and operation definition and two sets. Sets data can be referenced from the internal state of workflow. 
-Usually the value is as list so convert them to sets. Then use the operation that can be:
+# Google event tracker
 
-Intersection: To find the common elements between two sets, you can use the intersection() method or the & operator. For example, if you have two sets, set1 and set2, you can find their intersection as intersection_set = set1.intersection(set2) or intersection_set = set1 & set2.
+This plugin sends event to google analytics
 
-Union: To find the combined set of unique elements from two sets, you can use the union() method or the | operator. For example, if you have two sets, set1 and set2, you can find their union as union_set = set1.union(set2) or union_set = set1 | set2.
+# JSON Configuration
 
-Difference: To find the elements that exist in one set but not in another, you can use the difference() method or the - operator. For example, if you have two sets, set1 and set2, you can find the elements that are in set1 but not in set2 as difference_set = set1.difference(set2) or difference_set = set1 - set2.
+```json
+{
+  "category": "category",
+  "action": "action",
+  "label": "label",
+  "value": 0
+}
+```
 
-Symmetric Difference: To find the elements that exist in either of the sets but not in both, you can use the symmetric_difference() method or the ^ operator. For example, if you have two sets, set1 and set2, you can find the symmetric difference as symmetric_difference_set = set1.symmetric_difference(set2) or symmetric_difference_set = set1 ^ set2.
+* __Category__ (required): The category of the event you’re tracking. The category organizes events into groups. Example:
+  Buttons.
+* __Action__ (required): The action of the event you’re tracking. The action tells you what a visitor did. Example: Click.
+* __Name__ (optional): The name of the event you’re tracking. The name gives you more information about the event. Example:
+  Sign up (a CTA on your button).
+* __Value__ (optional): The value you want to assign to the event you’re tracking. Example: 5. If an action is worth some
+  money for your business, like a signup button click is worth 5 USD, you can assign a value for it. Every time an event
+  happens.
 
-Subset Check: You can check if one set is a subset of another using the issubset() method or the <= operator. For example, if you have two sets, set1 and set2, you can check if set1 is a subset of set2 as is_subset = set1.issubset(set2) or is_subset = set1 <= set2.
+# Output 
 
-Superset Check: You can check if one set is a superset of another using the issuperset() method or the >= operator. For example, if you have two sets, set1 and set2, you can check if set1 is a superset of set2 as is_superset = set1.issuperset(set2) or is_superset = set1 >= set2.
+Returns result on the output port in the following schema:
 
-and calculate the result. Then return the result on the port named `result`. If there is an error
-return its message on the error port.
-
-Include all necessary classes and functions like Configuration, registration, validation, etc in one file.
-Plugin must return data only on ports. Do not write any explanation just code.
+```json
+{
+  "status": "200",
+  "content": "response content"
+}
+```
 
