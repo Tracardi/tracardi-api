@@ -62,7 +62,7 @@ services:
 
   tracardi-event-storage-worker:
     image: tracardi/com-tracardi-storage-worker:0.8.2-rc1
-    container_name: event-storage-worker
+    container_name: storage-event
     environment:
       CONSUMER_TYPE: "event"
       ELASTIC_HOST: http://elasticsearch:9200
@@ -79,7 +79,7 @@ services:
 
   tracardi-profile-storage-worker:
     image: tracardi/com-tracardi-storage-worker:0.8.2-rc1
-    container_name: profile-storage-worker
+    container_name: storage-profile
     environment:
       CONSUMER_TYPE: "profile"
       ELASTIC_HOST: http://elasticsearch:9200
@@ -96,7 +96,7 @@ services:
 
   tracardi-session-storage-worker:
     image: tracardi/com-tracardi-storage-worker:0.8.2-rc1
-    container_name: session-storage-worker
+    container_name: storage-session
     environment:
       CONSUMER_TYPE: "session"
       ELASTIC_HOST: http://elasticsearch:9200
