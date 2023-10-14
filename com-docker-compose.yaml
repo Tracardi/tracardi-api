@@ -1,67 +1,116 @@
 version: "3.7"
 services:
 
-#  tracardi-api:
-#    image: tracardi/tracardi-api:0.8.2-rc1
-#    environment:
-#      ELASTIC_HOST: http://elasticsearch:9200
-#      REDIS_HOST: redis://redis:6379
-#      LOGGING_LEVEL: info
-#      DEMO: yes
-#      PRODUCTION: no
-#      PULSAR_HOST: pulsar://pulsar:6650
-#      ASYNC_PROCESSING: yes
-#      LICENSE: ${API_LICENSE}
-#    ports:
-#      - 8686:80
-#    depends_on:
-#      - redis
-#      - elasticsearch
-#      - pulsar
-#      - tracardi-event-storage-worker
+  tracardi-test-api:
+    image: tracardi/com-tracardi-api:0.8.2-rc1
+    container_name: tracardi-test-api
+    restart: always
+    environment:
+      ELASTIC_HOST: http://elasticsearch:9200
+      REDIS_HOST: redis://redis:6379
+      PULSAR_HOST: pulsar://pulsar:6650
+      LOGGING_LEVEL: "info"
+      DEMO: "yes"
+      PRODUCTION: "no"
+      ASYNC_PROCESSING: "yes"
+      LICENSE: ${API_LICENSE}
+    ports:
+      - 8686:80
+    networks:
+      - local-network
+    depends_on:
+      - redis
+      - elasticsearch
+      - pulsar
+      - tracardi-profile-flusher-worker
+      - tracardi-session-flusher-worker
+      - tracardi-event-storage-worker
+      - tracardi-profile-storage-worker
+      - tracardi-session-storage-worker
 
-#  tracardi-event-storage-worker:
-#    image: tracardi/com-tracardi-storage-worker:0.8.2-rc1
-#    environment:
-#      ELASTIC_HOST: http://elasticsearch:9200
-#      REDIS_HOST: redis://redis:6379
-#      LOGGING_LEVEL: info
-#      CONSUMER_TYPE: event
-#      PULSAR_HOST: pulsar://pulsar:6650
-#      LICENSE: ${API_LICENSE}
-#    depends_on:
-#      - redis
-#      - elasticsearch
-#      - pulsar
+  tracardi-profile-flusher-worker:
+    image: tracardi/com-tracardi-flusher-worker:0.8.2-rc1
+    container_name: flusher-profile
+    environment:
+      CONSUMER_TYPE: "profile"
+      REDIS_HOST: redis://redis:6379
+      LOGGING_LEVEL: "info"
+      PULSAR_HOST: pulsar://pulsar:6650
+      LICENSE: ${API_LICENSE}
+    networks:
+      - local-network
+    depends_on:
+      - redis
+      - elasticsearch
+      - pulsar
 
-#  tracardi-profile-storage-worker:
-#    image: tracardi/com-tracardi-storage-worker:0.8.2-rc1
-#    environment:
-#      ELASTIC_HOST: http://elasticsearch:9200
-#      REDIS_HOST: redis://redis:6379
-#      LOGGING_LEVEL: info
-#      CONSUMER_TYPE: profile
-#      PULSAR_HOST: pulsar://pulsar:6650
-#      LICENSE: ${API_LICENSE}
-#    depends_on:
-#      - redis
-#      - elasticsearch
-#      - pulsar
+  tracardi-session-flusher-worker:
+    image: tracardi/com-tracardi-flusher-worker:0.8.2-rc1
+    container_name: flusher-session
+    environment:
+      CONSUMER_TYPE: "session"
+      REDIS_HOST: redis://redis:6379
+      LOGGING_LEVEL: "info"
+      PULSAR_HOST: pulsar://pulsar:6650
+      LICENSE: ${API_LICENSE}
+    networks:
+      - local-network
+    depends_on:
+      - redis
+      - elasticsearch
+      - pulsar
 
-#  tracardi-session-storage-worker:
-#    image: tracardi/com-tracardi-storage-worker:0.8.2-rc1
-#    environment:
-#      ELASTIC_HOST: http://elasticsearch:9200
-#      REDIS_HOST: redis://redis:6379
-#      LOGGING_LEVEL: info
-#      CONSUMER_TYPE: session
-#      PULSAR_HOST: pulsar://pulsar:6650
-#      LICENSE: ${API_LICENSE}
-#    depends_on:
-#      - redis
-#      - elasticsearch
-#      - pulsar
+  tracardi-event-storage-worker:
+    image: tracardi/com-tracardi-storage-worker:0.8.2-rc1
+    container_name: event-storage-worker
+    environment:
+      CONSUMER_TYPE: "event"
+      ELASTIC_HOST: http://elasticsearch:9200
+      REDIS_HOST: redis://redis:6379
+      LOGGING_LEVEL: "info"
+      PULSAR_HOST: pulsar://pulsar:6650
+      LICENSE: ${API_LICENSE}
+    networks:
+      - local-network
+    depends_on:
+      - redis
+      - elasticsearch
+      - pulsar
 
+  tracardi-profile-storage-worker:
+    image: tracardi/com-tracardi-storage-worker:0.8.2-rc1
+    container_name: profile-storage-worker
+    environment:
+      CONSUMER_TYPE: "profile"
+      ELASTIC_HOST: http://elasticsearch:9200
+      REDIS_HOST: redis://redis:6379
+      LOGGING_LEVEL: "info"
+      PULSAR_HOST: pulsar://pulsar:6650
+      LICENSE: ${API_LICENSE}
+    networks:
+      - local-network
+    depends_on:
+      - redis
+      - elasticsearch
+      - pulsar
+
+  tracardi-session-storage-worker:
+    image: tracardi/com-tracardi-storage-worker:0.8.2-rc1
+    container_name: session-storage-worker
+    environment:
+      CONSUMER_TYPE: "session"
+      ELASTIC_HOST: http://elasticsearch:9200
+      REDIS_HOST: redis://redis:6379
+      LOGGING_LEVEL: "info"
+      PULSAR_HOST: pulsar://pulsar:6650
+      LICENSE: ${API_LICENSE}
+    networks:
+      - local-network
+    depends_on:
+      - redis
+      - elasticsearch
+      - pulsar
+#
 #  tracardi-visit-end-worker:
 #    image: tracardi/com-tracardi-visit-end-worker:0.8.2-rc1
 #    environment:
@@ -71,35 +120,50 @@ services:
 #      CONSUMER_TYPE: event
 #      PULSAR_HOST: pulsar://pulsar:6650
 #      LICENSE: ${API_LICENSE}
-
-
-#  tracardi-gui:
-#    image: tracardi/tracardi-gui:0.8.2-rc1
-#    ports:
-#      - 8787:80
+#    networks:
+#      - local-network
 #    depends_on:
-#      - tracardi-api
+#      - redis
+#      - elasticsearch
+#      - pulsar
+
+
+  tracardi-gui:
+    image: tracardi/tracardi-gui:0.8.2-rc1
+    container_name: tracardi-gui
+    ports:
+      - 8787:80
+    depends_on:
+      - tracardi-api
 
   pulsar:
     image: apachepulsar/pulsar:3.1.0
+    container_name: pulsar
     restart: always
     ports:
       - 6650:6650
     environment:
-      PULSAR_LOG_LEVEL: warn
+      PULSAR_LOG_LEVEL: "warn"
     command: bin/pulsar standalone
+    networks:
+      - local-network
 
-#  elasticsearch:
-#    image: docker.elastic.co/elasticsearch/elasticsearch:7.13.2
-#    environment:
-#      bootstrap.memory_lock: "true"
-#      ES_JAVA_OPTS: "-Xms512m -Xmx512m"
-#      discovery.type: single-node
-#      xpack.security.enabled: "false"
-#      cluster.name: contextElasticSearch
-#
-#  redis:
-#    image: redis
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.13.2
+    container_name: elasticsearch
+    environment:
+      bootstrap.memory_lock: "true"
+      ES_JAVA_OPTS: "-Xms512m -Xmx512m"
+      discovery.type: single-node
+      xpack.security.enabled: "false"
+      cluster.name: contextElasticSearch
+    networks:
+      - local-network
+
+  redis:
+    image: redis
+    networks:
+      - local-network
 
 #  worker:
 #    image: tracardi/update-worker:0.8.2-rc1
@@ -109,3 +173,8 @@ services:
 #volumes:
 #  elasticsearch-data:
 #    driver: local
+
+
+networks:
+  local-network:
+    name: local-network
