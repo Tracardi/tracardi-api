@@ -28,7 +28,11 @@ docker run -p 9200:9200 -p 9600:9600 -e "discovery.type=single-node" opensearchp
 docker run -p 9200:9200 -p 9600:9600 -e "discovery.type=single-node" amazon/opendistro-for-elasticsearch:latest
 
 # Run local API
-docker run -p 8686:80 -e ELASTIC_HOST=http://192.168.1.103:9200 -e LOGGING_LEVEL=info tracardi/tracardi-api
+docker run -p 18686:80 \
+-e ELASTIC_HOST=http://192.168.1.107:9200 \
+-e REDIS_HOST=redis://192.168.1.107:6379 \
+-e LOGGING_LEVEL=info \
+tracardi/tracardi-api:0.8.2-rc1
 
 # Rabbit mq
 

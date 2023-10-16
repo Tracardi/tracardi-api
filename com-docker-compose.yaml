@@ -34,8 +34,8 @@ services:
     environment:
       CONSUMER_TYPE: "profile"
       REDIS_HOST: redis://redis:6379
-      LOGGING_LEVEL: "info"
       PULSAR_HOST: pulsar://pulsar:6650
+      LOGGING_LEVEL: "info"
       LICENSE: ${API_LICENSE}
     networks:
       - local-network
@@ -50,8 +50,8 @@ services:
     environment:
       CONSUMER_TYPE: "session"
       REDIS_HOST: redis://redis:6379
-      LOGGING_LEVEL: "info"
       PULSAR_HOST: pulsar://pulsar:6650
+      LOGGING_LEVEL: "info"
       LICENSE: ${API_LICENSE}
     networks:
       - local-network
@@ -67,8 +67,8 @@ services:
       CONSUMER_TYPE: "event"
       ELASTIC_HOST: http://elasticsearch:9200
       REDIS_HOST: redis://redis:6379
-      LOGGING_LEVEL: "info"
       PULSAR_HOST: pulsar://pulsar:6650
+      LOGGING_LEVEL: "info"
       LICENSE: ${API_LICENSE}
     networks:
       - local-network
@@ -84,8 +84,8 @@ services:
       CONSUMER_TYPE: "profile"
       ELASTIC_HOST: http://elasticsearch:9200
       REDIS_HOST: redis://redis:6379
-      LOGGING_LEVEL: "info"
       PULSAR_HOST: pulsar://pulsar:6650
+      LOGGING_LEVEL: "info"
       LICENSE: ${API_LICENSE}
     networks:
       - local-network
@@ -101,8 +101,8 @@ services:
       CONSUMER_TYPE: "session"
       ELASTIC_HOST: http://elasticsearch:9200
       REDIS_HOST: redis://redis:6379
-      LOGGING_LEVEL: "info"
       PULSAR_HOST: pulsar://pulsar:6650
+      LOGGING_LEVEL: "info"
       LICENSE: ${API_LICENSE}
     networks:
       - local-network
@@ -117,9 +117,8 @@ services:
     environment:
       ELASTIC_HOST: http://elasticsearch:9200
       REDIS_HOST: redis://redis:6379
-      LOGGING_LEVEL: info
-      CONSUMER_TYPE: event
       PULSAR_HOST: pulsar://pulsar:6650
+      LOGGING_LEVEL: info
       LICENSE: ${API_LICENSE}
     networks:
       - local-network
