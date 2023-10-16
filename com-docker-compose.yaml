@@ -18,15 +18,15 @@ services:
       - 8686:80
     networks:
       - local-network
-    depends_on:
-      - redis
-      - elasticsearch
-      - pulsar
-      - tracardi-profile-flusher-worker
-      - tracardi-session-flusher-worker
-      - tracardi-event-storage-worker
-      - tracardi-profile-storage-worker
-      - tracardi-session-storage-worker
+#    depends_on:
+#      - redis
+#      - elasticsearch
+#      - pulsar
+#      - tracardi-profile-flusher-worker
+#      - tracardi-session-flusher-worker
+##      - tracardi-event-storage-worker
+#      - tracardi-profile-storage-worker
+#      - tracardi-session-storage-worker
 
   tracardi-profile-flusher-worker:
     image: tracardi/com-tracardi-flusher-worker:0.8.2-rc1
@@ -110,22 +110,23 @@ services:
       - redis
       - elasticsearch
       - pulsar
-#
-#  tracardi-visit-end-worker:
-#    image: tracardi/com-tracardi-visit-end-worker:0.8.2-rc1
-#    environment:
-#      ELASTIC_HOST: http://elasticsearch:9200
-#      REDIS_HOST: redis://redis:6379
-#      LOGGING_LEVEL: info
-#      CONSUMER_TYPE: event
-#      PULSAR_HOST: pulsar://pulsar:6650
-#      LICENSE: ${API_LICENSE}
-#    networks:
-#      - local-network
-#    depends_on:
-#      - redis
-#      - elasticsearch
-#      - pulsar
+
+  tracardi-visit-end-worker:
+    image: tracardi/com-tracardi-visit-end-worker:0.8.2-rc1
+    container_name: visit-end
+    environment:
+      ELASTIC_HOST: http://elasticsearch:9200
+      REDIS_HOST: redis://redis:6379
+      LOGGING_LEVEL: info
+      CONSUMER_TYPE: event
+      PULSAR_HOST: pulsar://pulsar:6650
+      LICENSE: ${API_LICENSE}
+    networks:
+      - local-network
+    depends_on:
+      - redis
+      - elasticsearch
+      - pulsar
 
 
   tracardi-gui:
