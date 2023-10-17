@@ -312,6 +312,8 @@ async def app_starts():
     logger.info(f"TRACARDI version {str(tracardi.version)} set-up starts.")
     if License.has_license():
         logger.info(f"TRACARDI async processing:  {com_tracardi_settings.async_processing}.")
+        logger.info(f"TRACARDI multi-tenancy:  {tracardi.multi_tenant}.")
+        logger.info(f"TRACARDI multi-tenancy API:  {tracardi.multi_tenant_manager_url}.")
     await wait_for_connection(no_of_tries=10)
     logger.info("TRACARDI set-up finished.")
     logger.info(f"TRACARDI version {str(tracardi.version)} ready to operate.")
