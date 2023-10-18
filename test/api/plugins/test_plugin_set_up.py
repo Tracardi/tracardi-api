@@ -537,18 +537,6 @@ async def test_should_set_up_plugin_discard_profile_update_action():
     await plugin.set_up({})
 
 
-async def test_should_set_up_plugin_update_event_action():
-    
-    module = import_package("tracardi.process_engine.action.v1.operations.update_event_action")
-    plugin_class = load_callable(module, "UpdateEventAction")
-    plugin = plugin_class()
-    plugin.node = Node(id="node-id", 
-                       name="test-node", 
-                       module="tracardi.process_engine.action.v1.operations.update_event_action", 
-                       className="UpdateEventAction")
-    await plugin.set_up({})
-
-
 async def test_should_set_up_plugin_update_session_action():
     
     module = import_package("tracardi.process_engine.action.v1.operations.update_session_action")
@@ -703,42 +691,6 @@ async def test_should_set_up_plugin_field_type_action():
                        module="tracardi.process_engine.action.v1.traits.field_type_action", 
                        className="FieldTypeAction")
     await plugin.set_up({'field': 'profile@id'})
-
-
-async def test_should_set_up_plugin_event_discarder():
-    
-    module = import_package("tracardi.process_engine.action.v1.events.event_discarder.plugin")
-    plugin_class = load_callable(module, "EventDiscarder")
-    plugin = plugin_class()
-    plugin.node = Node(id="node-id", 
-                       name="test-node", 
-                       module="tracardi.process_engine.action.v1.events.event_discarder.plugin", 
-                       className="EventDiscarder")
-    await plugin.set_up({})
-
-
-async def test_should_set_up_plugin_profile_discarder():
-    
-    module = import_package("tracardi.process_engine.action.v1.profiles.profile_discarder.plugin")
-    plugin_class = load_callable(module, "ProfileDiscarder")
-    plugin = plugin_class()
-    plugin.node = Node(id="node-id", 
-                       name="test-node", 
-                       module="tracardi.process_engine.action.v1.profiles.profile_discarder.plugin", 
-                       className="ProfileDiscarder")
-    await plugin.set_up({})
-
-
-async def test_should_set_up_plugin_session_discarder():
-    
-    module = import_package("tracardi.process_engine.action.v1.sessions.session_discarder.plugin")
-    plugin_class = load_callable(module, "SessionDiscarder")
-    plugin = plugin_class()
-    plugin.node = Node(id="node-id", 
-                       name="test-node", 
-                       module="tracardi.process_engine.action.v1.sessions.session_discarder.plugin", 
-                       className="SessionDiscarder")
-    await plugin.set_up({})
 
 
 async def test_should_set_up_plugin_string_properties_actions():

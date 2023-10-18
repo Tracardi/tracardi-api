@@ -255,7 +255,6 @@ nav:
               - flow/actions/merge_profiles_action.md
               - flow/actions/segment_profiles_action.md
               - flow/actions/new_profile_action.md
-              - flow/actions/update_event_action.md
               - flow/actions/update_session_action.md
           - Stats:
               - flow/actions/increment_action.md
