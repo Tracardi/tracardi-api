@@ -127,6 +127,22 @@ services:
       - elasticsearch
       - pulsar
 
+  tracardi-scheduler-worker:
+    image: tracardi/com-tracardi-scheduler-worker:0.8.2-rc1
+    container_name: scheduler
+    environment:
+      ELASTIC_HOST: http://elasticsearch:9200
+      REDIS_HOST: redis://redis:6379
+      PULSAR_HOST: pulsar://pulsar:6650
+      LOGGING_LEVEL: info
+      LICENSE: ${API_LICENSE}
+    networks:
+      - local-network
+    depends_on:
+      - redis
+      - elasticsearch
+      - pulsar
+
 
   tracardi-gui:
     image: tracardi/tracardi-gui:0.8.2-rc1
