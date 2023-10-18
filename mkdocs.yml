@@ -260,8 +260,6 @@ nav:
           - Stats:
               - flow/actions/increment_action.md
               - flow/actions/decrement_action.md
-              - flow/actions/increase_views_action.md
-              - flow/actions/increase_visits_action.md
               - flow/actions/key_counter_action.md
           - Connectors:
               - flow/actions/zapier_webhook_action.md
