@@ -7,7 +7,9 @@ from tracardi.config import tracardi
 from tracardi.service.storage.driver.elastic import raw as raw_db
 from tracardi.service.storage.driver.elastic import snapshot as snapshot_db
 from tracardi.service.storage.elastic_client import ElasticClient
+from tracardi.service.storage.index import Resource
 from tracardi.service.storage.indices_manager import check_indices_mappings_consistency
+from tracardi.service.storage.mapping import get_mappings_by_field_type
 
 router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin", "maintainer"]))]
@@ -43,11 +45,27 @@ async def get_index_mapping_metadata(index: str, filter: str = None):
 
     result = await raw_db.get_mapping_fields(index)
     if filter is not None:
-        result = [item for item in result if item.startswith(filter) and item!=filter]
+        result = [item for item in result if item.startswith(filter) and item != filter]
     return {"result": result, "total": len(result)}
 
 
-@router.get("/storage/mapping/{index}", tags=["storage"], include_in_schema=tracardi.expose_gui_api, response_model=list)
+@router.get("/storage/mapping/{index}/metadata/type/{field_types}", tags=["storage"], include_in_schema=tracardi.expose_gui_api,
+            response_model=dict)
+async def get_index_mapping_metadata(index: str, field_types: str):
+    """
+    Returns fields with given field types of given index (str)
+    """
+
+    resource = Resource()
+    index = resource[index]
+    field_types = field_types.split(',')
+    fields = await get_mappings_by_field_type(index.get_write_index(), field_types)
+
+    return {"result": fields, "total": len(fields)}
+
+
+@router.get("/storage/mapping/{index}", tags=["storage"], include_in_schema=tracardi.expose_gui_api,
+            response_model=list)
 async def get_index_mapping(index: str):
     """
     Returns mapping of given index (str)
