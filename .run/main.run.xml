@@ -81,7 +81,7 @@
       <env name="_REDIS_HOST" value="redis://192.168.1.190:11111" />
       <env name="_REDIS_PASSWORD" value="5BlpzS6rRC" />
       <env name="_REDIS_PORT" value="11111" />
-      <env name="ASYNC_PROCESSING" value="yes" />
+      <env name="ASYNC_PROCESSING" value="no" />
       <env name="ASYNC_STORE_BUFFER_TIMEOUT" value="7000" />
       <env name="DEMO" value="yes" />
       <env name="ELASTIC_SAVE_POOL" value="" />
@@ -98,7 +98,7 @@
       <env name="LOGGING_LEVEL" value="INFO" />
       <env name="MULTI_TENANT" value="yes" />
       <env name="MULTI_TENANT_MANAGER_API_KEY" value="604e5043-a28f-4b4d-baa7-13eb196e7537" />
-      <env name="MULTI_TENANT_MANAGER_URL" value="http://143.244.199.180:48383" />
+      <env name="MULTI_TENANT_MANAGER_URL" value="http://159.223.242.31:48383" />
       <env name="PRODUCTION" value="no" />
       <env name="PULSAR_HOST" value="pulsar://localhost:6650" />
       <env name="PYTHONUNBUFFERED" value="1" />
