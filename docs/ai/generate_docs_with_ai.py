@@ -1,3 +1,11 @@
+import json
+import openai
+import os
+import requests
+
+from tracardi.service.tracardi_http_client import HttpClient
+
+prompt = """
 # Your task
 
 You have been assigned the task of documenting the Tracardi plugin.
@@ -211,110 +219,93 @@ There is only one, do not use `` in the response. So `some text` is not allowed.
 Here is the full plugin code:
 
 ```python
-from geopy import distance
-from tracardi.service.plugin.domain.register import Plugin, Spec, MetaData, Documentation, PortDoc
-from tracardi.service.plugin.runner import ActionRunner
-from tracardi.service.plugin.domain.result import Result
-from .model.configuration import Configuration
-
-
-def validate(config: dict):
-    return Configuration(**config)
-
-
-class CircularGeoFenceAction(ActionRunner):
-
-    config: Configuration
-
-    async def set_up(self, init):
-        self.config = validate(init)
-
-    async def run(self, payload: dict, in_edge=None) -> Result:
-
-        dot = self._get_dot_accessor(payload)
-
-        center_coordinates_tuple = (float(self.config.center_coordinate.lat), float(self.config.center_coordinate.lng))
-        test_coordinates_tuple = (float(dot[self.config.test_coordinate.lat]), float(dot[self.config.test_coordinate.lng]))
-
-        distance_from_center = distance.distance(center_coordinates_tuple, test_coordinates_tuple).km
-
-        return Result(port="payload", value={"inside": distance_from_center <= self.config.radius})
-
-
-def register() -> Plugin:
-    return Plugin(
-        start=False,
-        spec=Spec(
-            module=__name__,
-            className='CircularGeoFenceAction',
-            inputs=["payload"],
-            outputs=["payload"],
-            version='0.6.1',
-            license="MIT",
-            author="Risto Kowaczewski"
-        ),
-        metadata=MetaData(
-            name='Geo fence',
-            desc='Finds out if the test geo location coordinates are within the radius threshold from '
-                 'center point coordinates.',
-            icon='geo-fence',
-            group=["Location"],
-            documentation=Documentation(
-                inputs={
-                    "payload": PortDoc(desc="This port takes payload object.")
-                },
-                outputs={
-                    "payload": PortDoc(desc="Returns true if inside the radius, otherwise false.")
-                }
-            ),
-            pro=True
-        )
-    )
-```
-
+###CODE###
 ```
 
 
 Available manual:
 
-# Definition:
-The Geo Fence Plugin for Tracardi is a tool that enables geofencing capabilities within the Tracardi automation platform, allowing users to trigger actions based on geographic location.
-
-# Description:
-This GitHub repository houses the Geo Fence Plugin tailored for Tracardi, empowering you to harness geofencing for location-based automation and personalized user experiences.
-
-# Inputs and Outputs:
-Inputs: Geofence parameters, such as coordinates and radius, define the location to monitor. Triggers are configured to specify actions upon entering or exiting a geofence.
-Outputs: When a user's device enters or exits a defined geofence, the plugin can generate customized actions or events, enriching user interactions.
-
-# Configuration:
-Configure the plugin with the following settings:
-Geofence coordinates (latitude, longitude)
-Geofence radius
-Trigger events (entry, exit)
-Custom actions or workflows to execute upon trigger.
+None
 
 
-# Resources Required:
-Access to a geospatial database or mapping service for accurate location data.
-Network connectivity for real-time location updates.
-Adequate processing resources for efficient geofence event handling within the Tracardi environment.
+"""
 
-# Errors in Plugin:
-Potential issues include:
-Inaccurate location data leading to incorrect triggers.
-Permissions issues related to location access.
-Network connectivity problems causing missed geofence events.
-Compatibility issues with specific versions of Tracardi or dependencies.
+def to_snake_case(input_string):
+    # Remove leading and trailing whitespace
+    input_string = input_string.strip()
 
-# Output 
+    # Replace spaces with underscores
+    input_string = input_string.replace(' ', '_')
 
-Returns result on the output port in the following schema:
+    # Convert to lowercase
+    input_string = input_string.lower()
 
-```json
-{
-  "status": "200",
-  "content": "response content"
-}
-```
+    return input_string
+
+
+def write(file_path, text_to_save):
+    # Check if the file already exists, and if not, create and write to it
+    if not os.path.exists(file_path):
+        with open(file_path, 'w', encoding='utf-8') as file:
+            file.write(text_to_save)
+        print(f'File did not exist. Created and saved: {file_path}')
+
+
+# Function to search for text in Python files within a directory
+def search_text_in_directory(directory, search_text):
+    search_text_1 = f"name='{search_text}'"
+    search_text_2 = f'name="{search_text}"'
+    not_manual = "manual="
+
+    for root, _, files in os.walk(directory):
+        for file in files:
+            file_path = os.path.join(root, file)
+
+            # Check if the file is a Python file (ends with .py)
+            if file_path.endswith('.py'):
+                with open(file_path, 'r', encoding='utf-8') as f:
+                    t = f.read()
+                    if (search_text_1 in t or search_text_2 in t) and not_manual not in t:
+                        yield file_path, prompt.replace("###CODE###", t)
+
+
+
+# Input: Path to the text file to read
+text_file_path = "missing-plug-in-documentation.txt"
+
+# Read text from the text file line by line
+with open(text_file_path, 'r', encoding='utf-8') as text_file:
+    for line in text_file:
+        # Remove leading/trailing whitespace and line breaks
+        search_text = line.strip()
+
+        file = f"docs/{to_snake_case(search_text)}.md"
+
+        if os.path.exists(file):
+            continue
+
+        # Specify the directory where you want to search for the text
+        search_directory = "/home/risto/PycharmProjects/tracardi/tracardi/process_engine/action/v1"
+
+        # Search for the text in Python files within the specified directory
+        matching_files = search_text_in_directory(search_directory, search_text)
+
+        for file_location, prompt in matching_files:
+
+            model = "gpt-4"
+            openai.api_key = os.environ['CHATGPT_KEY']
+            # Send the prompt to the API and receive a response
+            response = openai.ChatCompletion.create(
+                model=model,
+                messages=[
+                    {"role": "system", "content": "You are a helpful assistant that creates documentation from code."},
+                    {"role": "user", "content": prompt}],
+                max_tokens=4097  # You can adjust the max_tokens as needed for the response length
+            )
+
+            # Extract and print the response
+            answer = response['choices'][0]['message']['content'].strip()
+
+            write(file, answer)
+            exit(1)
 

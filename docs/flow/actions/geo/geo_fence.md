@@ -27,7 +27,7 @@ value, indicating whether the test coordinates are inside the defined radius.
 
 **Outputs:**
 
-- Returns a boolean value: `true` if the test coordinates are inside the radius, `false` if they are outside.
+- Returns a boolean value: __true__ if the test coordinates are inside the radius, __false__ if they are outside.
 
 This plugin does not start the workflow; it is typically used as part of a larger automation sequence.
 

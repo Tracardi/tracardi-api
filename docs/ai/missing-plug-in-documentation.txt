@@ -1,4 +1,4 @@
-Discard profile update (404 error on clicking)
+Discard profile update
 Hash data
 Mask data
 Sort list
@@ -29,8 +29,8 @@ Discard Event
 Inject event
 Discard Profile
 Discard Session
-Regex replace (404 error)
-Regex validator (404 error)
+Regex replace
+Regex validator
 Request demo widget
 Show consent bar
 Add interest
