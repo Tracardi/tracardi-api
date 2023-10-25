@@ -248,7 +248,6 @@ def write(file_path, text_to_save):
     if not os.path.exists(file_path):
         with open(file_path, 'w', encoding='utf-8') as file:
             file.write(text_to_save)
-        print(f'File did not exist. Created and saved: {file_path}')
 
 
 # Function to search for text in Python files within a directory
@@ -266,7 +265,8 @@ def search_text_in_directory(directory, search_text):
                 with open(file_path, 'r', encoding='utf-8') as f:
                     t = f.read()
                     if (search_text_1 in t or search_text_2 in t) and not_manual not in t:
-                        yield file_path, prompt.replace("###CODE###", t)
+                        p = prompt
+                        yield file_path, p.replace("###CODE###", t)
 
 
 
@@ -282,6 +282,7 @@ with open(text_file_path, 'r', encoding='utf-8') as text_file:
         file = f"docs/{to_snake_case(search_text)}.md"
 
         if os.path.exists(file):
+            print(f"Skipped {file}")
             continue
 
         # Specify the directory where you want to search for the text
@@ -290,7 +291,7 @@ with open(text_file_path, 'r', encoding='utf-8') as text_file:
         # Search for the text in Python files within the specified directory
         matching_files = search_text_in_directory(search_directory, search_text)
 
-        for file_location, prompt in matching_files:
+        for file_location, _prompt in matching_files:
 
             model = "gpt-4"
             openai.api_key = os.environ['CHATGPT_KEY']
@@ -299,7 +300,7 @@ with open(text_file_path, 'r', encoding='utf-8') as text_file:
                 model=model,
                 messages=[
                     {"role": "system", "content": "You are a helpful assistant that creates documentation from code."},
-                    {"role": "user", "content": prompt}],
+                    {"role": "user", "content": _prompt}],
                 max_tokens=4097  # You can adjust the max_tokens as needed for the response length
             )
 
@@ -307,5 +308,5 @@ with open(text_file_path, 'r', encoding='utf-8') as text_file:
             answer = response['choices'][0]['message']['content'].strip()
 
             write(file, answer)
-            exit(1)
+            print(file, file_location)
 
