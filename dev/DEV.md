@@ -15,8 +15,15 @@ docker run -p 9200:9200 -p 9300:9300 -m 8g -e "discovery.type=single-node" -v "/
 docker run -p 9200:9200 -p 9300:9300 -m 2g -e "discovery.type=single-node" -e ES_JAVA_OPTS="-Xms512m -Xmx512m" docker.elastic.co/elasticsearch/elasticsearch:7.13.2
 
 # Run local redis
-docker run -p 6379:6379 redis redis-server --notify-keyspace-events Ex
+docker run -p 6379:6379 redis redis-server
 
+# Pulsar
+
+docker run -it \
+-p 6650:6650 \
+-p 8080:8080 \
+apachepulsar/pulsar:3.1.0 \
+bin/pulsar standalone
 
 # Run local Tracardi GUI
 docker run -p 8787:80 -e API_URL=//127.0.0.1:8686 -e TRACK_DEBUG="yes" tracardi/tracardi-gui
@@ -111,13 +118,7 @@ docker run --rm --net=host landoop/fast-data-dev
 helm upgrade matomo --set service.ports.http=9080,service.ports.https=9443,externalDatabase.host=192.168.1.190,externalDatabase.user=root,externalDatabase.password=root bitnami/matomo
 
 
-# Pulsar
 
-docker run -it \
--p 6650:6650 \
--p 8080:8080 \
-apachepulsar/pulsar:3.1.0 \
-bin/pulsar standalone
 
 SYNC
 

@@ -496,24 +496,58 @@ to filter resources related to your plugin.
 
 # Your goal
 
-Write a plugin that use and operation definition and two sets. Sets data can be referenced from the internal state of workflow. 
-Usually the value is as list so convert them to sets. Then use the operation that can be:
+Wriate a plugin that inserts any defined data to BugQuery. We will need a form to configure the resource,  the project, then dataset then table. And finally the row to be inserted. 
 
-Intersection: To find the common elements between two sets, you can use the intersection() method or the & operator. For example, if you have two sets, set1 and set2, you can find their intersection as intersection_set = set1.intersection(set2) or intersection_set = set1 & set2.
+This plugin needs a resource with the BigQuery credentials. 
 
-Union: To find the combined set of unique elements from two sets, you can use the union() method or the | operator. For example, if you have two sets, set1 and set2, you can find their union as union_set = set1.union(set2) or union_set = set1 | set2.
+Here is a code that could be run.
+```python
+import re
 
-Difference: To find the elements that exist in one set but not in another, you can use the difference() method or the - operator. For example, if you have two sets, set1 and set2, you can find the elements that are in set1 but not in set2 as difference_set = set1.difference(set2) or difference_set = set1 - set2.
+from google.cloud.bigquery import Dataset, DatasetReference, Table, TableReference
+from google.cloud.bigquery.client import Project
 
-Symmetric Difference: To find the elements that exist in either of the sets but not in both, you can use the symmetric_difference() method or the ^ operator. For example, if you have two sets, set1 and set2, you can find the symmetric difference as symmetric_difference_set = set1.symmetric_difference(set2) or symmetric_difference_set = set1 ^ set2.
+from google.cloud import bigquery
+import json
 
-Subset Check: You can check if one set is a subset of another using the issubset() method or the <= operator. For example, if you have two sets, set1 and set2, you can check if set1 is a subset of set2 as is_subset = set1.issubset(set2) or is_subset = set1 <= set2.
+# Your service account key as a JSON string
+service_account_key_str = """
+This is the credentials that needs to be set in resouce
+"""
 
-Superset Check: You can check if one set is a superset of another using the issuperset() method or the >= operator. For example, if you have two sets, set1 and set2, you can check if set1 is a superset of set2 as is_superset = set1.issuperset(set2) or is_superset = set1 >= set2.
+service_account_key_str = re.sub(r'"private_key": "([^"]*)"', lambda m: m.group().replace('\n', '\\n'),
+                                 service_account_key_str)
 
-and calculate the result. Then return the result on the port named `result`. If there is an error
-return its message on the error port.
+# Load the JSON string as a dictionary
+service_account_key_dict = json.loads(service_account_key_str)
 
-Include all necessary classes and functions like Configuration, registration, validation, etc in one file.
-Plugin must return data only on ports. Do not write any explanation just code.
+# Initialize the BigQuery client with the service account key dictionary
+
+client = bigquery.Client.from_service_account_info(service_account_key_dict)
+
+table = 'events'  # This must be set by user in the form
+dataset_id = 'events_01' # This must be set by user in the form
+project_id = 'tracardi' # This must be set by user in the form
+
+
+
+
+rows_to_insert = [
+    {'id': 'value1', 'type': 'value2'},
+    {'id': 'value3', 'type': 'value4'},
+    # Add more rows as needed
+]
+
+# Get the Big Query table
+table = client.get_table(
+    TableReference(
+        DatasetReference('tracardi', 'events_01'),
+        'events'
+    )
+)
+
+# Insert the rows into the table
+errors = client.insert_rows_json(table, rows_to_insert)
+```
+return payload on port success or if error is not None return error on port error.
 
