@@ -83,6 +83,10 @@ docker run -p 8686:80 -e ELASTIC_HOST=http://192.168.1.103:9200 -e USER_NAME=adm
 # minio
 docker run -p 9000:9000 -p 9001:9001 -e "MINIO_ROOT_USER=admin" -e "MINIO_ROOT_PASSWORD=admin" minio/minio server /data --console-address :9001
 
+# keycloak - https://inteca.com/identity-access-management/keycloak-docker-a-comprehensive-guide-to-deploying-and-managing-your-identity-and-access-management-solution/
+# http://localhost:8080/auth/admin
+docker run -p 8080:8080 -e KEYCLOAK_USER=admin -e KEYCLOAK_PASSWORD=admin jboss/keycloak
+
 
 # Generate certificate
 
