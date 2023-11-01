@@ -1,6 +1,6 @@
 # How do I filter data? What query should I use to filer data?
 
-To filter data in Tracardi, you can use the query syntax provided by the platform. Here are some examples of how to
+To filter data in Tracardi prior version 0.8.2, you can use the query syntax provided by the platform. Here are some examples of how to
 construct queries to filter data:
 
 1. Search by a specific field value:
