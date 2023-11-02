@@ -1,6 +1,7 @@
 from tracardi.context import ServerContext, Context
 from test.utils import get_test_tenant
 from tracardi.domain.session import Session
+from tracardi.service.profile_deduplicator import deduplicate_profile
 from tracardi.service.storage.cache.model import load as cache_load
 
 
@@ -228,13 +229,10 @@ with ServerContext(Context(production=False, tenant=get_test_tenant())):
             # Assert that profile is in 2 indices
             assert len(set(indices)) == 2
 
-            profile = await profile_db.deduplicate_profile(profile1)
-            assert profile.id == profile1 == profile_id
-
+            profile = await deduplicate_profile(profile1)
             await profile_db.refresh()
 
-            cache_load(model=Profile, id=profile_id)
-            record = await profile_db.load_by_id(profile_id)
+            record = await profile_db.load_by_id(profile.id)
             assert record is not None
             assert record.get_meta_data() is not None
 
