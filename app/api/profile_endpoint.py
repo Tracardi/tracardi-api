@@ -6,6 +6,7 @@ from fastapi.responses import Response
 
 from tracardi.exceptions.exception import DuplicatedRecordException
 from tracardi.domain.profile import Profile
+from tracardi.service.profile_deduplicator import deduplicate_profile
 from tracardi.service.storage.driver.elastic import profile as profile_db
 from tracardi.service.storage.driver.elastic import event as event_db
 from tracardi.service.storage.index import Resource
@@ -69,7 +70,7 @@ async def get_profile_by_id(id: str, response: Response) -> Optional[dict]:
         result['_meta'] = record.get_meta_data()
         return result
     except DuplicatedRecordException as e:
-        await profile_db.deduplicate_profile(id)
+        await deduplicate_profile(id)
         raise e
 
 
