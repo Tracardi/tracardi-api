@@ -50,6 +50,10 @@ docker run -p 8686:80 -e ELASTIC_HOST=http://<your-elastic-ip>:9200 -e REDIS_HOS
 Tracardi must connect to elasticsearch. To do that you have to set ELASTIC_HOST variable to reference your elasticsearch
 instance.
 
+!!! Warning "Please use the version tag"
+
+    Please use only docker with version tag. See the latest version in docker hub. 
+
 !!! Warning "Waiting for application startup"
 
     Notice that when type `http://localhost:9200` you try to connect to Elastic on localhost. This means that you're
@@ -71,10 +75,14 @@ For API documentation visit http://127.0.0.1:8686/docs
 Pull and run Tracardi Graphical User Interface.
 
 ```bash
-docker run -p 8787:80 tracardi/tracardi-gui #(1)
+docker run -p 8787:80 tracardi/tracardi-gui:<last-version> #(1)
 ```
 
 1. If you want a certain version of docker image add version tag, e.g. `tracardi/tracardi-gui:0.8.1`
+
+!!! Warning "Please use the version tag"
+
+    Please use only docker with version tag. See the latest version in docker hub. 
 
 ## Run Tracardi Graphical User Interface
 
