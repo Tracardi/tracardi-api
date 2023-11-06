@@ -175,6 +175,8 @@ nav:
           - resources/telegram_resource.md
           - resources/commercial/twilio_resource.md
           - resources/commercial/weaviate_resource.md
+          - resources/clicksend_resource.md
+
 
   # Workflow and its action plugins that can be used
   - Workflows:
@@ -222,6 +224,46 @@ nav:
           - flow/actions/marge_data_action.md
           - flow/actions/internal/add_empty_profile.md
           - flow/actions/internal/add_empty_session.md
+
+          - flow/actions/add_interest.md
+          - flow/actions/clicksend_sms.md
+          - flow/actions/copy_data.md
+          - flow/actions/cut_out_data.md
+          - flow/actions/data_to_json.md
+          - flow/actions/decrease_interest.md
+          - flow/actions/delete_data.md
+          - flow/actions/end.md
+          - flow/actions/geo_distance.md
+          - flow/actions/get_event_source.md
+          - flow/actions/get_issue.md
+          - flow/actions/google_spreadsheet.md
+          - flow/actions/has_segment.md
+          - flow/actions/hash_data.md
+          - flow/actions/html_fetcher.md
+          - flow/actions/increase_interest.md
+          - flow/actions/inject_event.md
+          - flow/actions/json_to_data.md
+          - flow/actions/last_profile_visit_time.md
+          - flow/actions/list_issues.md
+          - flow/actions/mask_data.md
+          - flow/actions/merge_event_properties.md
+          - flow/actions/microservice.md
+          - flow/actions/profile_live_time.md
+          - flow/actions/query_data.md
+          - flow/actions/show_consent_bar.md
+          - flow/actions/sleep.md
+          - flow/actions/string_stripper_action.md
+          - flow/actions/string_to_date_action.md
+          - flow/actions/tag_event.md
+          - flow/actions/time_difference.md
+          - flow/actions/update_event_action.md
+          - flow/actions/uuid4.md
+          - flow/actions/whois.md
+          - flow/actions/xpath_html_scrapper.md
+          - flow/actions/geo/geo_fence.md
+          - flow/actions/list/find_max_value.md
+          - flow/actions/list/sets_operations.md
+
 
           # Commercial version plugins
           - Commercial:
@@ -576,6 +618,32 @@ nav:
        - qa/what_are_predefined_event_types.md
        - qa/what_is_dot_notation.md
 
+       - qa/can_kafka_be_an_event_source.md
+       - qa/hot_to_get_started_with_data_collection.md
+       - qa/how_can_i_get_telegram_bot.md
+       - qa/how_can_i_udata_event.md
+       - qa/how_do_i_get_my_own_source_id.md
+       - qa/how_profile_is_loaded.md
+       - qa/what_are_the_main_featuress_of_commercial_version.md
+       - qa/what_happens_if_two_workflow_return_responses.md
+       - qa/what_happens_if_two_workflow_return_widgets.md
+       - qa/what_is_event_redirect.md
+       - qa/what_is_post_collection_remapping.md
+       - qa/what_is_the_sequence_of_event_processing.md
+       - qa/what_is_the_syntax_of_if_plugin.md
+       - qa/what_is_tracardi_flusher.md
+       - qa/what_type_of_triggers_event_has.md
+       - qa/why_can_not_conenct_to_lcoalhost.md
+       - qa/bulk/generic_tracardi_qa.md
+       - qa/bulk/other_qa.md
+       - qa/bulk/plugins_questions.md
+       - qa/bulk/questions_about_event_data.md
+       - qa/bulk/questions_about_profile_data.md
+       - qa/bulk/staging_server_qa.md
+       - qa/bulk/tracardi_installation.md
+       - qa/bulk/workflow.md
+
+
      - Errors:
        - qa/errors/error_11.md
        - qa/errors/error_12.md
@@ -588,6 +656,9 @@ nav:
        - qa/errors/error_6.md
        - qa/errors/error_7.md
        - qa/errors/error_8.md
+       - qa/errors/error_13.md
+       - qa/errors/error_14.md
+       - qa/errors/error_15.md
 
   - api/index.md
   - Developers:
