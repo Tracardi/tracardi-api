@@ -496,7 +496,7 @@ to filter resources related to your plugin.
 
 # Your goal
 
-Wriate a plugin that inserts any defined data to BugQuery. We will need a form to configure the resource,  the project, then dataset then table. And finally the row to be inserted. 
+Write a plugin that inserts any defined data to BigQuery. We will need a form to configure the resource,  the project, then dataset then table. And finally the row to be inserted. 
 
 This plugin needs a resource with the BigQuery credentials. 
 
