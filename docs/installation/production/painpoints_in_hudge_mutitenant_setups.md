@@ -10,7 +10,7 @@ When operating Tracardi in environments with a large number of tenants (over 100
    indices.
 
 2. **Performance Verification**: It's crucial to rigorously test the system to ascertain its efficiency and reliability
-   under the strain of a multitenant arrangement (with exceeded 1000 indices). This ensures that the introduction of
+   under the strain of a multi-tenant arrangement (with exceeded 1000 indices). This ensures that the introduction of
    more tenants doesn’t compromise
    the performance of the system.
 
