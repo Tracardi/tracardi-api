@@ -16,13 +16,13 @@ The outcome of this merging process is refleted in the updated profile traits.
 
 # Inputs and Outputs
 
-- `Input`: This plugin inputs a payload object.
-- `Outputs`: This plugin outputs merged traits if the operation is successful. If no profile is available, an error will be generated.
+- __Input__: This plugin inputs a payload object.
+- __Output__: This plugin outputs merged traits if the operation is successful. If no profile is available, an error will be generated.
 
 # Configuration
 
 The configuration of this plugin is quite simple, you only have one configuration parameter:
-- `Sub traits path` : If you want to merge data to the root of your profile traits, leave this field empty. But if you intend to create or merge a specific part of the profile traits, type the sub-path in here. This path will be appended to the main traits path, e.g: `profile@traits[sub.path]`. 
+- __Sub traits path__ : If you want to merge data to the root of your profile traits, leave this field empty. But if you intend to create or merge a specific part of the profile traits, type the sub-path in here. This path will be appended to the main traits path, e.g: __profile@traits[sub.path]__. 
 
 # JSON Configuration
 
@@ -40,7 +40,7 @@ This plugin does not require external resources to be configured.
 
 # Errors
 
-- `error` : This error occurs when there is no available profile.
+- __error__ : This error occurs when there is no available profile.
 
 ## Note
 

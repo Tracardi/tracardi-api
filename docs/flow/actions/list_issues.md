@@ -12,7 +12,7 @@ The "List Issues" plugin is designed to retrieve issues from a specified GitHub 
 
 Next, a resource is loaded and the credentials from the configuration dictionary are used to initialise a GitHub client. 
 
-The final step is the execution of the `list_issues()` function. This retrieves the list of issues from GitHub and returns the result based on the response's 'status' parameter.
+The final step is the execution of the **list_issues()** function. This retrieves the list of issues from GitHub and returns the result based on the response's 'status' parameter.
 
 If the status is either 200, 201, 202, 203, or 204, the result is returned at the payload port. On the other hand, if the status is different than the aforementioned, the result is returned at the error port.
 
@@ -29,7 +29,7 @@ The plugin takes one input:
 It gives two outputs:
 
 - "payload": This port returns the issues data from the GitHub repository.
-- "error": This port returns an error message if the `list_issues()` function returns a status other than 200, 201, 202, 203, or 204.
+- "error": This port returns an error message if the **list_issues()**function returns a status other than 200, 201, 202, 203, or 204.
 
 Note that this plugin cannot start a workflow.
 
@@ -62,4 +62,4 @@ The plugin requires access to the GitHub API, therefore you will need to configu
 
 # Errors
 
-If the `list_issues()` function returns a status other than 200, 201, 202, 203, or 204, the response will be returned through the error port.
+If the **list_issues()** function returns a status other than 200, 201, 202, 203, or 204, the response will be returned through the error port.

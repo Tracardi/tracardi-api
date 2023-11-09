@@ -211,10 +211,14 @@ There is only one, do not use `` in the response. So `some text` is not allowed.
 Here is the full plugin code:
 
 ```python
-from geopy import distance
-from tracardi.service.plugin.domain.register import Plugin, Spec, MetaData, Documentation, PortDoc
+from tracardi.service.plugin.domain.register import Plugin, Spec, MetaData, Form, FormGroup, FormField, FormComponent, \
+    Documentation, PortDoc
 from tracardi.service.plugin.runner import ActionRunner
 from tracardi.service.plugin.domain.result import Result
+
+import urllib
+from urllib.parse import urlparse
+
 from .model.configuration import Configuration
 
 
@@ -222,7 +226,7 @@ def validate(config: dict):
     return Configuration(**config)
 
 
-class CircularGeoFenceAction(ActionRunner):
+class ParseURLParameters(ActionRunner):
 
     config: Configuration
 
@@ -232,42 +236,72 @@ class CircularGeoFenceAction(ActionRunner):
     async def run(self, payload: dict, in_edge=None) -> Result:
 
         dot = self._get_dot_accessor(payload)
+        page_url = dot[self.config.url]
 
-        center_coordinates_tuple = (float(self.config.center_coordinate.lat), float(self.config.center_coordinate.lng))
-        test_coordinates_tuple = (float(dot[self.config.test_coordinate.lat]), float(dot[self.config.test_coordinate.lng]))
+        parsed = urlparse(page_url)
+        params = urllib.parse.parse_qsl(parsed.query)
 
-        distance_from_center = distance.distance(center_coordinates_tuple, test_coordinates_tuple).km
+        result = {
+            'url': page_url,
+            'scheme': parsed.scheme,
+            'hostname': parsed.hostname,
+            'path': parsed.path,
+            'query': parsed.query,
+            'params': {k: v for k, v in params},
+            'fragment': parsed.fragment
+        }
 
-        return Result(port="payload", value={"inside": distance_from_center <= self.config.radius})
+        return Result(port="payload", value=result)
 
 
 def register() -> Plugin:
     return Plugin(
         start=False,
         spec=Spec(
-            module=__name__,
-            className='CircularGeoFenceAction',
-            inputs=["payload"],
-            outputs=["payload"],
-            version='0.6.1',
-            license="MIT",
-            author="Risto Kowaczewski"
+            module='tracardi.process_engine.action.v1.strings.url_parser.plugin',
+            className='ParseURLParameters',
+            inputs=['payload'],
+            outputs=['payload'],
+            init={
+                'url': 'session@context.page.url'
+            },
+            manual="url_parser_action",
+            form=Form(groups=[
+                FormGroup(
+                    name="Url parser",
+                    fields=[
+                        FormField(
+                            id="url",
+                            name="Path to page URL",
+                            description="Type path to page url in context or session.",
+                            component=FormComponent(type="dotPath", props={
+                                "defaultSourceValue": "session",
+                                "defaultMode": 1
+                            })
+                        )
+                    ]
+                ),
+            ]),
+            license="MIT + CC",
+            author="EMGE1, Risto Kowaczewski",
+            version="0.6.0.1"
         ),
         metadata=MetaData(
-            name='Geo fence',
-            desc='Finds out if the test geo location coordinates are within the radius threshold from '
-                 'center point coordinates.',
-            icon='geo-fence',
-            group=["Location"],
+            name='Parse URL',
+            desc='Reads URL parameters form context, parses it and returns result on output.',
+            type='flowNode',
+            width=300,
+            height=100,
+            icon='url',
+            group=["Parsers"],
             documentation=Documentation(
                 inputs={
                     "payload": PortDoc(desc="This port takes payload object.")
                 },
                 outputs={
-                    "payload": PortDoc(desc="Returns true if inside the radius, otherwise false.")
+                    "payload": PortDoc(desc="Returns parsed URL.")
                 }
-            ),
-            pro=True
+            )
         )
     )
 ```
@@ -277,44 +311,38 @@ def register() -> Plugin:
 
 Available manual:
 
-# Definition:
-The Geo Fence Plugin for Tracardi is a tool that enables geofencing capabilities within the Tracardi automation platform, allowing users to trigger actions based on geographic location.
+# Url parser plugin
 
-# Description:
-This GitHub repository houses the Geo Fence Plugin tailored for Tracardi, empowering you to harness geofencing for location-based automation and personalized user experiences.
+This plugin parses URL and returns it as output.
 
-# Inputs and Outputs:
-Inputs: Geofence parameters, such as coordinates and radius, define the location to monitor. Triggers are configured to specify actions upon entering or exiting a geofence.
-Outputs: When a user's device enters or exits a defined geofence, the plugin can generate customized actions or events, enriching user interactions.
+# Configuration
 
-# Configuration:
-Configure the plugin with the following settings:
-Geofence coordinates (latitude, longitude)
-Geofence radius
-Trigger events (entry, exit)
-Custom actions or workflows to execute upon trigger.
-
-
-# Resources Required:
-Access to a geospatial database or mapping service for accurate location data.
-Network connectivity for real-time location updates.
-Adequate processing resources for efficient geofence event handling within the Tracardi environment.
-
-# Errors in Plugin:
-Potential issues include:
-Inaccurate location data leading to incorrect triggers.
-Permissions issues related to location access.
-Network connectivity problems causing missed geofence events.
-Compatibility issues with specific versions of Tracardi or dependencies.
-
-# Output 
-
-Returns result on the output port in the following schema:
+User must provide a path to page URL. By default, path is available at `session` in `context.page.url`
 
 ```json
 {
-  "status": "200",
-  "content": "response content"
+  "url": "session@context.page.url"
 }
 ```
 
+# Input
+
+This action does not process input payload directly.
+
+# Output
+
+Output example for url `http://web.address.com/path/index.html?param1=1#hash`:
+
+```json
+{
+  "url": "http://web.address.com/path/index.html?param1=1#hash",
+  "scheme": "http",
+  "hostname": "web.address.com",
+  "path": "path",
+  "query": "index.html?param1=1",
+  "params": {
+    "param1": "1"
+  },
+  "fragment": "hash"
+}
+```

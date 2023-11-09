@@ -18,7 +18,7 @@ At the end of the process, the modified payload is returned. If an error occurs 
 
 # Inputs and Outputs
 
-The plugin accepts a `payload` at its input. It outputs through two ports: `payload` and `error`. 
+The plugin accepts a **payload** at its input. It outputs through two ports: **payload** and **error**. 
 
 The payload port outputs the input payload, while the error port is used to output error messages when exceptions are encountered during the process.
 
@@ -28,8 +28,8 @@ This plugin cannot start the workflow by itself; it needs a payload input to sta
 
 The Add Interest plugin can be configured with two parameters:
 
-- `Interest name`: This indicates the name of the interest you want to add to the user profile.
-- `Interest value`: This denotes how much value you attach to the specified interest.
+- **Interest name**: This indicates the name of the interest you want to add to the user profile.
+- **Interest value**: This denotes how much value you attach to the specified interest.
 
 You need to provide values for these two parameters to properly configure the plugin.
 
@@ -42,7 +42,7 @@ You need to provide values for these two parameters to properly configure the pl
 }
 ```
 
-In the above configuration example, an interest named `music` is being added to the profile with a value of `1.0`.
+In the above configuration example, an interest named **music** is being added to the profile with a value of **1.0**.
 
 # Required resources
 

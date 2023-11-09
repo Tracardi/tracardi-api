@@ -19,7 +19,7 @@ The plugin accepts any JSON-like object as input through the "payload" port. Aft
 # Configuration
 
 The configuration for the Delete data plugin consists of:
-- `delete` - A list of fields to be removed from the payload. These fields should be provided as dot notation referencing the internal state of the workflow.
+- __delete__ - A list of fields to be removed from the payload. These fields should be provided as dot notation referencing the internal state of the workflow.
 
 # JSON Configuration
 

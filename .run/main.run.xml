@@ -84,7 +84,7 @@
       <env name="_REDIS_PORT" value="11111" />
       <env name="ASYNC_PROCESSING" value="no" />
       <env name="ASYNC_STORE_BUFFER_TIMEOUT" value="7000" />
-      <env name="DEMO" value="no" />
+      <env name="DEMO" value="yes" />
       <env name="ELASTIC_SAVE_POOL" value="" />
       <env name="ENABLE_EVENT_DESTINATIONS" value="yes" />
       <env name="ENABLE_EVENT_SOURCE_CHECK" value="yes" />
