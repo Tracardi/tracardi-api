@@ -9,13 +9,6 @@ from tracardi.domain.settings import SystemSettings
 system_settings = [
     SystemSettings(
         **{
-            "label": "UPDATE_PLUGINS_ON_STARTUP",
-            "value": server.update_plugins_on_start_up,
-            "desc": "Default: no. If equals yes it will update all installed plugins on Tracardi start."
-        }
-    ),
-    SystemSettings(
-        **{
             "label": "DEBUG_MAKE_SLOWER_RESPONSES",
             "value": server.make_slower_responses,
             "desc": "Default: 0. This variable is for testing purposes only. It sets the number of seconds each "
@@ -41,21 +34,6 @@ system_settings = [
             "label": "MULTI_TENANT",
             "value": tracardi.multi_tenant,
             "desc": "Default: No. Turns on multi tenancy feature for commercial versions."
-        }
-    ),
-    SystemSettings(
-        **{
-            "label": "RUN_HEARTBEAT_EVERY",
-            "value": server.heartbeat_every,
-            "desc": "Default: 300. The time each worker reports its health."
-        }
-    ),
-    SystemSettings(
-        **{
-            "label": "TASKS_EVERY",
-            "value": server.tasks_every,
-            "desc": "The interval of running tasks in seconds, "
-                    "defaults to 1."
         }
     ),
     SystemSettings(
@@ -200,6 +178,69 @@ system_settings = [
             "value": elastic.host,
             "desc": "Default: 127.0.0.1. This setting defines a IP address of elastic search instance. See Connecting "
                     "to elastic cluster for more information how to connect to a cluster of servers."
+        }
+    ),
+    SystemSettings(
+        **{
+            "label": "EVENT_PARTITIONING",
+            "value": tracardi.event_partitioning,
+            "desc": "Default: month. Determines how often event data is partitioned."
+        }
+    ),
+    SystemSettings(
+        **{
+            "label": "PROFILE_PARTITIONING",
+            "value": tracardi.profile_partitioning,
+            "desc": "Default: quarter. Sets the partitioning interval for user profile data."
+        }
+    ),
+    SystemSettings(
+        **{
+            "label": "SESSION_PARTITIONING",
+            "value": tracardi.session_partitioning,
+            "desc": "Default: quarter. Defines the frequency of session data partitioning."
+        }
+    ),
+    SystemSettings(
+        **{
+            "label": "ENTITY_PARTITIONING",
+            "value": tracardi.entity_partitioning,
+            "desc": "Default: quarter. Specifies the partitioning schedule for entity data."
+        }
+    ),
+    SystemSettings(
+        **{
+            "label": "ITEM_PARTITIONING",
+            "value": tracardi.item_partitioning,
+            "desc": "Default: year. Determines the partitioning interval for items."
+        }
+    ),
+    SystemSettings(
+        **{
+            "label": "LOG_PARTITIONING",
+            "value": tracardi.log_partitioning,
+            "desc": "Default: month. Log data partitioning frequency."
+        }
+    ),
+    SystemSettings(
+        **{
+            "label": "DISPATCH_LOG_PARTITIONING",
+            "value": tracardi.dispatch_log_partitioning,
+            "desc": "Default: month. Sets how often dispatch logs are partitioned."
+        }
+    ),
+    SystemSettings(
+        **{
+            "label": "CONSOLE_LOG_PARTITIONING",
+            "value": tracardi.console_log_partitioning,
+            "desc": "Default: month. Interval for partitioning console log data."
+        }
+    ),
+    SystemSettings(
+        **{
+            "label": "USER_LOG_PARTITIONING",
+            "value": tracardi.user_log_partitioning,
+            "desc": "Default: year. Frequency of user log data partitioning."
         }
     ),
     SystemSettings(
@@ -396,6 +437,7 @@ system_settings = [
 router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin", "developer"]))]
 )
+
 
 # todo remove after 2023-10-01
 # @router.get("/system/setting/{name}", tags=["system"],

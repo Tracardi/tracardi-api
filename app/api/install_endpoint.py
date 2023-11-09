@@ -3,7 +3,6 @@ import os
 from typing import Optional
 from fastapi import APIRouter, HTTPException
 
-from app.config import server
 from tracardi.domain.payload.tracker_payload import TrackerPayload
 from tracardi.service.installation import install_system, check_installation
 from tracardi.service.tracker import track_event
@@ -50,7 +49,7 @@ async def install_demo_data():
 async def install(credentials: Optional[Credentials]):
 
     try:
-        return await install_system(credentials, server.update_plugins_on_start_up)
+        return await install_system(credentials)
     except PermissionError as e:
         raise HTTPException(status_code=403, detail=str(e))
 
