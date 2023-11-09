@@ -2,10 +2,11 @@
 
 ## Short-Term Objectives
 
-* Establish a Fully Distributed Environment
-  - Develop five distinct data streams (profiles, sessions, events, workflows, destinations) that can be seamlessly connected by any company to create their custom data processors and integrations.
-  - Implement performance enhancements.
-  - Incorporate Apache Pulsar into the system.
+* Establish a Fully Distributed Multi-Tenant Environment
+  [x] Develop five distinct data streams (profiles, sessions, events, workflows, destinations) that can be seamlessly connected by any company to create their custom data processors and integrations.
+  [x] Implement performance enhancements.
+  [x] Incorporate Apache Pulsar into the system.
+  [ ] Move metadata to MySQL
 
 * Enhance Marketer-Focused User Interface
   - Introduce a unified segments list, including illustrative examples of segmented profiles.
