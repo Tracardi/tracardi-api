@@ -496,58 +496,5 @@ to filter resources related to your plugin.
 
 # Your goal
 
-Write a plugin that inserts any defined data to BigQuery. We will need a form to configure the resource,  the project, then dataset then table. And finally the row to be inserted. 
-
-This plugin needs a resource with the BigQuery credentials. 
-
-Here is a code that could be run.
-```python
-import re
-
-from google.cloud.bigquery import Dataset, DatasetReference, Table, TableReference
-from google.cloud.bigquery.client import Project
-
-from google.cloud import bigquery
-import json
-
-# Your service account key as a JSON string
-service_account_key_str = """
-This is the credentials that needs to be set in resouce
-"""
-
-service_account_key_str = re.sub(r'"private_key": "([^"]*)"', lambda m: m.group().replace('\n', '\\n'),
-                                 service_account_key_str)
-
-# Load the JSON string as a dictionary
-service_account_key_dict = json.loads(service_account_key_str)
-
-# Initialize the BigQuery client with the service account key dictionary
-
-client = bigquery.Client.from_service_account_info(service_account_key_dict)
-
-table = 'events'  # This must be set by user in the form
-dataset_id = 'events_01' # This must be set by user in the form
-project_id = 'tracardi' # This must be set by user in the form
-
-
-
-
-rows_to_insert = [
-    {'id': 'value1', 'type': 'value2'},
-    {'id': 'value3', 'type': 'value4'},
-    # Add more rows as needed
-]
-
-# Get the Big Query table
-table = client.get_table(
-    TableReference(
-        DatasetReference('tracardi', 'events_01'),
-        'events'
-    )
-)
-
-# Insert the rows into the table
-errors = client.insert_rows_json(table, rows_to_insert)
-```
-return payload on port success or if error is not None return error on port error.
+Write a plugin that adds two integers that are defined by the user and return result on port result.
 

@@ -115,12 +115,10 @@ plugin and make it accessible through the user interface.
 Here's the whole code with descriptions for easier understanding:
 
 ```python
-from pydantic import validator
+from pydantic import field_validator
 from tracardi.service.plugin.runner import ActionRunner
 from tracardi.service.plugin.domain.result import Result
-from tracardi.service.plugin.domain.register import Plugin, Spec, MetaData, Documentation, PortDoc, Form, FormGroup,
-
-FormComponent, FormField
+from tracardi.service.plugin.domain.register import Plugin, Spec, MetaData, Documentation, PortDoc, Form, FormGroup, FormComponent, FormField
 from tracardi.service.plugin.domain.config import PluginConfig
 from password_generator import PasswordGenerator
 
@@ -134,7 +132,7 @@ class Config(PluginConfig):
     special_characters: int
 
     # Validator to ensure that the minimum length is not greater than the maximum length
-    @validator("min_length")
+    @field_validator("min_length")
     def check_min_max_value(cls, value, values):
         if value > values["max_length"]:
             raise ValueError(
@@ -272,7 +270,7 @@ the code:
 1. Import Statements:
 
 ```python
-from pydantic import validator
+from pydantic import field_validator
 from tracardi.service.plugin.runner import ActionRunner
 from tracardi.service.plugin.domain.result import Result
 from tracardi.service.plugin.domain.register import Plugin, Spec, MetaData, Documentation, PortDoc, Form, FormGroup,
@@ -295,7 +293,7 @@ class Config(PluginConfig):
     lowercase: int
     special_characters: int
 
-    @validator("min_length")
+    @field_validator("min_length")
     def check_min_max_value(cls, value, values):
         if value > values["max_length"]:
             raise ValueError(
