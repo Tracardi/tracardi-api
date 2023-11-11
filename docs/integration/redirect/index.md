@@ -1,6 +1,6 @@
-# Link bridge
+# Link tracking, redirects
 
-A link bridge is a valuable tool for tracking and associating clicks on links with user profiles. It is commonly used
+A link tracking is a valuable tool for tracking and associating clicks on links with user profiles. It is commonly used
 when sending emails with community invites, promotions, etc. or monitoring email openings. By creating redirected links,
 we can track user interactions and gather data. For example, we can create a link that redirects to a tiny 1px image.
 When that image is displayed, Tracardi receives an event indicating the email was opened. Additionally, the redirect

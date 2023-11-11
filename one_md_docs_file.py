@@ -27,9 +27,9 @@ def merge_md_files(md_files, output_file):
 
 
 if __name__ == "__main__":
-    root_folder = "/home/risto/PycharmProjects/tracardi-api/docs/qa/errors"  # Replace with the path to your folder
-    output_file = "errors_merged.md"  # Name of the merged output file
-    skip_folders = ['ai', 'hacktoberfest', 'flow', 'development', 'qa', 'installation', 'plugins', 'traffic', 'configuration', 'integration', 'resources']  # Specify folders to skip (e.g., 'ai')
+    root_folder = "/home/risto/PycharmProjects/tracardi-api/docs"  # Replace with the path to your folder
+    output_file = "documentation.md"  # Name of the merged output file
+    skip_folders = ['ai', 'hacktoberfest']  # Specify folders to skip (e.g., 'ai')
 
     md_files = find_md_files(root_folder, skip_folders)
 
