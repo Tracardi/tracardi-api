@@ -3,7 +3,7 @@ event:
     traits:
       name: profile@data.pii.firstname
       surname: profile@data.pii.lastname
-      email: profile@data.contact.email
+      email: profile@data.contact.email.main
   context: off
 session:
   matadata: off

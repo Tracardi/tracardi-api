@@ -8,7 +8,7 @@ limited number of fields that are unique in the profiles. In most cases it will 
 Also, __a field value__ is required to load the profile. It may be a static value or it can be referenced from event or
 any object inside workflow.
 
-The default values configure the plugin to use event property __email__ and profile __data.contact.email__ to match the profile.
+The default values configure the plugin to use event property __email__ and profile __data.contact.email.main__ to match the profile.
 
 If you pass the e-mail or any value that identifies the profile in other location please select the correct path.
 
@@ -18,7 +18,7 @@ Example
 
 ```json
 {
-  "field": "data.contact.email",
+  "field": "data.contact.email.main",
   "value": "event@properties.email"
 }
 ```

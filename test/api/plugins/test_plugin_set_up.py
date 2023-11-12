@@ -510,7 +510,7 @@ async def test_should_set_up_plugin_merge_profiles_action():
                        name="test-node", 
                        module="tracardi.process_engine.action.v1.operations.merge_profiles_action", 
                        className="MergeProfilesAction")
-    await plugin.set_up({'mergeBy': ['profile@data.contact.email']})
+    await plugin.set_up({'mergeBy': ['profile@data.contact.email.main']})
 
 
 async def test_should_set_up_plugin_update_profile_action():
@@ -1286,7 +1286,7 @@ async def test_should_set_up_plugin_inject_profile_by_field():
                        name="test-node", 
                        module="tracardi.process_engine.action.v1.internal.inject_profile_by_field.plugin", 
                        className="InjectProfileByField")
-    await plugin.set_up({'field': 'data.contact.email', 'value': 'test@test.com'})
+    await plugin.set_up({'field': 'data.contact.email.main', 'value': 'test@test.com'})
 
 
 async def test_should_set_up_plugin_add_empty_profile_action():
@@ -2428,7 +2428,7 @@ async def test_should_set_up_plugin_novu_trigger_action(mocker):
                        name="test-node", 
                        module="tracardi.process_engine.action.v1.connectors.novu.trigger.plugin", 
                        className="NovuTriggerAction")
-    await plugin.set_up({'payload': '{}', 'recipient_email': 'profile@data.contact.email', 'source': {'id': '', 'name': ''}, 'subscriber_id': 'profile@id', 'template': {'id': '', 'name': ''}})
+    await plugin.set_up({'payload': '{}', 'recipient_email': 'profile@data.contact.email.main', 'source': {'id': '', 'name': ''}, 'subscriber_id': 'profile@id', 'template': {'id': '', 'name': ''}})
 
 
 async def test_should_set_up_plugin_pushover_action(mocker):

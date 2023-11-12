@@ -24,7 +24,7 @@ In the destination field you should see the resource. Then describe the destinat
 and fill the following fields:
 
 * __Destination prerequisites__ - enter the condition that must be met for the profile synchronization to start with the
-  external system. For example, `profile@data.contact.email exists` - it means that there must be an e-mail in the profile to
+  external system. For example, `profile@data.contact.email.business exists` - it means that there must be a business e-mail in the profile to
   forward the data. The point is that the external system may require specific data to identify the user. You can leave
   this field blank that means, that regardless of the quality of the data, it will be sent to the destination system. To
   write a correct condition please read [how to use logic notation](../../notations/logic_notation.md)
