@@ -128,6 +128,21 @@ system_settings = [
     ),
     SystemSettings(
         **{
+            "label": "TRIGGER_RULE_CACHE_TTL",
+            "value": memory_cache.trigger_rule_cache_ttl,
+            "desc": "Default: 5. Set cache time for workflow triggers. Set 0 for no caching."
+        }
+    ),
+    SystemSettings(
+        **{
+            "label": "DATA_COMPLIANCE_CACHE_TTL",
+            "value": memory_cache.data_compliance_cache_ttl,
+            "desc": "Default: 2. Set cache time for data compliance rules Set 0 for no caching."
+        }
+    ),
+
+    SystemSettings(
+        **{
             "label": "EVENT_METADATA_CACHE_TTL",
             "value": memory_cache.event_metadata_cache_ttl,
             "desc": "Default: 2. Set cache time for event tagging, indexing, etc. configuration. Set 0 for no caching."
