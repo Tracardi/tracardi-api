@@ -121,6 +121,6 @@ async def upsert_segment(segment: Segment):
     """
     Adds new segment to database
     """
-    result = await segment_db.save(segment.model_dump())
+    result = await segment_db.save(segment.model_dump(mode='json'))
     await segment_db.refresh()
     return result
