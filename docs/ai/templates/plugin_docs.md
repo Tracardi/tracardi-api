@@ -211,99 +211,108 @@ There is only one, do not use `` in the response. So `some text` is not allowed.
 Here is the full plugin code:
 
 ```python
-from tracardi.service.plugin.domain.register import Plugin, Spec, MetaData, Form, FormGroup, FormField, FormComponent, \
-    Documentation, PortDoc
-from tracardi.service.plugin.runner import ActionRunner
+from tracardi.service.plugin.domain.register import Plugin, Spec, MetaData, Documentation, PortDoc, Form, FormGroup, \
+    FormField, FormComponent
+from tracardi.service.plugin.runner import ActionRunner, JoinSettings, ReshapeTemplate
+from tracardi.service.wf.domain.edge import Edge
+from .model.config import Config
 from tracardi.service.plugin.domain.result import Result
 
-import urllib
-from urllib.parse import urlparse
 
-from .model.configuration import Configuration
-
-
-def validate(config: dict):
-    return Configuration(**config)
+def validate(config: dict) -> Config:
+    return Config(**config)
 
 
-class ParseURLParameters(ActionRunner):
+class JoinPayloads(ActionRunner):
 
-    config: Configuration
+    config: Config
 
     async def set_up(self, init):
         self.config = validate(init)
+        self.join = JoinSettings(
+            merge=True,
+            reshape={  # Reshape definition for payload output port
+                "payload": ReshapeTemplate(
+                    template=self.config.reshape,
+                    default=self.config.default)
+            },
+            type=self.config.type
+        )
 
-    async def run(self, payload: dict, in_edge=None) -> Result:
-
-        dot = self._get_dot_accessor(payload)
-        page_url = dot[self.config.url]
-
-        parsed = urlparse(page_url)
-        params = urllib.parse.parse_qsl(parsed.query)
-
-        result = {
-            'url': page_url,
-            'scheme': parsed.scheme,
-            'hostname': parsed.hostname,
-            'path': parsed.path,
-            'query': parsed.query,
-            'params': {k: v for k, v in params},
-            'fragment': parsed.fragment
-        }
-
-        return Result(port="payload", value=result)
+    async def run(self, payload: dict, in_edge: Edge = None) -> Result:
+        # Return joined input payloads. Payloads can be transformed by the `Reshape output payload` schema.
+        return Result(port="payload", value=payload)
 
 
 def register() -> Plugin:
     return Plugin(
         start=False,
         spec=Spec(
-            module='tracardi.process_engine.action.v1.strings.url_parser.plugin',
-            className='ParseURLParameters',
-            inputs=['payload'],
-            outputs=['payload'],
-            init={
-                'url': 'session@context.page.url'
-            },
-            manual="url_parser_action",
-            form=Form(groups=[
-                FormGroup(
-                    name="Url parser",
-                    fields=[
-                        FormField(
-                            id="url",
-                            name="Path to page URL",
-                            description="Type path to page url in context or session.",
-                            component=FormComponent(type="dotPath", props={
-                                "defaultSourceValue": "session",
-                                "defaultMode": 1
-                            })
-                        )
-                    ]
-                ),
-            ]),
+            module=__name__,
+            className='JoinPayloads',
+            inputs=["payload"],
+            outputs=["payload"],
+            version='0.7.1',
             license="MIT + CC",
-            author="EMGE1, Risto Kowaczewski",
-            version="0.6.0.1"
+            author="Risto Kowaczewski",
+            init={
+                "reshape": "{}",
+                "default": True,
+                "type": "dict"
+            },
+            manual="join_output_payloads",
+            form=Form(
+                groups=[
+                    FormGroup(
+                        name="Join payloads settings",
+                        fields=[
+                            FormField(
+                                id="reshape",
+                                name="Reshape output payload",
+                                description="Type transformation JSON to reshape the output payload",
+                                component=FormComponent(type="json", props={"label": "Transformation object"})
+                            ),
+                            FormField(
+                                id="type",
+                                name="Type of join",
+                                description="Select type of collection. Type of `Dictionary` uses the connection names "
+                                            "as keys in dictionary.",
+                                component=FormComponent(type="select", props={"label": "Name", "items": {
+                                    "list": "List",
+                                    "dict": "Dictionary"
+                                }})
+                            ),
+                            FormField(
+                                id="default",
+                                name="Missing values equal null",
+                                description="Values that are missing will become null",
+                                component=FormComponent(type="bool",
+                                                        props={"label": "Make missing values equal to null"})
+                            )
+                        ]
+                    )
+                ]
+            )
         ),
         metadata=MetaData(
-            name='Parse URL',
-            desc='Reads URL parameters form context, parses it and returns result on output.',
-            type='flowNode',
-            width=300,
-            height=100,
-            icon='url',
-            group=["Parsers"],
+            name='Join',
+            desc='Joins input data into one payload.',
+            tags=['memory', 'join', "payload"],
+            type="startNode",
+            icon='flow',
+            group=["Operations"],
+            purpose=['collection', 'segmentation'],
             documentation=Documentation(
                 inputs={
                     "payload": PortDoc(desc="This port takes payload object.")
                 },
                 outputs={
-                    "payload": PortDoc(desc="Returns parsed URL.")
+                    "payload": PortDoc(desc="This port returns input payload.")
                 }
             )
         )
     )
+
 ```
 
 ```
@@ -311,38 +320,99 @@ def register() -> Plugin:
 
 Available manual:
 
-# Url parser plugin
+Joins payload from incoming data.
 
-This plugin parses URL and returns it as output.
+# Data join
 
-# Configuration
+This plugin will join data form input connections. Connections can contain different data. This plugin will merge this data into one object. 
+If the connections are named then it will merge the data from the input connection under as connection name. 
+For example if the connection name is "Personal data" then the merged data will be:
 
-User must provide a path to page URL. By default, path is available at `session` in `context.page.url`
-
-```json
+```
 {
-  "url": "session@context.page.url"
+  "Personal data": {
+    ...payload
+  }
 }
 ```
 
-# Input
+If the connections are not named then data form incoming connection will be copied available under the connection id
+key. 
 
-This action does not process input payload directly.
+# Output reshaping
 
-# Output
+Joint data can be reshaped. 
 
-Output example for url `http://web.address.com/path/index.html?param1=1#hash`:
+Here is an example of reshape template.
+
+```
+{
+  "some-data": {
+    "key": "value",             // This is static value
+    
+    "value": "profile@id",      // Reads value from profile 
+                                // and saves it in object 
+                                // value key
+                                
+    "list": [1, "payload@data"],// Reads data value from 
+                                // payload and saves it as 
+                                // 2nd element of list
+                                
+    "event": "event@..."        // Saves in event all data 
+                                // from event.
+  }
+}
+```
+
+Notice that some parts of this object reference data with dot notation. The data will be replaced be
+the referenced data.
+
+Let's assume that the merged payloads look like this:
 
 ```json
 {
-  "url": "http://web.address.com/path/index.html?param1=1#hash",
-  "scheme": "http",
-  "hostname": "web.address.com",
-  "path": "path",
-  "query": "index.html?param1=1",
-  "params": {
-    "param1": "1"
-  },
-  "fragment": "hash"
+  "data": {
+        "name": "John",
+        "age": 26
+      },
+  "edge": {
+    "test": 1
+  }
+}
+```
+
+then the result after data reshaping with the following template:
+
+```
+{
+  "some-data": {
+    "key": "value",
+    "value": "profile@id"  
+    "list": [1, "payload@data"] 
+    "event": "event@..."
+}
+```
+
+will be:
+
+```json
+{
+  "some-data": {
+    "key": "value",
+    "value": "profile-id",
+    "list": [
+      1,
+      {
+        "name": "John",
+        "age": 26
+      }
+    ],
+    "event": {
+      "type": "page-view",
+      "properties": {
+        "url": "http://localhost"
+      }
+    }
+  }
 }
 ```
