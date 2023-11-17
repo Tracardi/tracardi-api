@@ -19,26 +19,50 @@ from tracardi.service.elastic.connection import wait_for_connection
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI, Request
 from starlette.staticfiles import StaticFiles
-from app.api import rule_endpoint, resource_endpoint, event_endpoint, \
-    profile_endpoint, flow_endpoint, generic_endpoint, \
-    segments_endpoint, \
-    tql_endpoint, health_endpoint, session_endpoint, plugins_endpoint, \
-    settings_endpoint, event_source_endpoint, test_endpoint, \
-    consent_type_endpoint, flow_action_endpoint, flows_endpoint, info_endpoint, \
-    user_endpoint, debug_endpoint, log_endpoint, tracardi_pro_endpoint, \
-    event_type_predefined, \
-    import_endpoint, \
-    task_endpoint, \
-    storage_endpoint, \
-    destination_endpoint, \
-    user_log_endpoint, \
-    user_account_endpoint, \
-    install_endpoint, \
-    delete_indices_endpoint, \
-    setting_endpoint, \
-    migration_endpoint, report_endpoint, live_segments_endpoint, \
-    console_log_endpoint, event_type_mapping, \
-    bridge_endpoint, entity_endpoint, staging_endpoint, customer_endpoint, event_to_profile
+from app.api import (
+    rule_endpoint,
+    resource_endpoint,
+    event_endpoint,
+    profile_endpoint,
+    flow_endpoint,
+    generic_endpoint,
+    segments_endpoint,
+    tql_endpoint,
+    health_endpoint,
+    session_endpoint,
+    plugins_endpoint,
+    settings_endpoint,
+    event_source_endpoint,
+    test_endpoint,
+    consent_type_endpoint,
+    flow_action_endpoint,
+    flows_endpoint,
+    info_endpoint,
+    user_endpoint,
+    debug_endpoint,
+    log_endpoint,
+    tracardi_pro_endpoint,
+    event_type_predefined,
+    import_endpoint,
+    task_endpoint,
+    storage_endpoint,
+    destination_endpoint,
+    user_log_endpoint,
+    user_account_endpoint,
+    install_endpoint,
+    delete_indices_endpoint,
+    setting_endpoint,
+    migration_endpoint,
+    report_endpoint,
+    live_segments_endpoint,
+    console_log_endpoint,
+    event_type_mapping,
+    bridge_endpoint,
+    entity_endpoint,
+    staging_endpoint,
+    customer_endpoint,
+    event_to_profile
+)
 from app.api.track import event_server_endpoint
 from tracardi.config import tracardi
 from tracardi.exceptions.log_handler import log_handler
@@ -83,10 +107,12 @@ if License.has_service(LICENSE):
     from com_tracardi.endpoint import event_props_to_event_traits_copy
     from com_tracardi.endpoint import metric_endpoint
     from com_tracardi.config import com_tracardi_settings
+    from com_tracardi.endpoint import field_update_log_endpoint
 else:
     event_to_profile_copy = get_router(prefix="/events/copy")
     event_props_to_event_traits_copy = get_router(prefix="/events/index")
     metric_endpoint = get_router(prefix="/metric")
+    field_update_log_endpoint = get_router(prefix="/field/update")
 
 
 if License.has_service(MULTI_TENANT):
@@ -291,6 +317,8 @@ application.include_router(event_to_profile_copy.router)
 application.include_router(event_props_to_event_traits_copy.router)
 application.include_router(event_type_predefined.router)
 application.include_router(setting_endpoint.router)
+application.include_router(field_update_log_endpoint.router)
+
 if License.has_service(MULTI_TENANT):
     application.include_router(tenant_install_endpoint.router)
 
