@@ -138,7 +138,7 @@ async def get_plugins_list(flow_type: Optional[str] = None, query: Optional[str]
     """
     _current_plugin = None
     if flow_type is None:
-        result = await action_db.load_all(limit=500)
+        result = await action_db.load_all(limit=1000)
     else:
         result = await action_db.filter(purpose=flow_type, limit=500)
 
