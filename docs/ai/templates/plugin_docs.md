@@ -211,83 +211,100 @@ There is only one, do not use `` in the response. So `some text` is not allowed.
 Here is the full plugin code:
 
 ```python
-from tracardi.service.plugin.domain.register import Plugin, Spec, MetaData, Documentation, PortDoc, Form, FormGroup, \
-    FormField, FormComponent
-from tracardi.service.plugin.runner import ActionRunner, JoinSettings, ReshapeTemplate
-from tracardi.service.wf.domain.edge import Edge
-from .model.config import Config
+from tracardi.service.plugin.domain.config import PluginConfig
+from tracardi.service.plugin.domain.register import Plugin, Spec, MetaData, Documentation, PortDoc, Form, FormGroup, FormField, FormComponent
+from tracardi.service.plugin.runner import ActionRunner
 from tracardi.service.plugin.domain.result import Result
+
+
+class Config(PluginConfig):
+    field: str
+    find: str
+    replace: str
 
 
 def validate(config: dict) -> Config:
     return Config(**config)
 
 
-class JoinPayloads(ActionRunner):
+class StringReplaceAction(ActionRunner):
 
     config: Config
 
     async def set_up(self, init):
         self.config = validate(init)
-        self.join = JoinSettings(
-            merge=True,
-            reshape={  # Reshape definition for payload output port
-                "payload": ReshapeTemplate(
-                    template=self.config.reshape,
-                    default=self.config.default)
-            },
-            type=self.config.type
-        )
 
-    async def run(self, payload: dict, in_edge: Edge = None) -> Result:
-        # Return joined input payloads. Payloads can be transformed by the `Reshape output payload` schema.
-        return Result(port="payload", value=payload)
+    async def run(self, payload: dict, in_edge=None):
+        dot = self._get_dot_accessor(payload)
+        value = dot[self.config.field]
 
+        if not isinstance(value, str):
+            return Result(port="error", value={
+                "message": f"Field '{self.config.field}' is not a string."
+            })
+
+        # Perform string replacement
+        new_value = value.replace(self.config.find, self.config.replace)
+
+        dot[self.config.field] = new_value
+
+        return Result(port="output", value=payload)
 
 def register() -> Plugin:
     return Plugin(
         start=False,
         spec=Spec(
             module=__name__,
-            className='JoinPayloads',
+            className=StringReplaceAction.__name__,
             inputs=["payload"],
-            outputs=["payload"],
-            version='0.7.1',
-            license="MIT + CC",
-            author="Risto Kowaczewski",
+            outputs=["output", "error"],
+            version='0.8.2',
+            license="MIT",
+            author="Akhil Bisht",
             init={
-                "reshape": "{}",
-                "default": True,
-                "type": "dict"
+                "field": None,
+                "find": None,
+                "replace": None
             },
-            manual="join_output_payloads",
+            manual="string_replace_action",
             form=Form(
                 groups=[
                     FormGroup(
-                        name="Join payloads settings",
+                        name="String Replacement Plugin Configuration",
                         fields=[
                             FormField(
-                                id="reshape",
-                                name="Reshape output payload",
-                                description="Type transformation JSON to reshape the output payload",
-                                component=FormComponent(type="json", props={"label": "Transformation object"})
+                                id="field",
+                                name="Field",
+                                description="The field to perform string replacement on.",
+                                component=FormComponent(
+                                    type="dotPath",
+                                    props={
+                                        "label": "Field",
+                                        "defaultSourceValue": "profile"
+                                    }
+                                )
                             ),
                             FormField(
-                                id="type",
-                                name="Type of join",
-                                description="Select type of collection. Type of `Dictionary` uses the connection names "
-                                            "as keys in dictionary.",
-                                component=FormComponent(type="select", props={"label": "Name", "items": {
-                                    "list": "List",
-                                    "dict": "Dictionary"
-                                }})
+                                id="find",
+                                name="Find",
+                                description="The substring to find in the field.",
+                                component=FormComponent(
+                                    type="text",
+                                    props={
+                                        "label": "Find"
+                                    }
+                                )
                             ),
                             FormField(
-                                id="default",
-                                name="Missing values equal null",
-                                description="Values that are missing will become null",
-                                component=FormComponent(type="bool",
-                                                        props={"label": "Make missing values equal to null"})
+                                id="replace",
+                                name="Replace",
+                                description="The replacement string.",
+                                component=FormComponent(
+                                    type="text",
+                                    props={
+                                        "label": "Replace"
+                                    }
+                                )
                             )
                         ]
                     )
@@ -295,20 +312,17 @@ def register() -> Plugin:
             )
         ),
         metadata=MetaData(
-            name='Join',
-            desc='Joins input data into one payload.',
-            tags=['memory', 'join', "payload"],
-            type="startNode",
-            icon='flow',
-            group=["Operations"],
-            purpose=['collection', 'segmentation'],
+            name='String Replace',
+            desc='Replace a specified string within a field in the payload.',
+            icon='replace',
+            group=["String"],
+            tags=['string', 'replace'],
+            purpose=['modification'],
             documentation=Documentation(
                 inputs={
                     "payload": PortDoc(desc="This port takes payload object.")
                 },
-                outputs={
-                    "payload": PortDoc(desc="This port returns input payload.")
-                }
+                outputs={"output": PortDoc(desc="This port returns the modified payload with the string replacement.")}
             )
         )
     )
@@ -320,99 +334,4 @@ def register() -> Plugin:
 
 Available manual:
 
-Joins payload from incoming data.
-
-# Data join
-
-This plugin will join data form input connections. Connections can contain different data. This plugin will merge this data into one object. 
-If the connections are named then it will merge the data from the input connection under as connection name. 
-For example if the connection name is "Personal data" then the merged data will be:
-
-```
-{
-  "Personal data": {
-    ...payload
-  }
-}
-```
-
-If the connections are not named then data form incoming connection will be copied available under the connection id
-key. 
-
-# Output reshaping
-
-Joint data can be reshaped. 
-
-Here is an example of reshape template.
-
-```
-{
-  "some-data": {
-    "key": "value",             // This is static value
-    
-    "value": "profile@id",      // Reads value from profile 
-                                // and saves it in object 
-                                // value key
-                                
-    "list": [1, "payload@data"],// Reads data value from 
-                                // payload and saves it as 
-                                // 2nd element of list
-                                
-    "event": "event@..."        // Saves in event all data 
-                                // from event.
-  }
-}
-```
-
-Notice that some parts of this object reference data with dot notation. The data will be replaced be
-the referenced data.
-
-Let's assume that the merged payloads look like this:
-
-```json
-{
-  "data": {
-        "name": "John",
-        "age": 26
-      },
-  "edge": {
-    "test": 1
-  }
-}
-```
-
-then the result after data reshaping with the following template:
-
-```
-{
-  "some-data": {
-    "key": "value",
-    "value": "profile@id"  
-    "list": [1, "payload@data"] 
-    "event": "event@..."
-}
-```
-
-will be:
-
-```json
-{
-  "some-data": {
-    "key": "value",
-    "value": "profile-id",
-    "list": [
-      1,
-      {
-        "name": "John",
-        "age": 26
-      }
-    ],
-    "event": {
-      "type": "page-view",
-      "properties": {
-        "url": "http://localhost"
-      }
-    }
-  }
-}
-```
+<nothing here>
