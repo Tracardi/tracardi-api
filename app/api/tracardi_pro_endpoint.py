@@ -18,7 +18,6 @@ from app.api.proto.tracard_pro_client import TracardiProClient
 from tracardi.exceptions.log_handler import log_handler
 from tracardi.service.storage.driver.elastic import resource as resource_db
 from tracardi.service.storage.driver.elastic import pro as pro_db
-from tracardi.service.storage.driver.elastic import action as action_db
 from tracardi.config import tracardi
 from tracardi.service.tracardi_http_client import HttpClient
 
@@ -177,7 +176,6 @@ async def save_tracardi_pro_resource(pro: ProService):
             plugin = Plugin(**plugin)
             response = await install_plugin(plugin.spec.module)
             result['plugin'].append(response)
-        await action_db.refresh()
 
     return result
 

@@ -1,17 +1,14 @@
-import hashlib
 from collections import defaultdict
 from typing import Optional
 from fastapi import APIRouter
 from fastapi import HTTPException, Depends
 
-from tracardi.service.storage.driver.elastic import action as action_db
 from app.service.grouper import search
 from tracardi.domain.enum.yes_no import YesNo
-from tracardi.domain.entity import Entity
 from tracardi.domain.flow_action_plugin import FlowActionPlugin
-from tracardi.domain.record.flow_action_plugin_record import FlowActionPluginRecord
 from tracardi.domain.settings import Settings
-from tracardi.domain.value_object.bulk_insert_result import BulkInsertResult
+from tracardi.service.storage.mysql.mapping.plugin_mapping import map_to_flow_action_plugin
+from tracardi.service.storage.mysql.service.action_plugin_service import ActionPluginService
 from .auth.permissions import Permissions
 from tracardi.config import tracardi
 
@@ -20,114 +17,95 @@ router = APIRouter(
 )
 
 
-async def _load_record(id: str) -> Optional[FlowActionPluginRecord]:
-    return FlowActionPluginRecord.create(await action_db.load_by_id(id))
-
-
-async def _store_record(data: Entity):
-    return await action_db.save(data)
-
-
-@router.get("/flow/action/plugin/{id}", 
+@router.get("/flow/action/plugin/{id}",
             tags=["flow", "action"],
-            response_model=FlowActionPlugin, 
+            response_model=FlowActionPlugin,
             include_in_schema=tracardi.expose_gui_api)
 async def get_plugin(id: str):
     """
     Returns FlowActionPlugin object.
     """
-    record = await _load_record(id)
 
-    if record is None:
-        raise HTTPException(status_code=404, detail=f"Missing plugin id '{id}'")
-    return record.decode()
+    aps = ActionPluginService()
+    record = await aps.load_by_id(plugin_id=id)
+    if not record.exists():
+        raise HTTPException(detail=f"Missing plugin id '{id}'", status_code=404)
+    return record.get_object(map_to_flow_action_plugin)
 
 
 @router.get("/flow/action/plugin/{id}/hide/{state}", tags=["flow", "action"],
-            response_model=BulkInsertResult, include_in_schema=tracardi.expose_gui_api)
+            include_in_schema=tracardi.expose_gui_api)
 async def get_plugin_state(id: str, state: YesNo):
     """
     Returns FlowActionPlugin object.
     """
-    record = await _load_record(id)
-    if record is None:
-        raise HTTPException(status_code=406, detail=f"Can not this operation on missing plugin '{id}'")
-    action = record.decode()
-    action.settings.hidden = Settings.as_bool(state)
-    return await _store_record(FlowActionPluginRecord.encode(action))
+
+    aps = ActionPluginService()
+    return await aps.update(
+        data={
+            "settings_hidden": Settings.as_bool(state)
+        },
+        plugin_id=id
+    )
 
 
 @router.get("/flow/action/plugin/{id}/enable/{state}", tags=["flow", "action"],
-            response_model=BulkInsertResult, include_in_schema=tracardi.expose_gui_api)
+            include_in_schema=tracardi.expose_gui_api)
 async def set_plugin_enabled_disabled(id: str, state: YesNo):
     """
     Sets FlowActionPlugin enabled or disabled.
     """
-    record = await _load_record(id)
-    if record is None:
-        raise HTTPException(status_code=406, detail=f"Can not this operation on missing plugin '{id}'")
-    action = record.decode()
-    action.settings.enabled = Settings.as_bool(state)
-    return await _store_record(FlowActionPluginRecord.encode(action))
+
+    aps = ActionPluginService()
+    return await aps.update(
+        data={
+            "settings_enabled": Settings.as_bool(state)
+        },
+        plugin_id=id
+    )
 
 
-@router.put("/flow/action/plugin/{id}/icon/{icon}", tags=["flow", "action"], response_model=BulkInsertResult,
+@router.put("/flow/action/plugin/{id}/icon/{icon}", tags=["flow", "action"],
             include_in_schema=tracardi.expose_gui_api)
 async def edit_plugin_icon(id: str, icon: str):
     """
     Edits icon for action with given ID
     """
-    record = await _load_record(id)
-    if record is None:
-        raise HTTPException(status_code=406, detail=f"Can not this operation on missing plugin '{id}'")
-    action = record.decode()
-    action.plugin.metadata.icon = icon
-    return await _store_record(FlowActionPluginRecord.encode(action))
+
+    aps = ActionPluginService()
+    return await aps.update(
+        data={
+            "plugin_metadata_icon": icon
+        },
+        plugin_id=id
+    )
 
 
-@router.put("/flow/action/plugin/{id}/name/{name}", tags=["flow", "action"], response_model=BulkInsertResult,
+@router.put("/flow/action/plugin/{id}/name/{name}", tags=["flow", "action"],
             include_in_schema=tracardi.expose_gui_api)
 async def edit_plugin_name(id: str, name: str):
     """
     Edits name for action with given ID
     """
-    record = await _load_record(id)
-    if record is None:
-        raise HTTPException(status_code=406, detail=f"Can not this operation on missing plugin '{id}'")
-    action = record.decode()
-    action.plugin.metadata.name = name
-    return await _store_record(FlowActionPluginRecord.encode(action))
+
+    aps = ActionPluginService()
+    return await aps.update(
+        data={
+            "plugin_metadata_name": name
+        },
+        plugin_id=id
+    )
 
 
 @router.delete("/flow/action/plugin/{id}", tags=["flow", "action"],
-               response_model=dict, include_in_schema=tracardi.expose_gui_api)
+               include_in_schema=tracardi.expose_gui_api)
 async def delete_plugin(id: str):
     """
     Deletes FlowActionPlugin object.
     """
-    result = await action_db.delete_by_id(id)
-    if result is None:
-        raise HTTPException(status_code=404, detail=f"Can not delete missing plugin '{id}'")
-    await action_db.refresh()
 
-    return result
-
-
-@router.post("/flow/action/plugin", tags=["flow", "action"],
-             response_model=BulkInsertResult, include_in_schema=tracardi.expose_gui_api)
-async def upsert_plugin(action: FlowActionPlugin):
-    """
-    Upserts workflow action plugin. Action plugin id is a hash of its module and className so
-    if there is a conflict in classes or you pass wrong module and class name then the action
-    plugin may be overwritten.
-    """
-
-    action_id = action.plugin.spec.module + action.plugin.spec.className
-    action.id = hashlib.md5(action_id.encode()).hexdigest()
-
-    result = await _store_record(FlowActionPluginRecord.encode(action))
-    await action_db.refresh()
-    return result
+    aps = ActionPluginService()
+    return await aps.delete(plugin_id=id)
 
 
 @router.get("/flow/action/plugins", tags=["flow", "action"],
@@ -136,16 +114,19 @@ async def get_plugins_list(flow_type: Optional[str] = None, query: Optional[str]
     """
     Returns a list of available plugins.
     """
+
+    aps = ActionPluginService()
+
     _current_plugin = None
     if flow_type is None:
-        result = await action_db.load_all(limit=1000)
+        records = await aps.load_all()
     else:
-        result = await action_db.filter(purpose=flow_type, limit=500)
+        records = await aps.filter(purpose=flow_type)
 
-    _result = []
-    for r in result:
-        _current_plugin = r
-        _result.append(FlowActionPluginRecord(**r).decode())
+    if not records.exists():
+        raise HTTPException(detail=f"Missing plugin id '{id}'", status_code=404)
+
+    _result = list(records.to_objects(map_to_flow_action_plugin))
 
     if query is not None:
         if len(query) == 0:

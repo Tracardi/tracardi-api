@@ -10,11 +10,13 @@ from app.api.auth.permissions import Permissions
 from tracardi.config import tracardi
 from app.service.error_converter import convert_errors
 from tracardi.domain.config_validation_payload import ConfigValidationPayload
+from tracardi.domain.flow_action_plugin import FlowActionPlugin
 from tracardi.domain.record.flow_action_plugin_record import FlowActionPluginRecord
 from tracardi.service.module_loader import is_coroutine
-from tracardi.service.storage.driver.elastic import action as action_db
 from fastapi.encoders import jsonable_encoder
 from tracardi.service.module_loader import import_package, load_callable
+from tracardi.service.storage.mysql.mapping.plugin_mapping import map_to_flow_action_plugin
+from tracardi.service.storage.mysql.service.action_plugin_service import ActionPluginService
 
 router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin", "developer"]))]
@@ -53,12 +55,15 @@ async def get_data_for_plugin(module: str, endpoint_function: str, request: Requ
         raise HTTPException(status_code=404, detail=str(e))
 
 
-@router.get("/action/plugins", tags=["action"], include_in_schema=tracardi.expose_gui_api)
-async def plugins():
-    """
-    Returns plugins from database
-    """
-    return await action_db.load_all()
+# @router.get("/action/plugins", tags=["action"], include_in_schema=tracardi.expose_gui_api)
+# async def plugins():
+#     """
+#     Returns plugins from database
+#     """
+#
+#     aps = ActionPluginService()
+#     return aps.load_all()
+#     return await action_db.load_all()
 
 
 @router.post("/plugin/{plugin_id}/config/validate", tags=["action"], include_in_schema=tracardi.expose_gui_api)
@@ -71,23 +76,30 @@ async def validate_plugin_configuration(plugin_id: str,
     """
 
     try:
-        record = await action_db.load_by_id(plugin_id)
+
+        aps = ActionPluginService()
+        record =await aps.load_by_id(plugin_id)
+
+        # record = await action_db.load_by_id(plugin_id)
 
         if record is None:
             raise HTTPException(status_code=404, detail=f"No action plugin for id `{plugin_id}`")
 
-        try:
-            action_record = FlowActionPluginRecord(**record)
-        except ValidationError as e:
-            raise HTTPException(status_code=404, detail="Action plugin id `{id}` could not be"
-                                                        "validated and mapped into FlowActionPluginRecord object."
-                                                        f"Internal error: {str(e)}")
+        plugin: FlowActionPlugin = record.get_object(map_to_flow_action_plugin)
+
+        # try:
+        #     action_record = FlowActionPluginRecord(**record)
+        # except ValidationError as e:
+        #     raise HTTPException(status_code=404, detail="Action plugin id `{id}` could not be"
+        #                                                 "validated and mapped into FlowActionPluginRecord object."
+        #                                                 f"Internal error: {str(e)}")
+
         # todo move to action_record class
 
-        if action_record.plugin.metadata.remote is True:
+        if plugin.plugin.metadata.remote is True:
             # Run validation thru remote validator not local microservice plugin
 
-            microservice = action_record.plugin.spec.microservice
+            microservice = plugin.plugin.spec.microservice
             production_credentials = microservice.server.credentials.production
             microservice_url = f"{production_credentials['url']}/plugin/validate" \
                                f"?service_id={service_id}" \
@@ -108,7 +120,7 @@ async def validate_plugin_configuration(plugin_id: str,
 
             # Run validation locally
 
-            validate = action_record.get_validator()
+            validate = plugin.get_validator()
 
             if config.config is None:
                 raise HTTPException(status_code=404, detail="No validate function provided. "
