@@ -37,7 +37,7 @@ async def install_demo_data():
     if os.environ.get("DEMO", 'no') == 'yes':
 
         for i in range(0, 10):
-            payload = generate_payload(source=tracardi.demo_source)
+            payload = generate_payload(source=tracardi.internal_source)
 
             await track_event(
                 TrackerPayload(**payload),
