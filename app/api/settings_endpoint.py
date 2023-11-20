@@ -29,6 +29,7 @@ system_settings = [
             "desc": "Default: Yes. Register system events like: profile-created, session-opened, etc."
         }
     ),
+
     SystemSettings(
         **{
             "label": "MULTI_TENANT",
@@ -446,7 +447,22 @@ system_settings = [
             "value": tracardi.enable_profile_destinations,
             "desc": "Default: no. Enables dispatching profiles to destinations."
         }
-    )
+    ),
+    SystemSettings(
+        **{
+            "label": "ENABLE_FIELD_UPDATE_LOG",
+            "value": tracardi.enable_field_update_log,
+            "desc": "Default: Yes. Save timestamps of updated fields."
+        }
+    ),
+    SystemSettings(
+        **{
+            "label": "ENABLE_ERRORS_ON_RESPONSE",
+            "value": tracardi.enable_errors_on_response,
+            "desc": "Default: Yes. Display errors on track response."
+        }
+    ),
+
 ]
 
 router = APIRouter(
