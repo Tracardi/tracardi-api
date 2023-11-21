@@ -2,31 +2,31 @@ from typing import Optional
 
 from fastapi import APIRouter, Response, Depends
 
-from tracardi.domain.value_object.bulk_insert_result import BulkInsertResult
-from tracardi.service.setup.setup_resources import get_destinations
-from tracardi.service.storage.driver.elastic import destination as destination_db
 from tracardi.service.storage.driver.elastic import resource as resource_db
-from tracardi.domain.destination import Destination, DestinationRecord
+from tracardi.domain.destination import Destination
+from tracardi.service.storage.mysql.mapping.destination_mapping import map_to_destination
+from tracardi.service.storage.mysql.service.destination_service import DestinationService
 from .auth.permissions import Permissions
 from tracardi.config import tracardi
-from ..service.grouping import group_records
+from ..service.grouping import group_mysql_records
 
 router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin", "developer"]))]
 )
 
 
-@router.post("/destination", tags=["destination"], response_model=BulkInsertResult,
-             include_in_schema=tracardi.expose_gui_api)
+@router.post("/destination", tags=["destination"], include_in_schema=tracardi.expose_gui_api)
 async def save_destination(destination: Destination):
     """
     Upserts destination data.
     """
 
-    record = DestinationRecord.encode(destination)
-    result = await destination_db.save(record)
-    await destination_db.refresh()
-    return result
+    ds = DestinationService()
+    await ds.insert(destination)
+    # record = DestinationRecord.encode(destination)
+    # result = await destination_db.save(record)
+    # await destination_db.refresh()
+    # return result
 
 
 @router.get("/destination/{id}", tags=["destination"], response_model=Optional[Destination],
@@ -35,13 +35,15 @@ async def get_destination(id: str, response: Response):
     """
     Returns destination or None if destination does not exist.
     """
-    destination_record = await destination_db.load(id)
 
-    if destination_record is None:
+    ds = DestinationService()
+    record = await ds.load_by_id(id)
+
+    if not record.exists():
         response.status_code = 404
         return None
 
-    return destination_record.decode()
+    return record.map_to_object(map_to_destination)
 
 
 @router.get("/destinations", tags=["destination"], response_model=dict,
@@ -51,8 +53,25 @@ async def get_destinations_list():
     Returns destinations.
     """
 
-    storage_result = await destination_db.load_all()
-    return storage_result.dict()
+    ds = DestinationService()
+    records = await ds.load_all()
+
+    if not records.exists():
+        return {
+            "total": 0,
+            "result": []
+        }
+
+    result = list(records.map_to_objects(map_to_destination))
+
+    return {
+        "total": records.count(),
+        "result": result
+    }
+
+
+    # storage_result = await destination_db.load_all()
+    # return storage_result.dict()
 
 
 @router.get("/destinations/type", tags=["destination"], response_model=dict, include_in_schema=tracardi.expose_gui_api)
@@ -60,27 +79,37 @@ async def get_destinations_type_list():
     """
     Returns destination types.
     """
-    return {key: value for key, value in get_destinations()}
+    return {key: value for key, value in DestinationService.get_destination_types()}
 
 
 @router.get("/destinations/by_tag", tags=["destination"], response_model=dict, include_in_schema=tracardi.expose_gui_api)
 async def get_destinations_by_tag(query: str = None, start: int = 0, limit: int = 100) -> dict:
-    result = await destination_db.load_all(start, limit=limit)
-    return group_records(result, query, group_by='tags', search_by='name', sort_by='name')
+    ds = DestinationService()
+    records = await ds.load_all()
+
+    if not records.exists():
+        return {
+            "total": 0,
+            "result": []
+        }
+
+    return group_mysql_records(
+        records.map_to_objects(map_to_destination),
+        query,
+        group_by='tags',
+        search_by='name'
+    )
 
 
 @router.delete("/destination/{id}", tags=["destination"], include_in_schema=tracardi.expose_gui_api)
-async def delete_destination(id: str, response: Response):
+async def delete_destination(id: str):
     """
     Deletes destination with given id
     """
-    result = await destination_db.delete(id)
 
-    if result is None:
-        response.status_code = 404
-        return None
+    ds = DestinationService()
+    await ds.delete_by_id(id)
 
-    await destination_db.refresh()
     return True
 
 
