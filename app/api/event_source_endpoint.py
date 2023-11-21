@@ -7,9 +7,9 @@ from tracardi.domain.named_entity import NamedEntity
 from tracardi.domain.enum.type_enum import TypeEnum
 from tracardi.domain.event_source import EventSource
 from tracardi.exceptions.log_handler import log_handler
-from tracardi.service.event_source_manager import event_source_types, save_source
-from tracardi.service.storage.driver.elastic import event_source as event_source_db
 from app.service.grouper import search
+from tracardi.service.storage.mysql.mapping.event_source_mapping import map_to_event_source
+from tracardi.service.storage.mysql.service.event_source_service import EventSourceService
 from .auth.permissions import Permissions
 from tracardi.config import tracardi
 
@@ -29,20 +29,27 @@ async def list_event_sources(query: str = None):
     """
     Lists all event sources that match given query (str) parameter
     """
-    result = await event_source_db.load_all(limit=1000)
 
-    total = result.total
-    result = [EventSource(**r) for r in result]
+    records = await EventSourceService().load_all()
+
+    if not records.exists():
+        return {
+            "total": 0,
+            "grouped": []
+        }
+
+    total = records.count()
+    event_sources = records.map_to_objects(map_to_event_source)
 
     # Filtering
     if query is not None and len(query) > 0:
         query = query.lower()
         if query:
-            result = [r for r in result if query in r.name.lower() or search(query, r.type)]
+            event_sources = [r for r in event_sources if query in r.name.lower() or search(query, r.type)]
 
     # Grouping
     groups = defaultdict(list)
-    for event_source in result:  # type: EventSource
+    for event_source in event_sources:  # type: EventSource
         if isinstance(event_source.groups, list):
             if len(event_source.groups) == 0:
                 groups["general"].append(event_source)
@@ -74,7 +81,7 @@ async def get_event_source_types(type: TypeEnum) -> dict:
     * Endpoint /resources/type/configuration will return all data.
     """
 
-    types = event_source_types()
+    types = EventSourceService.event_source_types()
 
     if type.value == 'name':
         types = {id: t['name'] for id, t in types.items()}
@@ -92,13 +99,14 @@ async def load_event_source(id: str, response: Response):
     """
     Returns event source with given ID (str)
     """
-    result = await event_source_db.load(id)
 
-    if result is None:
+    record = await EventSourceService().load_by_id(id)
+
+    if not record.exists():
         response.status_code = 404
         return None
 
-    return result
+    return record.map_to_object(map_to_event_source)
 
 
 @router.post("/event-source", tags=["event-source"],
@@ -107,11 +115,7 @@ async def save_event_source(event_source: EventSource):
     """
     Adds new event source in database
     """
-    try:
-        return await save_source(event_source)
-    except ValueError as e:
-        raise HTTPException(status_code=422, detail=repr(e))
-
+    return await EventSourceService().save(event_source)
 
 @router.delete("/event-source/{id}", tags=["event-source"],
                include_in_schema=tracardi.expose_gui_api)
@@ -119,24 +123,14 @@ async def delete_event_source(id: str, response: Response):
     """
     Deletes event source with given ID (str)
     """
-    result = await event_source_db.delete_by_id(id)
+
+    result = await EventSourceService().delete_by_id(id)
 
     if result is None:
         response.status_code = 404
         return None
 
-    await event_source_db.refresh()
     return True
-
-
-@router.get("/event-sources/refresh",
-            tags=["event-source"],
-            include_in_schema=tracardi.expose_gui_api)
-async def refresh_event_sources():
-    """
-    Refreshes event source index in database
-    """
-    return await event_source_db.refresh()
 
 
 @router.get("/event-sources/entity",
@@ -146,19 +140,20 @@ async def list_event_sources_names_and_ids(add_current: bool = False, type: Opti
     """
     Returns list of event sources. This list contains only id and name.
     """
-
+    ess = EventSourceService()
     if type:
-        result = await event_source_db.load_by(field="type", value=type)
+        records = await ess.load_by_type(type)
     else:
-        result = await event_source_db.load_all(limit=limit)
+        records = await ess.load_all()
 
-    if result is None:
+    if not records.exists():
         return {
             "total": 0,
             "result": []
         }
-    total = result.total
-    result = [NamedEntity(id=r['id'], name=f"{r['name']} ({','.join(r['type']) if isinstance(r['type'], list) else r['type']})") for r in result]
+
+    total = records.count()
+    result = records.as_named_entities(rewriter=lambda r: f"{r.name} ({r.type})")
 
     if add_current is True:
         total += 1

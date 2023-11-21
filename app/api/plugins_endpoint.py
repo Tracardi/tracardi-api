@@ -11,7 +11,6 @@ from tracardi.config import tracardi
 from app.service.error_converter import convert_errors
 from tracardi.domain.config_validation_payload import ConfigValidationPayload
 from tracardi.domain.flow_action_plugin import FlowActionPlugin
-from tracardi.domain.record.flow_action_plugin_record import FlowActionPluginRecord
 from tracardi.service.module_loader import is_coroutine
 from fastapi.encoders import jsonable_encoder
 from tracardi.service.module_loader import import_package, load_callable
@@ -85,14 +84,7 @@ async def validate_plugin_configuration(plugin_id: str,
         if record is None:
             raise HTTPException(status_code=404, detail=f"No action plugin for id `{plugin_id}`")
 
-        plugin: FlowActionPlugin = record.get_object(map_to_flow_action_plugin)
-
-        # try:
-        #     action_record = FlowActionPluginRecord(**record)
-        # except ValidationError as e:
-        #     raise HTTPException(status_code=404, detail="Action plugin id `{id}` could not be"
-        #                                                 "validated and mapped into FlowActionPluginRecord object."
-        #                                                 f"Internal error: {str(e)}")
+        plugin: FlowActionPlugin = record.map_to_object(map_to_flow_action_plugin)
 
         # todo move to action_record class
 

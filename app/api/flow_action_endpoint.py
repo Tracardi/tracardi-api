@@ -30,7 +30,7 @@ async def get_plugin(id: str):
     record = await aps.load_by_id(plugin_id=id)
     if not record.exists():
         raise HTTPException(detail=f"Missing plugin id '{id}'", status_code=404)
-    return record.get_object(map_to_flow_action_plugin)
+    return record.map_to_object(map_to_flow_action_plugin)
 
 
 @router.get("/flow/action/plugin/{id}/hide/{state}", tags=["flow", "action"],
@@ -41,7 +41,7 @@ async def get_plugin_state(id: str, state: YesNo):
     """
 
     aps = ActionPluginService()
-    return await aps.update(
+    return await aps.update_by_id(
         data={
             "settings_hidden": Settings.as_bool(state)
         },
@@ -57,7 +57,7 @@ async def set_plugin_enabled_disabled(id: str, state: YesNo):
     """
 
     aps = ActionPluginService()
-    return await aps.update(
+    return await aps.update_by_id(
         data={
             "settings_enabled": Settings.as_bool(state)
         },
@@ -73,7 +73,7 @@ async def edit_plugin_icon(id: str, icon: str):
     """
 
     aps = ActionPluginService()
-    return await aps.update(
+    return await aps.update_by_id(
         data={
             "plugin_metadata_icon": icon
         },
@@ -89,7 +89,7 @@ async def edit_plugin_name(id: str, name: str):
     """
 
     aps = ActionPluginService()
-    return await aps.update(
+    return await aps.update_by_id(
         data={
             "plugin_metadata_name": name
         },
@@ -105,7 +105,7 @@ async def delete_plugin(id: str):
     """
 
     aps = ActionPluginService()
-    return await aps.delete(plugin_id=id)
+    return await aps.delete_by_id(plugin_id=id)
 
 
 @router.get("/flow/action/plugins", tags=["flow", "action"],
@@ -117,6 +117,8 @@ async def get_plugins_list(flow_type: Optional[str] = None, query: Optional[str]
 
     aps = ActionPluginService()
 
+    # TODO nie filtruje po purpose bo to jest "collection,segmenation". Trzeba zanaleźć sposób na przechowywanie list.
+
     _current_plugin = None
     if flow_type is None:
         records = await aps.load_all()
@@ -126,7 +128,7 @@ async def get_plugins_list(flow_type: Optional[str] = None, query: Optional[str]
     if not records.exists():
         raise HTTPException(detail=f"Missing plugin id '{id}'", status_code=404)
 
-    _result = list(records.to_objects(map_to_flow_action_plugin))
+    _result = list(records.map_to_objects(map_to_flow_action_plugin))
 
     if query is not None:
         if len(query) == 0:
