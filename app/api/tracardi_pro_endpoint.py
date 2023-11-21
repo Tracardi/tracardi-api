@@ -13,12 +13,12 @@ from tracardi.service.plugin.domain.register import Plugin, MicroserviceConfig
 from tracardi.service.plugin.plugin_install import install_remote_plugin, install_plugin
 from app.api.domain.credentials import Credentials
 from tracardi.domain.resource import Resource, ResourceRecord
-from tracardi.domain.sign_up_data import SignUpData, SignUpRecord
+from tracardi.domain.sign_up_data import SignUpData
 from app.api.proto.tracard_pro_client import TracardiProClient
 from tracardi.exceptions.log_handler import log_handler
 from tracardi.service.storage.driver.elastic import resource as resource_db
-from tracardi.service.storage.driver.elastic import pro as pro_db
 from tracardi.config import tracardi
+from tracardi.service.storage.mysql.service.trcardi_pro_service import TracardiProService
 from tracardi.service.tracardi_http_client import HttpClient
 
 logging.basicConfig(level=logging.ERROR)
@@ -40,26 +40,27 @@ async def _store_resource_record(data: Entity):
 
 
 @router.get("/tpro/validate", tags=["tpro"], include_in_schema=tracardi.expose_gui_api)
-async def is_token_valid():
+async def is_token_valid() -> Optional[bool]:
     """
     Return None if not configured otherwise returns True if credentials are valid or False.
     """
     try:
-        result = await pro_db.read_pro_service_endpoint()
+        tps = TracardiProService()
+        record = await tps.load_by_tenant_id()
+
+        if not record.exists():
+            return None
+
+        token = tracardi_pro_client.validate(token=record.rows.token)
+
+        return token is not None
 
     except ValidationError as e:
         logger.error(f"Validation error when reading pro service user data: {str(e)}")
-        result = None
+        return None
     except Exception as e:
         logger.error(f"Exception when reading pro service user data: {str(e)}")
-        result = None
-
-    if result is None:
         return None
-
-    token = tracardi_pro_client.validate(token=result.token)
-
-    return token is not None
 
 
 @router.post("/tpro/sign_in", tags=["tpro"], include_in_schema=tracardi.expose_gui_api)
@@ -68,16 +69,15 @@ async def tracardi_pro_sign_in(credentials: Credentials):
     Handles signing in to Tracardi PRO service
     """
     try:
+
         token, host = tracardi_pro_client.sign_in(credentials.username, credentials.password)
-        result = await pro_db.read_pro_service_endpoint()
+
+        tps = TracardiProService()
+        result = await tps.authorize(token)
 
         # Save locally if data from remote differs with local data.
-        if result is None or result.token != token:
-            sign_up_record = SignUpRecord(id='0', token=token)
-            result = await pro_db.save_pro_service_endpoint(sign_up_record)
-
-            if result.saved == 0:
-                raise ConnectionError("Could not save Tracardi Pro data.")
+        if not result:
+            await tps.insert(token)
 
         return True
     except PermissionError as e:
@@ -96,13 +96,11 @@ async def tracardi_pro_sign_up(sign_up_data: SignUpData):
     Handles signing up to Tracardi PRO service
     """
     try:
-        # todo save more contact data on Pro server
-        token = tracardi_pro_client.sign_up(sign_up_data.username, sign_up_data.password)
-        sign_up_record = SignUpRecord(id='0', token=token)
-        result = await pro_db.save_pro_service_endpoint(sign_up_record)
 
-        if result.saved == 0:
-            raise ConnectionError("Could not save Tracardi Pro endpoint.")
+        token = tracardi_pro_client.sign_up(sign_up_data.username, sign_up_data.password)
+
+        tps = TracardiProService()
+        await tps.insert(token)
 
         return True
 
