@@ -5,8 +5,9 @@ from tracardi.config import tracardi
 from pydantic import ValidationError
 from app.api.user_endpoint import UserPayload, UserSoftEditPayload
 
-from app.service.user_manager import update_user
 from app.api.auth.permissions import Permissions
+from tracardi.domain.user import User
+from tracardi.service.storage.mysql.service.user_service import UserService
 
 router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin", "marketer", "developer", "maintainer"]))]
@@ -14,29 +15,39 @@ router = APIRouter(
 
 
 @router.get("/user-account", tags=["user"], include_in_schema=tracardi.expose_gui_api, response_model=dict)
-async def get_user_account(user=Depends(Permissions(["admin", "developer", "marketer", "maintainer"]))):
+async def get_user_account(user: User = Depends(Permissions(["admin", "developer", "marketer", "maintainer"]))):
     """
     Returns data of the user who called the endpoint
     """
-    return user.dict()
+    return user.model_dump(mode='json', exclude={"password": ...})
 
 
 @router.post("/user-account", tags=["user"], include_in_schema=tracardi.expose_gui_api, response_model=dict)
 async def edit_user_account(payload: UserSoftEditPayload,
-                            user=Depends(Permissions(["admin", "developer", "marketer", "maintainer"]))):
-
+                            user: User = Depends(Permissions(["admin", "developer", "marketer", "maintainer"]))):
     """
     Edits currently logged user.
     """
 
     try:
 
-        saved, new_user = await update_user(
+        existing_user = user.model_copy()
+        if payload.password:
+            existing_user.password = User.encode_password(payload.password)
+
+        if payload.full_name:
+            existing_user.full_name = payload.full_name
+
+        us = UserService()
+
+        saved, new_user = await us.update_if_exist(
             user.id,
-            UserPayload(**payload.model_dump(),
-                        roles=user.roles,
-                        disabled=user.disabled,
-                        email=user.email)
+            UserPayload(
+                full_name=existing_user.full_name,
+                password=existing_user.password,
+                roles=existing_user.roles,
+                disabled=existing_user.disabled,
+                email=existing_user.email)
         )
 
         token2user.set(new_user)

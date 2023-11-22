@@ -10,8 +10,8 @@ class TokenMemory(metaclass=Singleton):
     def __init__(self):
         self._redis = RedisClient()
         self.ttl = 30 * 60
-        self.instance_hash = sha1(f"{Collection.token}{tracardi.version.version}.{tracardi.version.name}"
-                                  .encode("utf-8")).hexdigest()
+        instance_hash = sha1(f"{tracardi.version.version}.{tracardi.version.name}".encode("utf-8")).hexdigest()
+        self.instance_hash = f"{Collection.token}{instance_hash}"
 
     def __setitem__(self, token, value):
         self._redis.set(f"{self.instance_hash}-{token}", value, ex=self.ttl)

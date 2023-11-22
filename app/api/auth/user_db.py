@@ -17,7 +17,7 @@ class TokenDb:
 
     def __init__(self):
         self._token_memory = TokenMemory()
-        self.salt = "skdjsd9328r&"
+        self.salt = "fe-skd~jS(ADsd-9328r&aS5ZFGdaF-STREas4TA"
 
     def _get_token(self, user: User) -> str:
         return sha1((user.id + self.salt).encode('utf-8')).hexdigest()

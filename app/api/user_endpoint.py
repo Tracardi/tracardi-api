@@ -5,14 +5,14 @@ from fastapi import APIRouter, Depends, HTTPException, Header, Response
 from tracardi.context import ServerContext, get_context
 from tracardi.domain.user import User
 from tracardi.config import tracardi
-from tracardi.domain.value_object.bulk_insert_result import BulkInsertResult
-from tracardi.service.storage.driver.elastic import user as user_db
 from pydantic import BaseModel
 from typing import Optional, Union
 
+from tracardi.service.storage.mysql.mapping.user_mapping import map_to_user
+from tracardi.service.storage.mysql.schema.table import UserTable
+from tracardi.service.storage.mysql.service.user_service import UserService
 from .auth.permissions import Permissions
 from .domain.user_payload import UserPayload
-from ..service.user_manager import update_user
 from .auth.user_db import token2user
 from fastapi.security import OAuth2PasswordRequestForm
 from starlette import status
@@ -20,8 +20,8 @@ from .auth.authentication import Authentication, get_authentication
 
 
 class UserSoftEditPayload(BaseModel):
-    password: str
-    full_name: str
+    password: Optional[str] = None
+    full_name: Optional[str] = None
 
 
 router = APIRouter(
@@ -31,8 +31,8 @@ router = APIRouter(
 auth_router = APIRouter()
 
 
-@auth_router.post("/user/token", 
-                  tags=["user", "authorization"], 
+@auth_router.post("/user/token",
+                  tags=["user", "authorization"],
                   include_in_schema=tracardi.expose_gui_api)
 async def get_token(login_form_data: OAuth2PasswordRequestForm = Depends(),
                     auth: Authentication = Depends(get_authentication)):
@@ -89,10 +89,9 @@ async def get_user_preference(key: str,
     return pref
 
 
-@router.post("/user/preference/{key}", 
-             tags=["user"], 
-             include_in_schema=tracardi.expose_gui_api, 
-             response_model=BulkInsertResult)
+@router.post("/user/preference/{key}",
+             tags=["user"],
+             include_in_schema=tracardi.expose_gui_api)
 async def set_user_preference(key: str, preference: Union[dict, str, int, float],
                               user: User = Depends(Permissions(["admin", "developer", "marketer", "maintainer"]))):
     """
@@ -100,8 +99,12 @@ async def set_user_preference(key: str, preference: Union[dict, str, int, float]
     """
 
     user.set_preference(key, preference)
-    result = await user_db.update_user(user)
-    await user_db.refresh()
+
+    us = UserService()
+    result = await us.upsert(user)
+
+    # result = await user_db.update_user(user)
+    # await user_db.refresh()
 
     token2user.set(user)
 
@@ -109,14 +112,19 @@ async def set_user_preference(key: str, preference: Union[dict, str, int, float]
 
 
 @router.delete("/user/preference/{key}", tags=["user"], include_in_schema=tracardi.expose_gui_api)
-async def delete_user_preference(key: str, user=Depends(Permissions(["admin", "developer", "marketer", "maintainer"]))):
+async def delete_user_preference(key: str,
+                                 user: User = Depends(Permissions(["admin", "developer", "marketer", "maintainer"]))):
     """
     Deletes user preference
     """
 
     if key in user.preference:
         user.delete_preference(key)
-        result = await user_db.update_user(user)
+
+        us = UserService()
+        result = await us.upsert(user)
+
+        # result = await user_db.update_user(user)
 
         token2user.set(user)
 
@@ -125,8 +133,9 @@ async def delete_user_preference(key: str, user=Depends(Permissions(["admin", "d
         raise HTTPException(status_code=404, detail=f"Preference {key} not found")
 
 
-@router.get("/user/preferences", tags=["user"], include_in_schema=tracardi.expose_gui_api, response_model=Optional[dict])
-async def gets_all_user_preferences(user=Depends(Permissions(["admin", "developer", "marketer", "maintainer"]))):
+@router.get("/user/preferences", tags=["user"], include_in_schema=tracardi.expose_gui_api,
+            response_model=Optional[dict])
+async def gets_all_user_preferences(user: User =Depends(Permissions(["admin", "developer", "marketer", "maintainer"]))):
     """
     Returns all user preferences
     """
@@ -134,91 +143,83 @@ async def gets_all_user_preferences(user=Depends(Permissions(["admin", "develope
     return user.preference
 
 
-@router.get("/user/refresh", tags=["user"], include_in_schema=tracardi.expose_gui_api, response_model=dict)
-async def refresh_users():
-    """
-    Refreshes users index
-    """
-
-    return await user_db.refresh()
-
-
-@router.get("/user/flush", tags=["user"], include_in_schema=tracardi.expose_gui_api, response_model=dict)
-async def flush_users():
-    """
-    Flushes users index
-    """
-
-    return await user_db.flush()
-
-
-@router.post("/user", tags=["user"], 
-             include_in_schema=tracardi.expose_gui_api, 
-             response_model=BulkInsertResult)
+@router.post("/user", tags=["user"],
+             include_in_schema=tracardi.expose_gui_api)
 async def add_user(user_payload: UserPayload):
-
     """
     Creates new user in database
     """
 
-    user_exists = await user_db.check_if_exists(user_payload.email)
-    if not user_exists:
-        expiration_timestamp = user_payload.get_expiration_date()
-        result = await user_db.add_user(
-            User(
-                **user_payload.model_dump(),
-                id=str(uuid4()),
-                expiration_timestamp=expiration_timestamp
-            )
-        )
-        await user_db.refresh()
+    expiration_timestamp = user_payload.get_expiration_date()
+    user = User(
+        **user_payload.model_dump(),
+        id=str(uuid4()),
+        expiration_timestamp=expiration_timestamp
+    )
 
-        return result
-    else:
+    user.password = User.encode_password(user.password)
+
+    us = UserService()
+
+    user_id = await us.insert_if_none(user)
+
+    if user_id is None:
         raise HTTPException(status_code=409, detail=f"User with email '{user_payload.email}' already exists.")
+
+    return user_id
 
 
 @router.delete("/user/{id}", tags=["user"], include_in_schema=tracardi.expose_gui_api, response_model=dict)
-async def delete_user(id: str, user=Depends(Permissions(["admin"]))):
+async def delete_user(id: str, user: User=Depends(Permissions(["admin"]))):
     """
     Deletes user with given ID
     """
 
     if id == user.id:
         raise HTTPException(status_code=403, detail="You cannot delete your own account")
-    result = await user_db.delete_user(id)
 
-    if result is None:
-        raise HTTPException(status_code=404, detail=f"User '{id}' not found")
-    await user_db.refresh()
+    us = UserService()
+    result = await us.delete_by_id(id)
 
-    return {"deleted": 1 if result["result"] == "deleted" else 0}
+    return {"deleted": result}
 
 
-@router.get("/user/{id}", tags=["user"], include_in_schema=tracardi.expose_gui_api, response_model=dict)
+@router.get("/user/{id}", tags=["user"], include_in_schema=tracardi.expose_gui_api)
 async def get_user(id: str):
     """
     Returns user with given ID
     """
+    us = UserService()
+    record = await us.load_by_id(id)
 
-    record = await user_db.load_by_id(id)
-    if record is None:
+    if not record.exists():
         raise HTTPException(status_code=404, detail=f"User {id} not found.")
 
-    if 'token' in record:
-        del record['token']
+    if record.has_multiple_records():
+        raise HTTPException(status_code=500, detail=f"User {id} has multiple rows in database.")
 
-    return record
+    user_table: UserTable = record.rows
+
+    return user_table
 
 
 @router.get("/users/{start}/{limit}", tags=["user"], include_in_schema=tracardi.expose_gui_api, response_model=list)
-async def get_users(start: int = 0, limit: int = 100, query: Optional[str] = ""):
+async def get_users(start: int = 0, limit: int = 500, query: Optional[str] = ""):
     """
     Lists users according to given query (str), start (int) and limit (int) parameters
     """
 
-    return await user_db.search_by_name(start, limit, query)
+    us = UserService()
+    if len(query) > 0:
+        users = await us.load_by_name(query, limit, start)
+    else:
+        users = (await us.load_all(limit, start)).map_to_objects(map_to_user)
 
+    result = []
+    for user in users:
+        result.append({**user.model_dump(), "expired": user.is_expired()})
+
+    return result
 
 @router.post("/user/{id}", tags=["user"], include_in_schema=tracardi.expose_gui_api, response_model=dict)
 async def edit_user(id: str, user_payload: UserPayload, user=Depends(Permissions(["admin"]))):
@@ -230,7 +231,9 @@ async def edit_user(id: str, user_payload: UserPayload, user=Depends(Permissions
         raise HTTPException(status_code=403, detail="You cannot remove the role of admin from your own account")
 
     try:
-        saved, updated_user = await update_user(id, user_payload)
+        us = UserService()
+
+        saved, updated_user = await us.update_if_exist(id, user_payload)
         token2user.set(updated_user)
         return {"inserted": saved}
 

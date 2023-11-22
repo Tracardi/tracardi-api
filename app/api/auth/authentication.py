@@ -2,7 +2,7 @@ import logging
 from tracardi.config import tracardi
 from tracardi.exceptions.log_handler import log_handler
 from tracardi.service.storage.driver.elastic import user_log as user_log_db
-from tracardi.service.storage.driver.elastic import user as user_db
+from tracardi.service.storage.mysql.service.user_service import UserService
 from ..auth.user_db import token2user
 from fastapi.security import OAuth2PasswordBearer
 from tracardi.domain.user import User
@@ -24,10 +24,11 @@ class Authentication:
         logger.info(f"Authorizing {username}...")
 
         try:
-            user = await user_db.get_by_credentials(
-                email=username,
-                password=password
-            )  # type: User
+            us = UserService()
+            user: User = await us.load_by_credentials(
+                    email=username,
+                    password=password
+                )
         except Exception as e:
             raise LoginException(f"System not installed. Got error {str(e)}")
 
