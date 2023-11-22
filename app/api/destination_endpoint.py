@@ -8,7 +8,6 @@ from tracardi.service.storage.mysql.mapping.destination_mapping import map_to_de
 from tracardi.service.storage.mysql.service.destination_service import DestinationService
 from .auth.permissions import Permissions
 from tracardi.config import tracardi
-from ..service.grouping import group_mysql_records
 
 router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin", "developer"]))]
@@ -23,10 +22,6 @@ async def save_destination(destination: Destination):
 
     ds = DestinationService()
     await ds.insert(destination)
-    # record = DestinationRecord.encode(destination)
-    # result = await destination_db.save(record)
-    # await destination_db.refresh()
-    # return result
 
 
 @router.get("/destination/{id}", tags=["destination"], response_model=Optional[Destination],
@@ -70,10 +65,6 @@ async def get_destinations_list():
     }
 
 
-    # storage_result = await destination_db.load_all()
-    # return storage_result.dict()
-
-
 @router.get("/destinations/type", tags=["destination"], response_model=dict, include_in_schema=tracardi.expose_gui_api)
 async def get_destinations_type_list():
     """
@@ -84,21 +75,23 @@ async def get_destinations_type_list():
 
 @router.get("/destinations/by_tag", tags=["destination"], response_model=dict, include_in_schema=tracardi.expose_gui_api)
 async def get_destinations_by_tag(query: str = None, start: int = 0, limit: int = 100) -> dict:
-    ds = DestinationService()
-    records = await ds.load_all()
+    ds = DestinationService(True)
+    records = await ds.filter(query, start, limit)
 
     if not records.exists():
         return {
             "total": 0,
-            "result": []
+            "grouped": {}
         }
 
-    return group_mysql_records(
-        records.map_to_objects(map_to_destination),
-        query,
-        group_by='tags',
-        search_by='name'
-    )
+    result = list(records.map_to_objects(map_to_destination))
+
+    return {
+        "total": len(result),
+        "grouped": {
+            "Destinations": result
+        }
+    }
 
 
 @router.delete("/destination/{id}", tags=["destination"], include_in_schema=tracardi.expose_gui_api)

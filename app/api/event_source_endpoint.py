@@ -30,41 +30,19 @@ async def list_event_sources(query: str = None):
     Lists all event sources that match given query (str) parameter
     """
 
-    records = await EventSourceService().load_all()
+    records = await EventSourceService().filter(query, limit=500)
 
     if not records.exists():
         return {
             "total": 0,
-            "grouped": []
+            "grouped": {}
         }
 
-    total = records.count()
-    event_sources = records.map_to_objects(map_to_event_source)
-
-    # Filtering
-    if query is not None and len(query) > 0:
-        query = query.lower()
-        if query:
-            event_sources = [r for r in event_sources if query in r.name.lower() or search(query, r.type)]
-
-    # Grouping
-    groups = defaultdict(list)
-    for event_source in event_sources:  # type: EventSource
-        if isinstance(event_source.groups, list):
-            if len(event_source.groups) == 0:
-                groups["general"].append(event_source)
-            else:
-                for group in event_source.groups:
-                    groups[group].append(event_source)
-        elif isinstance(event_source.groups, str):
-            groups[event_source.groups].append(event_source)
-
-    # Sort
-    groups = {k: sorted(v, key=lambda r: r.name, reverse=False) for k, v in groups.items()}
-
     return {
-        "total": total,
-        "grouped": groups
+        "total": 0,
+        "grouped": {
+            "Event sources": list(records.map_to_objects(map_to_event_source))
+        }
     }
 
 

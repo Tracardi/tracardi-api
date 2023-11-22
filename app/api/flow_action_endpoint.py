@@ -115,9 +115,7 @@ async def get_plugins_list(flow_type: Optional[str] = None, query: Optional[str]
     Returns a list of available plugins.
     """
 
-    aps = ActionPluginService()
-
-    # TODO nie filtruje po purpose bo to jest "collection,segmenation". Trzeba zanaleźć sposób na przechowywanie list.
+    aps = ActionPluginService(True)
 
     _current_plugin = None
     if flow_type is None:

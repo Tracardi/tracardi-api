@@ -54,17 +54,6 @@ async def get_data_for_plugin(module: str, endpoint_function: str, request: Requ
         raise HTTPException(status_code=404, detail=str(e))
 
 
-# @router.get("/action/plugins", tags=["action"], include_in_schema=tracardi.expose_gui_api)
-# async def plugins():
-#     """
-#     Returns plugins from database
-#     """
-#
-#     aps = ActionPluginService()
-#     return aps.load_all()
-#     return await action_db.load_all()
-
-
 @router.post("/plugin/{plugin_id}/config/validate", tags=["action"], include_in_schema=tracardi.expose_gui_api)
 async def validate_plugin_configuration(plugin_id: str,
                                         action_id: Optional[str] = "",
@@ -78,8 +67,6 @@ async def validate_plugin_configuration(plugin_id: str,
 
         aps = ActionPluginService()
         record =await aps.load_by_id(plugin_id)
-
-        # record = await action_db.load_by_id(plugin_id)
 
         if record is None:
             raise HTTPException(status_code=404, detail=f"No action plugin for id `{plugin_id}`")
