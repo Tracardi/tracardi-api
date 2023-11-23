@@ -5,6 +5,7 @@ from typing import Optional
 from fastapi import APIRouter, Request, status, HTTPException
 from fastapi.responses import RedirectResponse
 
+from tracardi.domain.event_redirect import EventRedirect
 from tracardi.service.notation.dict_traverser import DictTraverser
 from tracardi.service.notation.dot_accessor import DotAccessor
 
@@ -13,8 +14,9 @@ from tracardi.domain.entity import Entity
 from tracardi.domain.event_metadata import EventPayloadMetadata
 from tracardi.domain.payload.event_payload import EventPayload
 from tracardi.domain.time import Time
-from tracardi.service.storage.driver.elastic import event_redirect as event_redirect_db
 from tracardi.service.storage.driver.elastic import session as session_db
+from tracardi.service.storage.mysql.mapping.event_redirect_mapping import map_to_event_redirect
+from tracardi.service.storage.mysql.service.event_redirect_service import EventRedirectService
 from tracardi.service.tracker import track_event
 from tracardi.config import tracardi
 from tracardi.domain.payload.tracker_payload import TrackerPayload
@@ -239,9 +241,12 @@ async def request_redirect(request: Request, redirect_id: str, session_id: Optio
     if session_id:
         session_id = session_id.strip()
     redirect_id = redirect_id.strip()
-    redirect_config = await event_redirect_db.load_by_id(redirect_id)
 
-    if not redirect_config:
+    ers = EventRedirectService()
+
+    redirect_record = await ers.load_by_id(redirect_id)
+
+    if not redirect_record.exists():
         raise HTTPException(status_code=404)
 
     body = {}
@@ -273,9 +278,11 @@ async def request_redirect(request: Request, redirect_id: str, session_id: Optio
     )
     converter = DictTraverser(dot)
 
-    properties = converter.reshape(redirect_config.props)
+    event_redirect: EventRedirect = redirect_record.map_to_object(map_to_event_redirect)
+
+    properties = converter.reshape(event_redirect.props)
     tracker_payload = TrackerPayload(
-        source=Entity(id=redirect_config.source.id),
+        source=Entity(id=event_redirect.source.id),
         session=session,
         metadata=EventPayloadMetadata(time=Time()),
         context={},
@@ -284,7 +291,7 @@ async def request_redirect(request: Request, redirect_id: str, session_id: Optio
         },
         properties={},
         events=[
-            EventPayload(type=redirect_config.event_type, properties=properties)
+            EventPayload(type=event_redirect.event_type, properties=properties)
         ],
         options={"saveSession": False}
     )
@@ -297,4 +304,4 @@ async def request_redirect(request: Request, redirect_id: str, session_id: Optio
             allowed_bridges=['redirect']
         )
 
-    return RedirectResponse(redirect_config.url)
+    return RedirectResponse(event_redirect.url)
