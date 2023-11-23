@@ -18,7 +18,7 @@ from app.api.proto.tracard_pro_client import TracardiProClient
 from tracardi.exceptions.log_handler import log_handler
 from tracardi.service.storage.driver.elastic import resource as resource_db
 from tracardi.config import tracardi
-from tracardi.service.storage.mysql.service.trcardi_pro_service import TracardiProService
+from tracardi.service.storage.mysql.service.tracardi_pro_service import TracardiProService
 from tracardi.service.tracardi_http_client import HttpClient
 
 logging.basicConfig(level=logging.ERROR)

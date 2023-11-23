@@ -10,9 +10,9 @@ from tracardi.domain.profile import Profile, ConsentRevoke
 from tracardi.domain.session import Session
 from tracardi.service.storage.driver.elastic import session as session_db
 from tracardi.service.storage.driver.elastic import profile as profile_db
-from tracardi.service.storage.driver.elastic import consent_type as consent_type_db
 from tracardi.service.storage.cache.model import load as cache_load
 from tracardi.service.storage.mysql.mapping.event_source_mapping import map_to_event_source
+from tracardi.service.storage.mysql.service.consent_type_service import ConsentTypeService
 from tracardi.service.storage.mysql.service.event_source_service import EventSourceService
 
 router = APIRouter()
@@ -34,8 +34,9 @@ async def add_consent_type(data: CustomerConsent, all: Optional[bool] = False):
 
     profile = profile.to_entity(Profile)
     if all:
-        for consent in await consent_type_db.load_all():
-            consent_type = ConsentType(**consent)
+        cts = ConsentTypeService()
+        consent_type_records = await cts.load_all()
+        for consent_type in consent_type_records.map_to_object(ConsentType):
 
             if consent_type.auto_revoke:
                 try:
@@ -49,7 +50,7 @@ async def add_consent_type(data: CustomerConsent, all: Optional[bool] = False):
             else:
                 revoke = ConsentRevoke()
 
-            profile.consents[consent['id']] = revoke
+            profile.consents[consent_type.id] = revoke
     else:
         for consent, flag in data.consents.items():
             if flag:

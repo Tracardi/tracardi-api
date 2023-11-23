@@ -8,7 +8,7 @@ from google.protobuf import json_format
 
 from tracardi.config import tracardi
 from tracardi.exceptions.log_handler import log_handler
-from tracardi.service.storage.mysql.service.trcardi_pro_service import TracardiProService
+from tracardi.service.storage.mysql.service.tracardi_pro_service import TracardiProService
 
 
 _local_path = os.path.dirname(__file__)
