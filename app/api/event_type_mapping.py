@@ -67,13 +67,12 @@ async def list_event_mappings(event_type: str):
     if records.exists():
         for record in records.map_to_objects(map_to_event_mapping):
             mappings.append(record)
-
-    if not records:
+    else:
         raise HTTPException(status_code=404, detail=f"Mapping for event type [{event_type}] not found.")
 
     return {
-        "total": len(records),
-        "result": records
+        "total": len(mappings),
+        "result": mappings
     }
 
 
