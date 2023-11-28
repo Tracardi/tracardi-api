@@ -211,118 +211,128 @@ There is only one, do not use `` in the response. So `some text` is not allowed.
 Here is the full plugin code:
 
 ```python
-from tracardi.service.plugin.domain.config import PluginConfig
-from tracardi.service.plugin.domain.register import Plugin, Spec, MetaData, Documentation, PortDoc, Form, FormGroup, FormField, FormComponent
+from tracardi.domain.profile import Profile
+
+from tracardi.service.storage.driver.elastic import profile as profile_db
 from tracardi.service.plugin.runner import ActionRunner
+from tracardi.service.plugin.domain.register import Plugin, Spec, MetaData, Form, FormGroup, FormField, FormComponent, \
+    Documentation, PortDoc
 from tracardi.service.plugin.domain.result import Result
+from tracardi.service.storage.cache.model import load as cache_load
 
 
-class Config(PluginConfig):
-    field: str
-    find: str
-    replace: str
+from .model.configuration import Configuration
 
 
-def validate(config: dict) -> Config:
-    return Config(**config)
+def validate(config: dict):
+    return Configuration(**config)
 
 
-class StringReplaceAction(ActionRunner):
+class InjectProfileByField(ActionRunner):
 
-    config: Config
+    config: Configuration
 
     async def set_up(self, init):
         self.config = validate(init)
 
-    async def run(self, payload: dict, in_edge=None):
+    async def run(self, payload: dict, in_edge=None) -> Result:
         dot = self._get_dot_accessor(payload)
-        value = dot[self.config.field]
+        value = dot[self.config.value]
+        field = self.config.field
 
-        if not isinstance(value, str):
-            return Result(port="error", value={
-                "message": f"Field '{self.config.field}' is not a string."
-            })
+        if field == 'id':
+            cache_load(model=Profile, id=value)
+            profile_records = await profile_db.load_by_id(profile_id=value)
+            profile = Profile.create(profile_records)
 
-        # Perform string replacement
-        new_value = value.replace(self.config.find, self.config.replace)
+            if not profile:
+                return Result(port="error", value={"message": "Could not find profile."})
 
-        dot[self.config.field] = new_value
+        else:
+            result = await profile_db.load_active_profile_by_field(self.config.field, value, start=0, limit=2)
 
-        return Result(port="output", value=payload)
+            if result.total != 1:
+                message = "Found {} records for {} = {}.".format(result.total, self.config.field, value)
+                self.console.warning(message)
+                return Result(port="error", value={"message": message})
+
+            record = result.first()
+
+            if not record:
+                return Result(port="error", value={"message": "Could not find profile."})
+
+            profile = record.to_entity(Profile)
+
+        self.event.profile = profile
+        self.event.metadata.profile_less = False
+        self.event.operation.update = True
+        self.execution_graph.set_profiles(profile)
+
+        print(profile)
+
+        return Result(port="profile", value=profile.model_dump(mode='json'))
+
 
 def register() -> Plugin:
     return Plugin(
         start=False,
         spec=Spec(
             module=__name__,
-            className=StringReplaceAction.__name__,
-            inputs=["payload"],
-            outputs=["output", "error"],
+            className='InjectProfileByField',
+            inputs=['payload'],
+            outputs=['profile', 'error'],
             version='0.8.2',
-            license="MIT",
-            author="Akhil Bisht",
+            license="MIT + CC",
+            author="Risto Kowaczewski",
             init={
-                "field": None,
-                "find": None,
-                "replace": None
+                "field": "data.contact.email.main",
+                "value": "event@properties.email"
             },
-            manual="string_replace_action",
-            form=Form(
-                groups=[
-                    FormGroup(
-                        name="String Replacement Plugin Configuration",
-                        fields=[
-                            FormField(
-                                id="field",
-                                name="Field",
-                                description="The field to perform string replacement on.",
-                                component=FormComponent(
-                                    type="dotPath",
-                                    props={
-                                        "label": "Field",
-                                        "defaultSourceValue": "profile"
-                                    }
-                                )
-                            ),
-                            FormField(
-                                id="find",
-                                name="Find",
-                                description="The substring to find in the field.",
-                                component=FormComponent(
-                                    type="text",
-                                    props={
-                                        "label": "Find"
-                                    }
-                                )
-                            ),
-                            FormField(
-                                id="replace",
-                                name="Replace",
-                                description="The replacement string.",
-                                component=FormComponent(
-                                    type="text",
-                                    props={
-                                        "label": "Replace"
-                                    }
-                                )
-                            )
-                        ]
-                    )
-                ]
-            )
+            manual='profile_inject_action',
+            form=Form(groups=[
+                FormGroup(
+                    name="Select profile",
+                    fields=[
+                        FormField(
+                            id="field",
+                            name="Profile field",
+                            description="Select the PII profile field by which will be used to identify the profile.",
+                            component=FormComponent(type="select", props={"label": "Field", "items": {
+                                "id": "Id",
+                                "data.contact.email.main": "Main E-mail",
+                                "data.contact.email.business": "Business E-mail",
+                                "data.contact.email.private": "Private E-mail",
+                                "data.contact.phone.main": "Main Phone",
+                                "data.contact.phone.mobile": "Mobile Phone",
+                                "data.contact.phone.business": "Business Phone",
+                                "data.contact.app.twitter": "Twitter handle"
+                            }})
+                        ),
+                        FormField(
+                            id="value",
+                            name="Value",
+                            description="Type or reference the field value that you would like to use to find "
+                                        "the profile.",
+                            component=FormComponent(type="dotPath", props={"label": "Value"})
+                        )
+                    ]
+                ),
+            ]),
         ),
         metadata=MetaData(
-            name='String Replace',
-            desc='Replace a specified string within a field in the payload.',
-            icon='replace',
-            group=["String"],
-            tags=['string', 'replace'],
-            purpose=['modification'],
+            name='Load profile by ...',
+            desc='Loads and replaces current profile in the workflow. It also assigns loaded profile to current event. '
+                 'It basically replaces the current profile with loaded one.',
+            icon='profile',
+            group=["Operations"],
             documentation=Documentation(
                 inputs={
                     "payload": PortDoc(desc="This port takes payload object.")
                 },
-                outputs={"output": PortDoc(desc="This port returns the modified payload with the string replacement.")}
+                outputs={
+                    "profile": PortDoc(desc="Returns loaded profile."),
+                    "error": PortDoc(desc="Returns error.")
+                }
             )
         )
     )
@@ -334,4 +344,31 @@ def register() -> Plugin:
 
 Available manual:
 
-<nothing here>
+Load profile by ...
+
+Loads and replaces current profile in the workflow. It also assigns loaded profile to current event.
+
+In order to use this plugin you will have to select the field that will be used to identify the profile. There is a limited number of fields that are unique in the profiles. In most cases it will be an e-mail.
+
+Also, a field value is required to load the profile. It may be a static value or it can be referenced from event or any object inside workflow.
+
+The default values configure the plugin to use event property email and profile data.contact.email.main to match the profile.
+
+If you pass the e-mail or any value that identifies the profile in other location please select the correct path.
+Advanced JSON configuration
+
+Example
+
+{
+  "field": "data.contact.email.main",
+  "value": "event@properties.email"
+}
+
+    Field is a field name
+    Value is a value of that field
+
+Output
+
+If the profile is found it will be replaced inside workflow and the current event will have the profile replaced with the loaded one. On success the profile port is triggered with the loaded profile object.
+
+On failure the error port is triggered with the error message.
