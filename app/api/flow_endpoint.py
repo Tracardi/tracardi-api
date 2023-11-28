@@ -53,7 +53,7 @@ async def _store_record(data: NamedEntity) -> BulkInsertResult:
 async def _deploy_production_flow(flow: Flow, flow_record: Optional[FlowRecord] = None) -> BulkInsertResult:
 
     if flow_record is None:
-        old_flow_record = await flow_db.load_record(flow.id)
+        old_flow_record = await _load_record(flow.id)
     else:
         old_flow_record = flow_record
 
@@ -86,7 +86,7 @@ async def _upsert_flow_draft(draft: Flow, rearrange_nodes: Optional[bool] = Fals
 
         # Check if origin flow exists
 
-    flow_record = await flow_db.load_record(draft.id)  # type: FlowRecord
+    flow_record = await _load_record(draft.id)  # type: FlowRecord
 
     if flow_record is None:
         flow_record = draft.get_empty_workflow_record(draft.type)
@@ -142,7 +142,7 @@ async def load_flow_draft(id: str, response: Response):
     Loads draft version of flow with given ID (str)
     """
 
-    flow_record = await flow_db.load_record(id)  # type: FlowRecord
+    flow_record = await _load_record(id)
 
     if flow_record is None:
         response.status_code = 404
@@ -167,7 +167,7 @@ async def get_flow(id: str, response: Response):
     """
     Returns production version of flow with given ID (str)
     """
-    flow_record = await flow_db.load_record(id)  # type: FlowRecord
+    flow_record = await _load_record(id)
 
     if flow_record is None:
         response.status_code = 404
@@ -185,7 +185,7 @@ async def restore_production_flow_backup(id: str, production_draft: ProductionDr
     """
     Returns previous version of production flow with given ID (str)
     """
-    flow_record = await flow_db.load_record(id)  # type: FlowRecord
+    flow_record = await _load_record(id)
 
     if flow_record is None:
         raise HTTPException(status_code=404, detail="Flow id: `{}` does not exist.".format(id))
