@@ -115,16 +115,18 @@ async def get_plugins_list(flow_type: Optional[str] = None, query: Optional[str]
     Returns a list of available plugins.
     """
 
-    aps = ActionPluginService(True)
+    aps = ActionPluginService()
 
     _current_plugin = None
     if flow_type is None:
         records = await aps.load_all()
     else:
+        if flow_type not in ['collection', 'segmentation']:
+            raise HTTPException(detail='Incorrect workflow type.', status_code=404)
         records = await aps.filter(purpose=flow_type)
 
     if not records.exists():
-        raise HTTPException(detail=f"Missing plugin id '{id}'", status_code=404)
+        raise HTTPException(detail="Could not load any plugins", status_code=404)
 
     _result = list(records.map_to_objects(map_to_flow_action_plugin))
 

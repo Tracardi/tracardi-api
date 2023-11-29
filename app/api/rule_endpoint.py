@@ -3,12 +3,13 @@ from typing import List, Optional
 from fastapi import APIRouter, Response, HTTPException, Depends
 
 from tracardi.domain.event_source import EventSource
-from tracardi.domain.flow_meta_data import FlowMetaData
-from tracardi.service.storage.driver.elastic import flow as flow_db
+from tracardi.domain.flow import FlowRecord
 from tracardi.domain.rule import Rule
 from tracardi.service.storage.mysql.mapping.event_source_mapping import map_to_event_source
+from tracardi.service.storage.mysql.mapping.workflow_mapping import map_to_workflow_record
 from tracardi.service.storage.mysql.mapping.workflow_trigger_mapping import map_to_workflow_trigger_rule
 from tracardi.service.storage.mysql.service.event_source_service import EventSourceService
+from tracardi.service.storage.mysql.service.workflow_service import WorkflowService
 from tracardi.service.storage.mysql.service.workflow_trigger_service import WorkflowTriggerService
 from .auth.permissions import Permissions
 from tracardi.config import tracardi
@@ -45,10 +46,14 @@ async def upsert_rule(rule: Rule):
             rule.description = f"Triggers workflow: \"{rule.flow.name}\" when event \"{rule.event_type.name}\" " \
                                f"is collected from source: \"{rule.source.name}\""
 
-    flow_record = await flow_db.load_record(rule.flow.id)
+    ws = WorkflowService()
+    record = await ws.load_by_id(rule.flow.id)
+    flow_record = record.map_to_object(map_to_workflow_record)
+
     if flow_record is None:
-        new_flow = FlowMetaData(id=rule.flow.id, name=rule.flow.name, description="", type='collection')
-        await flow_db.save(new_flow)
+        new_flow = FlowRecord(id=rule.flow.id, name=rule.flow.name, description="", type='collection')
+        await ws.insert(new_flow)
+        # await flow_db.save(new_flow)
 
     wts = WorkflowTriggerService()
     return await wts.insert(rule)

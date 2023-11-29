@@ -7,7 +7,6 @@ from tracardi.context import get_context
 from tracardi.domain.enum.production_draft import ProductionDraft
 from tracardi.domain.event_metadata import EventMetadata, EventPayloadMetadata
 from tracardi.domain.metadata import ProfileMetadata
-from tracardi.domain.named_entity import NamedEntity
 from tracardi.domain.payload.event_payload import EventPayload
 from tracardi.domain.payload.tracker_payload import TrackerPayload
 from tracardi.domain.time import EventTime, ProfileTime, Time
@@ -15,10 +14,11 @@ from tracardi.exceptions.exception import StorageException
 from tracardi.domain.console import Console
 from tracardi.service.console_log import ConsoleLog
 from tracardi.service.secrets import encrypt
-from tracardi.service.storage.driver.elastic import flow as flow_db
 from tracardi.service.storage.driver.elastic import event as event_db
 from tracardi.service.storage.driver.elastic import profile as profile_db
 from tracardi.service.storage.driver.elastic import session as session_db
+from tracardi.service.storage.mysql.mapping.workflow_mapping import map_to_workflow_record
+from tracardi.service.storage.mysql.service.workflow_service import WorkflowService
 from tracardi.service.storage.mysql.service.workflow_trigger_service import WorkflowTriggerService
 from tracardi.service.utils.getters import get_entity_id
 from tracardi.service.wf.domain.flow_history import FlowHistory
@@ -43,14 +43,17 @@ router = APIRouter(
 
 
 async def _load_record(id: str) -> Optional[FlowRecord]:
-    return FlowRecord.create(await flow_db.load_by_id(id))
+    ws = WorkflowService()
+    record = await ws.load_by_id(id)
+    return record.map_to_object(map_to_workflow_record)
 
 
-async def _store_record(data: NamedEntity) -> BulkInsertResult:
-    return await flow_db.save(data)
+async def _store_record(workflow_record: FlowRecord) -> str:
+    ws = WorkflowService()
+    return await ws.insert(workflow_record)
 
 
-async def _deploy_production_flow(flow: Flow, flow_record: Optional[FlowRecord] = None) -> BulkInsertResult:
+async def _deploy_production_flow(flow: Flow, flow_record: Optional[FlowRecord] = None) -> str:
 
     if flow_record is None:
         old_flow_record = await _load_record(flow.id)
@@ -94,14 +97,9 @@ async def _upsert_flow_draft(draft: Flow, rearrange_nodes: Optional[bool] = Fals
     flow_record.draft = encrypt(draft.model_dump())
     flow_record.timestamp = datetime.utcnow()
 
-    result = await flow_db.save_record(flow_record)
+    result = await _store_record(flow_record)
 
     return result, flow_record
-
-
-@router.get("/flows/refresh", tags=["flow"], include_in_schema=tracardi.expose_gui_api)
-async def flow_refresh():
-    return await flow_db.refresh()
 
 
 @router.post("/flow/draft/nodes/rearrange", 
@@ -124,8 +122,7 @@ async def rearrange_flow(flow: Flow):
 
 
 @router.post("/flow/draft", 
-             tags=["flow"], 
-             response_model=BulkInsertResult, 
+             tags=["flow"],
              include_in_schema=tracardi.expose_gui_api)
 async def upsert_flow_draft(draft: Flow, rearrange_nodes: Optional[bool] = False):
     result, flow_record = await _upsert_flow_draft(draft, rearrange_nodes)
@@ -198,16 +195,15 @@ async def restore_production_flow_backup(id: str, production_draft: ProductionDr
     except ValueError as e:
         raise HTTPException(status_code=406, detail=str(e))
 
-    result = await flow_db.save_record(flow_record)
-    if result.saved == 1:
+    result = await _store_record(flow_record)
+    if result:
         if production_draft.value == ProductionDraft.production:
             return flow_record.get_production_workflow()
         return flow_record.get_draft_workflow()
 
 
 @router.post("/flow/production", 
-             tags=["flow"], 
-             response_model=BulkInsertResult,
+             tags=["flow"],
              include_in_schema=tracardi.expose_gui_api)
 async def deploy_production_flow(flow: Flow):
     """
@@ -219,7 +215,7 @@ async def deploy_production_flow(flow: Flow):
 
 @router.get("/flow/metadata/{id}", 
             tags=["flow"], 
-            response_model=FlowRecord, 
+            response_model=Optional[FlowRecord],
             include_in_schema=tracardi.expose_gui_api)
 async def get_flow_details(id: str):
     """
@@ -234,8 +230,7 @@ async def get_flow_details(id: str):
 
 
 @router.post("/flow/metadata", 
-             tags=["flow"], 
-             response_model=BulkInsertResult, 
+             tags=["flow"],
              include_in_schema=tracardi.expose_gui_api)
 async def upsert_flow_details(flow_metadata: FlowMetaData):
     """
@@ -279,7 +274,7 @@ async def upsert_flow_details(flow_metadata: FlowMetaData):
     return await _store_record(flow_record)
 
 
-@router.post("/flow/draft/metadata", tags=["flow"], response_model=BulkInsertResult,
+@router.post("/flow/draft/metadata", tags=["flow"],
              include_in_schema=tracardi.expose_gui_api)
 async def upsert_flow_draft_details(flow_metadata: FlowMetaData):
     """
@@ -307,12 +302,10 @@ async def upsert_flow_draft_details(flow_metadata: FlowMetaData):
         flow_record.draft = encrypt(draft_workflow.model_dump())
 
     result = await _store_record(flow_record)
-    await flow_db.refresh()
     return result
 
 
 @router.get("/flow/{id}/lock/{lock}", tags=["flow"],
-            response_model=BulkInsertResult,
             include_in_schema=tracardi.expose_gui_api)
 async def update_flow_lock(id: str, lock: str):
     flow_record = await _load_record(id)
@@ -447,26 +440,20 @@ async def debug_flow(flow: FlowGraph, event_id: Optional[str] = None):
 
 
 @router.delete("/flow/{id}", tags=["flow"], 
-               response_model=Optional[dict], 
+               response_model=dict,
                include_in_schema=tracardi.expose_gui_api)
-async def delete_flow(id: str, response: Response):
+async def delete_flow(id: str):
     """
     Deletes flow with given id (str)
     """
     # Delete rule before flow
     wts = WorkflowTriggerService()
-    await wts.delete_by_id(id)
+    await wts.delete_by_workflow_id(id)
 
-    # rule_delete_result = await rule_db.delete_by_id(id)
-    flow_delete_result = await flow_db.delete_by_id(id)
-
-    if flow_delete_result is None:
-        response.status_code = 404
-        return None
-
-    await flow_db.refresh()
+    ws = WorkflowService()
+    await ws.delete_by_id(id)
 
     return {
         "rule": True,
-        "flow": flow_delete_result
+        "flow": True
     }
