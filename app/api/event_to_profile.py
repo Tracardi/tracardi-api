@@ -3,6 +3,7 @@ from uuid import uuid4
 from fastapi import APIRouter, Depends, HTTPException
 
 from app.api.auth.permissions import Permissions
+from app.service.grouping import get_grouped_result
 from tracardi.config import tracardi
 from tracardi.domain.event_to_profile import EventToProfile
 from tracardi.service.events import get_default_mappings_for
@@ -17,15 +18,6 @@ router = APIRouter(
 )
 
 
-# @router.put("/event-to-profile/refresh", tags=["event-to-profile"], include_in_schema=tracardi.expose_gui_api,
-#             response_model=dict)
-# async def refresh_event_to_profile():
-#     """
-#     Refreshes event to profile index
-#     """
-#     return await event_to_profile_db.refresh()
-
-
 @router.post("/event-to-profile", tags=["event-to-profile"], include_in_schema=tracardi.expose_gui_api)
 async def add_event_to_profile(event_to_profile: EventToProfile):
     """
@@ -34,14 +26,6 @@ async def add_event_to_profile(event_to_profile: EventToProfile):
 
     etpms = EventToProfileMappingService()
     return await etpms.insert(event_to_profile)
-
-    # result = await event_to_profile_db.save(event_to_profile)
-    # await event_to_profile_db.refresh()
-    #
-    # if result.errors:
-    #     raise ValueError(result.errors)
-    #
-    # return result
 
 
 @router.get("/event-to-profiles/type/{event_type}",
@@ -77,7 +61,6 @@ async def get_event_to_profile_by_event_type(event_type: str):
     etpms = EventToProfileMappingService()
     custom_records = await etpms.load_by_type(event_type)
 
-    # custom_records = await event_to_profile_db.get_event_to_profile(event_type)
     if custom_records.exists():
         for event_to_profile in custom_records.map_to_objects(map_to_event_to_profile):
             event_to_profile.build_in = False
@@ -105,7 +88,7 @@ async def get_event_to_profile_by_event_type_id(id: str):
 
     etpms = EventToProfileMappingService()
     record = await etpms.load_by_id(id)
-    # record = await event_to_profile_db.load_by_id(event_type_id)
+
     if not record.exists():
         raise HTTPException(status_code=404,
                             detail=f"Event to profile coping schema for id {id} not found.")
@@ -122,24 +105,6 @@ async def del_event_type_metadata(id: str):
     etpms = EventToProfileMappingService()
     return await etpms.delete_by_id(id)
 
-    # result = await event_to_profile_db.del_event_type_metadata(event_type_id)
-    # await event_to_profile_db.refresh()
-    #
-    # return {"deleted": 1 if result is not None and result["result"] == "deleted" else 0}
-
-
-# @router.get("/events-to-profiles", tags=["event-type"], include_in_schema=tracardi.expose_gui_api,
-#             response_model=list)
-# async def list_events_to_profiles(start: Optional[int] = 0, limit: Optional[int] = 10):
-#     """
-#     List all of events to profiles.
-#     """
-#
-#
-#
-#     result = await event_to_profile_db.load_events_to_profiles(start, limit)
-#     return list(result)
-
 
 @router.get("/events-to-profiles/by_tag", tags=["event-type"], include_in_schema=tracardi.expose_gui_api,
             response_model=dict)
@@ -151,14 +116,5 @@ async def list_events_to_profiles_by_tag(query: str = None, start: Optional[int]
     etpms = EventToProfileMappingService()
     records = await etpms.load_all(search=query, limit=limit, offset=start)
 
-    objects = records.map_to_objects(map_to_event_to_profile)
+    return get_grouped_result("Mappings", records, map_to_event_to_profile)
 
-    return {
-        "total": records.count(),
-        "grouped": {
-            "Mappings": list(objects)
-        }
-    }
-
-    # result = await event_to_profile_db.load_events_to_profiles(start, limit)
-    # return group_records(result, query, group_by='tags', search_by='name', sort_by='name')

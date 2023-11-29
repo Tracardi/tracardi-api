@@ -3,6 +3,7 @@ from uuid import uuid4
 from fastapi import APIRouter, Depends, HTTPException
 
 from app.api.auth.permissions import Permissions
+from app.service.grouping import get_grouped_result
 from tracardi.config import tracardi
 from tracardi.domain.event_type_metadata import EventTypeMetadata
 from tracardi.service.events import get_default_mappings_for
@@ -25,15 +26,6 @@ async def add_event_type_mapping(event_mapping: EventTypeMetadata):
 
     ems = EventMappingService()
     return await ems.insert(event_mapping)
-
-    # # Save tags
-    # result = await event_management_db.save(event_mapping)
-    # await event_management_db.refresh()
-    #
-    # if result.errors:
-    #     raise ValueError(result.errors)
-    #
-    # return result
 
 
 @router.get("/mappings/{event_type}",
@@ -114,9 +106,4 @@ async def list_event_type_mappings_by_tag(query: str = None, start: Optional[int
     ems = EventMappingService()
     records = await ems.load_all(search=query, limit=limit, offset=start)
 
-    return {
-        "total": records.count(),
-        "grouped": {
-            "Event mappings": list(records.map_to_objects(map_to_event_mapping))
-        }
-    }
+    return get_grouped_result("Event mappings", records, map_to_event_mapping)

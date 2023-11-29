@@ -1,17 +1,16 @@
 import logging
-from collections import defaultdict
 from typing import Optional
 
-from fastapi import APIRouter, HTTPException, Depends, Response
+from fastapi import APIRouter, Depends, Response
 from tracardi.domain.named_entity import NamedEntity
 from tracardi.domain.enum.type_enum import TypeEnum
 from tracardi.domain.event_source import EventSource
 from tracardi.exceptions.log_handler import log_handler
-from app.service.grouper import search
 from tracardi.service.storage.mysql.mapping.event_source_mapping import map_to_event_source
 from tracardi.service.storage.mysql.service.event_source_service import EventSourceService
 from .auth.permissions import Permissions
 from tracardi.config import tracardi
+from ..service.grouping import get_grouped_result
 
 logger = logging.getLogger(__name__)
 logger.setLevel(tracardi.logging_level)
@@ -32,18 +31,7 @@ async def list_event_sources(query: str = None):
 
     records = await EventSourceService().filter(query, limit=500)
 
-    if not records.exists():
-        return {
-            "total": 0,
-            "grouped": {}
-        }
-
-    return {
-        "total": 0,
-        "grouped": {
-            "Event sources": list(records.map_to_objects(map_to_event_source))
-        }
-    }
+    return get_grouped_result("Event sources", records, map_to_event_source)
 
 
 @router.get("/event-sources/type/{type}",
