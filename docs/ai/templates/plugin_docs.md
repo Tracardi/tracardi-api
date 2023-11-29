@@ -211,66 +211,86 @@ There is only one, do not use `` in the response. So `some text` is not allowed.
 Here is the full plugin code:
 
 ```python
-from tracardi.domain.profile import Profile
-
-from tracardi.service.storage.driver.elastic import profile as profile_db
+from tracardi.service.plugin.domain.register import Plugin, Spec, MetaData, Documentation, PortDoc, Form, FormGroup, \
+    FormField, FormComponent
 from tracardi.service.plugin.runner import ActionRunner
-from tracardi.service.plugin.domain.register import Plugin, Spec, MetaData, Form, FormGroup, FormField, FormComponent, \
-    Documentation, PortDoc
+from .model.config import Config
 from tracardi.service.plugin.domain.result import Result
-from tracardi.service.storage.cache.model import load as cache_load
+from tracardi.service.storage.driver.elastic import consent_type as consent_type_db
+from tracardi.domain.consent_type import ConsentType
 
 
-from .model.configuration import Configuration
+def validate(config: dict) -> Config:
+    return Config(**config)
 
 
-def validate(config: dict):
-    return Configuration(**config)
+class RequireConsentsAction(ActionRunner):
 
-
-class InjectProfileByField(ActionRunner):
-
-    config: Configuration
+    config: Config
 
     async def set_up(self, init):
         self.config = validate(init)
 
     async def run(self, payload: dict, in_edge=None) -> Result:
-        dot = self._get_dot_accessor(payload)
-        value = dot[self.config.value]
-        field = self.config.field
+        if self.event.metadata.profile_less is True:
+            self.console.warning("Cannot perform consent check on profile less event.")
+            return Result(port="false", value=payload)
 
-        if field == 'id':
-            cache_load(model=Profile, id=value)
-            profile_records = await profile_db.load_by_id(profile_id=value)
-            profile = Profile.create(profile_records)
+        consent_ids = [consent["id"] for consent in self.config.consent_ids]
 
-            if not profile:
-                return Result(port="error", value={"message": "Could not find profile."})
+        profile_consents_copy = self.profile.consents
+        for consent_id in profile_consents_copy:
+            revoke = self.profile.consents[consent_id].revoke
+            if revoke is not None and revoke < self.event.metadata.time.insert:
+                self.profile.consents.pop(consent_id)
 
-        else:
-            result = await profile_db.load_active_profile_by_field(self.config.field, value, start=0, limit=2)
+        for consent_id in consent_ids:
+            consent_type = await consent_type_db.get_by_id(consent_id)
 
-            if result.total != 1:
-                message = "Found {} records for {} = {}.".format(result.total, self.config.field, value)
-                self.console.warning(message)
-                return Result(port="error", value={"message": message})
+            if consent_type is None:
+                raise ValueError(f"There is no consent type with ID {consent_id}")
+            consent_type = ConsentType(**consent_type)
 
-            record = result.first()
+            if self.config.require_all is True:
+                if consent_id not in self.profile.consents:
+                    return Result(port="false", value=payload)
 
-            if not record:
-                return Result(port="error", value={"message": "Could not find profile."})
+                if consent_type.revokable is True:
 
-            profile = record.to_entity(Profile)
+                    if self.profile.consents[consent_id].revoke is None:
+                        self.console.warning(f"Consent type {consent_type.name} is set as revokable by "
+                                             f"the revoke date is not set for this profile. "
+                                             f"I an assuming that this consent is "
+                                             f"timeless.")
+                        continue
 
-        self.event.profile = profile
-        self.event.metadata.profile_less = False
-        self.event.operation.update = True
-        self.execution_graph.set_profiles(profile)
+                    try:
+                        revoke_timestamp = self.profile.consents[consent_id].revoke.timestamp()
+                    except AttributeError:
+                        raise ValueError(f"Corrupted data - no revoke date provided for revokable consent "
+                                         f"type {consent_id}")
 
-        print(profile)
+                    if revoke_timestamp <= self.event.metadata.time.insert.timestamp():
+                        return Result(port="false", value=payload)
 
-        return Result(port="profile", value=profile.model_dump(mode='json'))
+            else:
+                if consent_id in self.profile.consents:
+                    if consent_type.revokable is False:
+                        return Result(port="true", value=payload)
+
+                    if self.profile.consents[consent_id].revoke is None:
+                        return Result(port="true", value=payload)
+
+                    try:
+                        revoke_timestamp = self.profile.consents[consent_id].revoke.timestamp()
+                    except AttributeError as e:
+                        raise ValueError(f"Corrupted data - no revoke date provided for revokable consent "
+                                         f"type {consent_id}. Reason: {str(e)}")
+
+                    if revoke_timestamp > self.event.metadata.time.insert.timestamp():
+                        return Result(port="true", value=payload)
+
+        return Result(port="true" if self.config.require_all is True else "false", value=payload)
 
 
 def register() -> Plugin:
@@ -278,60 +298,57 @@ def register() -> Plugin:
         start=False,
         spec=Spec(
             module=__name__,
-            className='InjectProfileByField',
-            inputs=['payload'],
-            outputs=['profile', 'error'],
-            version='0.8.2',
+            className='RequireConsentsAction',
+            inputs=["payload"],
+            outputs=["true", "false"],
+            version='0.6.2',
             license="MIT + CC",
-            author="Risto Kowaczewski",
+            author="Dawid Kruk",
+            manual="require_consents_action",
+            form=Form(
+                groups=[
+                    FormGroup(
+                        name="Consent requirements",
+                        fields=[
+                            FormField(
+                                id="consent_ids",
+                                name="IDs of required consents",
+                                description="Provide a list of IDs of consents that the profile must grant. "
+                                            "Press enter to add more the one consent.",
+                                component=FormComponent(type="consentTypes")
+                            ),
+                            FormField(
+                                id="require_all",
+                                name="Require all",
+                                description="If set to ON, plugin will require all of selected consents to be granted "
+                                            "and not revoked. If set to OFF, plugin will require only one of defined "
+                                            "consents to be granted.",
+                                component=FormComponent(type="bool", props={"label": "Require all"})
+                            )
+                        ]
+                    )
+                ]
+            ),
             init={
-                "field": "data.contact.email.main",
-                "value": "event@properties.email"
-            },
-            manual='profile_inject_action',
-            form=Form(groups=[
-                FormGroup(
-                    name="Select profile",
-                    fields=[
-                        FormField(
-                            id="field",
-                            name="Profile field",
-                            description="Select the PII profile field by which will be used to identify the profile.",
-                            component=FormComponent(type="select", props={"label": "Field", "items": {
-                                "id": "Id",
-                                "data.contact.email.main": "Main E-mail",
-                                "data.contact.email.business": "Business E-mail",
-                                "data.contact.email.private": "Private E-mail",
-                                "data.contact.phone.main": "Main Phone",
-                                "data.contact.phone.mobile": "Mobile Phone",
-                                "data.contact.phone.business": "Business Phone",
-                                "data.contact.app.twitter": "Twitter handle"
-                            }})
-                        ),
-                        FormField(
-                            id="value",
-                            name="Value",
-                            description="Type or reference the field value that you would like to use to find "
-                                        "the profile.",
-                            component=FormComponent(type="dotPath", props={"label": "Value"})
-                        )
-                    ]
-                ),
-            ]),
+                "consent_ids": [],
+                "require_all": False
+            }
         ),
         metadata=MetaData(
-            name='Load profile by ...',
-            desc='Loads and replaces current profile in the workflow. It also assigns loaded profile to current event. '
-                 'It basically replaces the current profile with loaded one.',
-            icon='profile',
-            group=["Operations"],
+            name='Has consents',
+            desc='Checks if defined consents are granted by current profile.',
+            icon='consent',
+            group=["Consents"],
+            type="condNode",
+            tags=['condition'],
+            purpose=['collection', 'segmentation'],
             documentation=Documentation(
                 inputs={
                     "payload": PortDoc(desc="This port takes payload object.")
                 },
                 outputs={
-                    "profile": PortDoc(desc="Returns loaded profile."),
-                    "error": PortDoc(desc="Returns error.")
+                    "true": PortDoc(desc="This port returns given payload if defined consents are granted."),
+                    "false": PortDoc(desc="This port returns given payload if defined consents are not granted.")
                 }
             )
         )
@@ -344,31 +361,40 @@ def register() -> Plugin:
 
 Available manual:
 
-Load profile by ...
+# Check granted profile consents
 
-Loads and replaces current profile in the workflow. It also assigns loaded profile to current event.
+This plugin takes in a list of consent ID and checks if current profile has granted
+one of them, or all of them.
 
-In order to use this plugin you will have to select the field that will be used to identify the profile. There is a limited number of fields that are unique in the profiles. In most cases it will be an e-mail.
+## Inputs
+This plugin takes any payload as input
 
-Also, a field value is required to load the profile. It may be a static value or it can be referenced from event or any object inside workflow.
+## Outputs
+This plugin outputs given payload on port **true** if required consents are granted,
+or on port **false** if required consents are not granted.
 
-The default values configure the plugin to use event property email and profile data.contact.email.main to match the profile.
+## Plugin configuration
+#### With form
+- IDs of required consents - provide a list of consents that you want to require to
+  be granted by the profile.
+- Require all - if this switch is set to ON, plugin will require all of provided
+  consent types to granted by profile. If it is set to OFF, only one consent has to
+  be granted.
 
-If you pass the e-mail or any value that identifies the profile in other location please select the correct path.
-Advanced JSON configuration
-
-Example
-
+#### Advanced configuration
+```json
 {
-  "field": "data.contact.email.main",
-  "value": "event@properties.email"
+  "consent_ids": [
+    {
+      "id": "<id-of-consent>",
+      "name": "<name-of-consent>"
+    },
+    {
+      "id": "<id-of-second-consent>",
+      "name": "<name-of-second-consent>"
+    },
+    "..."
+  ],
+  "require_all": "<bool>"
 }
-
-    Field is a field name
-    Value is a value of that field
-
-Output
-
-If the profile is found it will be replaced inside workflow and the current event will have the profile replaced with the loaded one. On success the profile port is triggered with the loaded profile object.
-
-On failure the error port is triggered with the error message.
+```
