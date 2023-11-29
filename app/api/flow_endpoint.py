@@ -16,10 +16,10 @@ from tracardi.domain.console import Console
 from tracardi.service.console_log import ConsoleLog
 from tracardi.service.secrets import encrypt
 from tracardi.service.storage.driver.elastic import flow as flow_db
-from tracardi.service.storage.driver.elastic import rule as rule_db
 from tracardi.service.storage.driver.elastic import event as event_db
 from tracardi.service.storage.driver.elastic import profile as profile_db
 from tracardi.service.storage.driver.elastic import session as session_db
+from tracardi.service.storage.mysql.service.workflow_trigger_service import WorkflowTriggerService
 from tracardi.service.utils.getters import get_entity_id
 from tracardi.service.wf.domain.flow_history import FlowHistory
 from tracardi.service.wf.domain.work_flow import WorkFlow
@@ -454,7 +454,10 @@ async def delete_flow(id: str, response: Response):
     Deletes flow with given id (str)
     """
     # Delete rule before flow
-    rule_delete_result = await rule_db.delete_by_id(id)
+    wts = WorkflowTriggerService()
+    await wts.delete_by_id(id)
+
+    # rule_delete_result = await rule_db.delete_by_id(id)
     flow_delete_result = await flow_db.delete_by_id(id)
 
     if flow_delete_result is None:
@@ -464,6 +467,6 @@ async def delete_flow(id: str, response: Response):
     await flow_db.refresh()
 
     return {
-        "rule": rule_delete_result,
+        "rule": True,
         "flow": flow_delete_result
     }
