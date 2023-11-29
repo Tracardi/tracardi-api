@@ -83,7 +83,7 @@ else:
     identification_point_endpoint = get_router(prefix="/identification")
 
 if License.has_service(COMPLIANCE):
-    from com_tracardi.endpoint import consent_data_compliance_endpoint
+    from com_tracardi.endpoint import event_data_compliance_endpoint
 else:
     consent_data_compliance_endpoint = get_router(prefix="/consent/compliance")
 
@@ -306,7 +306,7 @@ application.include_router(event_type_mapping.router)
 application.include_router(event_source_redirects.router)
 application.include_router(bridge_endpoint.router)
 application.include_router(entity_endpoint.router)
-application.include_router(consent_data_compliance_endpoint.router)
+application.include_router(event_data_compliance_endpoint.router)
 application.include_router(identification_point_endpoint.router)
 application.include_router(scheduler_endpoint.router)
 application.include_router(metric_endpoint.router)
