@@ -211,86 +211,62 @@ There is only one, do not use `` in the response. So `some text` is not allowed.
 Here is the full plugin code:
 
 ```python
-from tracardi.service.plugin.domain.register import Plugin, Spec, MetaData, Documentation, PortDoc, Form, FormGroup, \
-    FormField, FormComponent
+from typing import List
+
+from pydantic import field_validator
+from tracardi.domain.profile import Profile
+
+from tracardi.service.plugin.domain.register import Plugin, Spec, MetaData, Form, FormGroup, FormField, FormComponent, \
+    Documentation, PortDoc
 from tracardi.service.plugin.runner import ActionRunner
-from .model.config import Config
 from tracardi.service.plugin.domain.result import Result
-from tracardi.service.storage.driver.elastic import consent_type as consent_type_db
-from tracardi.domain.consent_type import ConsentType
+from tracardi.service.plugin.domain.config import PluginConfig
 
 
-def validate(config: dict) -> Config:
-    return Config(**config)
+class MergeProfileConfiguration(PluginConfig):
+    mergeBy: List[str]
+
+    @field_validator("mergeBy")
+    @classmethod
+    def list_must_not_be_empty(cls, value):
+        # Merge by keys must exist and come from profile
+        if not len(value) > 0:
+            raise ValueError("Field mergeBy is empty and has no effect on merging. "
+                             "Add merging key or remove this action from flow.")
+
+        for key in value:
+            if not key.startswith('profile@'):
+                raise ValueError(
+                    f"Field `{key}` does not start with profile@... Only profile fields are used during merging.")
+
+        return value
 
 
-class RequireConsentsAction(ActionRunner):
+def validate(config: dict) -> MergeProfileConfiguration:
+    return MergeProfileConfiguration(**config)
 
-    config: Config
+
+class MergeProfilesAction(ActionRunner):
+    merge_key: List[str]
 
     async def set_up(self, init):
-        self.config = validate(init)
+        config = validate(init)
+        self.merge_key = [key.lower() for key in config.mergeBy]
 
     async def run(self, payload: dict, in_edge=None) -> Result:
-        if self.event.metadata.profile_less is True:
-            self.console.warning("Cannot perform consent check on profile less event.")
-            return Result(port="false", value=payload)
-
-        consent_ids = [consent["id"] for consent in self.config.consent_ids]
-
-        profile_consents_copy = self.profile.consents
-        for consent_id in profile_consents_copy:
-            revoke = self.profile.consents[consent_id].revoke
-            if revoke is not None and revoke < self.event.metadata.time.insert:
-                self.profile.consents.pop(consent_id)
-
-        for consent_id in consent_ids:
-            consent_type = await consent_type_db.get_by_id(consent_id)
-
-            if consent_type is None:
-                raise ValueError(f"There is no consent type with ID {consent_id}")
-            consent_type = ConsentType(**consent_type)
-
-            if self.config.require_all is True:
-                if consent_id not in self.profile.consents:
-                    return Result(port="false", value=payload)
-
-                if consent_type.revokable is True:
-
-                    if self.profile.consents[consent_id].revoke is None:
-                        self.console.warning(f"Consent type {consent_type.name} is set as revokable by "
-                                             f"the revoke date is not set for this profile. "
-                                             f"I an assuming that this consent is "
-                                             f"timeless.")
-                        continue
-
-                    try:
-                        revoke_timestamp = self.profile.consents[consent_id].revoke.timestamp()
-                    except AttributeError:
-                        raise ValueError(f"Corrupted data - no revoke date provided for revokable consent "
-                                         f"type {consent_id}")
-
-                    if revoke_timestamp <= self.event.metadata.time.insert.timestamp():
-                        return Result(port="false", value=payload)
-
+        if isinstance(self.profile, Profile):
+            # TODO LOOK for self.profile.operation.needs_merging()
+            # TODO operation can be overwritten by update form cache. maybe mrege here not at the end of workflow.
+            self.profile.operation.merge = self.merge_key
+        else:
+            if self.event.metadata.profile_less is True:
+                self.console.warning("Can not merge profile when processing profile less events.")
             else:
-                if consent_id in self.profile.consents:
-                    if consent_type.revokable is False:
-                        return Result(port="true", value=payload)
+                message = "Can not merge profile. Profile is empty."
+                self.console.error(message)
+                return Result(value={"message": message}, port="error")
 
-                    if self.profile.consents[consent_id].revoke is None:
-                        return Result(port="true", value=payload)
-
-                    try:
-                        revoke_timestamp = self.profile.consents[consent_id].revoke.timestamp()
-                    except AttributeError as e:
-                        raise ValueError(f"Corrupted data - no revoke date provided for revokable consent "
-                                         f"type {consent_id}. Reason: {str(e)}")
-
-                    if revoke_timestamp > self.event.metadata.time.insert.timestamp():
-                        return Result(port="true", value=payload)
-
-        return Result(port="true" if self.config.require_all is True else "false", value=payload)
+        return Result(value=payload, port="payload")
 
 
 def register() -> Plugin:
@@ -298,61 +274,46 @@ def register() -> Plugin:
         start=False,
         spec=Spec(
             module=__name__,
-            className='RequireConsentsAction',
+            className='MergeProfilesAction',
             inputs=["payload"],
-            outputs=["true", "false"],
-            version='0.6.2',
-            license="MIT + CC",
-            author="Dawid Kruk",
-            manual="require_consents_action",
-            form=Form(
-                groups=[
-                    FormGroup(
-                        name="Consent requirements",
-                        fields=[
-                            FormField(
-                                id="consent_ids",
-                                name="IDs of required consents",
-                                description="Provide a list of IDs of consents that the profile must grant. "
-                                            "Press enter to add more the one consent.",
-                                component=FormComponent(type="consentTypes")
-                            ),
-                            FormField(
-                                id="require_all",
-                                name="Require all",
-                                description="If set to ON, plugin will require all of selected consents to be granted "
-                                            "and not revoked. If set to OFF, plugin will require only one of defined "
-                                            "consents to be granted.",
-                                component=FormComponent(type="bool", props={"label": "Require all"})
-                            )
-                        ]
-                    )
-                ]
-            ),
-            init={
-                "consent_ids": [],
-                "require_all": False
-            }
+            outputs=["payload", "error"],
+            init={"mergeBy": []},
+            version="0.8.2",
+            form=Form(groups=[
+                FormGroup(
+                    fields=[
+                        FormField(
+                            id="mergeBy",
+                            name="Merge by fields",
+                            description="Provide a list of fields that can identify user. For example profile@data.contact.email.main. "
+                                        "These fields will be treated as primary keys for merging. Profiles will be "
+                                        "grouped by this value and merged.",
+                            component=FormComponent(type="listOfDotPaths", props={"label": "condition",
+                                                                                  "defaultSourceValue": "profile"
+                                                                                  })
+                        )
+                    ]
+                ),
+            ]),
+            manual="merge_profiles_action"
         ),
         metadata=MetaData(
-            name='Has consents',
-            desc='Checks if defined consents are granted by current profile.',
-            icon='consent',
-            group=["Consents"],
-            type="condNode",
-            tags=['condition'],
-            purpose=['collection', 'segmentation'],
+            name='Merge profiles',
+            desc='Merges profile in storage when flow ends. This operation is expensive so use it with caution, '
+                 'only when there is a new PII information added.',
+            icon='merge',
+            group=["Operations"],
             documentation=Documentation(
                 inputs={
-                    "payload": PortDoc(desc="This port takes payload object.")
+                    "payload": PortDoc(desc="This port takes any JSON-like object.")
                 },
                 outputs={
-                    "true": PortDoc(desc="This port returns given payload if defined consents are granted."),
-                    "false": PortDoc(desc="This port returns given payload if defined consents are not granted.")
+                    "payload": PortDoc(desc="This port returns exactly same payload as given one.")
                 }
             )
         )
     )
+
 
 ```
 
@@ -361,40 +322,30 @@ def register() -> Plugin:
 
 Available manual:
 
-# Check granted profile consents
+Merge Profile Action
 
-This plugin takes in a list of consent ID and checks if current profile has granted
-one of them, or all of them.
+When new personal information is added to a customer's profile, it might need to be combined with other profiles in the system to create one consistent profile. This is done through the "merge profile" action.
 
-## Inputs
-This plugin takes any payload as input
+When this action is used in the workflow, it will set the profile to be merged at the end of the process. To finish the merging process, you'll need to provide a merge key in the settings of the "merge profile" step.
+Configuration
 
-## Outputs
-This plugin outputs given payload on port **true** if required consents are granted,
-or on port **false** if required consents are not granted.
+The merge key is an important part of the system that helps to combine different customer profiles into one. This key can be something unique like an email, phone number, or ID. The system will look for other profiles that have the same key and merge them together.
 
-## Plugin configuration
-#### With form
-- IDs of required consents - provide a list of consents that you want to require to
-  be granted by the profile.
-- Require all - if this switch is set to ON, plugin will require all of provided
-  consent types to granted by profile. If it is set to OFF, only one consent has to
-  be granted.
+When the profiles are merged, all their information is combined into one single profile and any actions related to those profiles are now related to the merged one. Any extra profiles that are no longer needed will be deleted, but their ID will still be connected to the new merged profile. This means that if you try to look for an old profile, the system will show you the new merged one.
 
-#### Advanced configuration
-```json
+If you want to merge profiles using more than one key, like email and name, the system will look for profiles that have both those keys. The merge key should be provided in a JSON array. To access the merge key data, you should use dotted notation. For more information on this notation, check the Notations/Dot notation section in the documentation.
+
 {
-  "consent_ids": [
-    {
-      "id": "<id-of-consent>",
-      "name": "<name-of-consent>"
-    },
-    {
-      "id": "<id-of-second-consent>",
-      "name": "<name-of-second-consent>"
-    },
-    "..."
-  ],
-  "require_all": "<bool>"
+  "mergeBy": ["profile@data.contact.email"]
 }
-```
+
+A simpler way to merge profile
+
+An identification point is a feature (in commercial Tracardi) that allows the system to identify customers during their journey. When this point is set, the system will monitor for events that can be used to match the anonymous customer's identified profile.
+
+To give an analogy, think of an identification point like the ones at an airport or during a police check. You stay anonymous until there is a moment when you need to show your ID. This is an identification point. At this point, you are no longer anonymous. The same goes for Tracardi, once you identify yourself, all your past events become part of your identified profile. If identification happens multiple times on different communication channels, all the anonymous actions will become not anonymous anymore.
+
+For example, if a customer's profile in the system has an email address that matches the email delivered in a new event, then the system can match anonymous customer data with the existing profile and merge all previous interactions/events.
+
+In simpler terms, identification point is a way for the system to identify customers and keep their information consistent throughout their journey.
+
