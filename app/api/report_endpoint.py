@@ -1,9 +1,12 @@
 from fastapi import APIRouter
 from fastapi import HTTPException, Depends
+
+from tracardi.service.storage.mysql.map_to_named_entity import map_to_named_entity
+from tracardi.service.storage.mysql.mapping.report_mapping import map_to_report
+from tracardi.service.storage.mysql.service.report_service import ReportService
 from .auth.permissions import Permissions
 from tracardi.config import tracardi
-from ..service.grouping import group_records
-from tracardi.service.storage.driver.elastic import report as report_db
+from ..service.grouping import get_grouped_result, get_result_dict
 from typing import Optional
 from tracardi.domain.report import Report
 from app.api.domain.report_test_payload import ReportTestPayload
@@ -16,11 +19,16 @@ router = APIRouter(
 
 
 @router.get("/reports/entities", tags=["report"], include_in_schema=tracardi.expose_gui_api)
-async def load_report_entities():
+async def load_report_names():
     """
     Returns list of reports as named entities. Roles: admin, developer, marketer
     """
-    return {"result": [dict(id=report.id, name=report.name) for report in await report_db.load_all()]}
+
+    rs = ReportService()
+    records = await rs.load_all()
+    return get_result_dict(records, map_to_named_entity)
+
+    # return {"result": [dict(id=report.id, name=report.name) for report in await report_db.load_all()]}
 
 
 @router.get("/report/{id}", tags=["report"], include_in_schema=tracardi.expose_gui_api)
@@ -28,21 +36,30 @@ async def get_report(id: str):
     """
     Returns report with given ID. Roles: admin, developer, marketer
     """
-    result = await report_db.load(id)
+    rs = ReportService()
+    record = await rs.load_by_id(id)
+    # result = await report_db.load(id)
 
-    if result is None:
+    if not record.exists():
         raise HTTPException(status_code=404, detail=f"Report with ID {id} not found.")
 
-    return result
+    return record.map_to_object(map_to_report)
 
 
 @router.get("/reports", tags=["report"], include_in_schema=tracardi.expose_gui_api)
-async def load_grouped_reports(query: Optional[str] = None):
+async def load_all(query: Optional[str] = None, limit: int = 200):
+
     """
     Returns list of reports according to given query, grouped by tag. Roles: admin, developer, marketer
     """
-    result = await report_db.load_for_grouping(query)
-    return group_records(result, None)
+
+    rs = ReportService()
+    records = await rs.load_all(search=query, limit=limit)
+
+    return get_grouped_result("Reports", records, map_to_report)
+
+    # result = await report_db.load_for_grouping(query)
+    # return group_records(result, None)
 
 
 @router.post("/report", tags=["report"], include_in_schema=tracardi.expose_gui_api)
@@ -50,9 +67,11 @@ async def add_report(report: Report):
     """
     Adds or edits report in the database. Roles: admin, developer, marketer
     """
-    result = await report_db.upsert(report)
-    await report_db.refresh()
-    return result
+
+    rs = ReportService()
+    return await rs.insert(report)
+    # await report_db.refresh()
+    # return result
 
 
 @router.delete("/report/{id}", tags=["report"], include_in_schema=tracardi.expose_gui_api)
@@ -60,9 +79,11 @@ async def delete_report(id: str):
     """
     Deletes report from the database
     """
-    result = await report_db.delete(id)
-    await report_db.refresh()
-    return result
+    rs = ReportService()
+    return await rs.delete_by_id(id)
+    # result = await report_db.delete(id)
+    # await report_db.refresh()
+    # return result
 
 
 @router.post("/report/test", tags=["report"], include_in_schema=tracardi.expose_gui_api)
