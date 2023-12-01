@@ -418,7 +418,7 @@ To use the resource in your plugin, you can load it in the `set_up` method. Add 
 your `my_plugin.py` file:
 
 ```python
-from tracardi.service.storage.driver.elastic import resource as resource_db
+from tracardi.service.domain import resource as resource_db
 
 
 class MyPlugin(ActionRunner):

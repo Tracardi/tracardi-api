@@ -15,7 +15,6 @@ from tracardi.domain.resource import Resource
 from tracardi.domain.sign_up_data import SignUpData
 from app.api.proto.tracard_pro_client import TracardiProClient
 from tracardi.exceptions.log_handler import log_handler
-from tracardi.service.storage.driver.elastic import resource as resource_db
 from tracardi.config import tracardi
 from tracardi.service.storage.mysql.service.resource_service import ResourceService
 from tracardi.service.storage.mysql.service.tracardi_pro_service import TracardiProService
@@ -38,7 +37,6 @@ tracardi_pro_client = TracardiProClient(host=tracardi.tracardi_pro_host,
 async def _store_resource_record(data: Resource):
     rs = ResourceService()
     return await rs.insert(data)
-    # return await resource_db.save(data)
 
 
 @router.get("/tpro/validate", tags=["tpro"], include_in_schema=tracardi.expose_gui_api)

@@ -192,7 +192,7 @@ Once we have a resource, we can load it in our plugin. We do this in the `set_up
 to the `set_up` method
 
 ```python
-from tracardi.service.storage.driver.elastic import resource as resource_db
+from tracardi.service.domain import resource as resource_db
 
 resource = await resource_db.load (config.resource.id) # (1)
 self.credentials = resource.credentials.get_credentials (self, output = MyResourceConfig) # (2)
@@ -211,7 +211,7 @@ the `ResourceSettings` object above and a user filled when creating the resource
 The whole `set_up` method should look like this:
 
 ```python
-from tracardi.service.storage.driver.elastic import resource as resource_db
+from tracardi.service.domain import resource as resource_db
 
 class MyPlugin (ActionRunner):
 
