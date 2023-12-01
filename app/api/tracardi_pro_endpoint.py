@@ -7,17 +7,17 @@ from fastapi import APIRouter, Depends, HTTPException
 from pydantic import ValidationError
 
 from app.api.auth.permissions import Permissions
-from tracardi.domain.entity import Entity
 from tracardi.domain.pro_service_form_data import TProMicroserviceCredentials, ProService, ProMicroService
 from tracardi.service.plugin.domain.register import Plugin, MicroserviceConfig
 from tracardi.service.plugin.plugin_install import install_remote_plugin, install_plugin
 from app.api.domain.credentials import Credentials
-from tracardi.domain.resource import Resource, ResourceRecord
+from tracardi.domain.resource import Resource
 from tracardi.domain.sign_up_data import SignUpData
 from app.api.proto.tracard_pro_client import TracardiProClient
 from tracardi.exceptions.log_handler import log_handler
 from tracardi.service.storage.driver.elastic import resource as resource_db
 from tracardi.config import tracardi
+from tracardi.service.storage.mysql.service.resource_service import ResourceService
 from tracardi.service.storage.mysql.service.tracardi_pro_service import TracardiProService
 from tracardi.service.tracardi_http_client import HttpClient
 
@@ -35,8 +35,10 @@ tracardi_pro_client = TracardiProClient(host=tracardi.tracardi_pro_host,
                                         secure=False)
 
 
-async def _store_resource_record(data: Entity):
-    return await resource_db.save(data)
+async def _store_resource_record(data: Resource):
+    rs = ResourceService()
+    return await rs.insert(data)
+    # return await resource_db.save(data)
 
 
 @router.get("/tpro/validate", tags=["tpro"], include_in_schema=tracardi.expose_gui_api)
@@ -162,9 +164,9 @@ async def save_tracardi_pro_resource(pro: ProService):
         resource.credentials.production = _remove_redundant_data(resource.credentials.production)
         resource.credentials.test = _remove_redundant_data(resource.credentials.test)
 
-        record = ResourceRecord.encode(resource)
-        result['resource'] = await _store_resource_record(record)
-        await resource_db.refresh()
+        # record = ResourceRecord.encode(resource)
+        result['resource'] = await _store_resource_record(resource)
+        # await resource_db.refresh()
 
     # Add plugins
 
@@ -196,9 +198,9 @@ async def save_tracardi_pro_microservice(pro: ProMicroService):
 
     production_credentials = TProMicroserviceCredentials(**resource.credentials.production)
 
-    record = ResourceRecord.encode(resource)
-    result = await _store_resource_record(record)
-    await resource_db.refresh()
+    # record = ResourceRecord.encode(resource)
+    result = await _store_resource_record(resource)
+    # await resource_db.refresh()
 
     # Create plugin
 

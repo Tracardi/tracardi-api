@@ -1,18 +1,17 @@
 import logging
-from collections import defaultdict
 from typing import Optional
-from fastapi import APIRouter, Depends, Response
+from fastapi import APIRouter, Depends
 
 from tracardi.domain.enum.type_enum import TypeEnum
 from tracardi.exceptions.log_handler import log_handler
 from tracardi.service.setup.setup_resources import get_type_of_resources
-from tracardi.service.storage.driver.elastic import resource as resource_db
-from tracardi.service.wf.domain.named_entity import NamedEntity
-from app.service.grouper import search
-from tracardi.domain.resource import Resource, ResourceRecord
-from tracardi.domain.value_object.bulk_insert_result import BulkInsertResult
+from tracardi.service.storage.mysql.map_to_named_entity import map_to_named_entity
+from tracardi.service.storage.mysql.mapping.resource_mapping import map_to_resource
+from tracardi.service.storage.mysql.service.resource_service import ResourceService
+from tracardi.domain.resource import Resource
 from .auth.permissions import Permissions
 from tracardi.config import tracardi
+from ..service.grouping import get_result_dict, get_grouped_result
 
 logger = logging.getLogger(__name__)
 logger.setLevel(tracardi.logging_level)
@@ -22,13 +21,15 @@ router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin", "developer"]))]
 )
 
+rs = ResourceService(True)
 
-async def _load_record(id: str) -> Optional[ResourceRecord]:
-    return ResourceRecord.create(await resource_db.load_by_id(id))
+async def _load_record(id: str) -> Optional[Resource]:
+    record = await rs.load_by_id(id)
+    return record.map_to_object(map_to_resource)
 
 
-async def _store_record(data: ResourceRecord):
-    return await resource_db.save(data)
+async def _store_record(resource: Resource):
+    return await rs.insert(resource)
 
 
 @router.get("/resources/type/{type}",
@@ -64,184 +65,103 @@ async def list_resources_names_by_tag(tag: str):
     """
     Returns list of resources that have defined tag. This list contains only id and name.
     """
-
-    result = await resource_db.load_by_tag(tag)
-    total = result.total
-    result = [NamedEntity(**r) for r in result]
-
-    return {
-        "total": total,
-        "result": list(result)
-    }
+    records = await rs.load_by_tag(tag)
+    return get_result_dict(records, map_to_named_entity)
 
 
-@router.get("/resources/tag/{tag}",
-            tags=["resource"],
-            include_in_schema=tracardi.expose_gui_api)
-async def list_resources_by_tag(tag: str):
-    """
-    Returns list of resources that have defined tag. This list contains all data along with credentials.
-    """
-    result = await resource_db.load_by_tag(tag)
-    total = result.total
-    result = [ResourceRecord(**r).decode() for r in result]
-
-    return {
-        "total": total,
-        "result": list(result)
-    }
+# @router.get("/resources/tag/{tag}",
+#             tags=["resource"],
+#             include_in_schema=tracardi.expose_gui_api)
+# async def list_resources_by_tag(tag: str):
+#     """
+#     Returns list of resources that have defined tag. This list contains all data along with credentials.
+#     """
+#
+#     records = await rs.load_by_tag(tag)
+#
+#     return get_result_dict(records, map_to_resource)
+#
+#     # result = await resource_db.load_by_tag(tag)
+#     # total = result.total
+#     # result = [ResourceRecord(**r).decode() for r in result]
+#     #
+#     # return {
+#     #     "total": total,
+#     #     "result": list(result)
+#     # }
 
 
 @router.get("/resources/entity",
             tags=["resource"],
             include_in_schema=tracardi.expose_gui_api)
-async def list_resources():
-    result = await resource_db.load_all(limit=250)
-    total = result.total
-    result = [NamedEntity(**item) for item in result]
+async def list_all_resources():
 
-    return {
-        "total": total,
-        "result": result
-    }
+    records = await rs.load_all(limit=250)
+    return get_result_dict(records, map_to_named_entity)
 
 
 @router.get("/resources",
             tags=["resource"],
             include_in_schema=tracardi.expose_gui_api)
 async def list_resources():
-    result = await resource_db.load_all()
-    total = result.total
-    result = [ResourceRecord(**r).decode() for r in result]
-
-    return {
-        "total": total,
-        "result": list(result)
-    }
+    records = await rs.load_all()
+    return get_result_dict(records, map_to_resource)
 
 
 @router.get("/resources/by_type",
             tags=["resource"],
             include_in_schema=tracardi.expose_gui_api)
-async def list_resources_by_type(query: str = None):
-    result = await resource_db.load_all()
+async def list_resources_by_type(query: str = None, limit:int = 200):
+    records = await rs.load_all(search=query, limit=limit)
 
-    total = result.total
-    result = [ResourceRecord(**r).decode() for r in result]
-
-    # Filtering
-    if query is not None and len(query) > 0:
-        query = query.lower()
-        if query:
-            result = [r for r in result if query in r.name.lower() or search(query, r.type)]
-
-    # Grouping
-    groups = defaultdict(list)
-    for resource in result:  # type: Resource
-        if isinstance(resource.groups, list):
-            if len(resource.groups) == 0:
-                groups["general"].append(resource)
-            else:
-                for group in resource.groups:
-                    groups[group].append(resource)
-        elif isinstance(resource.groups, str):
-            groups[resource.groups].append(resource)
-
-    # Sort
-    groups = {k: sorted(v, key=lambda r: r.name, reverse=False) for k, v in groups.items()}
-
-    return {
-        "total": total,
-        "grouped": groups
-    }
+    return get_grouped_result("Resources", records, map_to_resource)
 
 
-@router.get("/resource/{id}/enabled/on",
-            tags=["resource"],
-            response_model=dict,
-            include_in_schema=tracardi.expose_gui_api)
-async def set_resource_property_on(id: str):
-    record = await _load_record(id)
-    if record:
-        resource = record.decode()
-        resource_data = resource.model_dump()
-        resource_data['enabled'] = True
-        resource = Resource(**resource_data)
-        record = ResourceRecord.encode(resource)
-
-        return await _store_record(record)
-
-    return None
-
-
-@router.get("/resource/{id}/enabled/off",
-            tags=["resource"],
-            response_model=dict,
-            include_in_schema=tracardi.expose_gui_api)
-async def set_resource_property_off(id: str):
-    record = await _load_record(id)
-
-    if record:
-        resource = record.decode()
-        resource_data = resource.model_dump()
-        resource_data['enabled'] = False
-        resource = Resource(**resource_data)
-        record = ResourceRecord.encode(resource)
-
-        return await _store_record(record)
+# @router.get("/resource/{id}/enabled/on",
+#             tags=["resource"],
+#             include_in_schema=tracardi.expose_gui_api)
+# async def set_resource_property_on(id: str):
+#     resource = await _load_record(id)
+#     if resource:
+#         resource.enabled = True
+#         return await _store_record(resource)
+#
+#     return None
+#
+#
+# @router.get("/resource/{id}/enabled/off",
+#             tags=["resource"],
+#             include_in_schema=tracardi.expose_gui_api)
+# async def set_resource_property_off(id: str):
+#     resource = await _load_record(id)
+#     if resource:
+#         resource.enabled = False
+#         return await _store_record(resource)
+#
+#     return None
 
 
 @router.get("/resource/{id}",
             tags=["resource"],
             response_model=Optional[Resource],
             include_in_schema=tracardi.expose_gui_api)
-async def get_resource_by_id(id: str, response: Response) -> Optional[Resource]:
+async def get_resource_by_id(id: str) -> Optional[Resource]:
     """
     Returns source data with given id.
     """
-
-    record = await _load_record(id)
-
-    if record is not None:
-        return record.decode()
-
-    response.status_code = 404
-    return None
+    record = await rs.load_by_id(id)
+    return record.map_to_object(map_to_resource)
 
 
 @router.post("/resource", tags=["resource"],
-             response_model=BulkInsertResult,
              include_in_schema=tracardi.expose_gui_api)
 async def upsert_resource(resource: Resource):
-    record = ResourceRecord.encode(resource)
-    result = await _store_record(record)
-    await resource_db.refresh()
-    return result
+    return await _store_record(resource)
 
 
 @router.delete("/resource/{id}", tags=["resource"],
-               response_model=Optional[dict],
                include_in_schema=tracardi.expose_gui_api)
-async def delete_resource(id: str, response: Response):
-    result = await resource_db.delete(id)
-
-    if result is None:
-        response.status_code = 404
-        return None
-
-    await resource_db.refresh()
-    return result
+async def delete_resource(id: str):
+    return await rs.delete_by_id(id)
 
 
-@router.get("/resources/refresh",
-            tags=["resource"],
-            include_in_schema=tracardi.expose_gui_api)
-async def refresh_resources():
-    return await resource_db.refresh()
-
-
-@router.get("/resources/flash",
-            tags=["resource"],
-            include_in_schema=tracardi.expose_gui_api)
-async def refresh_resources():
-    return await resource_db.flush()
