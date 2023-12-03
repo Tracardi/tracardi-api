@@ -15,3 +15,6 @@ Once the API call is performed, you can use the Tracardi platform to manage the 
 to process the data, creating rules to shape the data, and creating segments to target customers.
 
 For more information look for `/track` API in the documentation.
+
+
+
