@@ -1,20 +1,38 @@
 # How to import data to Tracardi
 
-Tracardi provides a powerful API that allows you to easily import data into the platform. The API allows you to send
-data from any source, such as a database, a web service, or a file, and have it automatically ingested into the Tracardi
-platform.
+This answer is the summary of the following video tutorial: https://www.youtube.com/watch?v=w_4gPOL0tvw
 
-There are 2 way to import data. One via GUI. Find Import in left-hand menu and follow the instructions. Note that
-currently only imports from mysql and elastic search are available via gui.
+To import data into Tracardi through event collection, follow these steps:
 
-To import any data into Tracardi, you will need to create an API call that sends the data to the Tracardi platform. The
-API call should include the data you want to import, as well as any additional information that is needed to properly
-process the data.
+1. **Open an Event Source**: It's recommended to open an event for the import. This is the initial step where you set up
+   an event source in Tracardi.
 
-Once the API call is performed, you can use the Tracardi platform to manage the data. This includes creating workflows
-to process the data, creating rules to shape the data, and creating segments to target customers.
+2. **Allow Static Profile ID**: Ensure that the option "allow static profile ID" is selected. This is crucial because
+   you'll be sending profile IDs from an external system, and this setting allows Tracardi to recognize and use these
+   IDs.
 
-For more information look for `/track` API in the documentation.
+3. **Send a Regular Event to the Tracardi Endpoint**: Simulate a regular event with some random session data. You can
+   keep the session the same during the import process.
+
+   During sending:
+
+    1. **Include a Profile ID in Track Paylaod**: This step involves sending a profile ID. This profile ID will be
+       persistent and won't be
+       replaced by Tracardi's internal ID.
+
+    2. **Include Import Source in Track Payload**: Choose the appropriate import source for your data.
+
+    3. **Set event type to profile-update**: Indicate that you're sending profile data that you want to update. If the
+       profile does not exist, it will be created with the specified ID, thanks to the option in the Event Source that
+       retains this ID.
+
+    4. **Set Profile Data**: Send the data you want to be associated with the profile. This can include various types of
+       user or
+       event data.
+
+This process essentially involves setting up an event source, ensuring the correct handling of profile IDs, sending data
+to Tracardi, and then verifying that the data has been correctly imported and the profiles have been updated or created
+as needed.
 
 
 
