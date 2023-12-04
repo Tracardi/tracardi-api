@@ -9,6 +9,7 @@ from app.service.grouping import group_records
 from tracardi.domain.event_type_metadata import EventTypeMetadata
 from tracardi.domain.value_object.bulk_insert_result import BulkInsertResult
 from tracardi.service.events import get_default_mappings_for
+from tracardi.service.license import License
 from tracardi.service.storage.driver.elastic import event_management as event_management_db
 from tracardi.service.storage.driver.elastic import event as event_db
 from typing import Optional
@@ -126,5 +127,9 @@ async def list_event_type_mappings_by_tag(query: str = None, start: Optional[int
     """
     Lists event type metadata by tag, according to given start (int), limit (int) and query (str)
     """
+
+    if not License.has_license():
+        raise HTTPException(status_code=402, detail="Missing license")
+
     result = await event_management_db.load_events_type_mapping(start, limit)
     return group_records(result, query, group_by='tags', search_by='name', sort_by='name')
