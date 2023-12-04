@@ -9,6 +9,7 @@ from tracardi.domain.event_type_metadata import EventTypeMetadata
 from tracardi.service.events import get_default_mappings_for
 from typing import Optional, List
 
+from tracardi.service.license import License
 from tracardi.service.storage.mysql.mapping.event_to_event_mapping import map_to_event_mapping
 from tracardi.service.storage.mysql.service.event_mapping_service import EventMappingService
 
@@ -102,6 +103,10 @@ async def list_event_type_mappings_by_tag(query: str = None, start: Optional[int
     """
     Lists event type metadata by tag, according to given start (int), limit (int) and query (str)
     """
+
+    if not License.has_license():
+        raise HTTPException(status_code=402, detail="Missing license.")
+
 
     ems = EventMappingService()
     records = await ems.load_all(search=query, limit=limit, offset=start)
