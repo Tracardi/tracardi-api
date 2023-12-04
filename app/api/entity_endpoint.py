@@ -8,7 +8,7 @@ from .auth.permissions import Permissions
 from tracardi.config import tracardi
 
 router = APIRouter(
-    dependencies=[Depends(Permissions(roles=["admin", "developer", "maintainer"]))]
+    dependencies=[Depends(Permissions(roles=["admin", "developer", "maintainer", "marketer"]))]
 )
 
 
