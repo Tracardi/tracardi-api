@@ -108,11 +108,13 @@ if License.has_service(LICENSE):
     from com_tracardi.endpoint import metric_endpoint
     from com_tracardi.config import com_tracardi_settings
     from com_tracardi.endpoint import field_update_log_endpoint
+    from com_tracardi.endpoint import profile_activation
 else:
     event_to_profile_copy = get_router(prefix="/events/copy")
     event_props_to_event_traits_copy = get_router(prefix="/events/index")
     metric_endpoint = get_router(prefix="/metric")
     field_update_log_endpoint = get_router(prefix="/field/update")
+    profile_activation = get_router(prefix="/profile/activate")
 
 
 if License.has_service(MULTI_TENANT):
@@ -264,6 +266,7 @@ application.mount("/uix",
                       directory=os.path.join(_local_dir, "../uix")),
                   name="uix")
 
+application.include_router(profile_activation.router)
 application.include_router(event_server_endpoint.router)
 application.include_router(tql_endpoint.router)
 application.include_router(segments_endpoint.router)
@@ -318,6 +321,7 @@ application.include_router(event_props_to_event_traits_copy.router)
 application.include_router(event_type_predefined.router)
 application.include_router(setting_endpoint.router)
 application.include_router(field_update_log_endpoint.router)
+
 
 if License.has_service(MULTI_TENANT):
     application.include_router(tenant_install_endpoint.router)

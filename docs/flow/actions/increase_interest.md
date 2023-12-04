@@ -5,15 +5,19 @@ user profile.
 
 # Version
 
-The current version of the Increase Interest plugin is 0.8.0.
+The current version of the Increase Interest plugin is 0.8.2.
 
 ## Description
 
 The Increase Interest plugin operates by raising the interest value associated with a specified profile by a
 predetermined amount. The plugin receives a payload (in JSON format), and uses this to find the profile to be altered.
-It then increases the interest of that profile according to the plugin's configuration. The success or failure of each
-operation is tracked and logged, with error messages being produced for profile-less events and empty profiles. Finally,
-the plugin returns the same payload it received, allowing it to be passed on to the next plugin in the workflow.
+It then increases the interest of that profile according to the plugin's configuration. Dot
+notation can be used to dynamically set the interest name. Though there are some restrictions. The interest name must be
+an alpha-numerical string without spaces. Hyphen and dashes are allowed.
+
+The success or failure of each operation is tracked and logged, with error messages being produced for profile-less
+events and empty profiles. Finally, the plugin returns the same payload it received, allowing it to be passed on to the
+next plugin in the workflow.
 
 # Inputs and Outputs
 
@@ -56,3 +60,7 @@ The Increase Interest plugin may return the following error messages under certa
   the interest of a profile-less event.
 - __"Can not increase interests to empty profile."__: This error is encountered when the plugin tries to increase the
   interest of an empty profile.
+- __"Invalid interest name."__ - This error occurs when the name of the interest (key used to save it in the database)
+  is
+  not an alpha-numerical string. Interest name must be an alpha-numerical string without spaces. Hyphen and dashes are
+  allowed.
