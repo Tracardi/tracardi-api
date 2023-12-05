@@ -18,7 +18,7 @@ async def get_user_account(user=Depends(Permissions(["admin", "developer", "mark
     """
     Returns data of the user who called the endpoint
     """
-    return user.dict()
+    return user.model_dump(mode="json")
 
 
 @router.post("/user-account", tags=["user"], include_in_schema=tracardi.expose_gui_api, response_model=dict)
