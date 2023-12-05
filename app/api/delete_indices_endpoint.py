@@ -10,18 +10,23 @@ router = APIRouter(
 )
 
 
-@router.delete("/indices/version/{version}", tags=["index"], include_in_schema=tracardi.expose_gui_api)
-async def delete_old_indices(version: str, codename: Optional[str] = None):
+@router.delete("/indices", tags=["index"], include_in_schema=tracardi.expose_gui_api)
+async def delete_old_indices(db_version: str, codename: Optional[str] = None):
 
-    version = Version(version=version, name=codename)
-
-    if version == tracardi.version:
+    if db_version == tracardi.version.db_version:
         raise HTTPException(status_code=409, detail="You cannot delete indices that are currently used.")
 
     indices = await raw_db.indices()
+
+    # Test
     to_delete = [index for index in indices if index.startswith(
-        f"{version.get_version_prefix()}.{version.name}.tracardi-"
+        f"{db_version}.{codename}.tracardi-"
     )]
+
+    # Production
+    for index in indices :
+        if index.startswith(f"prod-{db_version}.{codename}.tracardi-"):
+            to_delete.append(index)
 
     result = {}
     for alias in to_delete:

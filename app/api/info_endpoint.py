@@ -25,7 +25,7 @@ async def get_current_backend_version():
     Returns current backend version with previous versions.
     """
 
-    version = tracardi.version.dict()
+    version = tracardi.version.model_dump(mode='json')
     version['instance'] = ApiInstance().id
 
     if License.has_license():
