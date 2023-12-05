@@ -134,7 +134,7 @@ async def get_migration_schemas(from_db_version: str, from_tenant_name: str = No
             to_version=MigrationManager.get_current_db_version_prefix(tracardi.version),  # Version as 081
             to_prefix=tenant
         )
-        return await manager.get_customized_schemas()
+        return await manager.get_available_schemas()
 
     except MigrationNotFoundException as e:
         raise HTTPException(status_code=404, detail=str(e))
