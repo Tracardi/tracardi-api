@@ -46,3 +46,10 @@ To do that, you can follow these steps:
 
 These steps should help you access and analyze the logs of your upgrade worker in Docker, providing insights into its
 operation and any issues it might be encountering.
+
+# Why my data was not migrated?
+
+We conduct tests on various data sets during migration, but there might be instances where your profiles and events are
+structured in ways we didn't anticipate. In such cases, the migration mappings might not function as expected. To
+identify any discrepancies, please review the upgrade worker logs to determine which fields are not aligning correctly.
+After identifying these issues, kindly report them to us for further assistance.
