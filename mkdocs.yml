@@ -16,8 +16,8 @@ markdown_extensions:
   - tables
   - footnotes
   - pymdownx.emoji:
-      emoji_index: !!python/name:materialx.emoji.twemoji
-      emoji_generator: !!python/name:materialx.emoji.to_svg
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
       options:
         custom_icons:
           - overrides/.icons
@@ -176,6 +176,7 @@ nav:
           - resources/commercial/twilio_resource.md
           - resources/commercial/weaviate_resource.md
           - resources/clicksend_resource.md
+          - resources/apache_pulsar_resource.md
 
 
   # Workflow and its action plugins that can be used
@@ -263,6 +264,8 @@ nav:
           - flow/actions/geo/geo_fence.md
           - flow/actions/list/find_max_value.md
           - flow/actions/list/sets_operations.md
+          - flow/actions/string_replace.md
+
 
 
           # Commercial version plugins
@@ -483,6 +486,7 @@ nav:
        - qa/difference_between_major_and_minor_upgrades.md
        - qa/how_to_automate_obtaining_the_API_key.md
        - qa/what_database_use_tracardi.md
+       - qa/what_things_should_i_consider_setting_up_prodution.md
        - Multi-tenancy:
          - qa/what_is_multi_tenant_setup.md
          - qa/how_do_i_setup_multi_tenant.md
@@ -521,6 +525,7 @@ nav:
          - qa/how_to_check_registered_email_in_mailchimp.md
          - qa/how_to_send_mails_with_mailchimp.md
          - qa/i_get_error_api_invaild_from_mailchimp.md
+         - qa/plugins/mailchimp.md
 
      - Tracking:
        - qa/how_to_track_clicked_links.md
@@ -643,6 +648,43 @@ nav:
        - qa/bulk/tracardi_installation.md
        - qa/bulk/workflow.md
 
+       - qa/empty_destination_drop_down.md
+       - qa/event_not_firing.md
+       - qa/event_type_on_start_node.md
+       - qa/how_many_events_can_handle_tracardi.md
+       - qa/how_profile_is_restored.md
+       - qa/how_the_profile_is_tracked.md
+       - qa/how_to_add_data_to_api_call.md
+       - qa/how_to_add_plugin_class_to_system.md
+       - qa/how_to_agregate_data.md
+       - qa/how_to_create_report.md
+       - qa/how_to_get_user_consents.md
+       - qa/how_to_import_initial_data.md
+       - qa/how_to_store_interests.md
+       - qa/how_tracadi_use_javascript_sinppet_to_collect_events.md
+       - qa/how_tracardi_can_track_marketing_campaigns.md
+       - qa/how_tracardi_segments_profiles.md
+       - qa/how_tracardi_tracks_customers.md
+       - qa/how_workflow_is_initated.md
+       - qa/how_workflow_segmentation_works.md
+       - qa/miggration_issues.md
+       - qa/on_which_fields.can_i_merge.md
+       - qa/production_configuration.md
+       - qa/resource_as_destination.md
+       - qa/what_are_extension_points.md
+       - qa/what_are_the_differences_in_data_flow_in_os_and_com.md
+       - qa/what_are_the_plugins.md
+       - qa/what_are_the_steps_of_collector.md
+       - qa/what_is_data_partitioning.md
+       - qa/what_is_the_differnece_bwtween_segment_and_audience.md
+       - qa/what_it_the_upgrade_process_of_tracardi.md
+       - qa/what_kind_of_segmentation_is_available_in_os.md
+
+       - qa/when_loading_i_have_the_error.md
+       - qa/where_can_i_save_list_visit_time_etc.md
+       - qa/why_i_do_not_see_the_event_from_my_code.md
+
+
 
      - Errors:
        - qa/errors/error_11.md
@@ -659,6 +701,7 @@ nav:
        - qa/errors/error_13.md
        - qa/errors/error_14.md
        - qa/errors/error_15.md
+       - qa/errors/error_16.md
 
   - api/index.md
   - Developers:
