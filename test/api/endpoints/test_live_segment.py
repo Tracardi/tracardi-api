@@ -1,7 +1,7 @@
 from uuid import uuid4
 
 from test.utils import Endpoint
-from tracardi.domain.live_segment import LiveSegment
+from tracardi.domain.live_segment import WorkflowSegmentationTrigger
 
 endpoint = Endpoint()
 
@@ -27,7 +27,7 @@ def test_should_create_and_delete_live_segment():
         assert response.status_code == 200
         result = response.json()
 
-        segment = LiveSegment(**result)
+        segment = WorkflowSegmentationTrigger(**result)
         assert segment.workflow.id == '1'
         assert segment.workflow.name == 'test'
         assert segment.name == 'Test segment'
@@ -40,7 +40,7 @@ def test_should_create_and_delete_live_segment():
         assert result['total'] >= 1
         assert isinstance(result['grouped']['Live segmentation'], list)
 
-        LiveSegment(**result['grouped']['Live segmentation'][0])
+        WorkflowSegmentationTrigger(**result['grouped']['Live segmentation'][0])
 
     finally:
         assert endpoint.delete(f'/segment/live/{segment_id}').status_code in [200, 404]
