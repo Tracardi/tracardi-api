@@ -90,14 +90,6 @@ system_settings = [
             "desc": "Defines the Tracardi Pro Scheduler Host."
         }
     ),
-
-    SystemSettings(
-        **{
-            "label": "CACHE_PROFILE",
-            "value": tracardi.cache_profiles,
-            "desc": "Default: no. Profiles can be cached, but it is not recommended as this option is experimental."
-        }
-    ),
     SystemSettings(
         **{
             "label": "EVENT_TO_PROFILE_COPY_CACHE_TTL",

@@ -52,7 +52,7 @@ async def get_token(login_form_data: OAuth2PasswordRequestForm = Depends(),
         try:
             token = await auth.login(login_form_data.username, login_form_data.password)
         except Exception as e:
-            raise HTTPException(status_code=400, detail=str(e))
+            raise HTTPException(status_code=400, detail=f"Redis authentication error: {str(e)}")
 
         return token
 
