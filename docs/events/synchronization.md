@@ -1,13 +1,22 @@
-# Events synchronization
+# Profile Synchronization in Data Management
 
-Profile synchronization is an important aspect of data management, particularly when working with customer data platforms or other systems that process large volumes of events and actions related to individual profiles. By coordinating the processing of events and actions, organizations can ensure that data is accurate, consistent, and up-to-date, and that actions and processes are performed in the correct order. 
+Profile synchronization plays a crucial role in data management, especially in systems handling extensive customer data,
+such as customer data platforms. This process is essential for managing a large number of events and actions linked to
+individual customer profiles. Synchronization ensures the accuracy, consistency, and timeliness of data, and maintains
+the correct order of actions and processes.
 
-Here is an example of how profile synchronization might be used in a customer data platform:
+Consider an online retailer using a customer data platform like Tracardi. This retailer monitors various
+customer-related activities, including product searches, purchases, and interactions with customer service. The
+platform, Tracardi, might be receiving numerous events every second, pertaining to various customer profiles.
 
-Imagine that an online retailer tracks events related to customer profiles, such as product searches, purchases, and customer service interactions. Tracardi might receive many events each second, including events related to different customer profiles.
+To process these events effectively, Tracardi employs profile synchronization. This approach involves processing events
+for each customer profile sequentially. Even if multiple events for a single customer arrive simultaneously, they are
+processed one after the other. This method guarantees that the data for each customer remains accurate and current,
+ensuring that all actions and processes are executed correctly.
 
-To ensure that events are processed accurately and consistently, Tracardi implements profile synchronization. This makes processing events for each customer profile sequentially, so that events related to one customer are fully processed one by one even if they are send at the same time. This ensures that the data for each customer is accurate and up-to-date, and that actions and processes are performed in the correct order.
+For instance, consider a scenario where two messages need to be sent, with the second message contingent on the outcome
+of the first. The system will wait for the completion of the first event before initiating the second message. This
+sequential processing is fundamental to maintaining data integrity.
 
-For example: If you want to send two messages and the second message depends on the result of the first one, the system must wait for the first event to be finished before sending the second message.
-
-Without profile synchronization, it is possible that events for different customer profiles could be processed out of order, leading to inconsistencies and errors in the data.
+Without profile synchronization, there's a risk of processing events for different customer profiles in a disordered
+manner, potentially leading to data inconsistencies and errors.
