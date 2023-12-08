@@ -1,13 +1,9 @@
 from datetime import datetime
-from typing import List
 from fastapi import APIRouter, Depends, Response
 from tracardi.domain.enum.time_span import TimeSpan
 from tracardi.service import events
 from tracardi.service.events import get_default_event_type_schema
 from tracardi.service.storage.driver.elastic import event as event_db
-from tracardi.service.storage.driver.elastic import debug_info as debug_info_db
-from tracardi.domain.record.event_debug_record import EventDebugRecord
-from tracardi.service.wf.domain.debug_info import DebugInfo
 from .auth.permissions import Permissions
 
 from tracardi.config import tracardi
@@ -233,20 +229,6 @@ async def delete_event(id: str):
     Deletes event with given ID
     """
     return await event_db.delete_by_id(id)
-
-
-@router.get("/event/debug/{id}", tags=["event"], response_model=List[DebugInfo],
-            include_in_schema=tracardi.expose_gui_api)
-async def get_event_debug_info(id: str):
-    """
-    Returns debug info of event with given ID
-    """
-    encoded_debug_records = await debug_info_db.load_by_event(id)
-    if encoded_debug_records is not None:
-        debug_info = [EventDebugRecord.decode(record, from_dict=True)
-                      for record in encoded_debug_records]  # type: List[DebugInfo]
-        return debug_info
-    return None
 
 
 # todo not used -  not in tests
