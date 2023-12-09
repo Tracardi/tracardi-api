@@ -730,6 +730,9 @@ nav:
       - Destinations:
           - development/destination_dev.md
 
+      - Resources:
+          - development/resource_dev.md
+
   - License:
       - license/index.md
       - license/os_license.md
