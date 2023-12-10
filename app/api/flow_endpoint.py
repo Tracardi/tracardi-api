@@ -1,4 +1,4 @@
-from zoneinfo import ZoneInfo
+from tracardi.service.utils.date import now_in_utc
 
 from datetime import datetime
 from typing import Optional
@@ -69,7 +69,7 @@ async def _deploy_production_flow(flow: Flow, flow_record: Optional[FlowRecord] 
 
     flow_record.backup = old_flow_record.production
     flow_record.deployed = True
-    flow_record.deploy_timestamp = datetime.utcnow()
+    flow_record.deploy_timestamp = now_in_utc()
 
     return await _store_record(flow_record)
 
@@ -94,7 +94,7 @@ async def _upsert_flow_draft(draft: Flow, rearrange_nodes: Optional[bool] = Fals
         flow_record = draft.get_empty_workflow_record(draft.type)
 
     flow_record.draft = encrypt(draft.model_dump())
-    flow_record.timestamp = datetime.utcnow()
+    flow_record.timestamp = now_in_utc()
 
     result = await flow_db.save_record(flow_record)
 
@@ -249,7 +249,7 @@ async def upsert_flow_details(flow_metadata: FlowMetaData):
         # create new
 
         flow_record = FlowRecord(**flow_metadata.model_dump())
-        flow_record.timestamp = datetime.utcnow()
+        flow_record.timestamp = now_in_utc()
         flow_record.draft = encrypt(Flow(
             id=flow_metadata.id,
             timestamp=flow_record.timestamp,
@@ -333,7 +333,7 @@ async def debug_flow(flow: FlowGraph, event_id: Optional[str] = None):
         Debugs flow sent in request body
     """
 
-    _now = datetime.utcnow().replace(tzinfo=ZoneInfo('UTC'))
+    _now = now_in_utc()
 
     if event_id is None:
         profile = Profile(id="@debug-profile-id",
@@ -360,7 +360,7 @@ async def debug_flow(flow: FlowGraph, event_id: Optional[str] = None):
         source = Entity(id="@debug-source-id")
 
         event = Event(
-            metadata=EventMetadata(time=EventTime(insert=datetime.utcnow())),
+            metadata=EventMetadata(time=EventTime()),
             id='@debug-event-id',
             type="@debug-event-type",
             source=source,
@@ -401,7 +401,7 @@ async def debug_flow(flow: FlowGraph, event_id: Optional[str] = None):
     tracker_payload = TrackerPayload(
         source=source,
         session=event_session,
-        metadata=EventPayloadMetadata(time=Time(insert=datetime.utcnow())),
+        metadata=EventPayloadMetadata(time=Time()),
         profile=profile,
         context={},
         request={},

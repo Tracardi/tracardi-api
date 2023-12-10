@@ -89,27 +89,27 @@ async def count_avg_process_time() -> dict:
 
 
 # todo not used - not in tests
-@router.get("/events/heatmap/profile/{id}", tags=["event"], include_in_schema=tracardi.expose_gui_api)
-async def heatmap_by_profile(id: str):
-    """
-    Returns events heatmap for profile with given ID
-    """
-    bucket_name = "items_over_time"
-
-    result = await event_db.heatmap_by_profile(id, bucket_name)
-    return {key: value for key, value in result.process(__format_time_buckets, bucket_name)}[bucket_name]
+# @router.get("/events/heatmap/profile/{id}", tags=["event"], include_in_schema=tracardi.expose_gui_api)
+# async def heatmap_by_profile(id: str):
+#     """
+#     Returns events heatmap for profile with given ID
+#     """
+#     bucket_name = "items_over_time"
+#
+#     result = await event_db.heatmap_by_profile(id, bucket_name)
+#     return {key: value for key, value in result.process(__format_time_buckets, bucket_name)}[bucket_name]
 
 
 # todo not used -  not in tests
-@router.get("/events/heatmap", tags=["event"], include_in_schema=tracardi.expose_gui_api)
-async def heatmap():
-    """
-    Returns events heatmap
-    """
-    bucket_name = "items_over_time"
-
-    result = await event_db.heatmap_by_profile(None, bucket_name)
-    return {key: value for key, value in result.process(__format_time_buckets, bucket_name)}[bucket_name]
+# @router.get("/events/heatmap", tags=["event"], include_in_schema=tracardi.expose_gui_api)
+# async def heatmap():
+#     """
+#     Returns events heatmap
+#     """
+#     bucket_name = "items_over_time"
+#
+#     result = await event_db.heatmap_by_profile(None, bucket_name)
+#     return {key: value for key, value in result.process(__format_time_buckets, bucket_name)}[bucket_name]
 
 
 @router.get("/events/metadata/type", tags=["event"], include_in_schema=tracardi.expose_gui_api)

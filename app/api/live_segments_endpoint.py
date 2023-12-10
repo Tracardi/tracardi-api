@@ -1,10 +1,11 @@
 from collections import defaultdict
-from datetime import datetime
+
 from typing import Optional
 
 from fastapi import APIRouter
 from fastapi import Depends
 
+from tracardi.service.utils.date import now_in_utc
 from tracardi.domain.live_segment import LiveSegment
 from tracardi.service.storage.driver.elastic import live_segment as live_segment_db
 from app.service.grouper import search
@@ -90,7 +91,7 @@ async def upsert_live_segment(segment: LiveSegment):
     """
     Adds new live segment to database
     """
-    segment.timestamp = datetime.utcnow()
+    segment.timestamp = now_in_utc()
     result = await live_segment_db.save(segment.model_dump())
     await live_segment_db.refresh()
     return result
