@@ -38,7 +38,7 @@ class DestinationInterface:
 
 ### Step 4: Understand the Class Properties
 
-- `Resource`: Manages user-selected resource settings.
+- `Resource`: Manages user-selected resource settings. See [How to add resource](resource_dev.md) for more details on how to add new resources if they are not defined already in the system.
 - `Destination`: Handles user-defined destination details.
 - `debug`: Indicates the debug mode status.
 
@@ -57,7 +57,10 @@ class DestinationInterface:
 - `event_type`: Type of associated event.
 - `source`: Source entity details.
 
-### Step 6: Create a Pulsar Credentials Object
+### Step 6: Create a Pulsar Credentials Object and Pulsar topic.
+
+We will need some objects in our example to keep the necessary data. We will need pulsar credentials to connect to credential server, and pulsar topic.
+
 
 - Define an object to store Apache Pulsar connection details.
 
@@ -67,8 +70,6 @@ class PulsarCredentials(BaseModel):
     token: Optional[str] = None
 ```
 
-### Step 7: Define Pulsar Topic Configuration
-
 - Create an object for configuring Apache Pulsar topics.
 
 ```python
@@ -76,7 +77,7 @@ class PulsarTopicConfiguration(BaseModel):
     topic: str
 ```
 
-### Step 8: Develop the Pulsar Connector
+### Step 7: Develop the Pulsar Connector
 
 - Implement the Pulsar connector class to handle communication with Apache Pulsar.
 
@@ -123,7 +124,7 @@ class PulsarConnector(DestinationInterface):
 
 #### Detailed Description
 
-- `_dispatch` method: Manages the data sending process to Pulsar.
+- `_dispatch` method: Manages the data sending process to Pulsar. When you develop your destination here you may code the logic of your destination plugin. Usually it will be some connection to external system. 
 - Authentication: Uses `PulsarCredentials` for Pulsar connection.
 - Credential Selection: Chooses credentials based on `debug` mode.
 - Configuration: Retrieves settings from `PulsarTopicConfiguration`.
@@ -146,7 +147,7 @@ else:
 # Get producer
 producer = client.create_producer(config.topic)
 
-# Encode paylaod
+# Encode payload
 payload = json.dumps(
     payload,
     default=str

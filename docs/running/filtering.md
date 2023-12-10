@@ -1,4 +1,4 @@
-# Data searching
+# Data searching - prior version 0.8.2
 
 Filtering is used in Tracardi to limit the number of event, profiles, etc. on the page. It uses a query parser that
 allows to define the rules of filtering.
@@ -187,7 +187,7 @@ the previous query could be rewritten as:
 ((quick AND fox) OR (brown AND fox) OR fox) AND NOT news
 ```
 
-# Filtering in version 0.8.2
+# Filtering post version 0.8.1
 
 Filtering in version 0.8.2 was simplified and has the following operations.
 

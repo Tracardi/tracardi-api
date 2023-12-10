@@ -77,10 +77,13 @@
       <env name="_PULSAR_AUTH_TOKEN" value="eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2OTU3MTc0NzYsImlzcyI6ImRhdGFzdGF4Iiwic3ViIjoiY2xpZW50OzY3MGVlODcyLTFlMjEtNGEwMy1hZGRjLTZkM2Q5NzFlZGRjODtiWGt0ZEdWemRDMHg7YzQxZjM5NmUzZSIsInRva2VuaWQiOiJjNDFmMzk2ZTNlIn0.l7F3xtPdeH-de1InolSYNENuVHMjM-NYc929sa50HVwNxXFf53OFvUOxKxgOi5cFUeiSYnlhwyBvTWi8xIIQO1sxCWLSPoQ7DBhJCC5vmAy8jWy-u40ecb0H45jT_zpXKsZ-UFZYks214Z9RWV43uCWCoiEjH06nOhKpgSTOQ10rZvz5r3jUzSpxYT9pUjEs80-dHglsgoijd2rdiRC6Fbd0QoNysIjDUUH46qPFIcRmg6YRd-Tx4Mq8RlTQfrf5VCjQu9zGJaRA2GXtvbOSOT0XVV2DNtrgH6ylvCf0ai3OmrUMezPXwqp17FyKHtX7k1HvWJp0Rr8U4Und5y5DRQ" />
       <env name="_PULSAR_COLLECTOR_TOPIC" value="persistent://my-test-1/default/test" />
       <env name="_PULSAR_HOST" value="pulsar+ssl://pulsar-gcp-europewest1.streaming.datastax.com:6651" />
+      <env name="_REDIS_HOST" value="127.0.0.1:33333" />
+      <env name="_REDIS_PASSWORD" value="OEFggDSNDZ" />
+      <env name="_REDIS_PORT" value="33333" />
       <env name="ASYNC_PROCESSING" value="no" />
       <env name="ASYNC_STORE_BUFFER_TIMEOUT" value="7000" />
       <env name="DEMO" value="no" />
-      <env name="ELASTIC_HOST" value="https://elastic:87p0Fq2M57S3qpI2B6aPKxD1@192.168.1.116:9200" />
+      <env name="_ELASTIC_HOST" value="https://elastic:87p0Fq2M57S3qpI2B6aPKxD1@192.168.1.116:9200" />
       <env name="ELASTIC_SAVE_POOL" value="" />
       <env name="ELASTIC_VERIFY_CERTS" value="no" />
       <env name="ENABLE_EVENT_DESTINATIONS" value="yes" />
@@ -99,9 +102,6 @@
       <env name="PRODUCTION" value="no" />
       <env name="PULSAR_HOST" value="pulsar://localhost:6650" />
       <env name="PYTHONUNBUFFERED" value="1" />
-      <env name="REDIS_HOST" value="127.0.0.1:33333" />
-      <env name="_REDIS_PASSWORD" value="OEFggDSNDZ" />
-      <env name="REDIS_PORT" value="33333" />
       <env name="SAVE_LOGS" value="yes" />
       <env name="SYSTEM_EVENTS" value="yes" />
       <env name="TRACK_DEBUG" value="yes" />

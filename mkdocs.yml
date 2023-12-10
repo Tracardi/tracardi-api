@@ -77,6 +77,16 @@ nav:
       - Development:
           - installation/development/index.md
 
+      - Production:
+          - installation/production/index.md
+          - installation/production/guide.md
+          - installation/production/data_partitioning.md
+          - installation/production/painpoints_in_hudge_mutitenant_setups.md
+          - installation/production/services.md
+          - installation/production/docker/index.md
+          - installation/production/k8s/index.md
+          - installation/production/k8s/helm.md
+
       - Upgrades:
           - installation/upgrades.md
 
@@ -705,10 +715,10 @@ nav:
 
   - api/index.md
   - Developers:
-      - Development environmet set-up:
+      - Development environment set-up:
           - development/react_env.md
           - development/python_env.md
-      - Mirco frontend apps developement:
+      - Mirco frontend apps development:
           - development/micro_frontend.md
       - Plugins:
           - plugins/index.md
@@ -717,6 +727,11 @@ nav:
               - plugins/tutorial/part2.md
               - plugins/tutorial/part3.md
           - plugins/forms/list_of_field_types.md
+      - Destinations:
+          - development/destination_dev.md
+
+      - Resources:
+          - development/resource_dev.md
 
   - License:
       - license/index.md

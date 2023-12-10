@@ -1,3 +1,5 @@
+from zoneinfo import ZoneInfo
+
 from datetime import datetime
 from typing import Optional
 
@@ -324,18 +326,22 @@ async def debug_flow(flow: FlowGraph, event_id: Optional[str] = None):
         Debugs flow sent in request body
     """
 
+    _now = datetime.utcnow().replace(tzinfo=ZoneInfo('UTC'))
+
     if event_id is None:
         profile = Profile(id="@debug-profile-id",
                           metadata=ProfileMetadata(
                               time=ProfileTime(
-                                  insert=datetime.utcnow()
+                                  create=_now,
+                                  insert=_now
                               )
                           ))
         session = Session(id="@debug-session-id",
                           metadata=SessionMetadata(
                               time=SessionTime(
-                                  insert=datetime.utcnow(),
-                                  timestamp=datetime.timestamp(datetime.utcnow())
+                                  create=_now,
+                                  insert=_now,
+                                  timestamp=datetime.timestamp(_now)
                               )
                           ))
         event_session = EventSession(
