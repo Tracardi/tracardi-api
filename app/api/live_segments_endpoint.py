@@ -11,6 +11,7 @@ from tracardi.service.storage.mysql.service.workflow_segmentation_trigger_servic
 from .auth.permissions import Permissions
 from tracardi.config import tracardi
 from ..service.grouping import get_grouped_result
+from tracardi.service.utils.date import now_in_utc
 
 router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer"]))]
@@ -66,5 +67,5 @@ async def upsert_live_segment(segment: WorkflowSegmentationTrigger):
     Adds new live segment to database
     """
 
-    segment.timestamp = datetime.utcnow()
+    segment.timestamp = now_in_utc()
     return await wsts.insert(segment)

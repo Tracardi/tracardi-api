@@ -1,9 +1,10 @@
-from datetime import datetime, timedelta
+from datetime import timedelta
 from typing import Optional
 
 from fastapi import APIRouter, HTTPException
 from pytimeparse.timeparse import timeparse
 
+from tracardi.service.utils.date import now_in_utc
 from tracardi.domain.consent_type import ConsentType
 from tracardi.domain.payload.customer_consent import CustomerConsent
 from tracardi.domain.profile import Profile, ConsentRevoke
@@ -41,7 +42,7 @@ async def add_consent_type(data: CustomerConsent, all: Optional[bool] = False):
             if consent_type.auto_revoke:
                 try:
                     seconds = timeparse(consent_type.auto_revoke)
-                    now = datetime.utcnow()
+                    now = now_in_utc()
                     revoke = now + timedelta(seconds=seconds)
                     revoke = ConsentRevoke(revoke=revoke)
                 except Exception:
