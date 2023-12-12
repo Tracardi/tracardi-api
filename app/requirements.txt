@@ -13,4 +13,4 @@ cron-validator==1.0.6
 python-multipart
 sentry-sdk
 
-git+https://github.com/Tracardi/tracardi.git@0.8.2-dev  # Change to 0.8.3-dev
+git+https://github.com/Tracardi/tracardi.git@0.9.1-dev  # Change to 0.9.1-dev

@@ -2,7 +2,7 @@ version: "3.7"
 services:
 
   tracardi-test-api:
-    image: tracardi/com-tracardi-api:0.8.2-rc1
+    image: tracardi/com-tracardi-api:0.9.0-rc1
     container_name: tracardi-test-api
     restart: always
     environment:
@@ -29,7 +29,7 @@ services:
 #      - tracardi-session-storage-worker
 
   tracardi-profile-flusher-worker:
-    image: tracardi/com-tracardi-flusher-worker:0.8.2-rc1
+    image: tracardi/com-tracardi-flusher-worker:0.9.0-rc1
     container_name: flusher-profile
     environment:
       CONSUMER_TYPE: "profile"
@@ -45,7 +45,7 @@ services:
       - pulsar
 
   tracardi-session-flusher-worker:
-    image: tracardi/com-tracardi-flusher-worker:0.8.2-rc1
+    image: tracardi/com-tracardi-flusher-worker:0.9.0-rc1
     container_name: flusher-session
     environment:
       CONSUMER_TYPE: "session"
@@ -61,7 +61,7 @@ services:
       - pulsar
 
   tracardi-event-storage-worker:
-    image: tracardi/com-tracardi-storage-worker:0.8.2-rc1
+    image: tracardi/com-tracardi-storage-worker:0.9.0-rc1
     container_name: storage-event
     environment:
       CONSUMER_TYPE: "event"
@@ -78,7 +78,7 @@ services:
       - pulsar
 
   tracardi-profile-storage-worker:
-    image: tracardi/com-tracardi-storage-worker:0.8.2-rc1
+    image: tracardi/com-tracardi-storage-worker:0.9.0-rc1
     container_name: storage-profile
     environment:
       CONSUMER_TYPE: "profile"
@@ -95,7 +95,7 @@ services:
       - pulsar
 
   tracardi-session-storage-worker:
-    image: tracardi/com-tracardi-storage-worker:0.8.2-rc1
+    image: tracardi/com-tracardi-storage-worker:0.9.0-rc1
     container_name: storage-session
     environment:
       CONSUMER_TYPE: "session"
@@ -112,7 +112,7 @@ services:
       - pulsar
 
   tracardi-visit-end-worker:
-    image: tracardi/com-tracardi-visit-end-worker:0.8.2-rc1
+    image: tracardi/com-tracardi-visit-end-worker:0.9.0-rc1
     container_name: visit-end
     environment:
       ELASTIC_HOST: http://elasticsearch:9200
@@ -128,7 +128,7 @@ services:
       - pulsar
 
   tracardi-scheduler-worker:
-    image: tracardi/com-tracardi-scheduler-worker:0.8.2-rc1
+    image: tracardi/com-tracardi-scheduler-worker:0.9.0-rc1
     container_name: scheduler
     environment:
       ELASTIC_HOST: http://elasticsearch:9200
@@ -145,7 +145,7 @@ services:
 
 
   tracardi-gui:
-    image: tracardi/tracardi-gui:0.8.2-rc1
+    image: tracardi/tracardi-gui:0.9.0-rc1
     container_name: tracardi-gui
     ports:
       - 8787:80
@@ -182,7 +182,7 @@ services:
       - local-network
 
 #  worker:
-#    image: tracardi/update-worker:0.8.2-rc1
+#    image: tracardi/update-worker:0.9.0-rc1
 #    environment:
 #      REDIS_HOST: redis://redis:6379
 

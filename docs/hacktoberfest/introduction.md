@@ -49,7 +49,7 @@ For developers:
 
 For everyone else:
 
-- Go to https://github.com/Tracardi/tracardi-api/blob/0.8.2-dev/docs/hacktoberfest/for_documentators.md
+- Go to https://github.com/Tracardi/tracardi-api/blob/0.9.0-dev/docs/hacktoberfest/for_documentators.md
 
 Thank you very much for your enthusiasm and help in making the Tracardi Project even better! 🚀 
 

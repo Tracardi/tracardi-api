@@ -278,7 +278,7 @@ def register() -> Plugin:
             inputs=["payload"],
             outputs=["payload", "error"],
             init={"mergeBy": []},
-            version="0.8.2",
+            version="0.9.0",
             form=Form(groups=[
                 FormGroup(
                     fields=[
