@@ -1,6 +1,5 @@
-from datetime import datetime
-
 from fastapi import APIRouter, Depends
+from tracardi.service.utils.date import now_in_utc
 from tracardi.config import tracardi
 from tracardi.service.storage.driver.elastic import raw as raw_db
 from .auth.permissions import Permissions
@@ -24,4 +23,4 @@ async def get_server_time():
     Returns current server time.
     """
 
-    return datetime.utcnow()
+    return now_in_utc()
