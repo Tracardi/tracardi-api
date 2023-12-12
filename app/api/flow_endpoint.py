@@ -278,7 +278,9 @@ async def upsert_flow_details(flow_metadata: FlowMetaData):
         flow_record.projects = flow_metadata.projects
         flow_record.type = flow_metadata.type
 
-    return await _store_record(flow_record)
+    result = await _store_record(flow_record)
+    await flow_db.refresh()
+    return result
 
 
 @router.post("/flow/draft/metadata", tags=["flow"], response_model=BulkInsertResult,
