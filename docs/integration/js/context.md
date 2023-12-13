@@ -32,7 +32,8 @@ Configuration can be extended with *context* parameter, where you may define the
             session: false,
             storage:true,
             screen: true,
-            performance: false
+            performance: false,
+            location: true
         }
     }
 }
@@ -89,6 +90,10 @@ the context configuration.
     Sending cookies and localStorage data can lead to data explosion in Tracardi database. Each customer may have
     different cookies and local data that will lead to the 1000 fields per record limit in elastic. This will stop writing
     new sessions to the system.
+
+### Customer GEO location
+
+By setting the __context.location__ to true, system will try to catch geo location on client side. 
 
 ### Event performance metrics
 
