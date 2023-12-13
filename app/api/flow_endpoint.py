@@ -1,3 +1,4 @@
+from tracardi.service.tracking.storage.profile_storage import load_profile
 from tracardi.service.utils.date import now_in_utc
 
 from datetime import datetime
@@ -20,7 +21,6 @@ from tracardi.service.secrets import encrypt
 from tracardi.service.storage.driver.elastic import flow as flow_db
 from tracardi.service.storage.driver.elastic import rule as rule_db
 from tracardi.service.storage.driver.elastic import event as event_db
-from tracardi.service.storage.driver.elastic import profile as profile_db
 from tracardi.service.storage.driver.elastic import session as session_db
 from tracardi.service.utils.getters import get_entity_id
 from tracardi.service.wf.domain.flow_history import FlowHistory
@@ -36,7 +36,6 @@ from tracardi.domain.session import Session, SessionMetadata, SessionTime
 from tracardi.domain.value_object.bulk_insert_result import BulkInsertResult
 from .auth.permissions import Permissions
 from tracardi.config import tracardi
-from tracardi.service.storage.cache.model import load as cache_load
 
 
 router = APIRouter(
@@ -380,12 +379,10 @@ async def debug_flow(flow: FlowGraph, event_id: Optional[str] = None):
         source = event.source
 
         if event.has_profile():
-            cache_load(model=Profile, id=event.profile.id)
-            profile = await profile_db.load_by_id(event.profile.id)
+            profile = await load_profile(event.profile.id)
             if profile is None:
                 raise ValueError(f"Could not find profile id {event.profile.id} attached to event id {event_id}. "
                                  f"Debugging will fail if profile is expected.")
-            profile = profile.to_entity(Profile)
         else:
             profile = None
 

@@ -10,6 +10,7 @@ from tracardi.service.profile_deduplicator import deduplicate_profile
 from tracardi.service.storage.driver.elastic import profile as profile_db
 from tracardi.service.storage.driver.elastic import event as event_db
 from tracardi.service.storage.index import Resource
+from tracardi.service.tracking.storage.profile_storage import delete_profile
 from .auth.permissions import Permissions
 from tracardi.config import tracardi
 
@@ -59,6 +60,7 @@ async def get_profile_by_id(id: str, response: Response) -> Optional[dict]:
     Returns profile with given ID (str)
     """
     try:
+        # This is acceptable - we see the profile from the database
         record = await profile_db.load_by_id(id)
         if record is None:
             response.status_code = 404
@@ -76,13 +78,13 @@ async def get_profile_by_id(id: str, response: Response) -> Optional[dict]:
                dependencies=[Depends(Permissions(roles=["admin", "developer"]))],
                response_model=Optional[dict],
                include_in_schema=tracardi.expose_gui_api)
-async def delete_profile(id: str, response: Response):
+async def delete_profile_by_id(id: str, response: Response):
     """
     Deletes profile with given ID (str)
     """
     # Delete from all indices
     index = Resource().get_index_constant("profile")
-    result = await profile_db.delete_by_id(id, index=index.get_multi_storage_alias())
+    result = await delete_profile(id, index=index.get_multi_storage_alias())
 
     if result['deleted'] == 0:
         response.status_code = 404
