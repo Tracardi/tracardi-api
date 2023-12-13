@@ -196,9 +196,13 @@ Use this template to generate the documentation:
 
 <Put here required resources. If none recourse defined in the plugin form or code write "This plugin does not require external resources tobe configured".>
 
+# Event prerequisites
+
+<Put here information if the plugin only works for sync event or for all events. Plugins that are UIX widgets (usually placed in UIX Widgets group) require an event to synchronious and wait for the workflow to finish. All other plugins do not have this requirement.>
+
 # Errors
 
-<Put here all possible errors. Put here Exception message (not exception type) theat means if there is ` raise ValueError("Profile event sequencing can not be performed without profile. Is this a profile less event?")` "Profile event sequencing can not be performed without profile. Is this a profile less event?" not `ValueError`.
+<Put here all possible errors. Put here Exception message (not exception type) that means if there is ` raise ValueError("Profile event sequencing can not be performed without profile. Is this a profile less event?")` "Profile event sequencing can not be performed without profile. Is this a profile less event?" not `ValueError`.
 and after the error the description when it may occur.>
 
 ```
@@ -211,37 +215,43 @@ There is only one, do not use `` in the response. So `some text` is not allowed.
 Here is the full plugin code:
 
 ```python
-from tracardi.service.plugin.domain.register import Plugin, Spec, MetaData, Documentation, PortDoc, Form, FormGroup, FormField, FormComponent
-from tracardi.service.plugin.runner import ActionRunner
-from tracardi.process_engine.tql.condition import Condition
-from .model.config import Config
+from typing import Optional
+
+from tracardi.service.plugin.domain.register import Plugin, Spec, MetaData, Documentation, PortDoc, Form, FormGroup, \
+    FormField, FormComponent
+from pydantic import field_validator
 from tracardi.service.plugin.domain.result import Result
+from tracardi.service.plugin.runner import ActionRunner
+from tracardi.service.plugin.domain.config import PluginConfig
 
 
-def validate(config: dict) -> Config:
+class Config(PluginConfig):
+    script_url: str
+
+    @field_validator("script_url")
+    def validate_file_path(cls, value):
+        if value == "":
+            raise ValueError("Script URL can not be empty.")
+        return value
+
+
+async def validate(config: dict) -> Config:
     return Config(**config)
 
 
-class ConditionSetPlugin(ActionRunner):
+class ZendeskWidgetPlugin(ActionRunner):
 
     config: Config
 
     async def set_up(self, init):
-        self.config = validate(init)
+        self.config = Config(**init)
 
     async def run(self, payload: dict, in_edge=None) -> Result:
-        condition = Condition()
-        dot = self._get_dot_accessor(payload)
-
-        conditions = {}
-        for key, value in self.config.conditions.items():
-            try:
-                result = await condition.evaluate(value, dot)
-                conditions[key] = result
-            except Exception as e:
-                self.console.error(f"Could not parse the condition `{value}`. Got error: {str(e)}")
-
-        return Result(port='result', value=conditions)
+        self.ux.append({
+            "tag": "script",
+            "props": {"src": self.config.script_url, "id": "ze-snippet"}
+        })
+        return Result(port="response", value=payload)
 
 
 def register() -> Plugin:
@@ -249,33 +259,27 @@ def register() -> Plugin:
         start=False,
         spec=Spec(
             module=__name__,
-            className='ConditionSetPlugin',
+            className=ZendeskWidgetPlugin.__name__,
             inputs=["payload"],
-            outputs=["result"],
-            version='0.8.2',
-            license="MIT + CC",
-            author="Daniel Demedziuk, Risto Kowaczewski",
+            outputs=["response", "error"],
+            version='0.7.3',
+            license="MIT",
+            author="Risto Kowaczewski",
+            manual="zendesk_widget_action",
             init={
-                'conditions': {}
+                "script_url": "https://static.zdassets.com/ekr/snippet.js?key=<your-key>",
             },
-            manual="condition_set_action",
             form=Form(
                 groups=[
                     FormGroup(
-                        name='Plugin configuration',
+                        name="Zendesk widget configuration",
                         fields=[
                             FormField(
-                                id='conditions',
-                                name='Conditions to evaluate',
-                                description='Provide key - value pairs where key is your custom name for a condition and value is a condition to evaluate (e.g. profile@consents.marketing EXISTS).',
-                                component=FormComponent(
-                                    type='keyValueList',
-                                    props={
-                                        'label': 'condition',
-                                        'disableSwitching': True,
-                                        'disableCasting': True
-                                    }
-                                )
+                                id="script_url",
+                                name="Zendesk script URL",
+                                description="The URL is displayed when you open an account in Zendesk. "
+                                            "Please see the zendesk.com documentation for more details.",
+                                component=FormComponent(type="text", props={"label": "Script URL"})
                             )
                         ]
                     )
@@ -283,63 +287,29 @@ def register() -> Plugin:
             )
         ),
         metadata=MetaData(
-            name='Resolve conditions',
-            desc='That plugin creates an object with results from resolved condition set.',
-            icon='question',
-            tags=['condition'],
-            group=["Flow control"],
-            purpose=['collection', 'segmentation'],
+            name='Zendesk widget',
+            brand="Zendesk",
+            desc='Shows Zendesk widget on the webpage.',
+            icon='zendesk',
+            tags=['messaging', 'chat'],
+            group=["UIX Widgets"],
             documentation=Documentation(
                 inputs={
                     "payload": PortDoc(desc="This port takes payload object.")
                 },
                 outputs={
-                    "result": PortDoc(desc="This port returns object with evaluated conditions.")
+                    "payload": PortDoc(desc="This port returns given payload without any changes.")
                 }
-            )
+            ),
+            frontend=True
         )
     )
 
-```
 
 ```
 
 
 Available manual:
 
-# Check conditions plugin
-
-This plugin return results with resolved condition set.
-
-## Configuration
-
-It takes key-value pairs where value is a condition and key is a string.
-
-*Example*
-
-```json
-{
-  "conditions": {
-    "marketing-consent": "profile@consents.marketing EXISTS",
-    "is-it-raining": "lowercase(payload@weather.condition) == 'rain'"
-  }
-}
-```
-
-## Input
-
-This plugin takes any type of payload as input.
-
-## Output
-
-Plugin outputs object with conditions evaluated to value false or true.
-
-Example:
-
-```json
-{
-  "marketing-consent": true,
-  "is-it-raining": false
-}
-```
+none
 
