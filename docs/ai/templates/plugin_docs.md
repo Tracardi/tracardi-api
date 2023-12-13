@@ -211,62 +211,37 @@ There is only one, do not use `` in the response. So `some text` is not allowed.
 Here is the full plugin code:
 
 ```python
-from typing import List
-
-from pydantic import field_validator
-from tracardi.domain.profile import Profile
-
-from tracardi.service.plugin.domain.register import Plugin, Spec, MetaData, Form, FormGroup, FormField, FormComponent, \
-    Documentation, PortDoc
+from tracardi.service.plugin.domain.register import Plugin, Spec, MetaData, Documentation, PortDoc, Form, FormGroup, FormField, FormComponent
 from tracardi.service.plugin.runner import ActionRunner
+from tracardi.process_engine.tql.condition import Condition
+from .model.config import Config
 from tracardi.service.plugin.domain.result import Result
-from tracardi.service.plugin.domain.config import PluginConfig
 
 
-class MergeProfileConfiguration(PluginConfig):
-    mergeBy: List[str]
-
-    @field_validator("mergeBy")
-    @classmethod
-    def list_must_not_be_empty(cls, value):
-        # Merge by keys must exist and come from profile
-        if not len(value) > 0:
-            raise ValueError("Field mergeBy is empty and has no effect on merging. "
-                             "Add merging key or remove this action from flow.")
-
-        for key in value:
-            if not key.startswith('profile@'):
-                raise ValueError(
-                    f"Field `{key}` does not start with profile@... Only profile fields are used during merging.")
-
-        return value
+def validate(config: dict) -> Config:
+    return Config(**config)
 
 
-def validate(config: dict) -> MergeProfileConfiguration:
-    return MergeProfileConfiguration(**config)
+class ConditionSetPlugin(ActionRunner):
 
-
-class MergeProfilesAction(ActionRunner):
-    merge_key: List[str]
+    config: Config
 
     async def set_up(self, init):
-        config = validate(init)
-        self.merge_key = [key.lower() for key in config.mergeBy]
+        self.config = validate(init)
 
     async def run(self, payload: dict, in_edge=None) -> Result:
-        if isinstance(self.profile, Profile):
-            # TODO LOOK for self.profile.operation.needs_merging()
-            # TODO operation can be overwritten by update form cache. maybe mrege here not at the end of workflow.
-            self.profile.operation.merge = self.merge_key
-        else:
-            if self.event.metadata.profile_less is True:
-                self.console.warning("Can not merge profile when processing profile less events.")
-            else:
-                message = "Can not merge profile. Profile is empty."
-                self.console.error(message)
-                return Result(value={"message": message}, port="error")
+        condition = Condition()
+        dot = self._get_dot_accessor(payload)
 
-        return Result(value=payload, port="payload")
+        conditions = {}
+        for key, value in self.config.conditions.items():
+            try:
+                result = await condition.evaluate(value, dot)
+                conditions[key] = result
+            except Exception as e:
+                self.console.error(f"Could not parse the condition `{value}`. Got error: {str(e)}")
+
+        return Result(port='result', value=conditions)
 
 
 def register() -> Plugin:
@@ -274,46 +249,56 @@ def register() -> Plugin:
         start=False,
         spec=Spec(
             module=__name__,
-            className='MergeProfilesAction',
+            className='ConditionSetPlugin',
             inputs=["payload"],
-            outputs=["payload", "error"],
-            init={"mergeBy": []},
-            version="0.8.2",
-            form=Form(groups=[
-                FormGroup(
-                    fields=[
-                        FormField(
-                            id="mergeBy",
-                            name="Merge by fields",
-                            description="Provide a list of fields that can identify user. For example profile@data.contact.email.main. "
-                                        "These fields will be treated as primary keys for merging. Profiles will be "
-                                        "grouped by this value and merged.",
-                            component=FormComponent(type="listOfDotPaths", props={"label": "condition",
-                                                                                  "defaultSourceValue": "profile"
-                                                                                  })
-                        )
-                    ]
-                ),
-            ]),
-            manual="merge_profiles_action"
+            outputs=["result"],
+            version='0.8.2',
+            license="MIT + CC",
+            author="Daniel Demedziuk, Risto Kowaczewski",
+            init={
+                'conditions': {}
+            },
+            manual="condition_set_action",
+            form=Form(
+                groups=[
+                    FormGroup(
+                        name='Plugin configuration',
+                        fields=[
+                            FormField(
+                                id='conditions',
+                                name='Conditions to evaluate',
+                                description='Provide key - value pairs where key is your custom name for a condition and value is a condition to evaluate (e.g. profile@consents.marketing EXISTS).',
+                                component=FormComponent(
+                                    type='keyValueList',
+                                    props={
+                                        'label': 'condition',
+                                        'disableSwitching': True,
+                                        'disableCasting': True
+                                    }
+                                )
+                            )
+                        ]
+                    )
+                ]
+            )
         ),
         metadata=MetaData(
-            name='Merge profiles',
-            desc='Merges profile in storage when flow ends. This operation is expensive so use it with caution, '
-                 'only when there is a new PII information added.',
-            icon='merge',
-            group=["Operations"],
+            name='Resolve conditions',
+            desc='That plugin creates an object with results from resolved condition set.',
+            icon='question',
+            tags=['condition'],
+            group=["Flow control"],
+            purpose=['collection', 'segmentation'],
             documentation=Documentation(
                 inputs={
-                    "payload": PortDoc(desc="This port takes any JSON-like object.")
+                    "payload": PortDoc(desc="This port takes payload object.")
                 },
                 outputs={
-                    "payload": PortDoc(desc="This port returns exactly same payload as given one.")
+                    "result": PortDoc(desc="This port returns object with evaluated conditions.")
                 }
             )
         )
     )
-
 
 ```
 
@@ -322,30 +307,39 @@ def register() -> Plugin:
 
 Available manual:
 
-Merge Profile Action
+# Check conditions plugin
 
-When new personal information is added to a customer's profile, it might need to be combined with other profiles in the system to create one consistent profile. This is done through the "merge profile" action.
+This plugin return results with resolved condition set.
 
-When this action is used in the workflow, it will set the profile to be merged at the end of the process. To finish the merging process, you'll need to provide a merge key in the settings of the "merge profile" step.
-Configuration
+## Configuration
 
-The merge key is an important part of the system that helps to combine different customer profiles into one. This key can be something unique like an email, phone number, or ID. The system will look for other profiles that have the same key and merge them together.
+It takes key-value pairs where value is a condition and key is a string.
 
-When the profiles are merged, all their information is combined into one single profile and any actions related to those profiles are now related to the merged one. Any extra profiles that are no longer needed will be deleted, but their ID will still be connected to the new merged profile. This means that if you try to look for an old profile, the system will show you the new merged one.
+*Example*
 
-If you want to merge profiles using more than one key, like email and name, the system will look for profiles that have both those keys. The merge key should be provided in a JSON array. To access the merge key data, you should use dotted notation. For more information on this notation, check the Notations/Dot notation section in the documentation.
-
+```json
 {
-  "mergeBy": ["profile@data.contact.email"]
+  "conditions": {
+    "marketing-consent": "profile@consents.marketing EXISTS",
+    "is-it-raining": "lowercase(payload@weather.condition) == 'rain'"
+  }
 }
+```
 
-A simpler way to merge profile
+## Input
 
-An identification point is a feature (in commercial Tracardi) that allows the system to identify customers during their journey. When this point is set, the system will monitor for events that can be used to match the anonymous customer's identified profile.
+This plugin takes any type of payload as input.
 
-To give an analogy, think of an identification point like the ones at an airport or during a police check. You stay anonymous until there is a moment when you need to show your ID. This is an identification point. At this point, you are no longer anonymous. The same goes for Tracardi, once you identify yourself, all your past events become part of your identified profile. If identification happens multiple times on different communication channels, all the anonymous actions will become not anonymous anymore.
+## Output
 
-For example, if a customer's profile in the system has an email address that matches the email delivered in a new event, then the system can match anonymous customer data with the existing profile and merge all previous interactions/events.
+Plugin outputs object with conditions evaluated to value false or true.
 
-In simpler terms, identification point is a way for the system to identify customers and keep their information consistent throughout their journey.
+Example:
+
+```json
+{
+  "marketing-consent": true,
+  "is-it-raining": false
+}
+```
 
