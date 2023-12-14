@@ -1,3 +1,4 @@
+from tracardi.service.tracking.storage.profile_storage import load_profile
 from tracardi.service.utils.date import now_in_utc
 
 from datetime import datetime
@@ -17,7 +18,6 @@ from tracardi.domain.console import Console
 from tracardi.service.console_log import ConsoleLog
 from tracardi.service.secrets import encrypt
 from tracardi.service.storage.driver.elastic import event as event_db
-from tracardi.service.storage.driver.elastic import profile as profile_db
 from tracardi.service.storage.driver.elastic import session as session_db
 from tracardi.service.storage.mysql.mapping.workflow_mapping import map_to_workflow_record
 from tracardi.service.storage.mysql.service.workflow_service import WorkflowService
@@ -36,7 +36,6 @@ from tracardi.domain.session import Session, SessionMetadata, SessionTime
 from tracardi.domain.value_object.bulk_insert_result import BulkInsertResult
 from .auth.permissions import Permissions
 from tracardi.config import tracardi
-from tracardi.service.storage.cache.model import load as cache_load
 
 
 router = APIRouter(
@@ -273,7 +272,9 @@ async def upsert_flow_details(flow_metadata: FlowMetaData):
         flow_record.projects = flow_metadata.projects
         flow_record.type = flow_metadata.type
 
-    return await _store_record(flow_record)
+    result = await _store_record(flow_record)
+    await flow_db.refresh()
+    return result
 
 
 @router.post("/flow/draft/metadata", tags=["flow"],
@@ -372,12 +373,10 @@ async def debug_flow(flow: FlowGraph, event_id: Optional[str] = None):
         source = event.source
 
         if event.has_profile():
-            cache_load(model=Profile, id=event.profile.id)
-            profile = await profile_db.load_by_id(event.profile.id)
+            profile = await load_profile(event.profile.id)
             if profile is None:
                 raise ValueError(f"Could not find profile id {event.profile.id} attached to event id {event_id}. "
                                  f"Debugging will fail if profile is expected.")
-            profile = profile.to_entity(Profile)
         else:
             profile = None
 

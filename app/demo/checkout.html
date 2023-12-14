@@ -47,11 +47,11 @@
     
     window.tracker.track("page-view", {"category": "check-out"});
     window.tracker.track("checkout-started", {
- "id": "checkout-id",
- "order_id": "order-id",
- "currency": "DOL",
- "value": 379.0
-});
+         "id": "checkout-id",
+         "order_id": "order-id",
+         "currency": "DOL",
+         "value": 379.0
+        });
     
 </script>
     
@@ -1462,7 +1462,7 @@
                                                             <label class="gl-label" for="login-email">E-MAIL *</label>
 
                                                             <input class="input-text input-text--primary-style" type="text" id="login-email" placeholder="Enter E-mail"
-                                                            onBlur="sendEvent('identification', {email: document.getElementById('login-email').value})"
+                                                            onBlur="sendEvent('identification', {email: {main: document.getElementById('login-email').value}})"
                                                             ></div>
                                                         <div class="u-s-m-b-15">
 
@@ -1579,7 +1579,7 @@
                                                 <label class="gl-label" for="billing-email">E-MAIL *</label>
 
                                                 <input class="input-text input-text--primary-style" type="text" id="billing-email" data-bill=""
-                                                onBlur="sendEvent('identification', {email: document.getElementById('billing-email').value})"
+                                                onBlur="sendEvent('identification', {email: {main: document.getElementById('billing-email').value}})"
                                                 ></div>
                                             <!--====== End - E-MAIL ======-->
 
@@ -1590,7 +1590,7 @@
                                                 <label class="gl-label" for="billing-phone">PHONE *</label>
 
                                                 <input class="input-text input-text--primary-style" type="text" id="billing-phone" data-bill=""
-                                                onBlur="sendEvent('identification', {phone: document.getElementById('billing-phone').value})"
+                                                onBlur="sendEvent('identification', {phone: { main: document.getElementById('billing-phone').value}})"
                                                 ></div>
                                             <!--====== End - PHONE ======-->
 

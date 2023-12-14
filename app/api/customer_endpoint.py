@@ -4,6 +4,9 @@ from typing import Optional
 from fastapi import APIRouter, HTTPException
 from pytimeparse.timeparse import timeparse
 
+from tracardi.service.tracking.cache.profile_cache import save_profile_cache
+from tracardi.service.tracking.storage.profile_storage import load_profile, save_profile
+from tracardi.service.tracking.storage.session_storage import load_session
 from tracardi.service.utils.date import now_in_utc
 from tracardi.domain.consent_type import ConsentType
 from tracardi.domain.payload.customer_consent import CustomerConsent
@@ -24,16 +27,13 @@ async def add_consent_type(data: CustomerConsent, all: Optional[bool] = False):
     """
     Adds customer consent
     """
-    cache_load(model=Session, id=data.session.id)
-    cache_load(model=Profile, id=data.profile.id)
-    session = await session_db.load_by_id(data.session.id)
-    profile = await profile_db.load_by_id(data.profile.id)
+    session = await load_session(data.session.id)
+    profile = await load_profile(data.profile.id)
     source = (await EventSourceService().load_by_id(data.source.id)).map_to_object(map_to_event_source)
 
     if not source or not profile or not session:
         raise HTTPException(status_code=403, detail="Access denied")
 
-    profile = profile.to_entity(Profile)
     if all:
         cts = ConsentTypeService()
         consent_type_records = await cts.load_all()
@@ -59,5 +59,8 @@ async def add_consent_type(data: CustomerConsent, all: Optional[bool] = False):
             else:
                 if consent in profile.consents:
                     del profile.consents[consent]
-    profile.aux['consents'] = {"displayed": True}
-    return await profile_db.save(profile)
+
+    profile.aux['consents'] = {"granted": True}
+
+    save_profile_cache(profile)
+    return await save_profile(profile)

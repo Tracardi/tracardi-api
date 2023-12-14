@@ -55,18 +55,18 @@
         btns.forEach(function(element) {
             helpers.onClick(element, async ()=> {
                 const response = await helpers.track("product-added-to-basket", {
- "id": "product-id",
- "name": "New Fashion B Nice Elegant",
- "sku": "AK-2WEU",
- "category": "Apparel",
- "brand": "Nike",
- "variant": {
-  "color": "Black",
-  "size": "L"
- },
- "price": 6.99,
- "quantity": 1
-});
+                 "id": "product-id",
+                 "name": "New Fashion B Nice Elegant",
+                 "sku": "AK-2WEU",
+                 "category": "Apparel",
+                 "brand": "Nike",
+                 "variant": {
+                  "color": "Black",
+                  "size": "L"
+                 },
+                 "price": 6.99,
+                 "quantity": 1
+                });
             });
           })
     })
@@ -3442,9 +3442,9 @@
 
                                         <label for="newsletter"></label>
 
-                                        <input class="input-text input-text--only-white" type="text" id="newsletter" placeholder="Enter your Email">
+                                        <input class="input-text input-text--only-white" type="text" id="newsletter" placeholder="Enter your Email" onBlur="sendEvent('identification', {email: main: {document.getElementById('newsletter').value}})">
 
-                                        <button class="btn btn--e-brand newsletter__btn" type="button" onClick="sendEvent('identification', {email: document.getElementById('newsletter').value})">SUBSCRIBE</button></div>
+                                        <button class="btn btn--e-brand newsletter__btn" type="button" onClick="sendEvent('identification', {email: main: {document.getElementById('newsletter').value}})">SUBSCRIBE</button></div>
 
                                     <span class="newsletter__text">Subscribe to the mailing list to receive updates on promotions, new arrivals, discount and coupons.</span>
                                 </form>
@@ -3743,7 +3743,7 @@
                                     <form class="new-l__form">
                                         <div class="u-s-m-b-15">
 
-                                            <input class="news-l__input" type="text" placeholder="E-mail Address"></div>
+                                            <input class="news-l__input" type="text" placeholder="E-mail Address" id="newsletter-email" onBlur="sendEvent('identification', {email: {main: document.getElementById('newsletter-email').value}})"></div>
                                         <div class="u-s-m-b-15">
 
                                             <button class="btn btn--e-brand-b-2" type="submit">Sign up!</button></div>
