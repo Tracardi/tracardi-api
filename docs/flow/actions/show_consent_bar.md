@@ -4,7 +4,7 @@ This plugin displays a consent pop-up on the front-end of your application.
 
 # Version
 
-0.6.1
+0.8.2
 
 ## Description
 
@@ -46,6 +46,7 @@ The plugin can be configured via the following parameters:
 - **position**: This field can be adjusted to place the widget either at the top or the bottom of the application window.
 - **expand_height**: This field can be adjusted to specify the height of the expanded widget.
 - **enabled**: This field can be set to either true or false to enable or disable the widget respectively.
+- **always_display**: If set to true the consent bar will always be displayed regardless if the consents were already given.
 
 # JSON Configuration
 
@@ -59,7 +60,8 @@ Here is an example configuration:
   "agree_all_event_type": "agree-all-event-type",
   "position": "bottom",
   "expand_height": 400,
-  "enabled": true
+  "enabled": true,
+  "always_display": false
 }
 ```
 

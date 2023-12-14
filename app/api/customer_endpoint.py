@@ -55,7 +55,7 @@ async def add_consent_type(data: CustomerConsent, all: Optional[bool] = False):
                 if consent in profile.consents:
                     del profile.consents[consent]
 
-    profile.aux['consents'] = {"displayed": True}
+    profile.aux['consents'] = {"granted": True}
 
     save_profile_cache(profile)
     return await save_profile(profile)
