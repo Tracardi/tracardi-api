@@ -70,28 +70,6 @@ async def get_consent_types(start: int = 0, limit: int = 200):
     }
 
 
-# @router.get("/consents/type/enabled", tags=["consent"], include_in_schema=tracardi.expose_gui_api,
-#             response_model=dict)
-# async def get_enabled_consent_types(limit: int = 100):
-#     """
-#     Lists only enabled consent types with defined limit (int)
-#     """
-#
-#     result = await consent_type_db.load_all_active(limit=limit)
-#     return {"total": len(result), "result": list(result)}
-
-
-# @router.put("/consents/type/refresh", dependencies=[Depends(Permissions(roles=["admin", "marketer", "developer"]))],
-#             tags=["consent"], include_in_schema=tracardi.expose_gui_api,
-#             response_model=dict)
-# async def refresh_consent_types():
-#     """
-#     Refreshes database consent type index. Accessible for roles: "admin", "marketer", "developer"
-#     """
-#
-#     return await consent_type_db.refresh()
-
-
 @router.get("/consents/type/by_tag", tags=["consent"], include_in_schema=tracardi.expose_gui_api,
             response_model=dict)
 async def get_consent_types(query: str = None, start: int = 0, limit: int = 10):

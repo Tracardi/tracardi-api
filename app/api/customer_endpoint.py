@@ -10,11 +10,7 @@ from tracardi.service.tracking.storage.session_storage import load_session
 from tracardi.service.utils.date import now_in_utc
 from tracardi.domain.consent_type import ConsentType
 from tracardi.domain.payload.customer_consent import CustomerConsent
-from tracardi.domain.profile import Profile, ConsentRevoke
-from tracardi.domain.session import Session
-from tracardi.service.storage.driver.elastic import session as session_db
-from tracardi.service.storage.driver.elastic import profile as profile_db
-from tracardi.service.storage.cache.model import load as cache_load
+from tracardi.domain.profile import ConsentRevoke
 from tracardi.service.storage.mysql.mapping.event_source_mapping import map_to_event_source
 from tracardi.service.storage.mysql.service.consent_type_service import ConsentTypeService
 from tracardi.service.storage.mysql.service.event_source_service import EventSourceService
