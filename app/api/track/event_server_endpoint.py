@@ -2,7 +2,7 @@ import logging
 from json import JSONDecodeError
 from typing import Optional
 
-from fastapi import APIRouter, Request, status, HTTPException
+from fastapi import APIRouter, Request, status, HTTPException, Response
 from fastapi.responses import RedirectResponse
 
 from tracardi.service.notation.dict_traverser import DictTraverser
@@ -76,13 +76,18 @@ async def _track(tracker_payload: TrackerPayload, host: str, allowed_bridges):
 
 
 @router.post("/track", tags=['collector'])
-async def track(tracker_payload: TrackerPayload, request: Request, profile_less: bool = False):
+async def track(tracker_payload: TrackerPayload, request: Request, response: Response, profile_less: bool = False):
 
     tracker_payload.set_headers(dict(request.headers))
     tracker_payload.profile_less = profile_less
-    return await _track(tracker_payload,
+    result = await _track(tracker_payload,
                         get_ip_address(request),
                         allowed_bridges=['rest'])
+
+    if result.get('errors', []):
+        response.status_code = 226
+
+    return result
 
 
 @router.put("/track", tags=['collector'])
