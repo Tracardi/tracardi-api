@@ -158,7 +158,6 @@ async def list_resources_by_type(query: str = None):
 
 @router.get("/resource/{id}/enabled/on",
             tags=["resource"],
-            response_model=dict,
             include_in_schema=tracardi.expose_gui_api)
 async def set_resource_property_on(id: str):
     record = await _load_record(id)
@@ -176,7 +175,6 @@ async def set_resource_property_on(id: str):
 
 @router.get("/resource/{id}/enabled/off",
             tags=["resource"],
-            response_model=dict,
             include_in_schema=tracardi.expose_gui_api)
 async def set_resource_property_off(id: str):
     record = await _load_record(id)

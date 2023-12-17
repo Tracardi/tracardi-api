@@ -101,11 +101,13 @@ def test_should_toggle_on_off_source():
         response = create_resource(resource_id, "mysql", name="Test MySql Resource")
         assert response.status_code == 200
         result = response.json()
+        print(result)
         assert result == {'saved': 1, 'errors': [], 'ids': [resource_id]}
 
         # Enable on
 
         result = endpoint.get(f'/resource/{resource_id}/enabled/on').json()
+        print(result)
         assert result == {'saved': 1, 'errors': [], 'ids': [resource_id]}
 
         result = endpoint.get(f'/resource/{resource_id}').json()

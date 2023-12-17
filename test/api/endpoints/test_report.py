@@ -26,7 +26,7 @@ def test_should_work():
     event_type = str(uuid4())
     session_id = str(uuid4())
     source_id = str(uuid4())
-    response, _, event_id, profile_id = _make_event(event_type, session_id=session_id, source_id=source_id)
+    response, _, events, profile_id = _make_event(event_type, session_id=session_id, source_id=source_id)
 
     try:
 
@@ -69,7 +69,7 @@ def test_should_work():
     finally:
         assert endpoint.delete("/report/@test-report").status_code == 200
         assert endpoint.delete(f'/event-source/{source_id}').status_code == 200
-        assert endpoint.delete(f'/event/{event_id}').status_code == 200
+        assert endpoint.delete(f'/event/{events[0]}').status_code == 200
         assert endpoint.delete(f'/profile/{profile_id}').status_code == 200
         assert endpoint.delete(f'/session/{session_id}').status_code == 200
 
