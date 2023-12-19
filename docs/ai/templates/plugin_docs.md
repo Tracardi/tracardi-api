@@ -215,43 +215,64 @@ There is only one, do not use `` in the response. So `some text` is not allowed.
 Here is the full plugin code:
 
 ```python
-from typing import Optional
+from tracardi.service.utils.date import now_in_utc
 
 from tracardi.service.plugin.domain.register import Plugin, Spec, MetaData, Documentation, PortDoc, Form, FormGroup, \
     FormField, FormComponent
-from pydantic import field_validator
-from tracardi.service.plugin.domain.result import Result
 from tracardi.service.plugin.runner import ActionRunner
-from tracardi.service.plugin.domain.config import PluginConfig
+from tracardi.service.plugin.domain.result import Result
+from .model.config import Config
+from datetime import datetime, timedelta
+from dateutil import parser
+from dateutil.parser import ParserError
 
 
-class Config(PluginConfig):
-    script_url: str
-
-    @field_validator("script_url")
-    def validate_file_path(cls, value):
-        if value == "":
-            raise ValueError("Script URL can not be empty.")
-        return value
-
-
-async def validate(config: dict) -> Config:
+def validate(config: dict):
     return Config(**config)
 
 
-class ZendeskWidgetPlugin(ActionRunner):
+class TimeDelay(ActionRunner):
 
     config: Config
 
     async def set_up(self, init):
-        self.config = Config(**init)
+        self.config = validate(init)
+
+    @staticmethod
+    def parse_date(date):
+        try:
+            if isinstance(date, str):
+                if date == 'now':
+                    date = now_in_utc()
+                else:
+                    date = parser.parse(date)
+            elif not isinstance(date, datetime):
+                raise ValueError("Date can be either string or datetime object")
+            return date
+        except ParserError:
+            raise ValueError("Could not parse data `{}`".format(date))
 
     async def run(self, payload: dict, in_edge=None) -> Result:
-        self.ux.append({
-            "tag": "script",
-            "props": {"src": self.config.script_url, "id": "ze-snippet"}
-        })
-        return Result(port="response", value=payload)
+
+        try:
+
+            dot = self._get_dot_accessor(payload)
+
+            ref_date = self.parse_date(dot[self.config.reference_date])
+
+            if self.config.sign == "+":
+                new_date = ref_date + timedelta(seconds=int(self.config.delay))
+            else:
+                new_date = ref_date - timedelta(seconds=int(self.config.delay))
+
+            return Result(port="date", value={
+                "date": new_date
+            })
+
+        except Exception as e:
+            return Result(port="error", value={
+                "message": str(e)
+            })
 
 
 def register() -> Plugin:
@@ -259,27 +280,52 @@ def register() -> Plugin:
         start=False,
         spec=Spec(
             module=__name__,
-            className=ZendeskWidgetPlugin.__name__,
+            className='TimeDelay',
             inputs=["payload"],
-            outputs=["response", "error"],
-            version='0.7.3',
-            license="MIT",
+            outputs=["date", "error"],
+            version='0.8.2',
+            license="MIT + CC",
             author="Risto Kowaczewski",
-            manual="zendesk_widget_action",
+            manual='time_delay',
             init={
-                "script_url": "https://static.zdassets.com/ekr/snippet.js?key=<your-key>",
+                "reference_date": "profile@metadata.time.insert",
+                "sign": "+",
+                "delay": "60"
             },
             form=Form(
                 groups=[
                     FormGroup(
-                        name="Zendesk widget configuration",
+                        name="Time delta",
+                        description="Calculates the time difference between two dates.",
                         fields=[
                             FormField(
-                                id="script_url",
-                                name="Zendesk script URL",
-                                description="The URL is displayed when you open an account in Zendesk. "
-                                            "Please see the zendesk.com documentation for more details.",
-                                component=FormComponent(type="text", props={"label": "Script URL"})
+                                id="reference_date",
+                                name="Reference date",
+                                description="Please type path to the date.",
+                                component=FormComponent(type="dotPath", props={
+                                    "label": "Date"
+                                }),
+                                required=True
+                            ),
+                            FormField(
+                                id="sign",
+                                name="Operation",
+                                description="Please select if you would like to add delay or subtract delay.",
+                                component=FormComponent(type="select", props={
+                                    "label": "Operation",
+                                    "items": {
+                                        "+": "Add",
+                                        "-": "Subtract"
+                                    }
+                                }),
+                                required=True
+                            ),
+                            FormField(
+                                id="delay",
+                                name="A delay in seconds",
+                                description="Please type delay that will be added to the reference date.",
+                                component=FormComponent(type="text", props={"label": "Delay"}),
+                                required=True
                             )
                         ]
                     )
@@ -287,21 +333,21 @@ def register() -> Plugin:
             )
         ),
         metadata=MetaData(
-            name='Zendesk widget',
-            brand="Zendesk",
-            desc='Shows Zendesk widget on the webpage.',
-            icon='zendesk',
-            tags=['messaging', 'chat'],
-            group=["UIX Widgets"],
+            name='Time delay',
+            desc='Returns date plus the defined delay.',
+            type='flowNode',
+            icon='time',
+            group=["Time"],
+            purpose=['collection', 'segmentation'],
             documentation=Documentation(
                 inputs={
-                    "payload": PortDoc(desc="This port takes payload object.")
+                    "payload": PortDoc(desc="This port payload object.")
                 },
                 outputs={
-                    "payload": PortDoc(desc="This port returns given payload without any changes.")
+                    "date": PortDoc(desc="This port returns a date."),
+                    "error": PortDoc(desc="This port returns an error.")
                 }
-            ),
-            frontend=True
+            )
         )
     )
 
@@ -311,5 +357,5 @@ def register() -> Plugin:
 
 Available manual:
 
-none
+This plugin calucates a date based on the date and a time delay. It can add or subtract the delay in seconds.  
 
