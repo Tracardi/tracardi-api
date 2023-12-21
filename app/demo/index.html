@@ -29,14 +29,18 @@
         tracker: {
             url: {
                 // This is url to tracardi backend. Please mind the correct port.
-                script: 'http://localhost:8686/tracker',
-                api: 'http://localhost:8686'
+                script: '//localhost:8686/tracker',
+                api: '//localhost:8686'
             },
             source: {
                 id: "demo-website"
             },
             context: {
                 location: true
+            },
+            settings: {
+              trackExternalLinks: ['tracardi.com'],
+              respectDoNotTrack: true
             }
             // Please see the documentation for more settings: http://docs.tracardi.com/integration/js-integration/
         }
@@ -3342,6 +3346,7 @@
                                 <div class="outer-footer__text-wrap"><i class="far fa-envelope"></i>
 
                                     <span>contact@domain.com</span></div>
+                                <div><a style="color: white" href="http://tracardi.com">Tracardi.com</a></div>
                                 <div class="outer-footer__social">
                                     <ul>
                                         <li>

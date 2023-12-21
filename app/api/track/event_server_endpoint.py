@@ -56,22 +56,22 @@ async def _track(tracker_payload: TrackerPayload, host: str, allowed_bridges):
     except UnauthorizedException as e:
         message = str(e)
         logger.error(message)
-        return HTTPException(detail=message,
+        raise HTTPException(detail=message,
                              status_code=status.HTTP_401_UNAUTHORIZED)
     except FieldTypeConflictException as e:
         message = "FieldTypeConflictException: {} - {}".format(str(e), e.explain())
         logger.error(message)
-        return HTTPException(detail=message,
+        raise HTTPException(detail=message,
                              status_code=status.HTTP_422_UNPROCESSABLE_ENTITY)
     except EventValidationException as e:
         message = "Validation failed with error: {}".format(str(e))
         logger.error(message)
-        return HTTPException(detail=message,
+        raise HTTPException(detail=message,
                              status_code=status.HTTP_406_NOT_ACCEPTABLE)
     except Exception as e:
         message = str(e)
         logger.error(message)
-        return HTTPException(detail=message,
+        raise HTTPException(detail=message,
                              status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
@@ -84,7 +84,7 @@ async def track(tracker_payload: TrackerPayload, request: Request, response: Res
                         get_ip_address(request),
                         allowed_bridges=['rest'])
 
-    if result.get('errors', []):
+    if result and result.get('errors', []):
         response.status_code = 226
 
     return result
