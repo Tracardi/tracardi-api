@@ -78,7 +78,7 @@ docker run -d -p 18123:8123 -p19000:9000 --ulimit nofile=262144:262144 clickhous
 # Run tracardi api with SSL
 
 docker run -v /home/risto/PycharmProjects/tracardi-api/ssl:/ssl -p 8686:443 -e USER_NAME=admin -e PASSWORD=admin -e WORKERS=2 -e ELASTIC_HOST=http://192.168.1.103:9200 -e GUNICORN_CMD_ARGS="--keyfile=/ssl/key.pem --certfile=/ssl/cert.pem" tracardi/tracardi-api-ssl
-docker run -p 8686:80 -e ELASTIC_HOST=http://192.168.1.106:9200 -e tracardi/tracardi-api:0.9.1-dev
+docker run -p 8686:80 -e ELASTIC_HOST=http://192.168.1.106:9200 -e tracardi/tracardi-api:0.9.0-dev
 
 
 # Run GUI HTTPS and HTTP
