@@ -42,17 +42,16 @@ def test_should_register_correct_event():
         assert 'id' in result['profile']
         profile_id = result['profile']['id']
 
-        assert 'event' in result
-        assert 'ids' in result['event']
+        assert 'events' in result
 
-        assert len(result['event']['ids']) == 5  # 2 events + Profile Created, Session Opened, Visit Created.
+        assert len(result['events']) == 5  # 2 events + Profile Created, Session Opened, Visit Created.
         session_id = result['session']['id']
         try:
             endpoint.get('/events/refresh')
 
             # Event 1
 
-            for event_id in result['event']['ids']:
+            for event_id in result['events']:
                 response = endpoint.get(f'/event/{event_id}')
                 _result = response.json()
                 assert _result['event']['id'] == event_id
@@ -75,7 +74,7 @@ def test_should_register_correct_event():
 
         finally:
             assert endpoint.delete(f'/session/{session_id}').status_code in [200, 404]
-            for event_id in result['event']['ids']:
+            for event_id in result['events']:
                 assert endpoint.delete(f'/event/{event_id}').status_code in [200, 404]
             assert endpoint.delete(f'/profile/{profile_id}').status_code in [200, 404]
 

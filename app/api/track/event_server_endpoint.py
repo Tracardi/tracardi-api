@@ -2,7 +2,7 @@ import logging
 from json import JSONDecodeError
 from typing import Optional
 
-from fastapi import APIRouter, Request, status, HTTPException
+from fastapi import APIRouter, Request, status, HTTPException, Response
 from fastapi.responses import RedirectResponse
 
 from tracardi.domain.event_redirect import EventRedirect
@@ -58,33 +58,38 @@ async def _track(tracker_payload: TrackerPayload, host: str, allowed_bridges):
     except UnauthorizedException as e:
         message = str(e)
         logger.error(message)
-        return HTTPException(detail=message,
+        raise HTTPException(detail=message,
                              status_code=status.HTTP_401_UNAUTHORIZED)
     except FieldTypeConflictException as e:
         message = "FieldTypeConflictException: {} - {}".format(str(e), e.explain())
         logger.error(message)
-        return HTTPException(detail=message,
+        raise HTTPException(detail=message,
                              status_code=status.HTTP_422_UNPROCESSABLE_ENTITY)
     except EventValidationException as e:
         message = "Validation failed with error: {}".format(str(e))
         logger.error(message)
-        return HTTPException(detail=message,
+        raise HTTPException(detail=message,
                              status_code=status.HTTP_406_NOT_ACCEPTABLE)
     except Exception as e:
         message = str(e)
         logger.error(message)
-        return HTTPException(detail=message,
+        raise HTTPException(detail=message,
                              status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @router.post("/track", tags=['collector'])
-async def track(tracker_payload: TrackerPayload, request: Request, profile_less: bool = False):
+async def track(tracker_payload: TrackerPayload, request: Request, response: Response, profile_less: bool = False):
 
     tracker_payload.set_headers(dict(request.headers))
     tracker_payload.profile_less = profile_less
-    return await _track(tracker_payload,
+    result = await _track(tracker_payload,
                         get_ip_address(request),
                         allowed_bridges=['rest'])
+
+    if result and result.get('errors', []):
+        response.status_code = 226
+
+    return result
 
 
 @router.put("/track", tags=['collector'])

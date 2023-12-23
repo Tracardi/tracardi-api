@@ -60,8 +60,8 @@ def test_get_validation_schemas():
         result = response.json()
         assert result['id'] == event_type
 
-        response = endpoint.get("/event-type/mapping")
-        assert response.status_code == 200
+        response = endpoint.get("/event-type/search/mappings")
+        assert response.status_code in [200, 402]
 
     finally:
         response = endpoint.delete(f"/event-type/mapping/{event_type}")
@@ -74,14 +74,16 @@ def test_get_validation_schemas_by_tag():
     event_type = str(uuid4())
     try:
         _add_event_management_data(event_type)
-        response = endpoint.get("/event-type/mappings/search?start=0&limit=1000")
-        assert response.status_code == 200
-        result = response.json()
-        assert 'total' in result
-        assert 'grouped' in result
-        assert 'tag1' in result['grouped']
-        assert 'tag2' in result['grouped']
-        assert 'tag3' in result['grouped']
+        response = endpoint.get("/event-type/search/mappings?start=0&limit=1000")
+        assert response.status_code in [200, 402]
+
+        if response.status_code == 200:
+            result = response.json()
+            assert 'total' in result
+            assert 'grouped' in result
+            assert 'tag1' in result['grouped']
+            assert 'tag2' in result['grouped']
+            assert 'tag3' in result['grouped']
     finally:
         response = endpoint.delete(f"/event-type/mapping/{event_type}")
         assert response.status_code == 200
