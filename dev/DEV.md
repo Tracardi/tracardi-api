@@ -31,6 +31,11 @@ docker run -it \
 apachepulsar/pulsar:3.1.0 \
 bin/pulsar standalone
 
+# Starrock
+
+docker run -p 9030:9030 -p 8030:8030 -p 8040:8040 -itd \
+--name quickstart starrocks/allin1-ubuntu
+
 # Run local Tracardi GUI
 docker run -p 8787:80 -e API_URL=//127.0.0.1:8686 -e TRACK_DEBUG="yes" tracardi/tracardi-gui
 
