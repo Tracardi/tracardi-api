@@ -25,7 +25,7 @@ async def _load_by_id(import_id: str) -> Optional[ImportConfig]:
     ics = ImportService()
     record = await ics.load_by_id(import_id)
 
-    if record is None:
+    if not record.exists():
         raise HTTPException(status_code=404, detail=f"No import configuration found for id {import_id}")
 
     return record.map_to_object(map_to_import_config)
