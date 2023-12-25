@@ -1,5 +1,8 @@
+from typing import Optional
+
 from fastapi import APIRouter, HTTPException, Depends
-from tracardi.service.storage.driver.elastic import import_config as import_config_db
+from tracardi.service.storage.mysql.mapping.import_mapping import map_to_import_config
+from tracardi.service.storage.mysql.service.import_service import ImportService
 from tracardi.worker.celery_worker import celery
 from .auth.permissions import Permissions
 from tracardi.config import tracardi
@@ -11,10 +14,21 @@ from celery.result import AsyncResult
 from starlette.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
 from app.service.error_converter import convert_errors
+from ..service.grouping import get_grouped_result
 
 router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin", "developer"]))]
 )
+
+
+async def _load_by_id(import_id: str) -> Optional[ImportConfig]:
+    ics = ImportService()
+    record = await ics.load_by_id(import_id)
+
+    if record is None:
+        raise HTTPException(status_code=404, detail=f"No import configuration found for id {import_id}")
+
+    return record.map_to_object(map_to_import_config)
 
 
 # Celery worker endpoints
@@ -28,10 +42,7 @@ async def run_import(import_id: str, name: str = None, debug: bool = True):
 
     try:
 
-        import_configuration = await import_config_db.load(import_id)
-        if import_configuration is None:
-            raise HTTPException(status_code=404, 
-                                detail=f"No import source configuration found for id {import_id}")
+        import_configuration = await _load_by_id(import_id)
 
         if import_configuration.enabled is False:
             raise HTTPException(status_code=409, 
@@ -95,13 +106,7 @@ async def get_import_by_id(import_id: str):
     """
     Returns import configuration.
     """
-
-    result = await import_config_db.load(import_id)
-    if result is not None:
-        return result
-    else:
-        raise HTTPException(status_code=404, detail=f"No import configuration found for id {import_id}")
-
+    return await _load_by_id(import_id)
 
 @router.post("/import", tags=["import"], include_in_schema=tracardi.expose_gui_api)
 async def save_import_config(import_configuration: dict):
@@ -120,9 +125,8 @@ async def save_import_config(import_configuration: dict):
         import_processor.config_model(**import_configuration.config)
 
         # Safe configuration
-        result = await import_config_db.save(import_configuration)
-        await import_config_db.refresh()
-        return result
+        ics = ImportService()
+        return await ics.insert(import_configuration)
 
     except ValidationError as e:
         return JSONResponse(
@@ -138,20 +142,19 @@ async def delete_import_configuration(import_id: str):
     Deletes import configuration
     """
 
-    result = await import_config_db.delete(import_id)
-    await import_config_db.refresh()
-    return result
+    ics = ImportService()
+    return await ics.delete_by_id(import_id)
 
 
 @router.get("/imports", tags=["import"], include_in_schema=tracardi.expose_gui_api)
-async def get_all_imports(limit: int = 50, query: str = None):
+async def get_all_imports(start:int = 0,  limit: int = 100, query: str = None):
 
     """
     Returns all imports.
     """
-
-    result = await import_config_db.load_all(limit, query)
-    return {"grouped": {"General": result}} if result else {}
+    ics = ImportService()
+    records = await ics.load_all(search=query, offset=start, limit=limit)
+    return get_grouped_result("Imports", records, map_to_import_config)
 
 
 @router.get("/import/form/{module}", tags=["import"], include_in_schema=tracardi.expose_gui_api)

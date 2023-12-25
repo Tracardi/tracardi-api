@@ -33,7 +33,6 @@ from tracardi.service.wf.domain.flow_graph import FlowGraph
 from tracardi.domain.flow import FlowRecord
 from tracardi.domain.profile import Profile
 from tracardi.domain.session import Session, SessionMetadata, SessionTime
-from tracardi.domain.value_object.bulk_insert_result import BulkInsertResult
 from .auth.permissions import Permissions
 from tracardi.config import tracardi
 
@@ -273,7 +272,6 @@ async def upsert_flow_details(flow_metadata: FlowMetaData):
         flow_record.type = flow_metadata.type
 
     result = await _store_record(flow_record)
-    await flow_db.refresh()
     return result
 
 
