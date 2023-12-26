@@ -4,13 +4,12 @@ from fastapi import APIRouter, HTTPException
 from fastapi import Depends
 
 from tracardi.domain.segment import Segment
-from tracardi.domain.value_object.bulk_insert_result import BulkInsertResult
 from tracardi.service.storage.mysql.map_to_named_entity import map_to_named_entity
 from tracardi.service.storage.mysql.mapping.segment_mapping import map_to_segment
 from tracardi.service.storage.mysql.service.segment_service import SegmentService
 from .auth.permissions import Permissions
 from tracardi.config import tracardi
-from ..service.grouping import get_grouped_result
+from ..service.grouping import get_grouped_result, get_result_dict
 
 router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer"]))]
@@ -68,19 +67,13 @@ async def get_segments_metadata(name: str = ""):
     Returns segments with match of given query (str) on name of event type
     """
     ss = SegmentService()
-    result = await ss.load_by_name(name)
-    total = result.count()
-    result = result.map_to_object(map_to_named_entity)
+    result = await ss.load_enabled()
+    return get_result_dict(result, map_to_named_entity)
 
-    return {
-        "total": total,
-        "grouped": result  # TODO powinno byc do result
-    }
 
 
 @router.post("/segment",
              tags=["segment"],
-             response_model=BulkInsertResult,
              include_in_schema=tracardi.expose_gui_api)
 async def upsert_segment(segment: Segment):
     """
