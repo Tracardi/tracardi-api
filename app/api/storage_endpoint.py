@@ -1,11 +1,8 @@
-from typing import Optional
-
 from fastapi import APIRouter, Depends, HTTPException
 
 from app.api.auth.permissions import Permissions
 from tracardi.config import tracardi
 from tracardi.service.storage.driver.elastic import raw as raw_db
-from tracardi.service.storage.driver.elastic import snapshot as snapshot_db
 from tracardi.service.storage.elastic_client import ElasticClient
 from tracardi.service.storage.index import Resource
 from tracardi.service.storage.indices_manager import check_indices_mappings_consistency
@@ -110,32 +107,3 @@ async def delete_index(index_name: str):
 
     es = ElasticClient.instance()
     return await es.remove_index(index_name)
-
-
-""" Snapshots """
-
-
-@router.get("/storage/snapshot-repository/{name}", tags=["storage"], include_in_schema=tracardi.expose_gui_api,
-            response_model=dict)
-async def get_snapshot_repository(name: str):
-    """
-    List repository snapshots
-    """
-
-    if tracardi.multi_tenant:
-        raise HTTPException(status_code=405, detail="This operation is not allowed for multi-tenant server.")
-
-    return await snapshot_db.get_snapshot_repository(repo=name)
-
-
-@router.get("/storage/snapshot-repository/status/{name}", tags=["storage"], include_in_schema=tracardi.expose_gui_api,
-            response_model=dict)
-async def get_snapshot_repository_status(name: Optional[str] = "_all"):
-    """
-    Lists available snapshots withing the repository name. Use _all as a name to get all repos snapshots.
-    """
-
-    if tracardi.multi_tenant:
-        raise HTTPException(status_code=405, detail="This operation is not allowed for multi-tenant server.")
-
-    return await snapshot_db.get_repository_snapshots(repo=name)
