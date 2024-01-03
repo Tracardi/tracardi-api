@@ -2,7 +2,9 @@ from typing import Optional
 
 from fastapi import APIRouter, HTTPException, Depends
 from tracardi.service.storage.mysql.mapping.import_mapping import map_to_import_config
+from tracardi.service.storage.mysql.mapping.task_mapping import map_to_task
 from tracardi.service.storage.mysql.service.import_service import ImportService
+from tracardi.service.storage.mysql.service.task_service import BackgroundTaskService
 from .auth.permissions import Permissions
 from tracardi.config import tracardi
 from tracardi.domain.import_config import ImportConfig
@@ -49,11 +51,11 @@ async def run_import(import_id: str, name: str = None, debug: bool = True):
 
         importer = getattr(package, module[-1])(debug)
 
-        task_id, celery_task_id = await importer.run(name, import_configuration)
+        task_id, task_id = await importer.run(name, import_configuration)
 
         return {
             "id": task_id,
-            "task_id": celery_task_id
+            "task_id": task_id
         }
 
     except AttributeError as e:
@@ -61,15 +63,26 @@ async def run_import(import_id: str, name: str = None, debug: bool = True):
 
 
 @router.get("/import/task/{task_id}/status", tags=["import"], include_in_schema=tracardi.expose_gui_api)
-def get_status(task_id):
+async def get_status(task_id):
     """
     Takes worker task id and returns current status
     """
-    # task_result = AsyncResult(task_id, app=celery)
+
+    bts = BackgroundTaskService()
+    record = await bts.load_by_id(task_id)
+
+    if not record.exists():
+        return {
+            "id": task_id,
+            "status": "none",
+            "progress": 0
+        }
+
+    task = record.map_to_object(map_to_task)
     result = {
-        "id": task_id,
-        "status": "Not implemented",
-        "progress": 0
+        "id": task.id,
+        "status": task.status,
+        "progress": task.progress
     }
     return result
 
