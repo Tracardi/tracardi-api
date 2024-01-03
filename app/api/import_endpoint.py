@@ -75,14 +75,16 @@ async def get_status(task_id):
         return {
             "id": task_id,
             "status": "none",
-            "progress": 0
+            "progress": 0,
+            "message": None
         }
 
     task = record.map_to_object(map_to_task)
     result = {
         "id": task.id,
         "status": task.status,
-        "progress": task.progress
+        "progress": task.progress,
+        "message": task.message
     }
     return result
 
