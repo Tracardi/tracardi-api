@@ -87,7 +87,9 @@ async def check_migration_consistency(version: str):
 async def run_migration(migration: MigrationPayload):
     try:
 
-        tenant = get_context().tenant
+        context = get_context()
+
+        tenant = context.tenant
 
         # For none tenant based migration calculate the tenant name.
         if migration.from_tenant_name is None:
@@ -109,7 +111,8 @@ async def run_migration(migration: MigrationPayload):
 
         return await manager.start_migration(
             ids=migration.ids,
-            elastic_host=elastic_host
+            elastic_host=elastic_host,
+            context=context
         )
 
     except MigrationNotFoundException as e:

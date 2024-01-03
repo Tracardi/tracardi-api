@@ -19,25 +19,6 @@ async def load_tasks(query: str = None, start:int = 0, limit: int = 100):
     records = await bts.load_all(search=query, offset=start, limit=limit)
     return get_grouped_result("Tasks", records, map_to_task)
 
-    # if not query:
-    #     query = {
-    #         "match_all": {}
-    #     }
-    # else:
-    #     query = {
-    #         "wildcard": {
-    #             "name": f"*{query}*"
-    #         }
-    #     }
-    #
-    # result = await task_db.load_tasks(query, limit=limit)
-    # return {
-    #     "grouped": {
-    #         "Tasks": list(result)
-    #     }
-    # }
-
-
 @router.get("/tasks/type/{type}", tags=["task"], include_in_schema=tracardi.expose_gui_api)
 async def load_tasks_by_type(type: str, query: str = None, start:int = 0, limit: int = 100):
 
@@ -45,33 +26,6 @@ async def load_tasks_by_type(type: str, query: str = None, start:int = 0, limit:
 
     records = await bts.load_all_by_type(type, search=query, offset=start, limit=limit)
     return get_grouped_result("Tasks", records, map_to_task)
-
-    # body = {
-    #     "bool": {
-    #         "must": [
-    #             {
-    #                 "term": {
-    #                     "type": type
-    #                 }
-    #             }
-    #         ]
-    #     }
-    # }
-    #
-    # if query:
-    #     body['bool']['must'].append({
-    #         "wildcard": {
-    #             "name": f"*{query}*"
-    #         }
-    #     })
-    #
-    # result = await task_db.load_tasks(body, limit=limit)
-    #
-    # return {
-    #     "grouped": {
-    #         "Tasks": list(result)
-    #     }
-    # }
 
 
 @router.delete("/task/{id}", tags=["task"], include_in_schema=tracardi.expose_gui_api)
