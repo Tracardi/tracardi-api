@@ -3,14 +3,12 @@ from typing import Optional
 from fastapi import APIRouter, HTTPException, Depends
 from tracardi.service.storage.mysql.mapping.import_mapping import map_to_import_config
 from tracardi.service.storage.mysql.service.import_service import ImportService
-from tracardi.worker.celery_worker import celery
 from .auth.permissions import Permissions
 from tracardi.config import tracardi
 from tracardi.domain.import_config import ImportConfig
 from tracardi.service.setup.setup_import_types import get_import_types
 from tracardi.service.module_loader import import_package
 from pydantic import ValidationError
-from celery.result import AsyncResult
 from starlette.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
 from app.service.error_converter import convert_errors
@@ -30,8 +28,6 @@ async def _load_by_id(import_id: str) -> Optional[ImportConfig]:
 
     return record.map_to_object(map_to_import_config)
 
-
-# Celery worker endpoints
 
 @router.get("/import/{import_id}/run", tags=["import"], include_in_schema=tracardi.expose_gui_api)
 async def run_import(import_id: str, name: str = None, debug: bool = True):
@@ -69,11 +65,11 @@ def get_status(task_id):
     """
     Takes worker task id and returns current status
     """
-    task_result = AsyncResult(task_id, app=celery)
+    # task_result = AsyncResult(task_id, app=celery)
     result = {
-        "id": task_result.id,
-        "status": task_result.status,
-        "progress": task_result.result
+        "id": task_id,
+        "status": "Not implemented",
+        "progress": 0
     }
     return result
 
@@ -84,8 +80,8 @@ def delete_import_task(task_id):
     """
     Takes worker task id and cancels task
     """
-
-    return celery.control.revoke(task_id, terminate=True)
+    raise NotImplemented("Not implemented")
+    # return celery.control.revoke(task_id, terminate=True)
 
 
 # Tracardi endpoints
