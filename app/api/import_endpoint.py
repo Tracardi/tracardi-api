@@ -1,6 +1,8 @@
 from typing import Optional
 
 from fastapi import APIRouter, HTTPException, Depends
+
+from tracardi.process_engine.importing.importer import Importer
 from tracardi.service.storage.mysql.mapping.import_mapping import map_to_import_config
 from tracardi.service.storage.mysql.mapping.task_mapping import map_to_task
 from tracardi.service.storage.mysql.service.import_service import ImportService
@@ -49,14 +51,11 @@ async def run_import(import_id: str, name: str = None, debug: bool = True):
         module = import_configuration.module.split(".")
         package = import_package(".".join(module[:-1]))
 
-        importer = getattr(package, module[-1])(debug)
+        importer: Importer = getattr(package, module[-1])(debug)
 
-        task_id, task_id = await importer.run(name, import_configuration)
+        await importer.run(name, import_configuration)
 
-        return {
-            "id": task_id,
-            "task_id": task_id
-        }
+        return None
 
     except AttributeError as e:
         raise HTTPException(status_code=404, detail=str(e))
@@ -134,6 +133,8 @@ async def save_import_config(import_configuration: dict):
 
         # Validate data with the configuration model
         import_processor.config_model(**import_configuration.config)
+
+        print(import_configuration)
 
         # Safe configuration
         ics = ImportService()
