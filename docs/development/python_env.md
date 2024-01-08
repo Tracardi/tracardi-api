@@ -47,12 +47,14 @@ When you want to stop Elasticsearch or redis, press CTRL+C in the terminal you s
 Open a terminal and go to the directory where you want to keep the code. Enter:
 
 ```bash
-git clone https://github.com/Tracardi/tracardi  #(1)
-git clone https://github.com/Tracardi/tracardi-api #(2)
+git clone https://github.com/Tracardi/tracardi:<branch> #(1)
+git clone https://github.com/Tracardi/tracardi-api:<branch> #(2)
 ```
 
-1. Clones tracardi repository. Code will be available in tracardi folder.
-2. Clones tracardi-api repository
+1. Clones tracardi repository. Do not forget to replace `branch` with current version. Code will be available in tracardi folder.
+2. Clones tracardi-api repository. Do not forget to replace `branch` with current version. 
+
+Do not forget to replace `branch` with current version. 
 
 ## Create virtual environments
 
