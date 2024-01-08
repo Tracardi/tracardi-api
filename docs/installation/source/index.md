@@ -41,7 +41,7 @@ python3.9 -m venv venv
 
 !!! Tip
 
-    Before creating the virtual environment make sure you have version 3.9.x installed. Type `python --version` to see if the version is correct.
+    Before creating the virtual environment make sure you have version 3.10.x installed. Type `python --version` to see if the version is correct.
 
 # Install dependencies
 

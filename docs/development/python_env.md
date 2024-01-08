@@ -3,7 +3,7 @@
 ## Software prerequisites
 
 * Docker
-* Python version 3.9.x
+* Python version 3.10.x
 * Pip
 * Python Virtual Environment
 * PyCharm
@@ -71,7 +71,7 @@ python3.9 -m venv venv # (2)
 
 !!! Tip
 
-    Before creating the virtual environment make sure you have version 3.9.x installed. Type `python --version` to see the python version.
+    Before creating the virtual environment make sure you have version 3.10.x installed. Type `python --version` to see the python version.
 
 ## Install dependencies
 
@@ -146,13 +146,13 @@ python3.9 -m venv venv # (2)
 
 !!! Tip
 
-    Before creating the virtual environment make sure you have version 3.9.x installed. Type `python --version` to 
+    Before creating the virtual environment make sure you have version 3.10.x installed. Type `python --version` to 
     see the python version.
 
 !!! Bug "Trouble shooting"
 
     If you see an error that some of the libraries can not be installed, this may mean that you do not have python 
-    version 3.9.x installed in your virtual environment.
+    version 3.10.x installed in your virtual environment.
 
 ## Importing project into PyCharm
 
