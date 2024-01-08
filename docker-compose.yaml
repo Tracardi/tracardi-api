@@ -2,7 +2,7 @@ version: "3.7"
 services:
 
   tracardi-api:
-    image: tracardi/tracardi-api:0.8.2-rc2
+    image: tracardi/tracardi-api:0.8.2-rc3
     environment:
       ELASTIC_HOST: http://elasticsearch:9200
       REDIS_HOST: redis://redis:6379
@@ -16,7 +16,7 @@ services:
       - elasticsearch
 
   tracardi-gui:
-    image: tracardi/tracardi-gui:0.8.2-rc2
+    image: tracardi/tracardi-gui:0.8.2-rc3
     ports:
       - 8787:80
     depends_on:
