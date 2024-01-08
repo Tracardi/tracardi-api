@@ -122,6 +122,10 @@ nav:
 
   - Traffic:
       - traffic/inbound/index.md
+      - Bridges:
+        - bridge/index.md
+        - bridge/rest_api.md
+        - bridge/webhook.md
       - traffic/outbound/index.md
   - Events:
       - events/index.md
@@ -278,6 +282,7 @@ nav:
 
 
 
+
           # Commercial version plugins
           - Commercial:
               - flow/actions/pause_and_resume.md
@@ -402,6 +407,7 @@ nav:
               - flow/actions/local_time_span_action.md
               - flow/actions/calculate_time_difference_action.md
               - flow/actions/today_action.md
+              - flow/actions/time_delay.md
 
           - Processing:
               - flow/actions/url_parser_action.md
@@ -694,6 +700,8 @@ nav:
        - qa/where_can_i_save_list_visit_time_etc.md
        - qa/why_i_do_not_see_the_event_from_my_code.md
 
+       - qa/profile_merging_qa.md
+       - qa/why_my_debuging_fails.md
 
 
      - Errors:

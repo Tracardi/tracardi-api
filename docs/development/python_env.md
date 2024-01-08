@@ -62,14 +62,14 @@ We need to create 2 virtual environments. Type:
 
 ```bash
 cd tracardi-api
-python3.9 -m venv venv  # (1)
+python3.10 -m venv venv  # (1)
 cd ..
 cd tracardi
-python3.9 -m venv venv # (2)
+python3.10 -m venv venv # (2)
 ```
 
-1. Installs virtual environment with python 3.9 for tracardi API
-2. Installs virtual environment with python 3.9 for tracardi library
+1. Installs virtual environment with python 3.10 for tracardi API
+2. Installs virtual environment with python 3.10 for tracardi library
 
 !!! Tip
 
