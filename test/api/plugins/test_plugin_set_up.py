@@ -510,7 +510,7 @@ async def test_should_set_up_plugin_merge_profiles_action():
                        name="test-node", 
                        module="tracardi.process_engine.action.v1.operations.merge_profiles_action", 
                        className="MergeProfilesAction")
-    await plugin.set_up({'mergeBy': ['profile@data.contact.email']})
+    await plugin.set_up({'mergeBy': ['profile@data.contact.email.main']})
 
 
 async def test_should_set_up_plugin_update_profile_action():
@@ -534,18 +534,6 @@ async def test_should_set_up_plugin_discard_profile_update_action():
                        name="test-node", 
                        module="tracardi.process_engine.action.v1.operations.discard_profile_update_action", 
                        className="DiscardProfileUpdateAction")
-    await plugin.set_up({})
-
-
-async def test_should_set_up_plugin_update_event_action():
-    
-    module = import_package("tracardi.process_engine.action.v1.operations.update_event_action")
-    plugin_class = load_callable(module, "UpdateEventAction")
-    plugin = plugin_class()
-    plugin.node = Node(id="node-id", 
-                       name="test-node", 
-                       module="tracardi.process_engine.action.v1.operations.update_event_action", 
-                       className="UpdateEventAction")
     await plugin.set_up({})
 
 
@@ -703,42 +691,6 @@ async def test_should_set_up_plugin_field_type_action():
                        module="tracardi.process_engine.action.v1.traits.field_type_action", 
                        className="FieldTypeAction")
     await plugin.set_up({'field': 'profile@id'})
-
-
-async def test_should_set_up_plugin_event_discarder():
-    
-    module = import_package("tracardi.process_engine.action.v1.events.event_discarder.plugin")
-    plugin_class = load_callable(module, "EventDiscarder")
-    plugin = plugin_class()
-    plugin.node = Node(id="node-id", 
-                       name="test-node", 
-                       module="tracardi.process_engine.action.v1.events.event_discarder.plugin", 
-                       className="EventDiscarder")
-    await plugin.set_up({})
-
-
-async def test_should_set_up_plugin_profile_discarder():
-    
-    module = import_package("tracardi.process_engine.action.v1.profiles.profile_discarder.plugin")
-    plugin_class = load_callable(module, "ProfileDiscarder")
-    plugin = plugin_class()
-    plugin.node = Node(id="node-id", 
-                       name="test-node", 
-                       module="tracardi.process_engine.action.v1.profiles.profile_discarder.plugin", 
-                       className="ProfileDiscarder")
-    await plugin.set_up({})
-
-
-async def test_should_set_up_plugin_session_discarder():
-    
-    module = import_package("tracardi.process_engine.action.v1.sessions.session_discarder.plugin")
-    plugin_class = load_callable(module, "SessionDiscarder")
-    plugin = plugin_class()
-    plugin.node = Node(id="node-id", 
-                       name="test-node", 
-                       module="tracardi.process_engine.action.v1.sessions.session_discarder.plugin", 
-                       className="SessionDiscarder")
-    await plugin.set_up({})
 
 
 async def test_should_set_up_plugin_string_properties_actions():
@@ -1334,7 +1286,7 @@ async def test_should_set_up_plugin_inject_profile_by_field():
                        name="test-node", 
                        module="tracardi.process_engine.action.v1.internal.inject_profile_by_field.plugin", 
                        className="InjectProfileByField")
-    await plugin.set_up({'field': 'data.contact.email', 'value': 'test@test.com'})
+    await plugin.set_up({'field': 'data.contact.email.main', 'value': 'test@test.com'})
 
 
 async def test_should_set_up_plugin_add_empty_profile_action():
@@ -1455,18 +1407,6 @@ async def test_should_set_up_plugin_require_consents_action():
                        module="tracardi.process_engine.action.v1.consents.require_consents_action.plugin", 
                        className="RequireConsentsAction")
     await plugin.set_up({'consent_ids': [], 'require_all': False})
-
-
-async def test_should_set_up_plugin_postpone_event_action():
-    
-    module = import_package("tracardi.process_engine.action.v1.flow.postpone_event.plugin")
-    plugin_class = load_callable(module, "PostponeEventAction")
-    plugin = plugin_class()
-    plugin.node = Node(id="node-id", 
-                       name="test-node", 
-                       module="tracardi.process_engine.action.v1.flow.postpone_event.plugin", 
-                       className="PostponeEventAction")
-    await plugin.set_up({'event_type': 'type', 'source': {'id': 'x', 'name': 'x'}, 'event_properties': '{}', 'delay': 60})
 
 
 async def test_should_set_up_plugin_contains_string_action():
@@ -2488,7 +2428,7 @@ async def test_should_set_up_plugin_novu_trigger_action(mocker):
                        name="test-node", 
                        module="tracardi.process_engine.action.v1.connectors.novu.trigger.plugin", 
                        className="NovuTriggerAction")
-    await plugin.set_up({'payload': '{}', 'recipient_email': 'profile@data.contact.email', 'source': {'id': '', 'name': ''}, 'subscriber_id': 'profile@id', 'template': {'id': '', 'name': ''}})
+    await plugin.set_up({'payload': '{}', 'recipient_email': 'profile@data.contact.email.main', 'source': {'id': '', 'name': ''}, 'subscriber_id': 'profile@id', 'template': {'id': '', 'name': ''}})
 
 
 async def test_should_set_up_plugin_pushover_action(mocker):

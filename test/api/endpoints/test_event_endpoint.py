@@ -43,10 +43,9 @@ def _make_event(type, properties=None, session_id=None, source_id=None):
 
     result = response.json()
 
-    event_id = result['event']['ids'][0]
     profile_id = result['profile']['id']
 
-    return response, payload, event_id, profile_id
+    return response, payload, result['events'], profile_id
 
 
 def test_should_refresh_data():
@@ -69,7 +68,7 @@ def test_should_count_events():
 
     source_id = str(uuid4())
     session_id = str(uuid4())
-    response, _, event_id, profile_id = _make_event("test", source_id=source_id, session_id=session_id)
+    response, _, events, profile_id = _make_event("test", source_id=source_id, session_id=session_id)
 
     try:
         response = endpoint.get('/event/count')
@@ -77,10 +76,10 @@ def test_should_count_events():
         result = response.json()
         count1 = result['count']
 
-        assert count1 == count + 3  # Event: Test, Profile Create, Session Created.
+        assert count1 == count + 4  # Event: Test, Profile Create, Session Opened, Visit started.
 
     finally:
-        response = endpoint.delete(f'/event/{event_id}')
+        response = endpoint.delete(f'/event/{events[0]}')
         assert response.status_code == 200
 
         assert endpoint.delete(f'/profile/{profile_id}').status_code == 200
@@ -125,7 +124,7 @@ def test_should_return_event_meta():
     if result['total'] < 1000:
         source_id = str(uuid4())
         session_id = str(uuid4())
-        response, _, event_id, profile_id = _make_event("test", source_id=source_id, session_id=session_id)
+        response, _, events, profile_id = _make_event("test", source_id=source_id, session_id=session_id)
 
         try:
 
@@ -135,7 +134,7 @@ def test_should_return_event_meta():
             assert {'name': 'Test', 'id': 'test'} in result['result']
 
         finally:
-            assert endpoint.delete(f'/event/{event_id}').status_code == 200
+            assert endpoint.delete(f'/event/{events[0]}').status_code == 200
             assert endpoint.get('/events/refresh').status_code == 200
 
             assert endpoint.delete(f'/event-source/{source_id}').status_code == 200
@@ -148,28 +147,29 @@ def test_should_return_event_meta():
 
 
 def test_should_return_events_by_type():
-    response = endpoint.get(f'/events/by_type')
+    response = endpoint.get('/events/by_type')
     assert response.status_code == 200
     result = response.json()
 
     assert isinstance(result, list)
 
-    event_type = str(uuid4())
+    event_type = 'session-opened'
     session_id = str(uuid4())
     source_id = str(uuid4())
-    response, _, event_id, profile_id = _make_event(event_type, session_id=session_id, source_id=source_id)
-    response, _, event_id1, profile_id1 = _make_event(event_type, session_id=session_id, source_id=source_id)
+    response, _, events, profile_id = _make_event(event_type, session_id=session_id, source_id=source_id)
+    response, _, events1, profile_id1 = _make_event(event_type, session_id=session_id, source_id=source_id)
 
     try:
-        response = endpoint.get(f'/events/by_type')
+        response = endpoint.get('/events/by_type')
         assert response.status_code == 200
         result = response.json()
+
         result = {item['name']: item['value'] for item in result}
         assert event_type in result
         assert result[event_type] >= 2
     finally:
-        assert endpoint.delete(f'/event/{event_id}').status_code == 200
-        assert endpoint.delete(f'/event/{event_id1}').status_code == 200
+        assert endpoint.delete(f'/event/{events[0]}').status_code == 200
+        assert endpoint.delete(f'/event/{events1[0]}').status_code == 200
         assert endpoint.get('/events/refresh').status_code == 200
 
         assert endpoint.delete(f'/event-source/{source_id}').status_code == 200
@@ -182,7 +182,7 @@ def test_should_return_events_by_type():
 
 
 def test_should_return_events_by_tag():
-    response = endpoint.get(f'/events/by_tag')
+    response = endpoint.get('/events/by_tag')
     assert response.status_code == 200
     result = response.json()
 
@@ -192,8 +192,8 @@ def test_should_return_events_by_tag():
     event_tag = str(uuid4())
     session_id = str(uuid4())
     source_id = str(uuid4())
-    response, _, event_id, profile_id = _make_event(event_type, session_id=session_id, source_id=source_id)
-    response, _, event_id1, profile_id1 = _make_event(event_type, session_id=session_id, source_id=source_id)
+    response, _, events, profile_id = _make_event(event_type, session_id=session_id, source_id=source_id)
+    response, _, events1, profile_id1 = _make_event(event_type, session_id=session_id, source_id=source_id)
 
     data = {
         "id": str(uuid4()),
@@ -201,14 +201,14 @@ def test_should_return_events_by_tag():
         "event_type": event_type,
         "tags": [event_tag]
     }
-    response = endpoint.post("/event-type/management", data)
+    response = endpoint.post("/event-type/mapping", data)
     assert response.status_code == 200
     sleep(1)
     response = endpoint.get("/events/refresh")
     assert response.status_code == 200
 
     try:
-        response = endpoint.get(f'/events/by_tag')
+        response = endpoint.get('/events/by_tag')
         assert response.status_code == 200
         result = response.json()
         result = {item['name']: item['value'] for item in result}
@@ -216,9 +216,9 @@ def test_should_return_events_by_tag():
         assert result[event_tag] >= 1
 
     finally:
-        response = endpoint.delete(f'/event/{event_id}')
+        response = endpoint.delete(f'/event/{events[0]}')
         assert response.status_code == 200
-        response = endpoint.delete(f'/event/{event_id1}')
+        response = endpoint.delete(f'/event/{events1[0]}')
         assert response.status_code == 200
         assert endpoint.get('/events/refresh').status_code == 200
 
@@ -234,7 +234,7 @@ def test_should_return_events_by_tag():
 
 
 def test_should_return_events_by_status():
-    response = endpoint.get(f'/events/by_status')
+    response = endpoint.get('/events/by_status')
     assert response.status_code == 200
     result = response.json()
 
@@ -243,20 +243,20 @@ def test_should_return_events_by_status():
     event_type = str(uuid4())
     session_id = str(uuid4())
     source_id = str(uuid4())
-    response, _, event_id, profile_id = _make_event(event_type, session_id=session_id, source_id=source_id)
-    response, _, event_id1, profile_id1 = _make_event(event_type, session_id=session_id, source_id=source_id)
+    response, _, events, profile_id = _make_event(event_type, session_id=session_id, source_id=source_id)
+    response, _, events1, profile_id1 = _make_event(event_type, session_id=session_id, source_id=source_id)
 
     try:
-        response = endpoint.get(f'/events/by_status')
+        response = endpoint.get('/events/by_status')
         assert response.status_code == 200
         result = response.json()
         result = {item['name']: item['value'] for item in result}
         assert 'collected' in result
         assert result['collected'] >= 2
     finally:
-        response = endpoint.delete(f'/event/{event_id}')
+        response = endpoint.delete(f'/event/{events[0]}')
         assert response.status_code == 200
-        assert endpoint.delete(f'/event/{event_id1}').status_code == 200
+        assert endpoint.delete(f'/event/{events1[0]}').status_code == 200
         assert endpoint.get('/events/refresh').status_code == 200
 
         assert endpoint.delete(f'/event-source/{source_id}').status_code == 200
@@ -269,7 +269,7 @@ def test_should_return_events_by_status():
 
 
 def test_should_return_events_by_source():
-    response = endpoint.get(f'/events/by_source?buckets_size=100')
+    response = endpoint.get('/events/by_source?buckets_size=100')
     assert response.status_code == 200
     result = response.json()
 
@@ -278,19 +278,19 @@ def test_should_return_events_by_source():
     event_type = str(uuid4())
     session_id = str(uuid4())
     source_id = str(uuid4())
-    response, _, event_id, profile_id = _make_event(event_type, session_id=session_id, source_id=source_id)
-    response, _, event_id1, profile_id1 = _make_event(event_type, session_id=session_id, source_id=source_id)
+    response, _, events, profile_id = _make_event(event_type, session_id=session_id, source_id=source_id)
+    response, _, events1, profile_id1 = _make_event(event_type, session_id=session_id, source_id=source_id)
 
     try:
-        response = endpoint.get(f'/events/by_source?buckets_size=100')
+        response = endpoint.get('/events/by_source?buckets_size=100')
         assert response.status_code == 200
         result = response.json()
         result = {item['name']: item['value'] for item in result}
         assert source_id in result
         assert result[source_id] >= 2
     finally:
-        assert endpoint.delete(f'/event/{event_id}').status_code == 200
-        assert endpoint.delete(f'/event/{event_id1}').status_code == 200
+        assert endpoint.delete(f'/event/{events[0]}').status_code == 200
+        assert endpoint.delete(f'/event/{events1[0]}').status_code == 200
         assert endpoint.get('/events/refresh').status_code == 200
 
         assert endpoint.delete(f'/event-source/{source_id}').status_code == 200
@@ -306,16 +306,16 @@ def test_should_return_debug_info():
     event_type = str(uuid4())
     session_id = str(uuid4())
     source_id = str(uuid4())
-    response, _, event_id, profile_id = _make_event(event_type, session_id=session_id, source_id=source_id)
+    response, _, events, profile_id = _make_event(event_type, session_id=session_id, source_id=source_id)
 
     try:
-        response = endpoint.get(f'/event/debug/{event_id}')
+        response = endpoint.get(f'/event/debug/{events[0]}')
         assert response.status_code == 200
         result = response.json()
         assert isinstance(result, list)
     finally:
         assert endpoint.delete(f'/event-source/{source_id}').status_code == 200
-        assert endpoint.delete(f'/event/{event_id}').status_code == 200
+        assert endpoint.delete(f'/event/{events[0]}').status_code == 200
         assert endpoint.delete(f'/profile/{profile_id}').status_code == 200
         assert endpoint.delete(f'/session/{session_id}').status_code == 200
 
@@ -329,10 +329,10 @@ def test_should_return_event_console_log():
     event_type = str(uuid4())
     session_id = str(uuid4())
     source_id = str(uuid4())
-    response, _, event_id, profile_id = _make_event(event_type, session_id=session_id, source_id=source_id)
+    response, _, events, profile_id = _make_event(event_type, session_id=session_id, source_id=source_id)
 
     try:
-        response = endpoint.get(f'/event/logs/{event_id}')
+        response = endpoint.get(f'/event/logs/{events[0]}')
         assert response.status_code == 200
         result = response.json()
         assert isinstance(result, dict)
@@ -340,7 +340,7 @@ def test_should_return_event_console_log():
         assert 'total' in result
     finally:
         assert endpoint.delete(f'/event-source/{source_id}').status_code == 200
-        assert endpoint.delete(f'/event/{event_id}').status_code == 200
+        assert endpoint.delete(f'/event/{events[0]}').status_code == 200
         assert endpoint.delete(f'/profile/{profile_id}').status_code == 200
         assert endpoint.delete(f'/session/{session_id}').status_code == 200
 
@@ -403,20 +403,20 @@ def test_should_get_one_event():
     event_type = str(uuid4())
     session_id = str(uuid4())
     source_id = str(uuid4())
-    response, payload, event_id, profile_id = _make_event(event_type, session_id=session_id, source_id=source_id)
+    response, payload, events, profile_id = _make_event(event_type, session_id=session_id, source_id=source_id)
 
     try:
-        response = endpoint.get(f'/event/{event_id}')
+        response = endpoint.get(f'/event/{events[0]}')
         assert response.status_code == 200
         result = response.json()
 
         if tracardi.track_debug:
-            assert result['event']['id'] == event_id
+            assert result['event']['id'] in events
             assert result['event']['profile']['id'] == profile_id
         assert result['event']['properties'] == payload['events'][0]['properties']
         assert result['event']['type'] == payload['events'][0]['type']
     finally:
-        response = endpoint.delete(f'/event/{event_id}')
+        response = endpoint.delete(f'/event/{events[0]}')
         assert response.status_code == 200
         assert endpoint.get('/events/refresh').status_code == 200
         response = endpoint.delete(f'/event-source/{source_id}')

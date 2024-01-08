@@ -3,19 +3,20 @@ from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException
 
 from app.api.auth.permissions import Permissions
-from app.config import server
 from tracardi.config import tracardi
 from tracardi.service.storage.driver.elastic import raw as raw_db
 from tracardi.service.storage.driver.elastic import snapshot as snapshot_db
 from tracardi.service.storage.elastic_client import ElasticClient
+from tracardi.service.storage.index import Resource
 from tracardi.service.storage.indices_manager import check_indices_mappings_consistency
+from tracardi.service.storage.mapping import get_mappings_by_field_type
 
 router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin", "maintainer"]))]
 )
 
 
-@router.get("/storage/mapping/check", tags=["storage"], include_in_schema=server.expose_gui_api,
+@router.get("/storage/mapping/check", tags=["storage"], include_in_schema=tracardi.expose_gui_api,
             response_model=dict)
 async def check_indices_mapping_consistency():
     """
@@ -32,7 +33,7 @@ async def check_indices_mapping_consistency():
     return await check_indices_mappings_consistency()
 
 
-@router.get("/storage/mapping/{index}/metadata", tags=["storage"], include_in_schema=server.expose_gui_api,
+@router.get("/storage/mapping/{index}/metadata", tags=["storage"], include_in_schema=tracardi.expose_gui_api,
             response_model=dict)
 async def get_index_mapping_metadata(index: str, filter: str = None):
     """
@@ -44,11 +45,27 @@ async def get_index_mapping_metadata(index: str, filter: str = None):
 
     result = await raw_db.get_mapping_fields(index)
     if filter is not None:
-        result = [item for item in result if item.startswith(filter) and item!=filter]
+        result = [item for item in result if item.startswith(filter) and item != filter]
     return {"result": result, "total": len(result)}
 
 
-@router.get("/storage/mapping/{index}", tags=["storage"], include_in_schema=server.expose_gui_api, response_model=list)
+@router.get("/storage/mapping/{index}/metadata/type/{field_types}", tags=["storage"], include_in_schema=tracardi.expose_gui_api,
+            response_model=dict)
+async def get_index_mapping_metadata(index: str, field_types: str):
+    """
+    Returns fields with given field types of given index (str)
+    """
+
+    resource = Resource()
+    index = resource[index]
+    field_types = field_types.split(',')
+    fields = await get_mappings_by_field_type(index.get_write_index(), field_types)
+
+    return {"result": fields, "total": len(fields)}
+
+
+@router.get("/storage/mapping/{index}", tags=["storage"], include_in_schema=tracardi.expose_gui_api,
+            response_model=list)
 async def get_index_mapping(index: str):
     """
     Returns mapping of given index (str)
@@ -61,7 +78,7 @@ async def get_index_mapping(index: str):
     return mapping.get_field_names()
 
 
-@router.get("/storage/task/{task_id}", tags=["storage"], include_in_schema=server.expose_gui_api)
+@router.get("/storage/task/{task_id}", tags=["storage"], include_in_schema=tracardi.expose_gui_api)
 async def storage_task_status(task_id: str):
     """
     Returns the status of storage task.
@@ -70,7 +87,7 @@ async def storage_task_status(task_id: str):
     return await raw_db.task_status(task_id)
 
 
-@router.get("/storage/reindex/{source}/{destination}", tags=["storage"], include_in_schema=server.expose_gui_api)
+@router.get("/storage/reindex/{source}/{destination}", tags=["storage"], include_in_schema=tracardi.expose_gui_api)
 async def reindex_data(source: str, destination: str, wait_for_completion: bool = True):
     """
     Copies data from one index to another.
@@ -82,7 +99,7 @@ async def reindex_data(source: str, destination: str, wait_for_completion: bool 
     return await raw_db.reindex(source, destination, wait_for_completion)
 
 
-@router.delete("/storage/index/{index_name}", tags=["storage"], include_in_schema=server.expose_gui_api)
+@router.delete("/storage/index/{index_name}", tags=["storage"], include_in_schema=tracardi.expose_gui_api)
 async def delete_index(index_name: str):
     """
     Deletes storage index
@@ -98,7 +115,7 @@ async def delete_index(index_name: str):
 """ Snapshots """
 
 
-@router.get("/storage/snapshot-repository/{name}", tags=["storage"], include_in_schema=server.expose_gui_api,
+@router.get("/storage/snapshot-repository/{name}", tags=["storage"], include_in_schema=tracardi.expose_gui_api,
             response_model=dict)
 async def get_snapshot_repository(name: str):
     """
@@ -111,7 +128,7 @@ async def get_snapshot_repository(name: str):
     return await snapshot_db.get_snapshot_repository(repo=name)
 
 
-@router.get("/storage/snapshot-repository/status/{name}", tags=["storage"], include_in_schema=server.expose_gui_api,
+@router.get("/storage/snapshot-repository/status/{name}", tags=["storage"], include_in_schema=tracardi.expose_gui_api,
             response_model=dict)
 async def get_snapshot_repository_status(name: Optional[str] = "_all"):
     """

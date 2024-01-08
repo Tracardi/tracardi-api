@@ -1,7 +1,7 @@
 pip>=21.2.4
-fastapi[all]==0.99.0
+fastapi[all]>=0.103.0
 uvicorn[standard]>=0.22.0
-pydantic==1.10.11
+pydantic==2.3.0
 aiofiles==22.1.0
 aioredis==2.0.1
 hiredis==2.2.3
@@ -13,4 +13,4 @@ cron-validator==1.0.6
 python-multipart
 sentry-sdk
 
-git+https://github.com/Tracardi/tracardi.git@0.8.1  # Change to 0.8.2-dev
+git+https://github.com/Tracardi/tracardi.git@0.8.2-dev  # Change to 0.8.3-dev

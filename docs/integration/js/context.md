@@ -20,21 +20,36 @@ Configuration can be extended with *context* parameter, where you may define the
     const options = {
       tracker: {
         url: {
-            script: 'http://localhost:8686/tracker',
-            api: 'http://localhost:8686'
+            script: '//localhost:8686/tracker',
+            api: '//localhost:8686'
         },
         source: {
             id: "3ee63fc6-490a-4fd8-bfb3-bf0c8c8d3387"
         },
         context: {
+            cookies: false,
+            storage: false,
             browser: true,
             page: true,
-            session: false,
-            storage:true,
             screen: true,
-            performance: false
+            performance: false,
+            location: false
         }
     }
+}
+```
+
+Default context settings are:
+
+```json
+{
+  "cookies": false,
+  "storage": false,
+  "screen": true,
+  "page": true,
+  "browser": true,
+  "performance": false,
+  "location": false
 }
 ```
 
@@ -90,6 +105,10 @@ the context configuration.
     different cookies and local data that will lead to the 1000 fields per record limit in elastic. This will stop writing
     new sessions to the system.
 
+### Customer GEO location
+
+By setting the __context.location__ to true, system will try to catch geo location on client side. 
+
 ### Event performance metrics
 
 If you set `tracker.context.performance` to TRUE in tracker context configuration the result from __window.performance.getEntriesByType("
@@ -136,7 +155,11 @@ navigation")__ will be sent as event context.
 }
 ```
 
-### Append profile ID to external links (Tag A)
+# Tracker settings
+
+Tracker settings turn on/off additional tracker features.
+
+### Append profile ID to external links (Tagging links)
 
 The tracking script has the capability to include the current profile ID, session ID, and source ID in the URL parameter, 
 allowing for consistent profile ID persistence across domains that utilize the same Tracardi system. 
@@ -155,8 +178,8 @@ the A.href URL end with any of the defined domains in `trackExternalLinks`. In o
     const options = {
       tracker: {
         url: {
-            script: 'http://localhost:8686/tracker',
-            api: 'http://localhost:8686'
+            script: '//localhost:8686/tracker',
+            api: '//localhost:8686'
         },
         source: {
             id: "3ee63fc6-490a-4fd8-bfb3-bf0c8c8d3387"
@@ -241,8 +264,8 @@ tracker context:
     const options = {
       tracker: {
         url: {
-            script: 'http://localhost:8686/tracker',
-            api: 'http://localhost:8686'
+            script: '//localhost:8686/tracker',
+            api: '//localhost:8686'
         },
         source: {
             id: "3ee63fc6-490a-4fd8-bfb3-bf0c8c8d3387"
@@ -269,8 +292,8 @@ in settings section of tracker options.
     const options = {
       tracker: {
         url: {
-            script: 'http://localhost:8686/tracker',
-            api: 'http://localhost:8686'
+            script: '//localhost:8686/tracker',
+            api: '//localhost:8686'
         },
         source: {
             id: "3ee63fc6-490a-4fd8-bfb3-bf0c8c8d3387"

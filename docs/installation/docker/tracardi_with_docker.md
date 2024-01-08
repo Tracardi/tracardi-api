@@ -15,13 +15,18 @@ Make sure you have docker installed on your system.
 Pull and run Tracardi backend.
 
 ```bash
-docker run -p 8686:80 -e ELASTIC_HOST=http://<your-laptop-ip>:9200 -e REDIS_HOST=redis://<your-laptop-ip>:6379 tracardi/tracardi-api #(1)
+docker run -p 8686:80 -e ELASTIC_HOST=http://<your-laptop-ip>:9200 -e REDIS_HOST=redis://<your-laptop-ip>:6379 tracardi/tracardi-api:<last-version> #(1)
 ```
 
-1. Replace <your-laptop-ip> with your local laptop IP. 
+1. Replace <your-laptop-ip> with your local laptop IP. Replace <last-version> with the latest version. Do not use latest.
 
 Tracardi must connect to elasticsearch. To do that you have to set ELASTIC_HOST variable to reference your laptop's or
 server IP.
+
+!!! Warning "Please use the version tag"
+
+    Please use only docker with version tag. See the latest version in docker hub. 
+
 
 !!! Warning "Waiting for application startup"
 
@@ -44,10 +49,14 @@ For API documentation visit http://127.0.0.1:8686/docs
 Pull and run Tracardi Graphical User Interface.
 
 ```bash
-docker run -p 8787:80 tracardi/tracardi-gui #(1)
+docker run -p 8787:80 tracardi/tracardi-gui:<last-version> #(1)
 ```
 
 1. If you want a certain version of docker image add version tag, e.g. `tracardi/tracardi-gui:0.8.1`
+
+!!! Warning "Please use the version tag"
+
+    Please use only docker with version tag. See the latest version in docker hub. 
 
 ## Run Tracardi Graphical User Interface
 

@@ -3,7 +3,6 @@ from tracardi.context import Context, ServerContext
 from test.utils import Endpoint, get_test_tenant
 from uuid import uuid4
 
-from tracardi.domain.named_entity import NamedEntity
 
 with ServerContext(Context(production=False, tenant=get_test_tenant())):
     endpoint = Endpoint()
@@ -15,7 +14,7 @@ with ServerContext(Context(production=False, tenant=get_test_tenant())):
 
         event_source = dict(
             id=id,
-            bridge=NamedEntity(id="1", name="Api").dict(),
+            bridge=dict(id="1", name="Api"),
             type=type,
             name=id,
             timestamp="2022-01-07T16:18:09.278Z",

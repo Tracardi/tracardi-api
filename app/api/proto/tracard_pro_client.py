@@ -45,7 +45,7 @@ class TracardiProClient(object):
             message = pb2.EmptyParams()
             response = self.stub.validate(message, metadata=[('token', token)])
             return response.token if response.token != "" else None
-        except grpc.RpcError as e:
+        except grpc.RpcError:
             return None
 
     def sign_in(self, username, password) -> tuple:

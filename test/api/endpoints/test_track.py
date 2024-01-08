@@ -42,17 +42,16 @@ def test_should_register_correct_event():
         assert 'id' in result['profile']
         profile_id = result['profile']['id']
 
-        assert 'event' in result
-        assert 'ids' in result['event']
+        assert 'events' in result
 
-        assert len(result['event']['ids']) == 4  # 2 events + Profile Created, Session Opened.
+        assert len(result['events']) == 5  # 2 events + Profile Created, Session Opened, Visit Created.
         session_id = result['session']['id']
         try:
-            endpoint.get(f'/events/refresh')
+            endpoint.get('/events/refresh')
 
             # Event 1
 
-            for event_id in result['event']['ids']:
+            for event_id in result['events']:
                 response = endpoint.get(f'/event/{event_id}')
                 _result = response.json()
                 assert _result['event']['id'] == event_id
@@ -61,13 +60,13 @@ def test_should_register_correct_event():
                 if _result['event']['type'] == "test-event-2":
                     assert _result['event']['context']['test'] == 2
 
-            endpoint.get(f'/sessions/refresh')
+            endpoint.get('/sessions/refresh')
             response = endpoint.get(f'/session/{session_id}')
             _result = response.json()
             assert 'id' in _result
             assert _result['id'] == session_id
 
-            endpoint.get(f'/profiles/refresh')
+            endpoint.get('/profiles/refresh')
             response = endpoint.get(f'/profile/{profile_id}')
             _result = response.json()
             assert 'id' in _result
@@ -75,7 +74,7 @@ def test_should_register_correct_event():
 
         finally:
             assert endpoint.delete(f'/session/{session_id}').status_code in [200, 404]
-            for event_id in result['event']['ids']:
+            for event_id in result['events']:
                 assert endpoint.delete(f'/event/{event_id}').status_code in [200, 404]
             assert endpoint.delete(f'/profile/{profile_id}').status_code in [200, 404]
 

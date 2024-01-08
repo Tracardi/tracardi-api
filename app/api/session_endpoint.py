@@ -7,7 +7,7 @@ from tracardi.service.storage.driver.elastic import session as session_db
 from tracardi.service.storage.driver.elastic.session import _aggregate_session
 from tracardi.service.storage.index import Resource
 from .auth.permissions import Permissions
-from ..config import server
+from tracardi.config import tracardi
 
 router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin", "developer", 'marketer', "maintainer"]))]
@@ -16,8 +16,8 @@ router = APIRouter(
 
 @router.get("/session/count/online", tags=["session"],
             dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer", "maintainer"]))],
-            include_in_schema=server.expose_gui_api)
-async def count_sessions():
+            include_in_schema=tracardi.expose_gui_api)
+async def count_sessions_online():
     result = await session_db.count_online()
     return {
         "events": result.total,
@@ -27,7 +27,7 @@ async def count_sessions():
 
 @router.get("/sessions/count/by_app", tags=["session"],
             dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer", "maintainer"]))],
-            include_in_schema=server.expose_gui_api)
+            include_in_schema=tracardi.expose_gui_api)
 async def get_sessions_by_app():
     bucket_name = 'sessions_by_app'
     result = await _aggregate_session(bucket_name, by='app.name', buckets_size=20)
@@ -40,7 +40,7 @@ async def get_sessions_by_app():
 
 @router.get("/sessions/count/by_os_name", tags=["session"],
             dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer", "maintainer"]))],
-            include_in_schema=server.expose_gui_api)
+            include_in_schema=tracardi.expose_gui_api)
 async def get_sessions_by_os_name():
     bucket_name = 'sessions_by_os_name'
     result = await _aggregate_session(bucket_name, by='os.name', buckets_size=20)
@@ -53,7 +53,7 @@ async def get_sessions_by_os_name():
 
 @router.get("/sessions/count/by_device_geo", tags=["session"],
             dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer", "maintainer"]))],
-            include_in_schema=server.expose_gui_api)
+            include_in_schema=tracardi.expose_gui_api)
 async def get_sessions_by_device_location():
     bucket_name = 'sessions_by_device_geo'
     result = await _aggregate_session(bucket_name, by='device.geo.country.name', buckets_size=20)
@@ -66,7 +66,7 @@ async def get_sessions_by_device_location():
 
 @router.get("/sessions/count/by_channel", tags=["session"],
             dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer", "maintainer"]))],
-            include_in_schema=server.expose_gui_api)
+            include_in_schema=tracardi.expose_gui_api)
 async def get_sessions_by_channel():
     bucket_name = 'sessions_by_channel'
     result = await _aggregate_session(bucket_name, by='metadata.channel', buckets_size=20)
@@ -79,8 +79,8 @@ async def get_sessions_by_channel():
 
 @router.get("/sessions/count/by_resolution", tags=["session"],
             dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer", "maintainer"]))],
-            include_in_schema=server.expose_gui_api)
-async def get_sessions_by_channel():
+            include_in_schema=tracardi.expose_gui_api)
+async def get_sessions_by_resolution():
     bucket_name = 'sessions_by_resolution'
     result = await _aggregate_session(bucket_name, by='device.resolution', buckets_size=20)
 
@@ -92,7 +92,7 @@ async def get_sessions_by_channel():
 
 @router.get("/session/count/online/by_location", tags=["session"],
             dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer", "maintainer"]))],
-            include_in_schema=server.expose_gui_api)
+            include_in_schema=tracardi.expose_gui_api)
 async def count_sessions_by_location():
     result = await session_db.count_online_by_location()
     return {
@@ -105,12 +105,12 @@ async def count_sessions_by_location():
 
 @router.get("/session/count", tags=["session"],
             dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer", "maintainer"]))],
-            include_in_schema=server.expose_gui_api)
+            include_in_schema=tracardi.expose_gui_api)
 async def count_sessions():
     return await session_db.count()
 
 
-@router.get("/sessions/refresh", tags=["session"], include_in_schema=server.expose_gui_api)
+@router.get("/sessions/refresh", tags=["session"], include_in_schema=tracardi.expose_gui_api)
 async def session_refresh():
     """
     Refreshes session index
@@ -118,7 +118,7 @@ async def session_refresh():
     return await session_db.refresh()
 
 
-@router.get("/sessions/flash", tags=["session"], include_in_schema=server.expose_gui_api)
+@router.get("/sessions/flash", tags=["session"], include_in_schema=tracardi.expose_gui_api)
 async def session_refresh():
     """
     Flushes session index
@@ -128,7 +128,7 @@ async def session_refresh():
 
 @router.post("/sessions/import", tags=["session"],
              dependencies=[Depends(Permissions(roles=["admin", "developer"]))],
-             include_in_schema=server.expose_gui_api)
+             include_in_schema=tracardi.expose_gui_api)
 async def import_profiles(sessions: List[Session]):
     """
     Adds given sessions to database
@@ -140,7 +140,7 @@ async def import_profiles(sessions: List[Session]):
             tags=["session"],
             dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer"]))],
             response_model=Optional[Session],
-            include_in_schema=server.expose_gui_api)
+            include_in_schema=tracardi.expose_gui_api)
 async def get_session_by_id(id: str, response: Response):
     """
     Returns session with given ID (str)
@@ -155,7 +155,7 @@ async def get_session_by_id(id: str, response: Response):
 
 @router.delete("/session/{id}", tags=["session"],
                dependencies=[Depends(Permissions(roles=["admin", "developer"]))],
-               include_in_schema=server.expose_gui_api)
+               include_in_schema=tracardi.expose_gui_api)
 async def delete_session(id: str, response: Response):
     """
     Deletes session with given ID (str)
@@ -173,7 +173,7 @@ async def delete_session(id: str, response: Response):
 
 @router.get("/session/profile/{profile_id}", tags=["session"],
             dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer"]))],
-            include_in_schema=server.expose_gui_api)
+            include_in_schema=tracardi.expose_gui_api)
 async def get_nth_last_session_for_profile(profile_id: str, n: Optional[int] = 0):
     result = await session_db.get_nth_last_session(profile_id, n + 1)
 

@@ -18,9 +18,6 @@ provide similar functionality to Tracardi. Here are some major open-source compe
    allows businesses to capture, process, and analyze customer event data in real-time, enabling personalized marketing
    efforts.
 
-5. BlueConic Community Edition: BlueConic also offers a community edition of their CDP that is open-source. It provides
-   basic customer data management and segmentation capabilities, allowing businesses to get started with a CDP solution.
-
 These open-source alternatives provide businesses with flexibility and customization options. However, it's important to
 note that open-source solutions may require more technical expertise and effort for setup, customization, and
 maintenance compared to commercial options like Tracardi. It's advisable to evaluate these alternatives based on your

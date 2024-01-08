@@ -1,4 +1,3 @@
-import asyncio
 from typing import List, Optional
 
 from fastapi import APIRouter, Response, HTTPException, Depends
@@ -9,7 +8,7 @@ from tracardi.service.storage.driver.elastic import rule as rule_db
 from tracardi.service.storage.driver.elastic import flow as flow_db
 from tracardi.domain.rule import Rule
 from .auth.permissions import Permissions
-from ..config import server
+from tracardi.config import tracardi
 from ..service.grouping import group_records
 
 router = APIRouter(
@@ -17,7 +16,7 @@ router = APIRouter(
 )
 
 
-@router.post("/rule", tags=["rule"], include_in_schema=server.expose_gui_api)
+@router.post("/rule", tags=["rule"], include_in_schema=tracardi.expose_gui_api)
 async def upsert_rule(rule: Rule):
     """
     Adds new trigger rule to database
@@ -55,7 +54,7 @@ async def upsert_rule(rule: Rule):
     return result
 
 
-@router.get("/rule/{id}", tags=["rule"], response_model=Optional[Rule], include_in_schema=server.expose_gui_api)
+@router.get("/rule/{id}", tags=["rule"], response_model=Optional[Rule], include_in_schema=tracardi.expose_gui_api)
 async def get_rule(id: str, response: Response):
     """
     Returns rule or None if rule does not exist.
@@ -70,7 +69,7 @@ async def get_rule(id: str, response: Response):
     return result
 
 
-@router.delete("/rule/{id}", tags=["rule"], include_in_schema=server.expose_gui_api)
+@router.delete("/rule/{id}", tags=["rule"], include_in_schema=tracardi.expose_gui_api)
 async def delete_rule(id: str, response: Response):
     """
     Deletes rule with given ID (str) from database
@@ -85,7 +84,7 @@ async def delete_rule(id: str, response: Response):
     return result
 
 
-@router.get("/rules/by_flow/{id}", tags=["rules"], response_model=List[Rule], include_in_schema=server.expose_gui_api)
+@router.get("/rules/by_flow/{id}", tags=["rules"], response_model=List[Rule], include_in_schema=tracardi.expose_gui_api)
 async def get_rules_attached_to_flow(id: str) -> List[Rule]:
     """
     Returns list of rules attached to flow with given ID (str)
@@ -93,7 +92,7 @@ async def get_rules_attached_to_flow(id: str) -> List[Rule]:
     return await rule_db.load_flow_rules(id)
 
 
-@router.get("/rules/refresh", tags=["rules"], include_in_schema=server.expose_gui_api)
+@router.get("/rules/refresh", tags=["rules"], include_in_schema=tracardi.expose_gui_api)
 async def refresh_rules():
     """
     Refreshes rules index
@@ -101,15 +100,15 @@ async def refresh_rules():
     return await rule_db.refresh()
 
 
-@router.get("/rules/flash", tags=["rules"], include_in_schema=server.expose_gui_api)
-async def refresh_rules():
+@router.get("/rules/flash", tags=["rules"], include_in_schema=tracardi.expose_gui_api)
+async def flash_rules():
     """
     Flushes rules index
     """
     return await rule_db.flush()
 
 
-@router.get("/rules/by_tag", tags=["rules"], response_model=dict, include_in_schema=server.expose_gui_api)
+@router.get("/rules/by_tag", tags=["rules"], response_model=dict, include_in_schema=tracardi.expose_gui_api)
 async def get_rules_by_tag(query: str = None, start: int = 0, limit: int = 100) -> dict:
     """
     Lists rules by tags, according to query (str), start (int) and limit (int) parameters
@@ -118,8 +117,8 @@ async def get_rules_by_tag(query: str = None, start: int = 0, limit: int = 100) 
     return group_records(result, query, group_by='tags', search_by='name', sort_by='name')
 
 
-@router.get("/rules/by_event_type/{event_type}", tags=["rules"], response_model=dict, include_in_schema=server.expose_gui_api)
-async def get_rules_by_tag(event_type: str) -> dict:
+@router.get("/rules/by_event_type/{event_type}", tags=["rules"], response_model=dict, include_in_schema=tracardi.expose_gui_api)
+async def get_rules_by_event_type(event_type: str) -> dict:
     """
     Lists rules by event types
     """

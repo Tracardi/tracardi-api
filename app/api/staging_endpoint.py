@@ -4,14 +4,14 @@ from tracardi.service.staging import move_from_staging_to_production, add_alias_
     remove_alias_staging_to_production
 
 from app.api.auth.permissions import Permissions
-from app.config import server
+from tracardi.config import tracardi
 
 router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin", "maintainer"]))]
 )
 
 
-@router.get("/production/deploy", tags=["staging"], include_in_schema=server.expose_gui_api)
+@router.get("/production/deploy", tags=["staging"], include_in_schema=tracardi.expose_gui_api)
 async def deploy_staging_to_production():
     """
     Deploys current staging server data to production.
@@ -22,7 +22,7 @@ async def deploy_staging_to_production():
         raise HTTPException(detail=f"Error: {str(e)}, Reason: Probably production not installed.", status_code=422)
 
 
-@router.get("/production/dry-run", tags=["staging"], include_in_schema=server.expose_gui_api)
+@router.get("/production/dry-run", tags=["staging"], include_in_schema=tracardi.expose_gui_api)
 async def dry_run_staging_on_production():
     """
     Connects current staging server data to production. Can be reverted.
@@ -33,7 +33,7 @@ async def dry_run_staging_on_production():
         raise HTTPException(detail=f"Error: {str(e)}, Reason: Probably production not installed.", status_code=422)
 
 
-@router.get("/production/dry-run/revert", tags=["staging"], include_in_schema=server.expose_gui_api)
+@router.get("/production/dry-run/revert", tags=["staging"], include_in_schema=tracardi.expose_gui_api)
 async def disconnect_staging_from_production():
     """
     Revert to old production data.

@@ -1,4 +1,5 @@
-import os, sys
+import os
+import sys
 import traceback
 from datetime import datetime
 import sentry_sdk
@@ -18,31 +19,57 @@ from tracardi.service.elastic.connection import wait_for_connection
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI, Request
 from starlette.staticfiles import StaticFiles
-from app.api import rule_endpoint, resource_endpoint, event_endpoint, \
-    profile_endpoint, flow_endpoint, generic_endpoint, \
-    segments_endpoint, \
-    tql_endpoint, health_endpoint, session_endpoint, plugins_endpoint, \
-    settings_endpoint, event_source_endpoint, test_endpoint, \
-    consent_type_endpoint, flow_action_endpoint, flows_endpoint, info_endpoint, \
-    user_endpoint, debug_endpoint, log_endpoint, tracardi_pro_endpoint, \
-    event_type_predefined, \
-    import_endpoint, \
-    task_endpoint, \
-    storage_endpoint, \
-    destination_endpoint, \
-    user_log_endpoint, \
-    user_account_endpoint, \
-    install_endpoint, \
-    delete_indices_endpoint, \
-    setting_endpoint, \
-    migration_endpoint, report_endpoint, live_segments_endpoint, \
-    console_log_endpoint, event_type_mapping, \
-    bridge_endpoint, entity_endpoint, staging_endpoint, customer_endpoint, event_to_profile
+from app.api import (
+    rule_endpoint,
+    resource_endpoint,
+    event_endpoint,
+    profile_endpoint,
+    flow_endpoint,
+    generic_endpoint,
+    segments_endpoint,
+    tql_endpoint,
+    health_endpoint,
+    session_endpoint,
+    plugins_endpoint,
+    settings_endpoint,
+    event_source_endpoint,
+    test_endpoint,
+    consent_type_endpoint,
+    flow_action_endpoint,
+    flows_endpoint,
+    info_endpoint,
+    user_endpoint,
+    debug_endpoint,
+    log_endpoint,
+    tracardi_pro_endpoint,
+    event_type_predefined,
+    import_endpoint,
+    task_endpoint,
+    storage_endpoint,
+    destination_endpoint,
+    user_log_endpoint,
+    user_account_endpoint,
+    install_endpoint,
+    delete_indices_endpoint,
+    setting_endpoint,
+    migration_endpoint,
+    report_endpoint,
+    live_segments_endpoint,
+    console_log_endpoint,
+    event_type_mapping,
+    bridge_endpoint,
+    entity_endpoint,
+    staging_endpoint,
+    customer_endpoint,
+    event_to_profile, cache_endpoint
+)
 from app.api.track import event_server_endpoint
 from tracardi.config import tracardi
 from tracardi.exceptions.log_handler import log_handler
 from tracardi.service.storage.elastic_client import ElasticClient
 from app.api.licensed_endpoint import get_router
+
+
 
 # Licensed software
 if License.has_service(SCHEDULER):
@@ -78,9 +105,16 @@ else:
 if License.has_service(LICENSE):
     from com_tracardi.endpoint import event_to_profile_copy
     from com_tracardi.endpoint import event_props_to_event_traits_copy
+    from com_tracardi.endpoint import metric_endpoint
+    from com_tracardi.config import com_tracardi_settings
+    from com_tracardi.endpoint import field_update_log_endpoint
+    from com_tracardi.endpoint import profile_activation
 else:
     event_to_profile_copy = get_router(prefix="/events/copy")
     event_props_to_event_traits_copy = get_router(prefix="/events/index")
+    metric_endpoint = get_router(prefix="/metric")
+    field_update_log_endpoint = get_router(prefix="/field/update")
+    profile_activation = get_router(prefix="/profile/activate")
 
 
 if License.has_service(MULTI_TENANT):
@@ -112,7 +146,7 @@ if License.has_license():
 
     print(f"Services {list(license.get_service_ids())}", flush=True)
 else:
-    print(f"License: MIT + “Commons Clause” License Condition v1.0", flush=True)
+    print("License: MIT + “Commons Clause” License Condition v1.0", flush=True)
 
 tags_metadata = [
     {
@@ -174,7 +208,7 @@ application = FastAPI(
     description="The TRACARDI open-source customer data platform provides exceptional control over customer "
                 "data through its comprehensive set of features.",
     version=str(tracardi.version),
-    openapi_tags=tags_metadata if server.expose_gui_api else None,
+    openapi_tags=tags_metadata if tracardi.expose_gui_api else None,
     docs_url='/docs' if server.api_docs else None,
     redoc_url='/redoc' if server.api_docs else None,
     contact={
@@ -232,6 +266,7 @@ application.mount("/uix",
                       directory=os.path.join(_local_dir, "../uix")),
                   name="uix")
 
+application.include_router(profile_activation.router)
 application.include_router(event_server_endpoint.router)
 application.include_router(tql_endpoint.router)
 application.include_router(segments_endpoint.router)
@@ -277,6 +312,7 @@ application.include_router(entity_endpoint.router)
 application.include_router(consent_data_compliance_endpoint.router)
 application.include_router(identification_point_endpoint.router)
 application.include_router(scheduler_endpoint.router)
+application.include_router(metric_endpoint.router)
 application.include_router(staging_endpoint.router)
 application.include_router(customer_endpoint.router)
 application.include_router(event_to_profile.router)
@@ -284,6 +320,9 @@ application.include_router(event_to_profile_copy.router)
 application.include_router(event_props_to_event_traits_copy.router)
 application.include_router(event_type_predefined.router)
 application.include_router(setting_endpoint.router)
+application.include_router(field_update_log_endpoint.router)
+application.include_router(cache_endpoint.router)
+
 if License.has_service(MULTI_TENANT):
     application.include_router(tenant_install_endpoint.router)
 
@@ -300,10 +339,13 @@ if server.performance_tracking:
         profiles_sample_rate=1.0,
     )
 
-
 @application.on_event("startup")
 async def app_starts():
     logger.info(f"TRACARDI version {str(tracardi.version)} set-up starts.")
+    if License.has_license():
+        logger.info(f"TRACARDI async processing:  {com_tracardi_settings.async_processing}.")
+        logger.info(f"TRACARDI multi-tenancy:  {tracardi.multi_tenant}.")
+        logger.info(f"TRACARDI multi-tenancy API:  {tracardi.multi_tenant_manager_url}.")
     await wait_for_connection(no_of_tries=10)
     logger.info("TRACARDI set-up finished.")
     logger.info(f"TRACARDI version {str(tracardi.version)} ready to operate.")

@@ -25,7 +25,7 @@ def _create_plugin() -> Tuple[Response, str, FlowActionPlugin]:
             metadata=MetaData(name="test")
         )
     )
-    response = endpoint.post(f"/flow/action/plugin", data=json.loads(data.json()))
+    response = endpoint.post("/flow/action/plugin", data=json.loads(data.model_dump_json()))
     assert response.status_code == 200
     return response, response.json()['ids'][0], data
 

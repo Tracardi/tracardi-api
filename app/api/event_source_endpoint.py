@@ -3,7 +3,6 @@ from collections import defaultdict
 from typing import Optional
 
 from fastapi import APIRouter, HTTPException, Depends, Response
-from tracardi.config import tracardi
 from tracardi.domain.named_entity import NamedEntity
 from tracardi.domain.enum.type_enum import TypeEnum
 from tracardi.domain.event_source import EventSource
@@ -12,7 +11,7 @@ from tracardi.service.event_source_manager import event_source_types, save_sourc
 from tracardi.service.storage.driver.elastic import event_source as event_source_db
 from app.service.grouper import search
 from .auth.permissions import Permissions
-from ..config import server
+from tracardi.config import tracardi
 
 logger = logging.getLogger(__name__)
 logger.setLevel(tracardi.logging_level)
@@ -25,7 +24,7 @@ router = APIRouter(
 
 @router.get("/event-sources/by_type",
             tags=["event-source"],
-            include_in_schema=server.expose_gui_api)
+            include_in_schema=tracardi.expose_gui_api)
 async def list_event_sources(query: str = None):
     """
     Lists all event sources that match given query (str) parameter
@@ -65,7 +64,7 @@ async def list_event_sources(query: str = None):
 @router.get("/event-sources/type/{type}",
             tags=["event-source"],
             response_model=dict,
-            include_in_schema=server.expose_gui_api)
+            include_in_schema=tracardi.expose_gui_api)
 async def get_event_source_types(type: TypeEnum) -> dict:
     """
     Returns a list of event source types. Each event source requires a source type to define what kind of data is
@@ -88,7 +87,7 @@ async def get_event_source_types(type: TypeEnum) -> dict:
 
 @router.get("/event-source/{id}", tags=["event-source"],
             response_model=Optional[EventSource],
-            include_in_schema=server.expose_gui_api)
+            include_in_schema=tracardi.expose_gui_api)
 async def load_event_source(id: str, response: Response):
     """
     Returns event source with given ID (str)
@@ -103,7 +102,7 @@ async def load_event_source(id: str, response: Response):
 
 
 @router.post("/event-source", tags=["event-source"],
-             include_in_schema=server.expose_gui_api)
+             include_in_schema=tracardi.expose_gui_api)
 async def save_event_source(event_source: EventSource):
     """
     Adds new event source in database
@@ -115,7 +114,7 @@ async def save_event_source(event_source: EventSource):
 
 
 @router.delete("/event-source/{id}", tags=["event-source"],
-               include_in_schema=server.expose_gui_api)
+               include_in_schema=tracardi.expose_gui_api)
 async def delete_event_source(id: str, response: Response):
     """
     Deletes event source with given ID (str)
@@ -132,7 +131,7 @@ async def delete_event_source(id: str, response: Response):
 
 @router.get("/event-sources/refresh",
             tags=["event-source"],
-            include_in_schema=server.expose_gui_api)
+            include_in_schema=tracardi.expose_gui_api)
 async def refresh_event_sources():
     """
     Refreshes event source index in database
@@ -142,7 +141,7 @@ async def refresh_event_sources():
 
 @router.get("/event-sources/entity",
             tags=["event-source"],
-            include_in_schema=server.expose_gui_api)
+            include_in_schema=tracardi.expose_gui_api)
 async def list_event_sources_names_and_ids(add_current: bool = False, type: Optional[str] = None, limit: int = 500):
     """
     Returns list of event sources. This list contains only id and name.

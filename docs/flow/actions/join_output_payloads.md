@@ -1,96 +1,64 @@
-Joins payload from incoming data.
+# Join
 
-# Data join
+Joins payload from incoming data, merging different input connections into a single, unified payload.
 
-This plugin will join data form input connections. Connections can contain different data. This plugin will merge this data into one object. 
-If the connections are named then it will merge the data from the input connection under as connection name. 
-For example if the connection name is "Personal data" then the merged data will be:
+# Version
 
-```
-{
-  "Personal data": {
-    ...payload
-  }
-}
-```
+0.7.1
 
-If the connections are not named then data form incoming connection will be copied available under the connection id
-key. 
+## Description
 
-# Output reshaping
+The Join plugin focuses on combining data from various input connections into a single payload. This is particularly
+useful when data from multiple sources needs to be gathered and analyzed as a unified set. If input connections have
+specific names, the plugin organizes the merged data under these connection names. For unnamed connections, it uses the
+connection IDs as keys in the resulting object.
 
-Joint data can be reshaped. 
+Additionally, the plugin offers a feature for reshaping the joint data. This allows for transforming the data structure
+according to a predefined JSON template. The template can include static values, dynamically fetched data using dot
+notation (such as "profile@id"), or combinations thereof. This capability enables tailored data structuring to fit
+specific analytical or operational needs.
 
-Here is an example of reshape template.
+# Inputs and Outputs
 
-```
-{
-  "some-data": {
-    "key": "value",             // This is static value
-    
-    "value": "profile@id",      // Reads value from profile 
-                                // and saves it in object 
-                                // value key
-                                
-    "list": [1, "payload@data"],// Reads data value from 
-                                // payload and saves it as 
-                                // 2nd element of list
-                                
-    "event": "event@..."        // Saves in event all data 
-                                // from event.
-  }
-}
-```
+## Inputs:
 
-Notice that some parts of this object reference data with dot notation. The data will be replaced be
-the referenced data.
+- **Payload**: Accepts a payload object containing the data to be joined.
 
-Let's assume that the merged payloads look like this:
+## Outputs:
+
+- **Payload**: Returns the joined payload, Optionally it may be reshaped according to the configured template.
+
+# Configuration
+
+- **Reshape output payload**: A JSON template to reshape the output payload, allowing transformations of the joint data.
+- **Type of join**: Choose between a list or a dictionary for the collection type. Dictionary type uses connection names
+  as keys.
+- **Missing values equal null**: If enabled, any missing values in the data will be replaced with null.
+
+# JSON Configuration
+
+Example configuration:
 
 ```json
 {
-  "data": {
-        "name": "John",
-        "age": 26
-      },
-  "edge": {
-    "test": 1
-  }
+  "reshape": "{\"some-data\": {\"key\": \"value\", \"value\": \"profile@id\", \"list\": [1, \"payload@data\"], \"event\": \"event@...\"}}",
+  "default": true,
+  "type": "dict"
 }
 ```
 
-then the result after data reshaping with the following template:
+# Required resources
 
-```
-{
-  "some-data": {
-    "key": "value",
-    "value": "profile@id"  
-    "list": [1, "payload@data"] 
-    "event": "event@..."
-}
-```
+This plugin does not require external resources to be configured.
 
-will be:
+# Errors
 
-```json
-{
-  "some-data": {
-    "key": "value",
-    "value": "profile-id",
-    "list": [
-      1,
-      {
-        "name": "John",
-        "age": 26
-      }
-    ],
-    "event": {
-      "type": "page-view",
-      "properties": {
-        "url": "http://localhost"
-      }
-    }
-  }
-}
-```
+- **"Invalid Configuration":** Occurs when the provided plugin configuration is not valid. This can happen if the JSON
+  reshaping template is incorrectly formatted or if essential configuration parameters are missing or invalid.
+
+# Operation
+
+Upon execution, the plugin processes incoming data from different sources, joining them based on the defined
+configuration. The reshaping feature applies the specified template to the joint data, allowing for customized data
+structuring. The output is a single payload that consolidates all input data, optionally reshaped and organized
+according to the plugin's configuration.

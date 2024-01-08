@@ -36,7 +36,7 @@ def test_track_payload():
                 'Could not perform test due to bad server configuration. No debugging allowed. '
                 'Start Tracardi with TRACK_DEBUG=yes.')
 
-        assert len(result['event']['ids']) == 3  # Event, Session opened, Profile Created
+        assert len(result['event']['ids']) == 4  # Event, Session opened, Profile Created, visit started
 
         assert 'id' in result['profile']
 
@@ -48,8 +48,8 @@ def test_track_payload():
 
     finally:
 
-        assert endpoint.get(f'/sessions/refresh').status_code == 200
-        assert endpoint.get(f'/event-sources/refresh').status_code == 200
+        assert endpoint.get('/sessions/refresh').status_code == 200
+        assert endpoint.get('/event-sources/refresh').status_code == 200
 
         assert endpoint.delete(f'/event-source/{source_id}').status_code in [200, 404]
         assert endpoint.delete(f'/session/{session_id}').status_code in [200, 404]

@@ -2,8 +2,9 @@ import logging
 from json import JSONDecodeError
 from typing import Optional
 
-from fastapi import APIRouter, Request, status, HTTPException
+from fastapi import APIRouter, Request, status, HTTPException, Response
 from fastapi.responses import RedirectResponse
+
 from tracardi.service.notation.dict_traverser import DictTraverser
 from tracardi.service.notation.dot_accessor import DotAccessor
 
@@ -56,36 +57,54 @@ async def _track(tracker_payload: TrackerPayload, host: str, allowed_bridges):
         message = str(e)
         logger.error(message)
         raise HTTPException(detail=message,
-                            status_code=status.HTTP_401_UNAUTHORIZED)
+                             status_code=status.HTTP_401_UNAUTHORIZED)
     except FieldTypeConflictException as e:
         message = "FieldTypeConflictException: {} - {}".format(str(e), e.explain())
         logger.error(message)
         raise HTTPException(detail=message,
-                            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY)
+                             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY)
     except EventValidationException as e:
         message = "Validation failed with error: {}".format(str(e))
         logger.error(message)
         raise HTTPException(detail=message,
-                            status_code=status.HTTP_406_NOT_ACCEPTABLE)
+                             status_code=status.HTTP_406_NOT_ACCEPTABLE)
     except Exception as e:
         message = str(e)
         logger.error(message)
         raise HTTPException(detail=message,
-                            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @router.post("/track", tags=['collector'])
-async def track(tracker_payload: TrackerPayload, request: Request, profile_less: bool = False):
+async def track(tracker_payload: TrackerPayload, request: Request, response: Response, profile_less: bool = False):
 
     tracker_payload.set_headers(dict(request.headers))
     tracker_payload.profile_less = profile_less
-    return await _track(tracker_payload,
+    result = await _track(tracker_payload,
                         get_ip_address(request),
                         allowed_bridges=['rest'])
 
+    if result and result.get('errors', []):
+        response.status_code = 226
+
+    return result
+
+
+@router.put("/track", tags=['collector'])
+async def track_async(tracker_payload: TrackerPayload, request: Request, profile_less: bool = False):
+
+    tracker_payload.set_headers(dict(request.headers))
+    tracker_payload.profile_less = profile_less
+
+    # validate source
+
+    # validate event and reshape event
+
+    # queue for saving and processing
+
 
 @router.post("/collect/{event_type}/{source_id}/{session_id}", tags=['collector'])
-async def track_post_webhook(event_type: str, source_id: str, request: Request, session_id: Optional[str] = None):
+async def track_post_webhook_with_session(event_type: str, source_id: str, request: Request, session_id: Optional[str] = None):
     """
     Collects data from request POST and adds event type. It stays profile-less if no session provided.
     Session is saved when event is not profile less.
@@ -255,7 +274,7 @@ async def request_redirect(request: Request, redirect_id: str, session_id: Optio
             "params": dict(request.query_params),
             "body": body
         },
-        session=session.dict() if session else None
+        session=session.model_dump() if session else None
     )
     converter = DictTraverser(dot)
 

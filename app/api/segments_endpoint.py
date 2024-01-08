@@ -10,7 +10,7 @@ from app.service.grouper import search
 from tracardi.domain.segment import Segment
 from tracardi.domain.value_object.bulk_insert_result import BulkInsertResult
 from .auth.permissions import Permissions
-from ..config import server
+from tracardi.config import tracardi
 
 router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer"]))]
@@ -23,7 +23,7 @@ async def _load_record(id: str) -> Optional[Segment]:
 
 @router.get("/segment/{id}",
             tags=["segment"],
-            include_in_schema=server.expose_gui_api)
+            include_in_schema=tracardi.expose_gui_api)
 async def get_segment(id: str):
     """
     Returns segment with given ID (str)
@@ -33,7 +33,7 @@ async def get_segment(id: str):
 
 @router.delete("/segment/{id}",
                tags=["segment"],
-               include_in_schema=server.expose_gui_api)
+               include_in_schema=tracardi.expose_gui_api)
 async def delete_segment(id: str):
     """
     Deletes segment with given ID (str)
@@ -47,7 +47,7 @@ async def delete_segment(id: str):
 
 @router.get("/segments/refresh",
             tags=["segment"],
-            include_in_schema=server.expose_gui_api)
+            include_in_schema=tracardi.expose_gui_api)
 async def refresh_segments():
     """
     Refreshes segments index
@@ -57,14 +57,14 @@ async def refresh_segments():
 
 @router.get("/segments",
             tags=["segment"],
-            include_in_schema=server.expose_gui_api)
+            include_in_schema=tracardi.expose_gui_api)
 async def get_segments(query: str = None):
     """
     Returns segments with match of given query (str) on name of event type
     """
     result = await segment_db.load_all()
     total = result.total
-    result = [Segment.construct(Segment.__fields_set__, **r) for r in result]
+    result = [Segment(**r) for r in result]
 
     # Filtering
     if query is not None and len(query) > 0:
@@ -98,8 +98,8 @@ async def get_segments(query: str = None):
 
 @router.get("/segments/metadata",
             tags=["segment"],
-            include_in_schema=server.expose_gui_api)
-async def get_segments(name: str = ""):
+            include_in_schema=tracardi.expose_gui_api)
+async def get_segments_metadata(name: str = ""):
     """
     Returns segments with match of given query (str) on name of event type
     """
@@ -116,11 +116,11 @@ async def get_segments(name: str = ""):
 @router.post("/segment",
              tags=["segment"],
              response_model=BulkInsertResult,
-             include_in_schema=server.expose_gui_api)
+             include_in_schema=tracardi.expose_gui_api)
 async def upsert_segment(segment: Segment):
     """
     Adds new segment to database
     """
-    result = await segment_db.save(segment.dict())
+    result = await segment_db.save(segment.model_dump(mode='json'))
     await segment_db.refresh()
     return result

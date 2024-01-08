@@ -26,14 +26,14 @@ def test_should_get_existing_plugin():
         )
     )
 
-    data = json.loads(json.dumps(payload.dict(), default=str))
+    data = json.loads(json.dumps(payload.model_dump(), default=str))
 
-    response = endpoint.post(f'/flow/action/plugin', data=data)
+    response = endpoint.post('/flow/action/plugin', data=data)
     assert response.status_code == 200
     result = response.json()
     plugin_id = result['ids'][0]
 
-    assert endpoint.get(f'/flows/refresh').status_code == 200
+    assert endpoint.get('/flows/refresh').status_code == 200
 
     response = endpoint.get(f'/flow/action/plugin/{plugin_id}')
     assert response.status_code == 200

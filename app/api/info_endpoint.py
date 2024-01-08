@@ -5,13 +5,12 @@ from fastapi import APIRouter
 from tracardi.domain.api_instance import ApiInstance
 from tracardi.service.license import License
 
-from app.config import server
 from tracardi.config import tracardi
 
 router = APIRouter()
 
 
-@router.get("/info/version", tags=["info"], include_in_schema=server.expose_gui_api, response_model=str)
+@router.get("/info/version", tags=["info"], include_in_schema=tracardi.expose_gui_api, response_model=str)
 async def get_version():
     """
     Returns info about Tracardi API version
@@ -26,7 +25,7 @@ async def get_current_backend_version():
     Returns current backend version with previous versions.
     """
 
-    version = tracardi.version.dict()
+    version = tracardi.version.model_dump(mode='json')
     version['instance'] = ApiInstance().id
 
     if License.has_license():

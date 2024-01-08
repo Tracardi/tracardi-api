@@ -4,7 +4,7 @@ endpoint = Endpoint()
 
 
 def test_should_return_settings():
-    response = endpoint.get("/settings")
+    response = endpoint.get("/system/settings")
     assert response.status_code == 200
     result = response.json()
     for setting in result:

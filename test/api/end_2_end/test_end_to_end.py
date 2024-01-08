@@ -3,8 +3,8 @@ from uuid import uuid4
 from tracardi.process_engine.action.v1.flow.start.start_action import StartAction
 from tracardi.process_engine.action.v1.increase_views_action import IncreaseViewsAction
 from tracardi.domain.flow import Flow
-from tracardi.process_engine.action.v1.end_action import EndAction
 from test.api.endpoints.test_event_source_endpoint import _create_event_source
+from tracardi.process_engine.action.v1.operations.update_profile_action import UpdateProfileAction
 from tracardi.service.wf.service.builders import action
 from test.utils import Endpoint
 
@@ -64,11 +64,11 @@ def test_source_rule_and_flow():
 
         start = action(StartAction)
         increase_views = action(IncreaseViewsAction)
-        end = action(EndAction)
+        update_profile = action(UpdateProfileAction)
 
         flow = Flow.build("End2End flow", id=flow_id)
         flow += start('payload') >> increase_views('payload')
-        flow += increase_views('payload') >> end('payload')
+        flow += increase_views('payload') >> update_profile('payload')
 
         flow.arrange_nodes()
 
@@ -76,7 +76,7 @@ def test_source_rule_and_flow():
             assert flow.flowGraph.get_node_by_id(edge.source).position.y < \
                    flow.flowGraph.get_node_by_id(edge.target).position.y - 100  # Y coordinate increases to the bottom
 
-        assert endpoint.post('/flow/production', data=flow.dict()).status_code == 200
+        assert endpoint.post('/flow/production', data=flow.model_dump()).status_code == 200
         assert endpoint.get('/flows/refresh').status_code == 200
 
         result = endpoint.post('/segment', data={
@@ -140,11 +140,11 @@ def test_source_rule_and_flow():
         assert endpoint.delete(f'/profile/{profile_id}').status_code == 200
 
     finally:
-        assert endpoint.get(f'/profiles/refresh').status_code == 200
-        assert endpoint.get(f'/sessions/refresh').status_code == 200
-        assert endpoint.get(f'/rules/refresh').status_code == 200
-        assert endpoint.get(f'/flows/refresh').status_code == 200
-        assert endpoint.get(f'/event-sources/refresh').status_code == 200
+        assert endpoint.get('/profiles/refresh').status_code == 200
+        assert endpoint.get('/sessions/refresh').status_code == 200
+        assert endpoint.get('/rules/refresh').status_code == 200
+        assert endpoint.get('/flows/refresh').status_code == 200
+        assert endpoint.get('/event-sources/refresh').status_code == 200
 
         assert endpoint.delete(f'/flow/{flow_id}').status_code in [200, 404]
         assert endpoint.delete(f'/rule/{rule_id}').status_code in [200, 404]

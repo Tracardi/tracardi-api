@@ -1,46 +1,85 @@
-# Merge Profile Action
+# Merge profiles
 
-When new personal information is added to a customer's profile, it might need to be combined with other profiles in the
-system to create one consistent profile. This is done through the "merge profile" action.
+This plugin combines customer profiles in Tracardi when new information about a customer is added. It helps to make one
+complete profile from many separate ones.
 
-When this action is used in the workflow, it will set the profile to be merged at the end of the process. To finish the
-merging process, you'll need to provide a merge key in the settings of the "merge profile" step.
+# Version
 
-## Configuration
+0.8.2
 
-The merge key is an important part of the system that helps to combine different customer profiles into one. This key
-can be something unique like an email, phone number, or ID. The system will look for other profiles that have the same
-key and merge them together.
+## Description
 
-When the profiles are merged, all their information is combined into one single profile and any actions related to those
-profiles are now related to the merged one. Any extra profiles that are no longer needed will be deleted, but their ID
-will still be connected to the new merged profile. This means that if you try to look for an old profile, the system
-will show you the new merged one.
+The Merge Profiles Action in Tracardi is for joining different customer profiles into one. This is useful when new
+personal information is added to a customer's profile. The action marks the profile to be joined together at the end of
+the process. The joining is done using specific keys like email or phone number, which are unique to a user. When it
+finds profiles with the same key, it puts them together, and all their information and activities become part of one
+profile. The old profiles are removed but their IDs stay connected to the new combined profile.
 
-If you want to merge profiles using more than one key, like email and name, the system will look for profiles that have
-both those keys. The merge key should be provided in a JSON array. To access the merge key data, you should use dotted
-notation. For more information on this notation, check the Notations/Dot notation section in the documentation.
+## Additional Information
+
+The merge key is a special part of the system that helps to put different customer profiles together into one. This key
+is something unique to each customer, like their email, phone number, or ID. The system searches for other profiles with
+the same key and combines them into one.
+
+When the profiles are put together, all their details and actions become part of one big profile. The profiles that are
+not needed anymore are removed, but their ID stays linked to the new big profile. So, if you look for an old profile,
+the system will show you the new, combined one.
+
+If you want to join profiles using more than one key, like both email and name, the system will look for profiles that
+match both these details. You should list these merge keys in a JSON array. To find and use these merge keys, you use a
+special format called dotted notation. You can learn more about this in the documentation's Notations/Dot notation
+section.
+
+# Inputs and Outputs
+
+The plugin takes any kind of data in a JSON format and gives back the same data.
+
+Input: `{"payload": {}}`
+Output: `{"payload": {}}`
+
+The plugin does not start the workflow.
+
+# Configuration
+
+- **Merge by fields**: This is a list of fields used to identify a user, such as `profile@data.contact.email.main`.
+  These fields are like keys for joining profiles. Profiles with the same key values are put together.
+
+# JSON Configuration
 
 ```json
 {
-  "mergeBy": ["profile@data.contact.email"]
+  "mergeBy": [
+    "profile@data.contact.email.main"
+  ]
 }
-
 ```
 
-# A simpler way to merge profile
+# Required resources
 
-An identification point is a feature (in commercial Tracardi) that allows the system to identify customers during their journey. When this point
-is set, the system will monitor for events that can be used to match the anonymous customer's identified profile.
+This plugin does not need external resources to be configured.
 
-To give an analogy, think of an identification point like the ones at an airport or during a police check. You stay
-anonymous until there is a moment when you need to show your ID. This is an identification point. At this point, you are
-no longer anonymous. The same goes for Tracardi, once you identify yourself, all your past events become part of your
-identified profile. If identification happens multiple times on different communication channels, all the anonymous
-actions will become not anonymous anymore.
+# Errors
 
-For example, if a customer's profile in the system has an email address that matches the email delivered in a new event,
-then the system can match anonymous customer data with the existing profile and merge all previous interactions/events.
+- "Field mergeBy is empty and has no effect on merging. Add merging key or remove this action from flow." This error
+  happens when the merge key list is empty.
+- "Field `{key}` does not start with profile@... Only profile fields are used during merging." This error occurs when
+  the provided merge key does not start with 'profile@'. The plugin only uses profile fields for merging.
 
-In simpler terms, identification point is a way for the system to identify customers and keep their information
-consistent throughout their journey.
+# A Simpler Way to Combine Profiles in Commercial Tracardi
+
+In the commercial version of Tracardi, there's a feature called an identification point that helps recognize customers
+during their use of the system. This feature works by watching for certain activities. These activities help the system
+figure out who the customer is, even if they were unknown before.
+
+Here's an easy way to understand it: It's like when you go through a check at an airport or during a police stop. You're
+just another person until you have to show your ID. That moment, when you show your ID, is like an identification point.
+Once you're identified in Tracardi, all your past activities are linked to your known profile. This means if you're
+identified in various ways over time, like with an email or a phone number, all your previously unknown activities get
+linked to your known profile.
+
+For instance, if there's already a profile in the system with an email address, and the same email shows up in a new
+activity, Tracardi will realize that this anonymous data actually belongs to the existing profile. Then, it combines all
+the past activities with this profile.
+
+In simple terms, this feature in the commercial Tracardi is a way to keep track of customers and ensure their
+information stays connected and current throughout their interactions with the system.

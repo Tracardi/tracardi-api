@@ -1,4 +1,3 @@
-import json
 import os
 from pprint import pprint
 
@@ -126,4 +125,3 @@ response = get_chat_gpt3_5_response(
 )
 
 print(response['content'])
-# print(json.dumps(result, indent=4))

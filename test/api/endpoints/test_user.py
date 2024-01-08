@@ -1,3 +1,6 @@
+from uuid import uuid4
+
+from app.api.domain.user_payload import UserPayload
 from test.utils import Endpoint
 
 
@@ -5,7 +8,9 @@ endpoint = Endpoint()
 
 
 def test_should_add_read_and_delete_user():
-    user_email = 'test.email@example.com'
+    user_email = f'{str(uuid4())[:5]}@example.com'
+    user_id = None
+
     try:
 
         data = {
@@ -15,7 +20,10 @@ def test_should_add_read_and_delete_user():
             "roles": ["admin", "marketer", "developer"],
             "disabled": False
         }
-        response = endpoint.post("/user", data)
+
+        data = UserPayload(**data)
+        
+        response = endpoint.post("/user", data.model_dump())
         assert response.status_code == 200
 
         result = response.json()
@@ -50,5 +58,6 @@ def test_should_add_read_and_delete_user():
         assert result["deleted"] == 1
 
     finally:
-        endpoint.delete(f"/user/{user_id}")
+        if user_id:
+            endpoint.delete(f"/user/{user_id}")
 

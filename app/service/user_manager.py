@@ -10,7 +10,7 @@ async def update_user(id, user_payload: UserPayload) -> Tuple[int, User]:
     if not current_user:
         raise LookupError(f"User does not exist {id}")
 
-    user = User(**user_payload.dict(),
+    user = User(**user_payload.model_dump(),
                 id=id,
                 expiration_timestamp=user_payload.get_expiration_date())
 

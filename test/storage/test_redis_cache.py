@@ -5,8 +5,7 @@ from tracardi.service.storage.redis.cache import RedisCache
 
 
 def test_redis_cache():
-    with ServerContext(Context(production=False)):
-        value = {
+    value = {
             "a": {
                 "b": [1, 2, 3]
             },
@@ -14,28 +13,30 @@ def test_redis_cache():
                 "d": None
             }
         }
-        rc = RedisCache(ttl=1, prefix="pytest:")
+    collection = "pytest:"
+    rc = RedisCache(ttl=1)
 
-        if "key" not in rc:
-            assert rc["key"] is None
-        else:
-            del rc["key"]
+    if not rc.has("key", collection):
+        assert rc.get("key", collection) is None
+    else:
+        rc.delete("key", collection)
 
-        rc["key"] = value
+    rc.set("key", value, collection)
 
-        assert rc["key"] == value
+    assert rc.get("key", collection) == value
 
-        # Can be deleted
+    # Can be deleted
 
-        del rc['Not-exists']
+    rc.delete("key", collection)
 
-        del rc["key"]
-        assert rc["key"] is None
+    rc.delete("key", collection)
+    assert rc.get("key", collection) is None
 
-        # Expires
+    # Expires
 
-        rc["key"] = value
+    rc.set("key", value, collection)
 
-        sleep(2)
+    sleep(2)
 
-        assert rc["key"] is None
+    assert rc.get("key", collection) is None
+

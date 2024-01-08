@@ -75,7 +75,7 @@ Plugin(
                     name="If condition statement",  # Form field for configuring the "condition" key in the init
                     description="Provide a condition for the IF statement. If the condition is met, the payload "
                                 "will be returned on the TRUE port; otherwise, the FALSE port is triggered.",
-                    # Description of the configuration key
+                    # Description of the configuration key. FormComponent.type describes the form field type used to imput data. 
                     component=FormComponent(type="textarea", props={"label": "condition"})
                 ),
                 ...
@@ -130,8 +130,26 @@ Please use the above information to create clear and understandable documentatio
 If you see the code that does this:
 
 ```python
+# Get DotAccessor
 dot = self._get_dot_accessor(payload)
+# Lets assume that self.config.some-configuration = "event@path.to.property". 
+# It replace doted notation ("event@path.to.property") with value form event that is in path.to.property
+# And assigns it to value variable. 
+value = dot[self.config.some-configuration]
+```
+
+It means that it parses `some-propery` from the configuration (which is usually the dictionary) and replaces the dot notated values that reference the internet data of workflow. 
+
+
+
+If you see the code that does this:
+
+```python
+# Get DotAccessor
+dot = self._get_dot_accessor(payload)
+# Get traverser that goes through the dict and finds doted notation like this "key": "event@path.to.property"
 converter = DictTraverser(dot)
+# Replace "event@path.to.property" with value form event that is in path.to.property
 converter.reshape(self.config.some-property)
 ```
 
@@ -163,7 +181,7 @@ Use this template to generate the documentation:
 
 # Inputs and Outputs
 
-<Put here information about input and outputs with examples if possible.>
+<Put here information about input and outputs with examples. Put if possible exmples in JSON format of input and output values. Mention if the plugin can start the workflow.>
 
 
 # Configuration
@@ -178,50 +196,83 @@ Use this template to generate the documentation:
 
 <Put here required resources. If none recourse defined in the plugin form or code write "This plugin does not require external resources tobe configured".>
 
+# Event prerequisites
+
+<Put here information if the plugin only works for sync event or for all events. Plugins that are UIX widgets (usually placed in UIX Widgets group) require an event to synchronious and wait for the workflow to finish. All other plugins do not have this requirement.>
+
 # Errors
 
-<Put here all possible errors. Put here Exception message (not exception type) theat means if there is ` raise ValueError("Profile event sequencing can not be performed without profile. Is this a profile less event?")` "Profile event sequencing can not be performed without profile. Is this a profile less event?" not `ValueError`.
+<Put here all possible errors. Put here Exception message (not exception type) that means if there is ` raise ValueError("Profile event sequencing can not be performed without profile. Is this a profile less event?")` "Profile event sequencing can not be performed without profile. Is this a profile less event?" not `ValueError`.
 and after the error the description when it may occur.>
 
 ```
 
+# What are the limitation of MD markup in the response
+
+There is only one, do not use `` in the response. So `some text` is not allowed. If you to stress some text use __some text__ instead.
+
 ---
 Here is the full plugin code:
 
-from uuid import uuid4
-from tracardi.domain.entity import Entity
-from tracardi.domain.event import EventSession
-from tracardi.domain.session import Session, SessionMetadata
-from tracardi.domain.value_object.operation import Operation
-from tracardi.service.plugin.domain.register import Plugin, Spec, MetaData, Documentation, PortDoc
-from tracardi.service.plugin.domain.result import Result
+```python
+from tracardi.service.utils.date import now_in_utc
+
+from tracardi.service.plugin.domain.register import Plugin, Spec, MetaData, Documentation, PortDoc, Form, FormGroup, \
+    FormField, FormComponent
 from tracardi.service.plugin.runner import ActionRunner
-from tracardi.service.storage.driver.elastic import session as session_db
+from tracardi.service.plugin.domain.result import Result
+from .model.config import Config
+from datetime import datetime, timedelta
+from dateutil import parser
+from dateutil.parser import ParserError
 
 
-class AddEmptySessionAction(ActionRunner):
+def validate(config: dict):
+    return Config(**config)
+
+
+class TimeDelay(ActionRunner):
+
+    config: Config
+
+    async def set_up(self, init):
+        self.config = validate(init)
+
+    @staticmethod
+    def parse_date(date):
+        try:
+            if isinstance(date, str):
+                if date == 'now':
+                    date = now_in_utc()
+                else:
+                    date = parser.parse(date)
+            elif not isinstance(date, datetime):
+                raise ValueError("Date can be either string or datetime object")
+            return date
+        except ParserError:
+            raise ValueError("Could not parse data `{}`".format(date))
 
     async def run(self, payload: dict, in_edge=None) -> Result:
 
-        session = Session(
-                id=str(uuid4()),
-                profile=Entity(id=self.profile.id) if self.profile is not None else None,
-                metadata=SessionMetadata(),
-                operation=Operation(update=True)
-            )
-        self.session = session
-        self.event.session = EventSession(
-                id=session.id,
-                start=session.metadata.time.insert,
-                duration=session.metadata.time.duration
-            )
-        self.event.operation.update = True
-        self.execution_graph.set_sessions(session)
-        await session_db.save(session)
+        try:
 
-        self.set_tracker_option("saveSession", True)
+            dot = self._get_dot_accessor(payload)
 
-        return Result(port='payload', value=payload)
+            ref_date = self.parse_date(dot[self.config.reference_date])
+
+            if self.config.sign == "+":
+                new_date = ref_date + timedelta(seconds=int(self.config.delay))
+            else:
+                new_date = ref_date - timedelta(seconds=int(self.config.delay))
+
+            return Result(port="date", value={
+                "date": new_date
+            })
+
+        except Exception as e:
+            return Result(port="error", value={
+                "message": str(e)
+            })
 
 
 def register() -> Plugin:
@@ -229,36 +280,82 @@ def register() -> Plugin:
         start=False,
         spec=Spec(
             module=__name__,
-            className='AddEmptySessionAction',
+            className='TimeDelay',
             inputs=["payload"],
-            outputs=['payload'],
-            version='0.7.0',
-            license="MIT",
+            outputs=["date", "error"],
+            version='0.8.2',
+            license="MIT + CC",
             author="Risto Kowaczewski",
-            init=None,
-            form=None,
-
+            manual='time_delay',
+            init={
+                "reference_date": "profile@metadata.time.insert",
+                "sign": "+",
+                "delay": "60"
+            },
+            form=Form(
+                groups=[
+                    FormGroup(
+                        name="Time delta",
+                        description="Calculates the time difference between two dates.",
+                        fields=[
+                            FormField(
+                                id="reference_date",
+                                name="Reference date",
+                                description="Please type path to the date.",
+                                component=FormComponent(type="dotPath", props={
+                                    "label": "Date"
+                                }),
+                                required=True
+                            ),
+                            FormField(
+                                id="sign",
+                                name="Operation",
+                                description="Please select if you would like to add delay or subtract delay.",
+                                component=FormComponent(type="select", props={
+                                    "label": "Operation",
+                                    "items": {
+                                        "+": "Add",
+                                        "-": "Subtract"
+                                    }
+                                }),
+                                required=True
+                            ),
+                            FormField(
+                                id="delay",
+                                name="A delay in seconds",
+                                description="Please type delay that will be added to the reference date.",
+                                component=FormComponent(type="text", props={"label": "Delay"}),
+                                required=True
+                            )
+                        ]
+                    )
+                ]
+            )
         ),
         metadata=MetaData(
-            name='Create empty session',
-            desc='Ads new session to the event. Empty session gets created with random id.',
-            icon='session',
-            group=["Operations"],
-            keywords=['new', 'add', 'create'],
+            name='Time delay',
+            desc='Returns date plus the defined delay.',
+            type='flowNode',
+            icon='time',
+            group=["Time"],
+            purpose=['collection', 'segmentation'],
             documentation=Documentation(
                 inputs={
-                    "payload": PortDoc(desc="This port takes payload object.")
+                    "payload": PortDoc(desc="This port payload object.")
                 },
                 outputs={
-                    "payload": PortDoc(desc="Returns input payload.")
+                    "date": PortDoc(desc="This port returns a date."),
+                    "error": PortDoc(desc="This port returns an error.")
                 }
             )
         )
     )
 
 
+```
+
 
 Available manual:
 
-None
+This plugin calucates a date based on the date and a time delay. It can add or subtract the delay in seconds.  
 

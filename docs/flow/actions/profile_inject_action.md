@@ -1,34 +1,59 @@
 # Load profile by ...
 
-Loads and replaces current profile in the workflow. It also assigns loaded profile to current event.
+This plugin is designed to load and replace the current profile in a Tracardi workflow. It also assigns the loaded
+profile to the current event, effectively replacing the current profile with the newly loaded one.
 
-In order to use this plugin you will have to __select the field that will be used to identify the profile__. There is a
-limited number of fields that are unique in the profiles. In most cases it will be an __e-mail__.
+# Version
 
-Also, __a field value__ is required to load the profile. It may be a static value or it can be referenced from event or
-any object inside workflow.
+0.8.2
 
-The default values configure the plugin to use event property __email__ and profile __data.contact.email__ to match the profile.
+## Description
 
-If you pass the e-mail or any value that identifies the profile in other location please select the correct path.
+The "Load profile by ..." plugin operates by identifying a profile based on a specified field and its value. This field
+is a piece of personally identifiable information (PII) unique to each profile, such as an email address or phone
+number. Once the field and its corresponding value are provided, the plugin searches for the profile in the database. If
+found, it updates the workflow's current profile and assigns it to the current event.
 
-## Advanced JSON configuration
+The plugin handles different scenarios:
 
-Example
+1. If the specified field is 'id', it loads the profile directly based on the provided ID.
+2. For other fields, it searches for an active profile that matches the provided field and value. If exactly one
+   matching profile is found, it is loaded; otherwise, an error is generated.
+
+The plugin's primary function is to update the workflow's execution graph with the loaded profile, making it available
+as part of the workflow's internal state.
+
+# Inputs and Outputs
+
+- **Inputs**: The plugin takes a payload object as its input. This payload is used to obtain the field value for profile
+  identification.
+- **Outputs**:
+    - **Profile**: Outputs the loaded profile object if a profile is successfully found and loaded.
+    - **Error**: Outputs an error message if the profile cannot be found or if multiple profiles match the search
+      criteria.
+
+# Configuration
+
+- **Profile field**: The PII profile field used to identify the profile. Options include fields like main email,
+  business email, private email, main phone, mobile phone, etc.
+- **Value**: The specific value of the field, which can be a static value or a reference from the event or any object
+  within the workflow.
+
+# JSON Configuration
 
 ```json
 {
-  "field": "data.contact.email",
+  "field": "data.contact.email.main",
   "value": "event@properties.email"
 }
 ```
 
-* Field is a field name
-* Value is a value of that field
+# Required resources
 
-## Output
+This plugin does not require external resources to be configured.
 
-If the profile is found it will be replaced inside workflow and the current event will have the profile replaced with
-the loaded one. On success the profile port is triggered with the loaded profile object.
+# Errors
 
-On failure the error port is triggered with the error message. 
+- **"Could not find profile."**: This error occurs when no profile is found matching the provided field and value.
+- **"Found [number] records for [field] = [value].**": This error is triggered when multiple profiles match the
+  specified field and value, indicating an ambiguous search result.

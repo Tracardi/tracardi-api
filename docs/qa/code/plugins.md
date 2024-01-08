@@ -1,4 +1,4 @@
-# Write some simple code of tracardi plugin
+# How to write some simple code of tracardi plugin
 
 The purpose of writing code for a Tracardi plugin is to extend Tracardi's base functionalities by introducing new
 actions or nodes to the existing workflow. By creating plugins, we can add features or functionality that control and

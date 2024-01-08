@@ -4,10 +4,12 @@ from uuid import uuid4
 from fastapi import APIRouter, Depends, HTTPException
 
 from app.api.auth.permissions import Permissions
-from app.config import server
+from tracardi.config import tracardi
 from app.service.grouping import group_records
 from tracardi.domain.event_type_metadata import EventTypeMetadata
-from tracardi.service.events import get_default_event_type_mapping
+from tracardi.domain.value_object.bulk_insert_result import BulkInsertResult
+from tracardi.service.events import get_default_mappings_for
+from tracardi.service.license import License
 from tracardi.service.storage.driver.elastic import event_management as event_management_db
 from tracardi.service.storage.driver.elastic import event as event_db
 from typing import Optional
@@ -18,7 +20,7 @@ router = APIRouter(
 )
 
 
-@router.put("/mapping/refresh", tags=["event-type"], include_in_schema=server.expose_gui_api,
+@router.put("/mapping/refresh", tags=["event-type"], include_in_schema=tracardi.expose_gui_api,
             response_model=dict)
 async def refresh_event_type_mapping():
     """
@@ -27,8 +29,8 @@ async def refresh_event_type_mapping():
     return await event_management_db.refresh()
 
 
-@router.post("/mapping", tags=["event-type"], include_in_schema=server.expose_gui_api,
-             response_model=dict)
+@router.post("/mapping", tags=["event-type"], include_in_schema=tracardi.expose_gui_api,
+             response_model=BulkInsertResult)
 async def add_event_type_mapping(event_mapping: EventTypeMetadata):
     """
     Creates new event type mapping in database
@@ -54,7 +56,7 @@ async def add_event_type_mapping(event_mapping: EventTypeMetadata):
 
 @router.get("/mappings/{event_type}",
             tags=["event-type"],
-            include_in_schema=server.expose_gui_api,
+            include_in_schema=tracardi.expose_gui_api,
             response_model=dict)
 async def list_event_type_metadata(event_type: str):
     """
@@ -63,7 +65,7 @@ async def list_event_type_metadata(event_type: str):
 
     records = []
 
-    build_in = get_default_event_type_mapping(event_type, "copy")
+    build_in = get_default_mappings_for(event_type, "copy")
     if build_in is not None:
         build_in = {
             'id': str(uuid4()),
@@ -92,8 +94,8 @@ async def list_event_type_metadata(event_type: str):
 
 @router.get("/mapping/{event_type}",
             tags=["event-type"],
-            include_in_schema=server.expose_gui_api,
-            response_model=dict)
+            include_in_schema=tracardi.expose_gui_api,
+            response_model=Optional[dict])
 async def get_event_type_mapping(event_type: str):
     """
     Return custom event type mapping for given event type
@@ -107,7 +109,7 @@ async def get_event_type_mapping(event_type: str):
     return record
 
 
-@router.delete("/mapping/{event_type}", tags=["event-type"], include_in_schema=server.expose_gui_api,
+@router.delete("/mapping/{event_type}", tags=["event-type"], include_in_schema=tracardi.expose_gui_api,
                response_model=dict)
 async def del_event_type_metadata(event_type: str):
     """
@@ -119,11 +121,15 @@ async def del_event_type_metadata(event_type: str):
     return {"deleted": 1 if result is not None and result["result"] == "deleted" else 0}
 
 
-@router.get("/search/mappings", tags=["event-type"], include_in_schema=server.expose_gui_api,
+@router.get("/search/mappings", tags=["event-type"], include_in_schema=tracardi.expose_gui_api,
             response_model=dict)
 async def list_event_type_mappings_by_tag(query: str = None, start: Optional[int] = 0, limit: Optional[int] = 200):
     """
     Lists event type metadata by tag, according to given start (int), limit (int) and query (str)
     """
+
+    if not License.has_license():
+        raise HTTPException(status_code=402, detail="Missing license")
+
     result = await event_management_db.load_events_type_mapping(start, limit)
     return group_records(result, query, group_by='tags', search_by='name', sort_by='name')

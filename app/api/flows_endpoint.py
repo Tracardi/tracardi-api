@@ -7,7 +7,7 @@ from tracardi.service.wf.domain.named_entity import NamedEntity
 from app.service.grouper import search
 from tracardi.domain.flow import FlowRecord
 from .auth.permissions import Permissions
-from ..config import server
+from tracardi.config import tracardi
 from ..service.grouping import group_records
 
 router = APIRouter(
@@ -16,8 +16,8 @@ router = APIRouter(
 
 
 @router.get("/flows/entity", tags=["flow"],
-            include_in_schema=server.expose_gui_api)
-async def get_flows(type: Optional[str] = None, limit: int = 500):
+            include_in_schema=tracardi.expose_gui_api)
+async def get_flows_entities(type: Optional[str] = None, limit: int = 500):
     """
     Loads flows according to given limit (int) parameter
     """
@@ -37,7 +37,7 @@ async def get_flows(type: Optional[str] = None, limit: int = 500):
 
 
 @router.get("/flows", tags=["flow"],
-            include_in_schema=server.expose_gui_api,
+            include_in_schema=tracardi.expose_gui_api,
             dependencies=[Depends(Permissions(roles=["admin", "developer"]))]
             )
 async def get_flows(query: str = None):
@@ -60,7 +60,7 @@ async def get_flows(query: str = None):
     }
 
 
-@router.get("/flows/refresh", tags=["flow"], include_in_schema=server.expose_gui_api,
+@router.get("/flows/refresh", tags=["flow"], include_in_schema=tracardi.expose_gui_api,
             dependencies=[Depends(Permissions(roles=["admin", "developer"]))]
             )
 async def refresh_flows():
@@ -70,7 +70,7 @@ async def refresh_flows():
     return await flow_db.refresh()
 
 
-@router.get("/flows/by_tag", tags=["flow"], include_in_schema=server.expose_gui_api,
+@router.get("/flows/by_tag", tags=["flow"], include_in_schema=tracardi.expose_gui_api,
             dependencies=[Depends(Permissions(roles=["admin", "developer"]))]
             )
 async def get_grouped_flows(type: Optional[str] = None, query: str = None, limit: int = 100):

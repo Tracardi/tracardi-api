@@ -6,11 +6,14 @@ from fastapi.responses import Response
 
 from tracardi.exceptions.exception import DuplicatedRecordException
 from tracardi.domain.profile import Profile
+from tracardi.service.profile_deduplicator import deduplicate_profile
 from tracardi.service.storage.driver.elastic import profile as profile_db
 from tracardi.service.storage.driver.elastic import event as event_db
 from tracardi.service.storage.index import Resource
+from tracardi.service.tracking.storage.profile_storage import delete_profile
 from .auth.permissions import Permissions
-from ..config import server
+from tracardi.config import tracardi
+
 
 router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer", "maintainer"]))]
@@ -19,13 +22,13 @@ router = APIRouter(
 
 @router.get("/profile/count", tags=["profile"],
             dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer", "maintainer"]))],
-            include_in_schema=server.expose_gui_api)
+            include_in_schema=tracardi.expose_gui_api)
 async def count_profiles():
     return await profile_db.count()
 
 
 @router.post("/profiles/import", dependencies=[Depends(Permissions(roles=["admin"]))], tags=["profile"],
-             include_in_schema=server.expose_gui_api)
+             include_in_schema=tracardi.expose_gui_api)
 async def import_profiles(profiles: List[Profile]):
     """
     Saves given profiles (list of profiles) to database. Accessible by roles: "admin"
@@ -33,7 +36,7 @@ async def import_profiles(profiles: List[Profile]):
     return await profile_db.save_all(profiles)
 
 
-@router.get("/profiles/refresh", tags=["profile"], include_in_schema=server.expose_gui_api)
+@router.get("/profiles/refresh", tags=["profile"], include_in_schema=tracardi.expose_gui_api)
 async def refresh_profile():
     """
     Refreshes profile index
@@ -41,8 +44,8 @@ async def refresh_profile():
     return await profile_db.refresh()
 
 
-@router.get("/profiles/flash", tags=["profile"], include_in_schema=server.expose_gui_api)
-async def refresh_profile():
+@router.get("/profiles/flash", tags=["profile"], include_in_schema=tracardi.expose_gui_api)
+async def flash_profile():
     """
     Flashes profile index
     """
@@ -51,12 +54,13 @@ async def refresh_profile():
 
 @router.get("/profile/{id}", tags=["profile"],
             dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer"]))],
-            include_in_schema=server.expose_gui_api)
+            include_in_schema=tracardi.expose_gui_api)
 async def get_profile_by_id(id: str, response: Response) -> Optional[dict]:
     """
     Returns profile with given ID (str)
     """
     try:
+        # This is acceptable - we see the profile from the database
         record = await profile_db.load_by_id(id)
         if record is None:
             response.status_code = 404
@@ -66,21 +70,21 @@ async def get_profile_by_id(id: str, response: Response) -> Optional[dict]:
         result['_meta'] = record.get_meta_data()
         return result
     except DuplicatedRecordException as e:
-        await profile_db.deduplicate_profile(id)
+        await deduplicate_profile(id)
         raise e
 
 
 @router.delete("/profile/{id}", tags=["profile"],
                dependencies=[Depends(Permissions(roles=["admin", "developer"]))],
                response_model=Optional[dict],
-               include_in_schema=server.expose_gui_api)
-async def delete_profile(id: str, response: Response):
+               include_in_schema=tracardi.expose_gui_api)
+async def delete_profile_by_id(id: str, response: Response):
     """
     Deletes profile with given ID (str)
     """
     # Delete from all indices
     index = Resource().get_index_constant("profile")
-    result = await profile_db.delete_by_id(id, index=index.get_multi_storage_alias())
+    result = await delete_profile(id, index=index.get_multi_storage_alias())
 
     if result['deleted'] == 0:
         response.status_code = 404
@@ -89,7 +93,7 @@ async def delete_profile(id: str, response: Response):
     return result
 
 
-@router.get("/profile/{profile_id}/by/{field}", tags=["profile"], include_in_schema=server.expose_gui_api)
+@router.get("/profile/{profile_id}/by/{field}", tags=["profile"], include_in_schema=tracardi.expose_gui_api)
 async def profile_data_by(profile_id: str, field: str, table: bool = False):
     bucket_name = f"by_{field}"
     result = await event_db.aggregate_profile_events_by_field(profile_id,
@@ -101,7 +105,7 @@ async def profile_data_by(profile_id: str, field: str, table: bool = False):
     return [{"name": id, "value": count} for id, count in result.aggregations[bucket_name][0].items()]
 
 
-@router.get("/profiles/{qualify}/segment/{segment_names}", tags=["profile"], include_in_schema=server.expose_gui_api)
+@router.get("/profiles/{qualify}/segment/{segment_names}", tags=["profile"], include_in_schema=tracardi.expose_gui_api)
 async def find_profiles_by_segments(segment_names: str, qualify: str):
 
     """

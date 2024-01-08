@@ -1,5 +1,8 @@
 from tracardi.context import ServerContext, Context
 from test.utils import get_test_tenant
+from tracardi.service.profile_deduplicator import deduplicate_profile
+from tracardi.service.tracking.storage.profile_storage import load_profile
+from tracardi.service.tracking.storage.session_storage import load_session
 
 with ServerContext(Context(production=False, tenant=get_test_tenant())):
 
@@ -158,8 +161,8 @@ with ServerContext(Context(production=False, tenant=get_test_tenant())):
                 await session_db.refresh()
                 await event_db.refresh()
 
-                await session_db.load_by_id(session_id)
-                await profile_db.load_by_id(profile_id)
+                await load_session(session_id)
+                await load_profile(profile_id)
 
             finally:
                 assert endpoint.delete(f'/event-source/{source_id}').status_code in [200, 404]
@@ -206,7 +209,7 @@ with ServerContext(Context(production=False, tenant=get_test_tenant())):
 
             with pytest.raises(DuplicatedRecordException):
                 # Trows error duplicate record
-                await profile_db.load_by_id(profile_id)
+                await load_profile(profile_id)
 
             # When record is duplicated also session gets duplicated
             with pytest.raises(DuplicatedRecordException):
@@ -222,12 +225,10 @@ with ServerContext(Context(production=False, tenant=get_test_tenant())):
             # Assert that profile is in 2 indices
             assert len(set(indices)) == 2
 
-            profile = await profile_db.deduplicate_profile(profile1)
-            assert profile.id == profile1 == profile_id
-
+            profile = await deduplicate_profile(profile1)
             await profile_db.refresh()
 
-            record = await profile_db.load_by_id(profile_id)
+            record = await load_profile(profile.id)
             assert record is not None
             assert record.get_meta_data() is not None
 
@@ -264,7 +265,7 @@ with ServerContext(Context(production=False, tenant=get_test_tenant())):
             assert session1 == session2
 
             with pytest.raises(DuplicatedRecordException):
-                await profile_db.load_by_id(profile_id)
+                await load_profile(profile_id)
 
             # When record is duplicated also session gets duplicated
             with pytest.raises(DuplicatedRecordException):
@@ -303,8 +304,8 @@ with ServerContext(Context(production=False, tenant=get_test_tenant())):
                 await event_db.refresh()
 
                 # Should be no errors
-                await profile_db.load_by_id(profile_id)
-                await session_db.load_by_id(session_id)
+                await load_profile(profile_id)
+                await load_session(session_id)
 
                 for event_id in events1 + events2:
                     event = await event_db.load(event_id)

@@ -16,8 +16,8 @@ markdown_extensions:
   - tables
   - footnotes
   - pymdownx.emoji:
-      emoji_index: !!python/name:materialx.emoji.twemoji
-      emoji_generator: !!python/name:materialx.emoji.to_svg
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
       options:
         custom_icons:
           - overrides/.icons
@@ -76,6 +76,16 @@ nav:
           - installation/commercial/index.md
       - Development:
           - installation/development/index.md
+
+      - Production:
+          - installation/production/index.md
+          - installation/production/guide.md
+          - installation/production/data_partitioning.md
+          - installation/production/painpoints_in_hudge_mutitenant_setups.md
+          - installation/production/services.md
+          - installation/production/docker/index.md
+          - installation/production/k8s/index.md
+          - installation/production/k8s/helm.md
 
       - Upgrades:
           - installation/upgrades.md
@@ -175,6 +185,9 @@ nav:
           - resources/telegram_resource.md
           - resources/commercial/twilio_resource.md
           - resources/commercial/weaviate_resource.md
+          - resources/clicksend_resource.md
+          - resources/apache_pulsar_resource.md
+
 
   # Workflow and its action plugins that can be used
   - Workflows:
@@ -223,6 +236,48 @@ nav:
           - flow/actions/internal/add_empty_profile.md
           - flow/actions/internal/add_empty_session.md
 
+          - flow/actions/add_interest.md
+          - flow/actions/clicksend_sms.md
+          - flow/actions/copy_data.md
+          - flow/actions/cut_out_data.md
+          - flow/actions/data_to_json.md
+          - flow/actions/decrease_interest.md
+          - flow/actions/delete_data.md
+          - flow/actions/end.md
+          - flow/actions/geo_distance.md
+          - flow/actions/get_event_source.md
+          - flow/actions/get_issue.md
+          - flow/actions/google_spreadsheet.md
+          - flow/actions/has_segment.md
+          - flow/actions/hash_data.md
+          - flow/actions/html_fetcher.md
+          - flow/actions/increase_interest.md
+          - flow/actions/inject_event.md
+          - flow/actions/json_to_data.md
+          - flow/actions/last_profile_visit_time.md
+          - flow/actions/list_issues.md
+          - flow/actions/mask_data.md
+          - flow/actions/merge_event_properties.md
+          - flow/actions/microservice.md
+          - flow/actions/profile_live_time.md
+          - flow/actions/query_data.md
+          - flow/actions/show_consent_bar.md
+          - flow/actions/sleep.md
+          - flow/actions/string_stripper_action.md
+          - flow/actions/string_to_date_action.md
+          - flow/actions/tag_event.md
+          - flow/actions/time_difference.md
+          - flow/actions/update_event_action.md
+          - flow/actions/uuid4.md
+          - flow/actions/whois.md
+          - flow/actions/xpath_html_scrapper.md
+          - flow/actions/geo/geo_fence.md
+          - flow/actions/list/find_max_value.md
+          - flow/actions/list/sets_operations.md
+          - flow/actions/string_replace.md
+
+
+
           # Commercial version plugins
           - Commercial:
               - flow/actions/pause_and_resume.md
@@ -255,13 +310,10 @@ nav:
               - flow/actions/merge_profiles_action.md
               - flow/actions/segment_profiles_action.md
               - flow/actions/new_profile_action.md
-              - flow/actions/update_event_action.md
               - flow/actions/update_session_action.md
           - Stats:
               - flow/actions/increment_action.md
               - flow/actions/decrement_action.md
-              - flow/actions/increase_views_action.md
-              - flow/actions/increase_visits_action.md
               - flow/actions/key_counter_action.md
           - Connectors:
               - flow/actions/zapier_webhook_action.md
@@ -444,6 +496,7 @@ nav:
        - qa/difference_between_major_and_minor_upgrades.md
        - qa/how_to_automate_obtaining_the_API_key.md
        - qa/what_database_use_tracardi.md
+       - qa/what_things_should_i_consider_setting_up_prodution.md
        - Multi-tenancy:
          - qa/what_is_multi_tenant_setup.md
          - qa/how_do_i_setup_multi_tenant.md
@@ -482,6 +535,7 @@ nav:
          - qa/how_to_check_registered_email_in_mailchimp.md
          - qa/how_to_send_mails_with_mailchimp.md
          - qa/i_get_error_api_invaild_from_mailchimp.md
+         - qa/plugins/mailchimp.md
 
      - Tracking:
        - qa/how_to_track_clicked_links.md
@@ -579,6 +633,69 @@ nav:
        - qa/what_are_predefined_event_types.md
        - qa/what_is_dot_notation.md
 
+       - qa/can_kafka_be_an_event_source.md
+       - qa/hot_to_get_started_with_data_collection.md
+       - qa/how_can_i_get_telegram_bot.md
+       - qa/how_can_i_udata_event.md
+       - qa/how_do_i_get_my_own_source_id.md
+       - qa/how_profile_is_loaded.md
+       - qa/what_are_the_main_featuress_of_commercial_version.md
+       - qa/what_happens_if_two_workflow_return_responses.md
+       - qa/what_happens_if_two_workflow_return_widgets.md
+       - qa/what_is_event_redirect.md
+       - qa/what_is_post_collection_remapping.md
+       - qa/what_is_the_sequence_of_event_processing.md
+       - qa/what_is_the_syntax_of_if_plugin.md
+       - qa/what_is_tracardi_flusher.md
+       - qa/what_type_of_triggers_event_has.md
+       - qa/why_can_not_conenct_to_lcoalhost.md
+       - qa/bulk/generic_tracardi_qa.md
+       - qa/bulk/other_qa.md
+       - qa/bulk/plugins_questions.md
+       - qa/bulk/questions_about_event_data.md
+       - qa/bulk/questions_about_profile_data.md
+       - qa/bulk/staging_server_qa.md
+       - qa/bulk/tracardi_installation.md
+       - qa/bulk/workflow.md
+
+       - qa/empty_destination_drop_down.md
+       - qa/event_not_firing.md
+       - qa/event_type_on_start_node.md
+       - qa/how_many_events_can_handle_tracardi.md
+       - qa/how_profile_is_restored.md
+       - qa/how_the_profile_is_tracked.md
+       - qa/how_to_add_data_to_api_call.md
+       - qa/how_to_add_plugin_class_to_system.md
+       - qa/how_to_agregate_data.md
+       - qa/how_to_create_report.md
+       - qa/how_to_get_user_consents.md
+       - qa/how_to_import_initial_data.md
+       - qa/how_to_store_interests.md
+       - qa/how_tracadi_use_javascript_sinppet_to_collect_events.md
+       - qa/how_tracardi_can_track_marketing_campaigns.md
+       - qa/how_tracardi_segments_profiles.md
+       - qa/how_tracardi_tracks_customers.md
+       - qa/how_workflow_is_initated.md
+       - qa/how_workflow_segmentation_works.md
+       - qa/miggration_issues.md
+       - qa/on_which_fields.can_i_merge.md
+       - qa/production_configuration.md
+       - qa/resource_as_destination.md
+       - qa/what_are_extension_points.md
+       - qa/what_are_the_differences_in_data_flow_in_os_and_com.md
+       - qa/what_are_the_plugins.md
+       - qa/what_are_the_steps_of_collector.md
+       - qa/what_is_data_partitioning.md
+       - qa/what_is_the_differnece_bwtween_segment_and_audience.md
+       - qa/what_it_the_upgrade_process_of_tracardi.md
+       - qa/what_kind_of_segmentation_is_available_in_os.md
+
+       - qa/when_loading_i_have_the_error.md
+       - qa/where_can_i_save_list_visit_time_etc.md
+       - qa/why_i_do_not_see_the_event_from_my_code.md
+
+
+
      - Errors:
        - qa/errors/error_11.md
        - qa/errors/error_12.md
@@ -591,13 +708,17 @@ nav:
        - qa/errors/error_6.md
        - qa/errors/error_7.md
        - qa/errors/error_8.md
+       - qa/errors/error_13.md
+       - qa/errors/error_14.md
+       - qa/errors/error_15.md
+       - qa/errors/error_16.md
 
   - api/index.md
   - Developers:
-      - Development environmet set-up:
+      - Development environment set-up:
           - development/react_env.md
           - development/python_env.md
-      - Mirco frontend apps developement:
+      - Mirco frontend apps development:
           - development/micro_frontend.md
       - Plugins:
           - plugins/index.md
@@ -606,6 +727,11 @@ nav:
               - plugins/tutorial/part2.md
               - plugins/tutorial/part3.md
           - plugins/forms/list_of_field_types.md
+      - Destinations:
+          - development/destination_dev.md
+
+      - Resources:
+          - development/resource_dev.md
 
   - License:
       - license/index.md

@@ -24,7 +24,7 @@ In the destination field you should see the resource. Then describe the destinat
 and fill the following fields:
 
 * __Destination prerequisites__ - enter the condition that must be met for the profile synchronization to start with the
-  external system. For example, `profile@data.contact.email exists` - it means that there must be an e-mail in the profile to
+  external system. For example, `profile@data.contact.email.business exists` - it means that there must be a business e-mail in the profile to
   forward the data. The point is that the external system may require specific data to identify the user. You can leave
   this field blank that means, that regardless of the quality of the data, it will be sent to the destination system. To
   write a correct condition please read [how to use logic notation](../../notations/logic_notation.md)
@@ -37,14 +37,9 @@ and fill the following fields:
 
 !!! Info
 
-    __Destination is not synchronized right away after the first profile update__. The synchronisation is a postponed 
+    In a commercial version __Destination is not synchronized right away after the first profile update__. The synchronisation is a postponed 
     process it means it will trigger after some time when the profile update process ends. For exmaple, when the 
-    profile is updated every second for
-    ten seconds the synchronisation will start after 20 seconds after the last update. That means not earlier then
-    30 seconds from the first profile change. This is done on purpose to not stress the remote system. 
-
-!!! Tip
-
-    To set the time after the destination system is synchronized use environment variable: POSTPONE_DESTINATION_SYNC. 
-   
+    profile is updated every second for ten seconds the synchronisation will start after in about 20 seconds after the 
+    last update. That means not earlier then 30 seconds from the first profile change. This is done on purpose 
+    to not stress the remote system. 
 

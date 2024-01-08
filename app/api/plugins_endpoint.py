@@ -7,7 +7,7 @@ from pydantic import ValidationError
 from starlette.responses import JSONResponse
 
 from app.api.auth.permissions import Permissions
-from app.config import server
+from tracardi.config import tracardi
 from app.service.error_converter import convert_errors
 from tracardi.domain.config_validation_payload import ConfigValidationPayload
 from tracardi.domain.record.flow_action_plugin_record import FlowActionPluginRecord
@@ -21,7 +21,7 @@ router = APIRouter(
 )
 
 
-@router.post("/plugin/{module}/{endpoint_function}", tags=["action"], include_in_schema=server.expose_gui_api)
+@router.post("/plugin/{module}/{endpoint_function}", tags=["action"], include_in_schema=tracardi.expose_gui_api)
 async def get_data_for_plugin(module: str, endpoint_function: str, request: Request):
     """
     Calls helper method from Endpoint class in plugin's module
@@ -53,7 +53,7 @@ async def get_data_for_plugin(module: str, endpoint_function: str, request: Requ
         raise HTTPException(status_code=404, detail=str(e))
 
 
-@router.get("/action/plugins", tags=["action"], include_in_schema=server.expose_gui_api)
+@router.get("/action/plugins", tags=["action"], include_in_schema=tracardi.expose_gui_api)
 async def plugins():
     """
     Returns plugins from database
@@ -61,7 +61,7 @@ async def plugins():
     return await action_db.load_all()
 
 
-@router.post("/plugin/{plugin_id}/config/validate", tags=["action"], include_in_schema=server.expose_gui_api)
+@router.post("/plugin/{plugin_id}/config/validate", tags=["action"], include_in_schema=tracardi.expose_gui_api)
 async def validate_plugin_configuration(plugin_id: str,
                                         action_id: Optional[str] = "",
                                         service_id: Optional[str] = "",
@@ -98,7 +98,7 @@ async def validate_plugin_configuration(plugin_id: str,
             }) as client:
                 async with client.post(
                         url=microservice_url,
-                        json=config.dict()) as remote_response:
+                        json=config.model_dump()) as remote_response:
                     return JSONResponse(
                         status_code=remote_response.status,
                         content=jsonable_encoder(await remote_response.json())

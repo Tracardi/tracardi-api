@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List
 
 from app.api.auth.permissions import Permissions
 from tracardi.config import elastic, redis_config, tracardi, memory_cache
@@ -7,13 +7,6 @@ from fastapi import APIRouter, Depends
 from tracardi.domain.settings import SystemSettings
 
 system_settings = [
-    SystemSettings(
-        **{
-            "label": "UPDATE_PLUGINS_ON_STARTUP",
-            "value": server.update_plugins_on_start_up,
-            "desc": "Default: no. If equals yes it will update all installed plugins on Tracardi start."
-        }
-    ),
     SystemSettings(
         **{
             "label": "DEBUG_MAKE_SLOWER_RESPONSES",
@@ -36,26 +29,12 @@ system_settings = [
             "desc": "Default: Yes. Register system events like: profile-created, session-opened, etc."
         }
     ),
+
     SystemSettings(
         **{
             "label": "MULTI_TENANT",
             "value": tracardi.multi_tenant,
             "desc": "Default: No. Turns on multi tenancy feature for commercial versions."
-        }
-    ),
-    SystemSettings(
-        **{
-            "label": "RUN_HEARTBEAT_EVERY",
-            "value": server.heartbeat_every,
-            "desc": "Default: 300. The time each worker reports its health."
-        }
-    ),
-    SystemSettings(
-        **{
-            "label": "TASKS_EVERY",
-            "value": server.tasks_every,
-            "desc": "The interval of running tasks in seconds, "
-                    "defaults to 1."
         }
     ),
     SystemSettings(
@@ -69,7 +48,7 @@ system_settings = [
     SystemSettings(
         **{
             "label": "EXPOSE_GUI_API",
-            "value": server.expose_gui_api,
+            "value": tracardi.expose_gui_api,
             "desc": "Expose GUI API or not, defaults to True, "
                     "can be changed by setting to 'yes' (then it's True) or 'no', "
                     "which makes it False."
@@ -111,14 +90,6 @@ system_settings = [
             "desc": "Defines the Tracardi Pro Scheduler Host."
         }
     ),
-
-    SystemSettings(
-        **{
-            "label": "CACHE_PROFILE",
-            "value": tracardi.cache_profiles,
-            "desc": "Default: no. Profiles can be cached, but it is not recommended as this option is experimental."
-        }
-    ),
     SystemSettings(
         **{
             "label": "EVENT_TO_PROFILE_COPY_CACHE_TTL",
@@ -150,23 +121,24 @@ system_settings = [
     ),
     SystemSettings(
         **{
+            "label": "TRIGGER_RULE_CACHE_TTL",
+            "value": memory_cache.trigger_rule_cache_ttl,
+            "desc": "Default: 5. Set cache time for workflow triggers. Set 0 for no caching."
+        }
+    ),
+    SystemSettings(
+        **{
+            "label": "DATA_COMPLIANCE_CACHE_TTL",
+            "value": memory_cache.data_compliance_cache_ttl,
+            "desc": "Default: 2. Set cache time for data compliance rules Set 0 for no caching."
+        }
+    ),
+
+    SystemSettings(
+        **{
             "label": "EVENT_METADATA_CACHE_TTL",
             "value": memory_cache.event_metadata_cache_ttl,
             "desc": "Default: 2. Set cache time for event tagging, indexing, etc. configuration. Set 0 for no caching."
-        }
-    ),
-    SystemSettings(
-        **{
-            "label": "ELASTIC_SAVE_POOL",
-            "value": elastic.save_pool,
-            "desc": "Default: 0. Pool of records to be collected before saving to elastic. Default 0 means no pooling."
-        }
-    ),
-    SystemSettings(
-        **{
-            "label": "ELASTIC_SAVE_POOL_TTL",
-            "value": elastic.save_pool_ttl,
-            "desc": "Default: 5. How many seconds pool waits before being purged."
         }
     ),
     SystemSettings(
@@ -184,18 +156,6 @@ system_settings = [
             "value": tracardi.sync_profile_tracks_wait,
             "desc": "Maximum number of seconds to wait between profile synchronization attempts. Profile must be saved "
                     "before the next rule can be run  on it. Default: 1"
-        }
-    ),
-    SystemSettings(
-        **{
-            "label": "POSTPONE_DESTINATION_SYNC",
-            "value": tracardi.postpone_destination_sync,
-            "desc": "Postpone destination synchronisation. Default 0, means do not wait. Destinations are called only "
-                    "when the profile is changed. If there is a stream of changes then with every change of profile "
-                    "synchronisation will be triggered. To avoid unnecessary calls to external systems you can set this "
-                    "variable to eg. 60 seconds and Tracardi will wait between 60 and 120 seconds after the last "
-                    "change of profile before it will trigger destination synchronisation. This features requires "
-                    "REDIS."
         }
     ),
     SystemSettings(
@@ -226,6 +186,69 @@ system_settings = [
             "value": elastic.host,
             "desc": "Default: 127.0.0.1. This setting defines a IP address of elastic search instance. See Connecting "
                     "to elastic cluster for more information how to connect to a cluster of servers."
+        }
+    ),
+    SystemSettings(
+        **{
+            "label": "EVENT_PARTITIONING",
+            "value": tracardi.event_partitioning,
+            "desc": "Default: month. Determines how often event data is partitioned."
+        }
+    ),
+    SystemSettings(
+        **{
+            "label": "PROFILE_PARTITIONING",
+            "value": tracardi.profile_partitioning,
+            "desc": "Default: quarter. Sets the partitioning interval for user profile data."
+        }
+    ),
+    SystemSettings(
+        **{
+            "label": "SESSION_PARTITIONING",
+            "value": tracardi.session_partitioning,
+            "desc": "Default: quarter. Defines the frequency of session data partitioning."
+        }
+    ),
+    SystemSettings(
+        **{
+            "label": "ENTITY_PARTITIONING",
+            "value": tracardi.entity_partitioning,
+            "desc": "Default: quarter. Specifies the partitioning schedule for entity data."
+        }
+    ),
+    SystemSettings(
+        **{
+            "label": "ITEM_PARTITIONING",
+            "value": tracardi.item_partitioning,
+            "desc": "Default: year. Determines the partitioning interval for items."
+        }
+    ),
+    SystemSettings(
+        **{
+            "label": "LOG_PARTITIONING",
+            "value": tracardi.log_partitioning,
+            "desc": "Default: month. Log data partitioning frequency."
+        }
+    ),
+    SystemSettings(
+        **{
+            "label": "DISPATCH_LOG_PARTITIONING",
+            "value": tracardi.dispatch_log_partitioning,
+            "desc": "Default: month. Sets how often dispatch logs are partitioned."
+        }
+    ),
+    SystemSettings(
+        **{
+            "label": "CONSOLE_LOG_PARTITIONING",
+            "value": tracardi.console_log_partitioning,
+            "desc": "Default: month. Interval for partitioning console log data."
+        }
+    ),
+    SystemSettings(
+        **{
+            "label": "USER_LOG_PARTITIONING",
+            "value": tracardi.user_log_partitioning,
+            "desc": "Default: year. Frequency of user log data partitioning."
         }
     ),
     SystemSettings(
@@ -393,39 +416,55 @@ system_settings = [
         **{
             "label": "ENABLE_WORKFLOW",
             "value": tracardi.enable_workflow,
-            "desc": "Default: no. Disables processing events by workflows."
+            "desc": "Default: yes. Enables processing events by workflows."
         }
     ),
     SystemSettings(
         **{
             "label": "ENABLE_SEGMENTATION_WF_TRIGGERS",
             "value": tracardi.enable_segmentation_wf_triggers,
-            "desc": "Default: yes. Disables triggering events by profile added to segments."
+            "desc": "Default: yes. Enables triggering events by profile added to segments."
         }
     ),
     SystemSettings(
         **{
             "label": "ENABLE_EVENT_DESTINATIONS",
             "value": tracardi.enable_event_destinations,
-            "desc": "Default: no. Disables dispatching events to destinations."
+            "desc": "Default: no. Enables dispatching events to destinations."
         }
     ),
     SystemSettings(
         **{
             "label": "ENABLE_PROFILE_DESTINATIONS",
             "value": tracardi.enable_profile_destinations,
-            "desc": "Default: no. Disables dispatching profiles to destinations."
+            "desc": "Default: no. Enables dispatching profiles to destinations."
         }
-    )
+    ),
+    SystemSettings(
+        **{
+            "label": "ENABLE_FIELD_UPDATE_LOG",
+            "value": tracardi.enable_field_update_log,
+            "desc": "Default: Yes. Save timestamps of updated fields."
+        }
+    ),
+    SystemSettings(
+        **{
+            "label": "ENABLE_ERRORS_ON_RESPONSE",
+            "value": tracardi.enable_errors_on_response,
+            "desc": "Default: Yes. Display errors on track response."
+        }
+    ),
+
 ]
 
 router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin", "developer"]))]
 )
 
+
 # todo remove after 2023-10-01
 # @router.get("/system/setting/{name}", tags=["system"],
-#             include_in_schema=server.expose_gui_api,
+#             include_in_schema=tracardi.expose_gui_api,
 #             response_model=Optional[SystemSettings])
 # async def get_system_settings(name: str) -> Optional[SystemSettings]:
 #     """
@@ -438,7 +477,7 @@ router = APIRouter(
 
 
 @router.get("/system/settings", tags=["system"],
-            include_in_schema=server.expose_gui_api,
+            include_in_schema=tracardi.expose_gui_api,
             response_model=List[SystemSettings])
 async def get_system_settings() -> List[SystemSettings]:
     """
