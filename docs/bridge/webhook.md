@@ -73,7 +73,7 @@ This method only works when system is configured to compute IDs form collected e
 
 To enable this feature do the following:
 
-  - Set the environment parameter `HASH_ID_WEBHOOK` to a key of at least 20 characters when system starts (add it to docker command when you start tracardi API). It will be used to hash the e-mails and phones.
+  - Set the environment parameter `AUTO_PROFILE_MERGING` to a key of at least 20 characters when system starts (add it to docker command when you start tracardi API). It will be used to hash the e-mails and phones.
   - Enabling this parameter automatically activates the feature to generate and store unique IDs for every email sent to the system.
   - Generated IDs are stored in the 'profile IDS' field.
   - Email-based IDs receive prefixes like 'emm-', 'emb-', 'emp-' for main, business, and private emails, respectively.
