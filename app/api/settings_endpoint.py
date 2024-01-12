@@ -454,6 +454,13 @@ system_settings = [
             "desc": "Default: Yes. Display errors on track response."
         }
     ),
+    SystemSettings(
+        **{
+            "label": "AUTO_PROFILE_MERGING",
+            "value": len(tracardi.auto_profile_merging) > 0,
+            "desc": "Default: No. Merge profile automatically on change of defined profile fields."
+        }
+    ),
 
 ]
 

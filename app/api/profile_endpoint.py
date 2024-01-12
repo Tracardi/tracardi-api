@@ -59,19 +59,16 @@ async def get_profile_by_id(profile_id: str, response: Response) -> Optional[dic
     """
     Returns profile with given ID (str)
     """
-    try:
-        # This is acceptable - we see the profile from the database
-        record = await profile_db.load_by_id(profile_id)
-        if record is None:
-            response.status_code = 404
-            return None
+    # This is acceptable - we see the profile from the database
+    record = await profile_db.load_by_id(profile_id)
 
-        result = dict(record)
-        result['_meta'] = record.get_meta_data()
-        return result
-    except DuplicatedRecordException as e:
-        await deduplicate_profile(profile_id)
-        raise e
+    if record is None:
+        response.status_code = 404
+        return None
+
+    result = dict(record)
+    result['_meta'] = record.get_meta_data()
+    return result
 
 
 @router.delete("/profile/{id}", tags=["profile"],
