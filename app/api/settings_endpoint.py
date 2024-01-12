@@ -457,7 +457,7 @@ system_settings = [
     SystemSettings(
         **{
             "label": "AUTO_PROFILE_MERGING",
-            "value": len(tracardi.auto_profile_merging) > 0,
+            "value": tracardi.auto_profile_merging and len(tracardi.auto_profile_merging) > 0,
             "desc": "Default: No. Merge profile automatically on change of defined profile fields."
         }
     ),
