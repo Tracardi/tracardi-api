@@ -181,7 +181,7 @@ with ServerContext(Context(production=False, tenant=get_test_tenant())):
             profile_id = str(uuid4())
             source_id = str(uuid4())
             session_id = str(uuid4())
-            print(profile_id)
+
             assert _create_event_source(source_id, "rest").status_code == 200
 
             profile1, session1, events1 = await _create_track(source_id,
