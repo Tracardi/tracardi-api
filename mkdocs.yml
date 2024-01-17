@@ -212,7 +212,6 @@ nav:
           - flow/actions/condition_set_action.md
           - flow/actions/count_by_query_string_action.md
           - flow/actions/reshape_payload_action.md
-          - flow/actions/assign_profile_id_action.md
           - flow/actions/template_action.md
           - flow/actions/append_remove_trait_action.md
           - flow/actions/start_action.md
