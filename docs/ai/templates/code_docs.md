@@ -235,7 +235,7 @@ Here is the full code:
                 # Add last geo to profile
                 if profile.data.devices.last.geo.is_empty() or _geo != profile.data.devices.last.geo:
                     profile.data.devices.last.geo = _geo
-                    profile.operation.update = True
+                    profile.set_updated()
 
             except ValidationError as e:
                 logger.error(str(e))
@@ -256,7 +256,7 @@ Here is the full code:
                         accountId=maxmind_account_id), ip=session.device.ip)
 
                     profile.data.devices.last.geo = _geo
-                    profile.operation.update = True
+                    profile.set_updated()
 
                 elif session.operation.new:
 
@@ -271,7 +271,7 @@ Here is the full code:
 
                         if profile.data.devices.last.geo.is_empty() or _geo != profile.data.devices.last.geo:
                             profile.data.devices.last.geo = _geo
-                            profile.operation.update = True
+                            profile.set_updated()
 
                     except Exception as e:
                         logger.error(f"Could not fetch GEO location. Error: {str(e)}")
