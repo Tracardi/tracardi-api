@@ -6,7 +6,7 @@ This documentation describes in detail how Tracardi retrieves event context and 
 
 The code for retrieving the profile's geo location in Tracardi follows the following steps:
 
-1. It first checks if the session is new by evaluating the `session.operation.new` condition. If the session is
+1. It first checks if the session is new by evaluating the `session.is_new()` condition. If the session is
    new, it proceeds with the following steps. If not, it skips the subsequent steps and moves to the next part of the
    code.
 

@@ -348,7 +348,7 @@ async def debug_flow(flow: FlowGraph, event_id: Optional[str] = None):
             start=session.metadata.time.insert,
             duration=session.metadata.time.duration
         )
-        session.operation.new = True
+        session.set_new()
         source = Entity(id="@debug-source-id")
 
         event = Event(

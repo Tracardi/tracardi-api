@@ -92,7 +92,7 @@ and after the error the description when it may occur.>
 Here is the full code:
 
 # Is new session
-        if session.operation.new:
+        if session.is_new():
 
             # Add session created event to the registered events
             tracker_payload.events.append(
@@ -230,12 +230,12 @@ Here is the full code:
 
                 if session.device.geo.is_empty():
                     session.device.geo = _geo
-                    session.operation.update = True
+                    session.set_updated()
 
                 # Add last geo to profile
                 if profile.data.devices.last.geo.is_empty() or _geo != profile.data.devices.last.geo:
                     profile.data.devices.last.geo = _geo
-                    profile.operation.update = True
+                    profile.set_updated()
 
             except ValidationError as e:
                 logger.error(str(e))
@@ -256,9 +256,9 @@ Here is the full code:
                         accountId=maxmind_account_id), ip=session.device.ip)
 
                     profile.data.devices.last.geo = _geo
-                    profile.operation.update = True
+                    profile.set_updated()
 
-                elif session.operation.new:
+                elif session.is_new():
 
                     logger.info(f"Fetching GEO location for {session.device.ip}")
 
@@ -271,7 +271,7 @@ Here is the full code:
 
                         if profile.data.devices.last.geo.is_empty() or _geo != profile.data.devices.last.geo:
                             profile.data.devices.last.geo = _geo
-                            profile.operation.update = True
+                            profile.set_updated()
 
                     except Exception as e:
                         logger.error(f"Could not fetch GEO location. Error: {str(e)}")

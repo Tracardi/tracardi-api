@@ -1241,18 +1241,6 @@ async def test_should_set_up_plugin_twitter_tweet_action(mocker):
     await plugin.set_up({'source': {'id': '1', 'name': '1'}, 'tweet': 'tweet'})
 
 
-async def test_should_set_up_plugin_assign_profile_id_action():
-    
-    module = import_package("tracardi.process_engine.action.v1.internal.assign_profile_id.plugin")
-    plugin_class = load_callable(module, "AssignProfileIdAction")
-    plugin = plugin_class()
-    plugin.node = Node(id="node-id", 
-                       name="test-node", 
-                       module="tracardi.process_engine.action.v1.internal.assign_profile_id.plugin", 
-                       className="AssignProfileIdAction")
-    await plugin.set_up({'value': ''})
-
-
 async def test_should_set_up_plugin_event_source_fetcher_action():
     
     module = import_package("tracardi.process_engine.action.v1.internal.event_source_fetcher.plugin")
