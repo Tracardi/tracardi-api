@@ -31,17 +31,17 @@ Type:
 
 ```bash
 cd tracardi-api
-python3.9 -m venv venv  # (1)
+python3.10 -m venv venv  # (1)
 cd ..
 cd tracardi
-python3.9 -m venv venv
+python3.10 -m venv venv
 ```
 
 1. Installs virtual environment with python 3.9 or 3.10 (for version 0.8.1+)
 
 !!! Tip
 
-    Before creating the virtual environment make sure you have version 3.9.x installed. Type `python --version` to see if the version is correct.
+    Before creating the virtual environment make sure you have version 3.10.x installed. Type `python --version` to see if the version is correct.
 
 # Install dependencies
 

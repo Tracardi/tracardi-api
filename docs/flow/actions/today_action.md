@@ -1,8 +1,37 @@
-# Today plugin
+# Today
 
-Plugin read a time in a give time zone.
+The "Today" plugin provides detailed information about the current date and time, including day of the week, month,
+year, and exact time. This plugin is particularly useful for tasks that require date and time-related data processing.
 
-# Configuration
+# Version
+
+0.8.2
+
+## Description
+
+The Today plugin operates by determining the current date and time based on a specified timezone. It then outputs
+detailed information including the UTC time, local time, server time, and timestamps. The plugin can handle different
+time zones, allowing for flexibility in workflows that involve users or events across various geographic locations.
+
+## Inputs and Outputs
+
+Inputs:
+
+- Payload: Accepts any JSON-like object. The plugin uses this input to extract the specified timezone.
+
+Outputs:
+
+- Payload: Outputs a JSON object containing detailed current date and time information.
+- Error: In case of issues, such as an unavailable time zone, this output provides an error message.
+
+## Configuration
+
+- __Timezone__: Specify the path to the field containing the timezone information. This can be a direct timezone string
+  or a path using dot notation, such as "session@context.time.tz".
+
+## JSON Configuration
+
+Example configuration:
 
 ```json
 {
@@ -10,43 +39,15 @@ Plugin read a time in a give time zone.
 }
 ```
 
-Time zone can ba a path to timezone data or a plain text. Time zone must be in a format of "country/city".
+## Required resources
 
-See https://en.wikipedia.org/wiki/List_of_tz_database_time_zones for detailed list of timezones.
+This plugin does not require external resources to be configured.
 
-# Output
+## Event prerequisites
 
-```json
-{
-  "utcTime": "2021-10-25T09:13:29.341421",
-  "timestamp": 1635153209.341412,
-  "server": {
-    "dayOfWeek": "monday",
-    "day": 25,
-    "month": 10,
-    "year": 2021,
-    "week": 1,
-    "hour": 5,
-    "minute": 13,
-    "second": 29,
-    "ms": 341395,
-    "time": "05:13:29.341395",
-    "fold": 0,
-    "iso": "2021-10-25T05:13:29.341395-04:00"
-  },
-  "local": {
-    "dayOfWeek": "sunday",
-    "day": 24,
-    "month": 10,
-    "year": 2021,
-    "week": 1,
-    "hour": 23,
-    "minute": 13,
-    "second": 29,
-    "ms": 341395,
-    "time": "23:13:29.341395",
-    "fold": 0,
-    "iso": "2021-10-25T23:13:29.341395-04:00"
-  }
-}
-```
+The Today plugin is compatible with all event types and does not require synchronous events to operate.
+
+## Errors
+
+- "Unavailable time zone in current session": This error occurs if the specified timezone is not found or is invalid in
+  the current session. The workflow will proceed through the "error" output port in this case.

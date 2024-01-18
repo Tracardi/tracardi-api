@@ -68,12 +68,13 @@ The Webhook Bridge offers two distinct methods for matching profiles based on th
 - **Applicability**: When the payload contains a profile ID. Configure the Webhook Bridge to use this ID for loading profiles in Tracardi.
 - **Operational Process**: If the ID exists in the system, the corresponding profile is matched directly.
 
-#### Method 2: Matching via Email or Phone
-This method only works when system is configured to compute IDs form collected e-mails and phones.
+#### Method 2: Matching via Auto Profile Merging
+
+This method only works when system is configured to use AUTO PROFILE MERGING.
 
 To enable this feature do the following:
 
-  - Set the environment parameter `HASH_ID_WEBHOOK` to a key of at least 20 characters when system starts (add it to docker command when you start tracardi API). It will be used to hash the e-mails and phones.
+  - Set the environment parameter `AUTO_PROFILE_MERGING` to a key of at least 20 characters when system starts (add it to docker command when you start tracardi API). It will be used to hash the e-mails and phones.
   - Enabling this parameter automatically activates the feature to generate and store unique IDs for every email sent to the system.
   - Generated IDs are stored in the 'profile IDS' field.
   - Email-based IDs receive prefixes like 'emm-', 'emb-', 'emp-' for main, business, and private emails, respectively.
@@ -86,7 +87,7 @@ To enable this feature do the following:
 
 #### Webhook bridge configuration
 
-To enable profile matching create an Event Source usung Webhook bridge and fill the form in the following way:
+To enable profile matching create an Event Source using Webhook bridge and fill the form in the following way:
 
 1. **Create Profile and Session for Collected Data:**
     - Boolean switch to decide whether to generate a profile and session ID for webhook events.

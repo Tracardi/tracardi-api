@@ -52,26 +52,23 @@ async def flash_profile():
     return await profile_db.flush()
 
 
-@router.get("/profile/{id}", tags=["profile"],
+@router.get("/profile/{profile_id}", tags=["profile"],
             dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer"]))],
             include_in_schema=tracardi.expose_gui_api)
-async def get_profile_by_id(id: str, response: Response) -> Optional[dict]:
+async def get_profile_by_id(profile_id: str, response: Response) -> Optional[dict]:
     """
     Returns profile with given ID (str)
     """
-    try:
-        # This is acceptable - we see the profile from the database
-        record = await profile_db.load_by_id(id)
-        if record is None:
-            response.status_code = 404
-            return None
+    # This is acceptable - we see the profile from the database
+    record = await profile_db.load_by_id(profile_id)
 
-        result = dict(record)
-        result['_meta'] = record.get_meta_data()
-        return result
-    except DuplicatedRecordException as e:
-        await deduplicate_profile(id)
-        raise e
+    if record is None:
+        response.status_code = 404
+        return None
+
+    result = dict(record)
+    result['_meta'] = record.get_meta_data()
+    return result
 
 
 @router.delete("/profile/{id}", tags=["profile"],

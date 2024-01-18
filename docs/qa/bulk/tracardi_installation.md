@@ -141,7 +141,7 @@ git clone https://github.com/Tracardi/tracardi-api
 To create virtual environments for Tracardi, follow these steps:
 
 - Navigate to the respective directory (`tracardi-api` or `tracardi`).
-- Use the `python3.9 -m venv venv` command to create a virtual environment.
+- Use the `python3.10 -m venv venv` command to create a virtual environment.
 
 # How do I install the dependencies for Tracardi when installing form source?
 

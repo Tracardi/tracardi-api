@@ -3,7 +3,7 @@
 ## Software prerequisites
 
 * Docker
-* Python version 3.9.x
+* Python version 3.10.x
 * Pip
 * Python Virtual Environment
 * PyCharm
@@ -47,12 +47,14 @@ When you want to stop Elasticsearch or redis, press CTRL+C in the terminal you s
 Open a terminal and go to the directory where you want to keep the code. Enter:
 
 ```bash
-git clone https://github.com/Tracardi/tracardi  #(1)
-git clone https://github.com/Tracardi/tracardi-api #(2)
+git clone https://github.com/Tracardi/tracardi:<branch> #(1)
+git clone https://github.com/Tracardi/tracardi-api:<branch> #(2)
 ```
 
-1. Clones tracardi repository. Code will be available in tracardi folder.
-2. Clones tracardi-api repository
+1. Clones tracardi repository. Do not forget to replace `branch` with current version. Code will be available in tracardi folder.
+2. Clones tracardi-api repository. Do not forget to replace `branch` with current version. 
+
+Do not forget to replace `branch` with current version. 
 
 ## Create virtual environments
 
@@ -60,18 +62,18 @@ We need to create 2 virtual environments. Type:
 
 ```bash
 cd tracardi-api
-python3.9 -m venv venv  # (1)
+python3.10 -m venv venv  # (1)
 cd ..
 cd tracardi
-python3.9 -m venv venv # (2)
+python3.10 -m venv venv # (2)
 ```
 
-1. Installs virtual environment with python 3.9 for tracardi API
-2. Installs virtual environment with python 3.9 for tracardi library
+1. Installs virtual environment with python 3.10 for tracardi API
+2. Installs virtual environment with python 3.10 for tracardi library
 
 !!! Tip
 
-    Before creating the virtual environment make sure you have version 3.9.x installed. Type `python --version` to see the python version.
+    Before creating the virtual environment make sure you have version 3.10.x installed. Type `python --version` to see the python version.
 
 ## Install dependencies
 
@@ -146,13 +148,13 @@ python3.9 -m venv venv # (2)
 
 !!! Tip
 
-    Before creating the virtual environment make sure you have version 3.9.x installed. Type `python --version` to 
+    Before creating the virtual environment make sure you have version 3.10.x installed. Type `python --version` to 
     see the python version.
 
 !!! Bug "Trouble shooting"
 
     If you see an error that some of the libraries can not be installed, this may mean that you do not have python 
-    version 3.9.x installed in your virtual environment.
+    version 3.10.x installed in your virtual environment.
 
 ## Importing project into PyCharm
 

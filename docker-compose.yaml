@@ -2,13 +2,15 @@ version: "3.7"
 services:
 
   tracardi-api:
-    image: tracardi/tracardi-api:0.8.2-rc3
+    image: tracardi/tracardi-api:0.8.2-rc4
     environment:
       ELASTIC_HOST: http://elasticsearch:9200
       REDIS_HOST: redis://redis:6379
       LOGGING_LEVEL: info
       DEMO: "yes"
       PRODUCTION: "no"
+      MULTI_TENANT: "no"
+      AUTO_PROFILE_MERGING: "237b49d6-474c-4b1a-9ad5-07a92e04de96"
     ports:
       - 8686:80
     depends_on:
@@ -16,11 +18,27 @@ services:
       - elasticsearch
 
   tracardi-gui:
-    image: tracardi/tracardi-gui:0.8.2-rc3
+    image: tracardi/tracardi-gui:0.9.0-a1
+    environment:
+      MULTI_TENANT: "no"
     ports:
       - 8787:80
     depends_on:
       - tracardi-api
+
+  tracardi-apm:
+    image: tracardi/apm:0.8.2-rc4
+    environment:
+      ELASTIC_HOST: http://elasticsearch:9200
+      REDIS_HOST: redis://redis:6379
+      LOGGING_LEVEL: info
+      MODE: worker
+      PAUSE: 15
+      PRODUCTION: "no"
+    depends_on:
+      - tracardi-api
+      - redis
+      - elasticsearch
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.13.2

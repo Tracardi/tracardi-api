@@ -19,6 +19,7 @@ async def get_version():
 
 
 @router.get("/info/version/details", tags=["info"])
+@router.get("/")
 async def get_current_backend_version():
 
     """
