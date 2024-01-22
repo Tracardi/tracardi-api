@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends
 from app.api.auth.permissions import Permissions
+from app.service.grouping import get_grouped_result, get_result_dict
 from tracardi.config import tracardi
 
 from tracardi.domain.consent_type import ConsentType
@@ -38,7 +39,6 @@ async def get_consent_type(consent_id: str):
     return (await cts.load_by_id(consent_id)).map_to_object(map_to_consent_type)
 
 
-
 @router.delete("/consent/type/{consent_id}",
                dependencies=[Depends(Permissions(roles=["admin", "marketer", "developer"]))], tags=["consent"],
                include_in_schema=tracardi.expose_gui_api)
@@ -52,7 +52,6 @@ async def delete_consent_type(consent_id: str):
     return await cts.delete_by_id(consent_id)
 
 
-
 @router.get("/consents/type", dependencies=[Depends(Permissions(roles=["admin", "marketer", "developer"]))],
             tags=["consent"], include_in_schema=tracardi.expose_gui_api,
             response_model=dict)
@@ -63,11 +62,7 @@ async def get_consent_types(start: int = 0, limit: int = 200):
     """
     cts = ConsentTypeService()
     result = await cts.load_all(limit=limit, offset=start)
-
-    return {
-        "total": result.count(),
-        "result": list(result.map_to_objects(map_to_consent_type))
-    }
+    return get_result_dict(result, map_to_consent_type)
 
 
 @router.get("/consents/type/by_tag", tags=["consent"], include_in_schema=tracardi.expose_gui_api,
@@ -78,13 +73,7 @@ async def get_consent_types(query: str = None, start: int = 0, limit: int = 10):
     """
     cts = ConsentTypeService()
     result = await cts.load_all(offset=start, limit=limit)
-    return {
-        "total": result.count(),
-        "grouped": {
-            "Consent types": list(result.map_to_objects(map_to_consent_type))
-        }
-    }
-
+    return get_grouped_result("Consent types", result, map_to_consent_type)
 
 
 @router.get("/consents/type/ids", tags=["consent"], include_in_schema=tracardi.expose_gui_api, response_model=dict)
