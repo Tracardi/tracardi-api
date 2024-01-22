@@ -23,6 +23,11 @@ docker run -p 9200:9200 -p 9300:9300 -m 2g -e "discovery.type=single-node" -e ES
 # Run local redis
 docker run -p 6379:6379 redis redis-server
 
+# Run local mysql
+docker run -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=test -p 3306:3306 mysql
+mysql -h localhost -P 3306 --protocol=tcp -u root -p root test
+mysql -h localhost -P 3306 --protocol=tcp -u root -p 
+
 # Pulsar
 
 docker run -it \
@@ -60,10 +65,7 @@ docker run -p 15672:15672 -p 5672:5672 --hostname my-rabbit-2 --name some-rabbit
 # Run local jupyter notebook
 docker run -p 8888:8888 jupyter/minimal-notebook
 
-# Run local mysql
-docker run -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=test -p 3306:3306 mysql
-mysql -h localhost -P 3306 --protocol=tcp -u root -p root test
-mysql -h localhost -P 3306 --protocol=tcp -u root -p 
+
 
 # Run local mongo
 docker run -p 27017:27017 mongo
