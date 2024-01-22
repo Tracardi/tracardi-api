@@ -81,6 +81,7 @@ async def save_event_source(event_source: EventSource):
     """
     Adds new event source in database
     """
+    print(event_source.enabled)
     return await EventSourceService().save(event_source)
 
 @router.delete("/event-source/{id}", tags=["event-source"],

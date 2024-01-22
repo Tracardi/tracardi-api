@@ -68,7 +68,7 @@ async def _deploy_production_flow(flow: Flow, flow_record: Optional[FlowRecord] 
     if old_flow_record.deploy_timestamp and flow_record.deploy_timestamp is None:
         flow_record.deploy_timestamp = old_flow_record.deploy_timestamp
 
-    flow_record.backup = old_flow_record.production
+    flow_record.backup = old_flow_record.production_flow
     flow_record.deployed = True
     flow_record.deploy_timestamp = now_in_utc()
 
@@ -150,7 +150,7 @@ async def load_flow_draft(id: str, response: Response):
         return flow_record.get_draft_workflow()
 
         # Fallback to production version
-    if flow_record.production:
+    if flow_record.production_flow:
         return flow_record.get_production_workflow()
 
     return flow_record.get_empty_workflow(id)
@@ -170,7 +170,7 @@ async def get_flow(id: str, response: Response):
         response.status_code = 404
         return None
 
-    if flow_record.production:
+    if flow_record.production_flow:
         return flow_record.get_production_workflow()
 
     return flow_record.get_empty_workflow(id)
@@ -250,7 +250,7 @@ async def upsert_flow_details(flow_metadata: FlowMetaData):
             description=flow_metadata.description,
             type=flow_metadata.type
         ).model_dump())
-        flow_record.production = encrypt(Flow(
+        flow_record.production_flow = encrypt(Flow(
             id=flow_metadata.id,
             timestamp=flow_record.timestamp,
             name=flow_metadata.name,
