@@ -27,7 +27,7 @@ And guess what? We’re having a special chat session where we’ll talk all abo
 12:00 CET. You can ask questions and learn more about what’s new. It’s going to be fun and super helpful, so make sure
 you sign up and join us!
 
-[Click here to register](#)
+https://cal.com/tracardi/office-hours?date=2024-01-25&month=2024-01
 
 Get ready to make your data management a whole lot easier and more fun with this latest TRACARDI update. We can’t wait
 for you to try it out!
