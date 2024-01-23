@@ -457,8 +457,8 @@ system_settings = [
     SystemSettings(
         **{
             "label": "AUTO_PROFILE_MERGING",
-            "value": tracardi.auto_profile_merging and len(tracardi.auto_profile_merging) > 0,
-            "desc": "Default: No. Merge profile automatically on change of defined profile fields."
+            "value": tracardi.is_apm_on(),
+            "desc": "Default: tracardi. Merge profile automatically on change of defined profile fields. AUTO_PROFILE_MERGING value is used to salt the profile merging keys hashing. Set value to random value, min 20 letters."
         }
     ),
 
