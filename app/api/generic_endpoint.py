@@ -49,24 +49,17 @@ async def select_by_sql(index: IndexesSearch, query: Optional[SqlQuery] = None):
 @router.post("/{index}/select/range",
              tags=["data"],
              include_in_schema=tracardi.expose_gui_api)
-async def time_range_with_sql(index: IndexesHistogram, query: DatetimeRangePayload, page: Optional[int] = None,
-                              query_type: str = None):
-    if query_type is None:
-        query_type = tracardi.query_language
-
+async def time_range_with_sql(index: IndexesHistogram, query: DatetimeRangePayload, page: Optional[int] = None):
     if page is not None:
         page_size = 25
         query.start = page_size * page
         query.limit = page_size
-    return await raw_db.index(index.value).query_by_sql_in_time_range(query, query_type)
+    return await raw_db.index(index.value).query_by_sql_in_time_range(query)
 
 
 @router.post("/{index}/select/histogram",
              tags=["data"],
              include_in_schema=tracardi.expose_gui_api)
-async def histogram_with_sql(index: IndexesHistogram, query: DatetimeRangePayload, query_type: str = None,
-                             group_by: str = None):
-    if query_type is None:
-        query_type = tracardi.query_language
+async def histogram_with_sql(index: IndexesHistogram, query: DatetimeRangePayload, group_by: str = None):
 
-    return await raw_db.index(index.value).histogram_by_sql_in_time_range(query, query_type, group_by)
+    return await raw_db.index(index.value).histogram_by_sql_in_time_range(query, group_by)

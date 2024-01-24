@@ -63,14 +63,6 @@ system_settings = [
     ),
     SystemSettings(
         **{
-            "label": "QUERY_LANGUAGE",
-            "value": tracardi.query_language,
-            "desc": "Defines what type of query language to use for filtering data. Default: Kibana Query Language (kql)."
-                    " Other possible values Tracardi Query Language (tql)"
-        }
-    ),
-    SystemSettings(
-        **{
             "label": "TRACARDI_PRO_HOST",
             "value": tracardi.tracardi_pro_host,
             "desc": "Defines the Tracardi Pro Services Host."
