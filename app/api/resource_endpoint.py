@@ -69,28 +69,6 @@ async def list_resources_names_by_tag(tag: str):
     return get_result_dict(records, map_to_named_entity)
 
 
-# @router.get("/resources/tag/{tag}",
-#             tags=["resource"],
-#             include_in_schema=tracardi.expose_gui_api)
-# async def list_resources_by_tag(tag: str):
-#     """
-#     Returns list of resources that have defined tag. This list contains all data along with credentials.
-#     """
-#
-#     records = await rs.load_by_tag(tag)
-#
-#     return get_result_dict(records, map_to_resource)
-#
-#     # result = await resource_db.load_by_tag(tag)
-#     # total = result.total
-#     # result = [ResourceRecord(**r).decode() for r in result]
-#     #
-#     # return {
-#     #     "total": total,
-#     #     "result": list(result)
-#     # }
-
-
 @router.get("/resources/entity",
             tags=["resource"],
             include_in_schema=tracardi.expose_gui_api)

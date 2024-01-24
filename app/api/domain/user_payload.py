@@ -9,7 +9,7 @@ class UserPayload(BaseModel):
     full_name: str
     email: str
     roles: List[str]
-    disabled: bool = False
+    enabled: bool = False
     expiration_date: Optional[str] = None
 
     @field_validator("email")

@@ -46,7 +46,7 @@ async def edit_user_account(payload: UserSoftEditPayload,
                 full_name=existing_user.full_name,
                 password=existing_user.password,
                 roles=existing_user.roles,
-                disabled=existing_user.disabled,
+                enabled=existing_user.enabled,
                 email=existing_user.email)
         )
 

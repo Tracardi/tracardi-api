@@ -17,6 +17,7 @@ from .auth.user_db import token2user
 from fastapi.security import OAuth2PasswordRequestForm
 from starlette import status
 from .auth.authentication import Authentication, get_authentication
+from ..service.grouping import get_grouped_result
 
 
 class UserSoftEditPayload(BaseModel):
@@ -124,8 +125,6 @@ async def delete_user_preference(key: str,
         us = UserService()
         result = await us.upsert(user)
 
-        # result = await user_db.update_user(user)
-
         token2user.set(user)
 
         return result
@@ -202,7 +201,19 @@ async def get_user(id: str):
 
     return user_table
 
+@router.get("/users", tags=["user"], include_in_schema=tracardi.expose_gui_api)
+async def get_users(start: int = 0, limit: int = 500, query: Optional[str] = ""):
+    """
+    Lists users according to given query (str), start (int) and limit (int) parameters
+    """
 
+    us = UserService()
+    result = await us.load_all(query, limit, start)
+
+    return get_grouped_result("Users", result, map_to_user, )
+
+
+# TODO remove in 1.0.0
 @router.get("/users/{start}/{limit}", tags=["user"], include_in_schema=tracardi.expose_gui_api, response_model=list)
 async def get_users(start: int = 0, limit: int = 500, query: Optional[str] = ""):
     """

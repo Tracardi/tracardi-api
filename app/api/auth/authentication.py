@@ -36,7 +36,7 @@ class Authentication:
             await user_log_db.add_log(email=username, successful=False)
             raise LoginException("Incorrect username or password.")
 
-        if user.disabled:
+        if not user.enabled:
             await user_log_db.add_log(email=username, successful=False)
             raise LoginException("This account was disabled")
 
