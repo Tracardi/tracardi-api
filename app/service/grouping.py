@@ -25,6 +25,6 @@ def get_grouped_result(label: str, records: SelectResult, mapping):
     return {
         "total": records.count(),
         "grouped": {
-            label: list(records.map_to_objects(mapping))
+            label: result
         }
     }
