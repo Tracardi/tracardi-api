@@ -210,7 +210,7 @@ async def get_users(start: int = 0, limit: int = 500, query: Optional[str] = "")
     us = UserService()
     result = await us.load_all(query, limit, start)
 
-    return get_grouped_result("Users", result, map_to_user, )
+    return get_grouped_result("Users", result, map_to_user)
 
 
 # TODO remove in 1.0.0
