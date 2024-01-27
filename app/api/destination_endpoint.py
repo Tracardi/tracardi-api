@@ -44,28 +44,29 @@ async def get_destination(id: str, response: Response):
     return record.map_to_object(map_to_destination)
 
 
-@router.get("/destinations", tags=["destination"], response_model=dict,
-            include_in_schema=tracardi.expose_gui_api)
-async def get_destinations_list():
-    """
-    Returns destinations.
-    """
-
-    ds = DestinationService()
-    records = await ds.load_all()
-
-    if not records.exists():
-        return {
-            "total": 0,
-            "result": []
-        }
-
-    result = list(records.map_to_objects(map_to_destination))
-
-    return {
-        "total": records.count(),
-        "result": result
-    }
+# # This may be not used
+# @router.get("/destinations", tags=["destination"], response_model=dict,
+#             include_in_schema=tracardi.expose_gui_api)
+# async def get_destinations_list():
+#     """
+#     Returns destinations.
+#     """
+#
+#     ds = DestinationService()
+#     records = await ds.load_all()
+#
+#     if not records.exists():
+#         return {
+#             "total": 0,
+#             "result": []
+#         }
+#
+#     result = list(records.map_to_objects(map_to_destination))
+#
+#     return {
+#         "total": records.count(),
+#         "result": result
+#     }
 
 
 @router.get("/destinations/type", tags=["destination"], response_model=dict, include_in_schema=tracardi.expose_gui_api)
@@ -79,7 +80,7 @@ async def get_destinations_type_list():
 @router.get("/destinations/by_tag", tags=["destination"], response_model=dict, include_in_schema=tracardi.expose_gui_api)
 async def get_destinations_by_tag(query: str = None, start: int = 0, limit: int = 100) -> dict:
     ds = DestinationService(True)
-    records = await ds.filter(query, start, limit)
+    records = await ds.load_all(query, start, limit)
 
     if not records.exists():
         return {

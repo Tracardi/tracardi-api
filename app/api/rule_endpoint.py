@@ -27,7 +27,7 @@ async def upsert_rule(rule: Rule):
     """
 
     if rule.type == 'event-collect':
-        event_source: Optional[EventSource] = (await EventSourceService().load_by_id(rule.source.id)).map_to_object(map_to_event_source)
+        event_source: Optional[EventSource] = (await EventSourceService().load_by_id_in_deployment_mode(rule.source.id)).map_to_object(map_to_event_source)
 
         if event_source is None:
             raise HTTPException(status_code=422, detail='Incorrect source id: `{}`'.format(rule.source.id))

@@ -3,7 +3,6 @@ from typing import Optional
 
 from fastapi import APIRouter, Depends, Response
 
-from tracardi.context import get_context
 from tracardi.domain.named_entity import NamedEntity
 from tracardi.domain.enum.type_enum import TypeEnum
 from tracardi.domain.event_source import EventSource
@@ -22,7 +21,10 @@ router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin", "developer"]))]
 )
 
-
+@router.get("/event-sources",
+            tags=["event-source"],
+            include_in_schema=tracardi.expose_gui_api)
+# Obsolete
 @router.get("/event-sources/by_type",
             tags=["event-source"],
             include_in_schema=tracardi.expose_gui_api)
@@ -31,7 +33,7 @@ async def list_event_sources(query: str = None):
     Lists all event sources that match given query (str) parameter
     """
 
-    records = await EventSourceService().load_all(query, limit=500)
+    records = await EventSourceService().load_all_in_deployment_mode(query, limit=500)
 
     return get_grouped_result("Event sources", records, map_to_event_source)
 
@@ -68,7 +70,7 @@ async def load_event_source(id: str, response: Response):
     Returns event source with given ID (str)
     """
 
-    record = await EventSourceService().load_by_id(id, in_deployment_mode=True)
+    record = await EventSourceService().load_by_id_in_deployment_mode(id)
 
     if not record.exists():
         response.status_code = 404
@@ -85,30 +87,28 @@ async def save_event_source(event_source: EventSource):
     """
     return await EventSourceService().save(event_source)
 
-@router.delete("/event-source/{id}", tags=["event-source"],
+@router.delete("/event-source/{source_id}", tags=["event-source"],
                include_in_schema=tracardi.expose_gui_api)
-async def delete_event_source(id: str, production: bool = None):
+async def delete_event_source(source_id: str):
     """
     Deletes event source with given ID (str).
     Return False if it is available in draft or production. True if all the instances where deleted
     """
 
-    if production is None:
-        production = get_context().production
-    return await EventSourceService().custom_delete_by_id(id, production)
+    return await EventSourceService().delete_by_id_in_deployment_mode(source_id)
 
 @router.get("/event-sources/entity",
             tags=["event-source"],
             include_in_schema=tracardi.expose_gui_api)
-async def list_event_sources_names_and_ids(add_current: bool = False, type: Optional[str] = None, limit: int = 500):
+async def list_event_sources_names_and_ids(add_current: bool = False, type: Optional[str] = None):
     """
     Returns list of event sources. This list contains only id and name.
     """
     ess = EventSourceService()
     if type:
-        records = await ess.load_by_type(type)
+        records = await ess.load_by_type_in_deployment_mode(type)
     else:
-        records = await ess.load_all()
+        records = await ess.load_all_in_deployment_mode()
 
     if not records.exists():
         return {

@@ -25,7 +25,7 @@ async def add_consent_type(data: CustomerConsent, all: Optional[bool] = False):
     """
     session = await load_session(data.session.id)
     profile = await load_profile(data.profile.id)
-    source = (await EventSourceService().load_by_id(data.source.id)).map_to_object(map_to_event_source)
+    source = (await EventSourceService().load_by_id_in_deployment_mode(data.source.id)).map_to_object(map_to_event_source)
 
     if not source or not profile or not session:
         raise HTTPException(status_code=403, detail="Access denied")
