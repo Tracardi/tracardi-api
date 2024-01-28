@@ -168,7 +168,7 @@ async def add_user(user_payload: UserPayload):
     return user_id
 
 
-@router.delete("/user/{id}", tags=["user"], include_in_schema=tracardi.expose_gui_api, response_model=dict)
+@router.delete("/user/{id}", tags=["user"], include_in_schema=tracardi.expose_gui_api)
 async def delete_user(id: str, user: User=Depends(Permissions(["admin"]))):
     """
     Deletes user with given ID
@@ -178,9 +178,7 @@ async def delete_user(id: str, user: User=Depends(Permissions(["admin"]))):
         raise HTTPException(status_code=403, detail="You cannot delete your own account")
 
     us = UserService()
-    result = await us.delete_by_id(id)
-
-    return {"deleted": result}
+    return await us.delete_by_id(id)
 
 
 @router.get("/user/{id}", tags=["user"], include_in_schema=tracardi.expose_gui_api)
