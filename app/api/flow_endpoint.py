@@ -125,24 +125,21 @@ async def load_flow_draft(id: str, response: Response):
     return flow_record.get_empty_workflow(id)
 
 
-@router.get("/flow/production/{id}",
-            tags=["flow"], 
-            response_model=Optional[Flow],
-            include_in_schema=tracardi.expose_gui_api)
-async def get_flow(id: str, response: Response):
-    """
-    Returns production version of flow with given ID (str)
-    """
-    flow_record = await _load_record(id)
-
-    if flow_record is None:
-        response.status_code = 404
-        return None
-
-    if flow_record.production_flow:
-        return flow_record.get_production_workflow()
-
-    return flow_record.get_empty_workflow(id)
+# @router.get("/flow/production/{id}",
+#             tags=["flow"],
+#             response_model=Optional[Flow],
+#             include_in_schema=tracardi.expose_gui_api)
+# async def get_flow(id: str, response: Response):
+#     """
+#     Returns production version of flow with given ID (str)
+#     """
+#     flow_record = await _load_record(id)
+#
+#     if flow_record is None:
+#         response.status_code = 404
+#         return None
+#
+#     return flow_record.get_empty_workflow(id)
 
 
 # @router.get("/flow/{production_draft}/{id}/restore", tags=["flow"], response_model=Flow,
