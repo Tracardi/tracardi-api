@@ -6,3 +6,5 @@
 - /production/deploy - removed
 - /production/dry-run - removed
 - /production/dry-run/revert - removed
+- /flow/production - removed
+- /flow/{production_draft}/{id}/restore - removed

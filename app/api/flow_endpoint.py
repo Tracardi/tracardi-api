@@ -6,8 +6,6 @@ from typing import Optional
 
 from fastapi import APIRouter, HTTPException, Depends, Response
 
-from tracardi.context import get_context
-from tracardi.domain.enum.production_draft import ProductionDraft
 from tracardi.domain.event_metadata import EventMetadata, EventPayloadMetadata
 from tracardi.domain.metadata import ProfileMetadata
 from tracardi.domain.payload.event_payload import EventPayload
@@ -53,48 +51,26 @@ async def _store_record(workflow_record: FlowRecord) -> str:
     return await ws.insert(workflow_record)
 
 
-async def _deploy_production_flow(flow: Flow, flow_record: Optional[FlowRecord] = None) -> str:
-
-    if flow_record is None:
-        old_flow_record = await _load_record(flow.id)
-    else:
-        old_flow_record = flow_record
-
-    flow_record = flow.get_production_workflow_record()
-
-    if flow_record is None or old_flow_record is None:
-        raise HTTPException(status_code=406, detail="Can not deploy missing draft workflow")
-
-    if old_flow_record.deploy_timestamp and flow_record.deploy_timestamp is None:
-        flow_record.deploy_timestamp = old_flow_record.deploy_timestamp
-
-    flow_record.backup = old_flow_record.production_flow
-    flow_record.deployed = True
-    flow_record.deploy_timestamp = now_in_utc()
-
-    return await _store_record(flow_record)
-
-
-async def _upsert_flow_draft(draft: Flow, rearrange_nodes: Optional[bool] = False):
+async def _upsert_flow(workflow: Flow, rearrange_nodes: Optional[bool] = False):
     """
     Creates draft of workflow. If there is production version of the workflow it stays intact.
     """
     # Frontend edge-id is long. Save space and md5 it.
 
-    if draft.flowGraph is not None:
-        draft.flowGraph.shorten_edge_ids()
+    if workflow.flowGraph is not None:
+        workflow.flowGraph.shorten_edge_ids()
 
     if rearrange_nodes is True:
-        draft.arrange_nodes()
+        workflow.arrange_nodes()
 
         # Check if origin flow exists
 
-    flow_record = await _load_record(draft.id)  # type: FlowRecord
+    flow_record = await _load_record(workflow.id)  # type: FlowRecord
 
     if flow_record is None:
-        flow_record = draft.get_empty_workflow_record(draft.type)
+        flow_record = workflow.get_empty_workflow_record(workflow.type)
 
-    flow_record.draft = encrypt(draft.model_dump())
+    flow_record.draft = encrypt(workflow.model_dump())
     flow_record.timestamp = now_in_utc()
 
     result = await _store_record(flow_record)
@@ -102,7 +78,7 @@ async def _upsert_flow_draft(draft: Flow, rearrange_nodes: Optional[bool] = Fals
     return result, flow_record
 
 
-@router.post("/flow/draft/nodes/rearrange", 
+@router.post("/flow/draft/nodes/rearrange",
              tags=["flow"], 
              response_model=Flow, 
              include_in_schema=tracardi.expose_gui_api)
@@ -121,14 +97,11 @@ async def rearrange_flow(flow: Flow):
     return flow
 
 
-@router.post("/flow/draft", 
+@router.post("/flow/draft",
              tags=["flow"],
              include_in_schema=tracardi.expose_gui_api)
-async def upsert_flow_draft(draft: Flow, rearrange_nodes: Optional[bool] = False):
-    result, flow_record = await _upsert_flow_draft(draft, rearrange_nodes)
-
-    if not get_context().is_production():
-        await _deploy_production_flow(draft, flow_record)
+async def upsert_workflow(workflow: Flow, rearrange_nodes: Optional[bool] = False):
+    result, flow_record = await _upsert_flow(workflow, rearrange_nodes)
 
     return result
 
@@ -148,10 +121,6 @@ async def load_flow_draft(id: str, response: Response):
     # Return draft if exists
     if flow_record.draft:
         return flow_record.get_draft_workflow()
-
-        # Fallback to production version
-    if flow_record.production_flow:
-        return flow_record.get_production_workflow()
 
     return flow_record.get_empty_workflow(id)
 
@@ -176,41 +145,30 @@ async def get_flow(id: str, response: Response):
     return flow_record.get_empty_workflow(id)
 
 
-@router.get("/flow/{production_draft}/{id}/restore", tags=["flow"], response_model=Flow,
-            include_in_schema=tracardi.expose_gui_api)
-async def restore_production_flow_backup(id: str, production_draft: ProductionDraft):
-    """
-    Returns previous version of production flow with given ID (str)
-    """
-    flow_record = await _load_record(id)
-
-    if flow_record is None:
-        raise HTTPException(status_code=404, detail="Flow id: `{}` does not exist.".format(id))
-
-    try:
-        if production_draft.value == ProductionDraft.production:
-            flow_record.restore_production_from_backup()
-        else:
-            flow_record.restore_draft_from_production()
-    except ValueError as e:
-        raise HTTPException(status_code=406, detail=str(e))
-
-    result = await _store_record(flow_record)
-    if result:
-        if production_draft.value == ProductionDraft.production:
-            return flow_record.get_production_workflow()
-        return flow_record.get_draft_workflow()
-
-
-@router.post("/flow/production", 
-             tags=["flow"],
-             include_in_schema=tracardi.expose_gui_api)
-async def deploy_production_flow(flow: Flow):
-    """
-        Creates production version of workflow. If there is a draft version of the workflow it is overwritten
-        by the production version. This may be the subject to change.
-    """
-    return await _deploy_production_flow(flow)
+# @router.get("/flow/{production_draft}/{id}/restore", tags=["flow"], response_model=Flow,
+#             include_in_schema=tracardi.expose_gui_api)
+# async def restore_production_flow_backup(id: str, production_draft: ProductionDraft):
+#     """
+#     Returns previous version of production flow with given ID (str)
+#     """
+#     flow_record = await _load_record(id)
+#
+#     if flow_record is None:
+#         raise HTTPException(status_code=404, detail="Flow id: `{}` does not exist.".format(id))
+#
+#     try:
+#         if production_draft.value == ProductionDraft.production:
+#             flow_record.restore_production_from_backup()
+#         else:
+#             flow_record.restore_draft_from_production()
+#     except ValueError as e:
+#         raise HTTPException(status_code=406, detail=str(e))
+#
+#     result = await _store_record(flow_record)
+#     if result:
+#         if production_draft.value == ProductionDraft.production:
+#             return flow_record.get_production_workflow()
+#         return flow_record.get_draft_workflow()
 
 
 @router.get("/flow/metadata/{id}", 
@@ -244,13 +202,6 @@ async def upsert_flow_details(flow_metadata: FlowMetaData):
         flow_record = FlowRecord(**flow_metadata.model_dump())
         flow_record.timestamp = now_in_utc()
         flow_record.draft = encrypt(Flow(
-            id=flow_metadata.id,
-            timestamp=flow_record.timestamp,
-            name=flow_metadata.name,
-            description=flow_metadata.description,
-            type=flow_metadata.type
-        ).model_dump())
-        flow_record.production_flow = encrypt(Flow(
             id=flow_metadata.id,
             timestamp=flow_record.timestamp,
             name=flow_metadata.name,
