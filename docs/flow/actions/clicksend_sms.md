@@ -31,11 +31,11 @@ The ClickSend Send SMS plugin is used to send SMS messages through the ClickSend
 The ClickSend Send SMS plugin accepts a payload as input and provides two output ports: "response" and "error."
 
 **Inputs**:
-- `payload`: This port accepts a payload object, which is a dictionary containing data.
+- __payload__: This port accepts a payload object, which is a dictionary containing data.
 
 **Outputs**:
-- `response`: This port returns the response status and content from the ClickSend gateway if the SMS message is sent successfully.
-- `error`: This port returns an error if the SMS message sending process fails.
+- __response__: This port returns the response status and content from the ClickSend gateway if the SMS message is sent successfully.
+- __error__: This port returns an error if the SMS message sending process fails.
 
 The plugin does not have the capability to start a workflow.
 
@@ -43,10 +43,10 @@ The plugin does not have the capability to start a workflow.
 
 The ClickSend Send SMS plugin has the following configuration parameters:
 
-- `Resource`: Select your ClickSend resource, which defines the credentials for the ClickSend gateway.
-- `Message template`: Type the SMS message. This message template can include data placeholders that will be replaced with data from the payload.
-- `Sender`: Type the sender's name or leave it blank to use the default sender. Custom sender names can be configured in the ClickSend system.
-- `Recipient`: Type or reference the recipient's phone number for the SMS message.
+- __Resource__: Select your ClickSend resource, which defines the credentials for the ClickSend gateway.
+- __Message template__: Type the SMS message. This message template can include data placeholders that will be replaced with data from the payload.
+- __Sender__: Type the sender's name or leave it blank to use the default sender. Custom sender names can be configured in the ClickSend system.
+- __Recipient__: Type or reference the recipient's phone number for the SMS message.
 
 # JSON Configuration
 
