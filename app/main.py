@@ -59,7 +59,6 @@ from app.api import (
     event_type_mapping,
     bridge_endpoint,
     entity_endpoint,
-    staging_endpoint,
     customer_endpoint,
     event_to_profile,
     cache_endpoint,
@@ -317,7 +316,6 @@ application.include_router(event_data_compliance_endpoint.router)
 application.include_router(identification_point_endpoint.router)
 application.include_router(scheduler_endpoint.router)
 application.include_router(metric_endpoint.router)
-application.include_router(staging_endpoint.router)
 application.include_router(customer_endpoint.router)
 application.include_router(event_to_profile.router)
 application.include_router(event_to_profile_copy.router)
