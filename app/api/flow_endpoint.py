@@ -14,7 +14,6 @@ from tracardi.domain.time import EventTime, ProfileTime, Time
 from tracardi.exceptions.exception import StorageException
 from tracardi.domain.console import Console
 from tracardi.service.console_log import ConsoleLog
-from tracardi.service.secrets import encrypt
 from tracardi.service.storage.driver.elastic import event as event_db
 from tracardi.service.storage.driver.elastic import session as session_db
 from tracardi.service.storage.mysql.mapping.workflow_mapping import map_to_workflow_record
@@ -70,7 +69,7 @@ async def _upsert_flow(workflow: Flow, rearrange_nodes: Optional[bool] = False):
     if flow_record is None:
         flow_record = workflow.get_empty_workflow_record(workflow.type)
 
-    flow_record.draft = encrypt(workflow.model_dump())
+    flow_record.draft = workflow.model_dump(mode='json')
     flow_record.timestamp = now_in_utc()
 
     result = await _store_record(flow_record)
@@ -120,7 +119,7 @@ async def load_flow_draft(id: str, response: Response):
 
     # Return draft if exists
     if flow_record.draft:
-        return flow_record.get_draft_workflow()
+        return Flow.from_workflow_record(flow_record)
 
     return flow_record.get_empty_workflow(id)
 
@@ -191,6 +190,9 @@ async def upsert_flow_details(flow_metadata: FlowMetaData):
     """
     Adds new flow metadata for flow with given id (str)
     """
+
+    ws = WorkflowService()
+
     flow_record = await _load_record(flow_metadata.id)
     if flow_record is None:
 
@@ -198,29 +200,23 @@ async def upsert_flow_details(flow_metadata: FlowMetaData):
 
         flow_record = FlowRecord(**flow_metadata.model_dump())
         flow_record.timestamp = now_in_utc()
-        flow_record.draft = encrypt(Flow(
+        flow_record.draft = Flow(
             id=flow_metadata.id,
             timestamp=flow_record.timestamp,
             name=flow_metadata.name,
             description=flow_metadata.description,
             type=flow_metadata.type
-        ).model_dump())
+        ).model_dump(mode='json')
+
+        return await ws.insert(flow_record)
 
     else:
-
-        # update
-
-        draft_flow = flow_record.get_draft_workflow()
-        draft_flow.name = flow_metadata.name
-        flow_record.draft = encrypt(draft_flow.model_dump())
-
-        flow_record.name = flow_metadata.name
-        flow_record.description = flow_metadata.description
-        flow_record.projects = flow_metadata.projects
-        flow_record.type = flow_metadata.type
-
-    result = await _store_record(flow_record)
-    return result
+        return await ws.update_by_id(flow_metadata.id, new_data=dict(
+            name=flow_metadata.name,
+            description=flow_metadata.description,
+            projects=",".join(flow_metadata.projects),
+            type=flow_metadata.type
+        ))
 
 
 @router.post("/flow/draft/metadata", tags=["flow"],
@@ -230,40 +226,22 @@ async def upsert_flow_draft_details(flow_metadata: FlowMetaData):
     Adds new draft metadata to flow with defined ID (str)
     """
 
-    flow_record = await _load_record(flow_metadata.id)
-
-    if flow_record is None:
-        raise HTTPException(status_code=404, detail="Flow `{}` does not exist.".format(flow_metadata.id))
-
-    flow_record.name = flow_metadata.name
-    flow_record.description = flow_metadata.description
-    flow_record.projects = flow_metadata.projects
-    flow_record.type = flow_metadata.type
-
-    if flow_record.draft:
-        draft_workflow = flow_record.get_draft_workflow()
-
-        draft_workflow.name = flow_metadata.name
-        draft_workflow.description = flow_metadata.description
-        draft_workflow.projects = flow_metadata.projects
-        draft_workflow.type = flow_metadata.type
-
-        flow_record.draft = encrypt(draft_workflow.model_dump())
-
-    result = await _store_record(flow_record)
-    return result
+    ws = WorkflowService()
+    return await ws.update_by_id(flow_metadata.id, new_data=dict(
+        name=flow_metadata.name,
+        description=flow_metadata.description,
+        projects=",".join(flow_metadata.projects),
+        type=flow_metadata.type
+    ))
 
 
 @router.get("/flow/{id}/lock/{lock}", tags=["flow"],
             include_in_schema=tracardi.expose_gui_api)
 async def update_flow_lock(id: str, lock: str):
-    flow_record = await _load_record(id)
-
-    if flow_record is None:
-        raise HTTPException(status_code=406, detail="Flow `{}` does not exist.".format(id))
-
-    flow_record.set_lock(True if lock.lower() == 'yes' else False)
-    return await _store_record(flow_record)
+    ws = WorkflowService()
+    return await ws.update_by_id(id, new_data=dict(
+        lock=lock.lower() == 'yes'
+    ))
 
 
 @router.post("/flow/debug", tags=["flow"],
