@@ -1,3 +1,4 @@
+import logging
 import os
 import sys
 import traceback
@@ -7,6 +8,7 @@ import sentry_sdk
 from app.middleware.context import ContextRequestMiddleware
 from tracardi.service.license import License, SCHEDULER, IDENTIFICATION, COMPLIANCE, RESHAPING, REDIRECTS, VALIDATOR, \
     LICENSE, MULTI_TENANT
+from tracardi.service.logging.formater import CustomFormatter
 
 _local_dir = os.path.dirname(__file__)
 sys.path.append(f"{_local_dir}/api/proto/stubs")
@@ -118,7 +120,6 @@ else:
 
 if License.has_service(MULTI_TENANT):
     from com_tracardi.endpoint import tenant_install_endpoint
-
 
 logger = get_logger(__name__)
 
@@ -337,6 +338,8 @@ if server.performance_tracking:
 
 @application.on_event("startup")
 async def app_starts():
+    logging.getLogger("uvicorn.access").handlers[0].setFormatter(CustomFormatter())
+
     logger.info(f"TRACARDI version {str(tracardi.version)} set-up starts.")
     if License.has_license():
         logger.info(f"TRACARDI async processing:  {com_tracardi_settings.async_processing}.")
@@ -383,5 +386,4 @@ async def app_shutdown():
 
 if __name__ == "__main__":
     import uvicorn
-
     uvicorn.run("app.main:application", host="0.0.0.0", port=8686, log_level='info', workers=1)
