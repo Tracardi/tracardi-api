@@ -1,10 +1,9 @@
-import logging
 from collections import defaultdict
 from fastapi import APIRouter, Depends, HTTPException
 from tracardi.context import get_context
 
 from tracardi.domain.version import Version
-from tracardi.exceptions.log_handler import log_handler
+from tracardi.exceptions.log_handler import get_logger
 from tracardi.service.logger_manager import save_logs
 from tracardi.service.storage.driver.elastic import raw as raw_db
 from tracardi.service.storage.indices_manager import check_indices_mappings_consistency
@@ -19,9 +18,7 @@ router = APIRouter(
 )
 
 
-logger = logging.getLogger(__name__)
-logger.setLevel(tracardi.logging_level)
-logger.addHandler(log_handler)
+logger = get_logger(__name__)
 
 
 # todo can not find usages

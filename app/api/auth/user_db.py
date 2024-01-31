@@ -1,16 +1,12 @@
 import json
-import logging
 from hashlib import sha1
 from typing import Optional
 
 from app.api.auth.token_memory import TokenMemory
-from tracardi.config import tracardi
 from tracardi.domain.user import User
-from tracardi.exceptions.log_handler import log_handler
+from tracardi.exceptions.log_handler import get_logger
 
-logger = logging.getLogger(__name__)
-logger.setLevel(tracardi.logging_level)
-logger.addHandler(log_handler)
+logger = get_logger(__name__)
 
 
 class TokenDb:

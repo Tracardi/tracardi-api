@@ -1,14 +1,11 @@
-import logging
 from fastapi import APIRouter, Depends
-from tracardi.exceptions.log_handler import log_handler
+from tracardi.exceptions.log_handler import get_logger
 from tracardi.service.events import get_predefined_event_types, \
     get_default_event_type_schema
 from .auth.permissions import Permissions
 from tracardi.config import tracardi
 
-logger = logging.getLogger(__name__)
-logger.setLevel(tracardi.logging_level)
-logger.addHandler(log_handler)
+logger = get_logger(__name__)
 
 router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin", "developer"]))]

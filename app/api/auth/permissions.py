@@ -1,17 +1,13 @@
-import logging
-
 from fastapi import Depends, HTTPException, status, Request
 from fastapi.security import OAuth2PasswordBearer
 
 from app.api.auth.user_db import token2user
 from tracardi.config import tracardi
-from tracardi.exceptions.log_handler import log_handler
+from tracardi.exceptions.log_handler import get_logger
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/user/token")
 
-logger = logging.getLogger(__name__)
-logger.setLevel(tracardi.logging_level)
-logger.addHandler(log_handler)
+logger = get_logger(__name__)
 
 
 class Permissions:

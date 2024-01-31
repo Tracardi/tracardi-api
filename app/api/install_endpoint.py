@@ -1,4 +1,3 @@
-import logging
 import os
 from typing import Optional
 from fastapi import APIRouter, HTTPException
@@ -8,14 +7,12 @@ from tracardi.service.installation import install_system, check_installation
 from tracardi.service.tracker import track_event
 from tracardi.config import tracardi
 from tracardi.domain.credentials import Credentials
-from tracardi.exceptions.log_handler import log_handler
+from tracardi.exceptions.log_handler import get_logger
 from tracardi.service.fake_data_maker.generate_payload import generate_payload
 from tracardi.service.plugin.plugin_install import install_default_plugins
 
 router = APIRouter()
-logger = logging.getLogger(__name__)
-logger.setLevel(tracardi.logging_level)
-logger.addHandler(log_handler)
+logger = get_logger(__name__)
 
 
 @router.get("/install", tags=["installation"], include_in_schema=tracardi.expose_gui_api, response_model=dict)

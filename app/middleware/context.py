@@ -5,6 +5,7 @@ from tracardi.context import Context, ServerContext
 from starlette.types import ASGIApp, Receive, Scope, Send
 from app.api.auth.user_db import token2user
 from tracardi.service.license import License, MULTI_TENANT
+from tracardi.service.logger_manager import save_logs
 
 if License.has_license() and License.has_service(MULTI_TENANT):
     from com_tracardi.service.tenant_manager import get_tenant_name_from_scope
@@ -81,3 +82,5 @@ class ContextRequestMiddleware:
                     cm.get_context().user = user
 
             await self.app(scope, receive, send)
+
+            await save_logs()

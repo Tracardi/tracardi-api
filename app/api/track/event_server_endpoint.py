@@ -1,4 +1,3 @@
-import logging
 from json import JSONDecodeError
 from typing import Optional
 
@@ -16,17 +15,14 @@ from tracardi.domain.time import Time
 from tracardi.service.storage.driver.elastic import event_redirect as event_redirect_db
 from tracardi.service.storage.driver.elastic import session as session_db
 from tracardi.service.tracker import track_event
-from tracardi.config import tracardi
 from tracardi.domain.payload.tracker_payload import TrackerPayload
 from tracardi.exceptions.exception import UnauthorizedException, FieldTypeConflictException, \
     EventValidationException
-from tracardi.exceptions.log_handler import log_handler
+from tracardi.exceptions.log_handler import get_logger
 from app.api.track.service.ip_address import get_ip_address
 from tracardi.service.url_constructor import url_query_params_to_dict
 
-logger = logging.getLogger(__name__)
-logger.setLevel(tracardi.logging_level)
-logger.addHandler(log_handler)
+logger = get_logger(__name__)
 
 router = APIRouter()
 

@@ -11,7 +11,6 @@ from tracardi.service.license import License, SCHEDULER, IDENTIFICATION, COMPLIA
 _local_dir = os.path.dirname(__file__)
 sys.path.append(f"{_local_dir}/api/proto/stubs")
 
-import logging
 from starlette.responses import JSONResponse
 from time import time
 from app.config import server
@@ -65,7 +64,7 @@ from app.api import (
 )
 from app.api.track import event_server_endpoint
 from tracardi.config import tracardi
-from tracardi.exceptions.log_handler import log_handler
+from tracardi.exceptions.log_handler import get_logger
 from tracardi.service.storage.elastic_client import ElasticClient
 from app.api.licensed_endpoint import get_router
 
@@ -121,10 +120,7 @@ if License.has_service(MULTI_TENANT):
     from com_tracardi.endpoint import tenant_install_endpoint
 
 
-logging.basicConfig(level=logging.ERROR)
-logger = logging.getLogger(__name__)
-logger.setLevel(tracardi.logging_level)
-logger.addHandler(log_handler)
+logger = get_logger(__name__)
 
 print(f"""
 88888888888 8888888b.         d8888  .d8888b.         d8888 8888888b.  8888888b. 8888888

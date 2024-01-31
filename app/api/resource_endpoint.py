@@ -1,10 +1,9 @@
-import logging
 from collections import defaultdict
 from typing import Optional
 from fastapi import APIRouter, Depends, Response
 
 from tracardi.domain.enum.type_enum import TypeEnum
-from tracardi.exceptions.log_handler import log_handler
+from tracardi.exceptions.log_handler import get_logger
 from tracardi.service.setup.setup_resources import get_type_of_resources
 from tracardi.service.storage.driver.elastic import resource as resource_db
 from tracardi.service.wf.domain.named_entity import NamedEntity
@@ -14,9 +13,7 @@ from tracardi.domain.value_object.bulk_insert_result import BulkInsertResult
 from .auth.permissions import Permissions
 from tracardi.config import tracardi
 
-logger = logging.getLogger(__name__)
-logger.setLevel(tracardi.logging_level)
-logger.addHandler(log_handler)
+logger = get_logger(__name__)
 
 router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin", "developer"]))]
