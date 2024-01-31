@@ -364,6 +364,7 @@ async def debug_flow(flow: FlowGraph, event_id: Optional[str] = None):
             metadata=EventMetadata(time=EventTime()),
             id='@debug-event-id',
             type="@debug-event-type",
+            name="debug-event",
             source=source,
             session=event_session,
             profile=profile,
