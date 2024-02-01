@@ -8,3 +8,4 @@
 - /production/dry-run/revert - removed
 - /flow/production - removed
 - /flow/{production_draft}/{id}/restore - removed
+- /flow/draft/metadata - removed

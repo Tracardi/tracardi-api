@@ -39,6 +39,12 @@ router = APIRouter(
 )
 
 
+async def _record_exists_in_current_context(id: str) -> Optional[FlowRecord]:
+    ws = WorkflowService()
+    record = await ws.load_in_current_context(id)
+    return record.map_to_object(map_to_workflow_record)
+
+
 async def _load_record(id: str) -> Optional[FlowRecord]:
     ws = WorkflowService()
     record = await ws.load_by_id(id)
@@ -150,7 +156,8 @@ async def upsert_flow_details(flow_metadata: FlowMetaData):
 
     ws = WorkflowService()
 
-    flow_record = await _load_record(flow_metadata.id)
+    flow_record = await _record_exists_in_current_context(flow_metadata.id)
+
     if flow_record is None:
 
         # create new
@@ -171,11 +178,11 @@ async def upsert_flow_details(flow_metadata: FlowMetaData):
         return await ws.update_by_id(flow_metadata.id, new_data=dict(
             name=flow_metadata.name,
             description=flow_metadata.description,
-            projects=",".join(flow_metadata.projects),
+            tags=",".join(flow_metadata.tags),
             type=flow_metadata.type
         ))
 
-
+# TODO obsolete delete
 @router.post("/flow/draft/metadata", tags=["flow"],
              include_in_schema=tracardi.expose_gui_api)
 async def upsert_flow_draft_details(flow_metadata: FlowMetaData):
@@ -187,7 +194,7 @@ async def upsert_flow_draft_details(flow_metadata: FlowMetaData):
     return await ws.update_by_id(flow_metadata.id, new_data=dict(
         name=flow_metadata.name,
         description=flow_metadata.description,
-        projects=",".join(flow_metadata.projects),
+        tags=",".join(flow_metadata.tags),
         type=flow_metadata.type
     ))
 

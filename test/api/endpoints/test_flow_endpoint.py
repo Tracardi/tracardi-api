@@ -19,7 +19,7 @@ def _create_flow(id, name, desc):
         "name": name,
         "description": desc,
         "enabled": True,
-        "projects": [
+        "tags": [
             "General", "Test"
         ],
         "draft": "",
@@ -177,7 +177,7 @@ def test_should_update_flow_metadata():
             "name": "New name",
             "description": "New Description",
             "enabled": False,
-            "projects": [
+            "tags": [
                 "New"
             ]
         })
@@ -198,7 +198,7 @@ def test_should_update_flow_metadata():
             assert result['id'] == id
             assert result['name'] == 'New name'
             assert result['description'] == 'New Description'
-            assert "New" in result['projects']
+            assert "New" in result['tags']
         else:
             raise Exception("Could not read flow")
 
@@ -262,7 +262,7 @@ def test_should_save_draft_metadata():
             "name": "string",
             "description": "string",
             "enabled": True,
-            "projects": [
+            "tags": [
                 "General"
             ]
         }
@@ -459,7 +459,7 @@ def test_should_not_create_draft_metadata_if_flow_missing():
         "name": "test WF",
         "description": "test WF",
         "enabled": True,
-        "projects": [
+        "tags": [
             "General", "Test"
         ],
         "draft": "",
@@ -480,7 +480,7 @@ def test_should_create_draft_metadata():
             "name": "test WF",
             "description": "test WF",
             "enabled": True,
-            "projects": [
+            "tags": [
                 "General", "Test"
             ],
             "draft": "",
