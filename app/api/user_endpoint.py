@@ -22,7 +22,7 @@ from ..service.grouping import get_grouped_result
 
 class UserSoftEditPayload(BaseModel):
     password: Optional[str] = None
-    full_name: Optional[str] = None
+    name: Optional[str] = None
 
 
 router = APIRouter(
@@ -30,7 +30,7 @@ router = APIRouter(
 )
 
 auth_router = APIRouter()
-
+# logger = get_logger(__name__)
 
 @auth_router.post("/user/token",
                   tags=["user", "authorization"],
@@ -53,7 +53,9 @@ async def get_token(login_form_data: OAuth2PasswordRequestForm = Depends(),
         try:
             token = await auth.login(login_form_data.username, login_form_data.password)
         except Exception as e:
-            raise HTTPException(status_code=400, detail=f"Redis authentication error: {str(e)}")
+            message = f"Authentication error: {str(e)}"
+            # logger.error(message)
+            raise HTTPException(status_code=400, detail=message)
 
         return token
 

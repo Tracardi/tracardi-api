@@ -35,15 +35,15 @@ async def edit_user_account(payload: UserSoftEditPayload,
         if payload.password:
             existing_user.password = User.encode_password(payload.password)
 
-        if payload.full_name:
-            existing_user.full_name = payload.full_name
+        if payload.name:
+            existing_user.name = payload.name
 
         us = UserService()
 
         saved, new_user = await us.update_if_exist(
             user.id,
             UserPayload(
-                full_name=existing_user.full_name,
+                name=existing_user.name,
                 password=existing_user.password,
                 roles=existing_user.roles,
                 enabled=existing_user.enabled,

@@ -8,7 +8,7 @@ def test_should_get_and_edit_account():
 
     user_payload = {
         "password": "test",
-        "full_name": "Test account",
+        "name": "Test account",
         "email": "test_email@test.com",
         "roles": ["marketer"],
         "disabled": False
@@ -26,16 +26,16 @@ def test_should_get_and_edit_account():
         result = endpoint.get("/user-account")
         assert result.status_code == 200
         assert result.json()["email"] == user_payload["email"]
-        assert result.json()["full_name"] == user_payload["full_name"]
+        assert result.json()["name"] == user_payload["name"]
         prev_password = result.json()["password"]
 
-        result = endpoint.post("/user-account", {"full_name": "Full name", "password": "123"})
+        result = endpoint.post("/user-account", {"name": "Full name", "password": "123"})
         assert result.status_code == 200
 
         result = endpoint.get("/user-account")
         assert result.status_code == 200
         assert result.json()["email"] == user_payload["email"]
-        assert result.json()["full_name"] == "Full name"
+        assert result.json()["name"] == "Full name"
         assert result.json()["password"] != prev_password
 
     finally:

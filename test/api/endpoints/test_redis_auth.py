@@ -13,7 +13,7 @@ def test_should_handle_multiple_sessions():
         user_id = None
         data = {
             "password": user_pass,
-            "full_name": "full name",
+            "name": "full name",
             "email": user_email,
             "roles": ["admin", "marketer", "developer"],
             "disabled": False

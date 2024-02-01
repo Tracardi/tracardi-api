@@ -10,7 +10,7 @@ def test_user_set_delete():
         token2user = TokenDb()
         user = User(id=str(uuid4()),
                     password="pass",
-                    full_name="Name",
+                    name="Name",
                     email="test@test.pl",
                     roles=['admin']
                     )

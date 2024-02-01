@@ -6,7 +6,7 @@ from datetime import datetime
 
 class UserPayload(BaseModel):
     password: str
-    full_name: str
+    name: str
     email: str
     roles: List[str]
     enabled: bool = False
