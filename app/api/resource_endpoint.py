@@ -1,9 +1,10 @@
 import logging
+from collections import defaultdict
 from typing import Optional
 from fastapi import APIRouter, Depends
 
 from tracardi.domain.enum.type_enum import TypeEnum
-from tracardi.exceptions.log_handler import log_handler
+from tracardi.exceptions.log_handler import get_logger
 from tracardi.service.setup.setup_resources import get_type_of_resources
 from tracardi.service.storage.mysql.map_to_named_entity import map_to_named_entity
 from tracardi.service.storage.mysql.mapping.resource_mapping import map_to_resource
@@ -13,9 +14,7 @@ from .auth.permissions import Permissions
 from tracardi.config import tracardi
 from ..service.grouping import get_result_dict, get_grouped_result
 
-logger = logging.getLogger(__name__)
-logger.setLevel(tracardi.logging_level)
-logger.addHandler(log_handler)
+logger = get_logger(__name__)
 
 router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin", "developer"]))]

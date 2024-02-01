@@ -1,14 +1,11 @@
-import logging
 from collections import namedtuple
 
 from fastapi import APIRouter, Depends, HTTPException
-from tracardi.exceptions.log_handler import log_handler
+from tracardi.exceptions.log_handler import get_logger
 from .auth.permissions import Permissions
 from tracardi.config import tracardi
 
-logger = logging.getLogger(__name__)
-logger.setLevel(tracardi.logging_level)
-logger.addHandler(log_handler)
+logger = get_logger(__name__)
 
 
 def get_router(prefix):

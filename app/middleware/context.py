@@ -4,13 +4,16 @@ from tracardi.config import tracardi
 from tracardi.context import Context, ServerContext
 from starlette.types import ASGIApp, Receive, Scope, Send
 from app.api.auth.user_db import token2user
+from tracardi.exceptions.log_handler import get_logger
 from tracardi.service.license import License, MULTI_TENANT
+from tracardi.service.logger_manager import save_logs
 
 if License.has_license() and License.has_service(MULTI_TENANT):
     from com_tracardi.service.tenant_manager import get_tenant_name_from_scope
 else:
     from tracardi.service.tenant_manager import get_tenant_name_from_scope
 
+logger = get_logger(__name__)
 
 def _get_header_value(scope, key) -> Optional[str]:
     headers = scope.get('headers', None)
@@ -79,5 +82,10 @@ class ContextRequestMiddleware:
                     user = token2user.get(token)
                     # This is dangerous user mutation. Never do this in other places.
                     cm.get_context().user = user
-
-            await self.app(scope, receive, send)
+            try:
+                await self.app(scope, receive, send)
+            except Exception as e:
+                logger.error(str(e))
+                raise e
+            finally:
+                await save_logs()

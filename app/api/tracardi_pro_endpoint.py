@@ -1,4 +1,3 @@
-import logging
 from collections import OrderedDict
 from typing import Optional
 
@@ -15,15 +14,13 @@ from tracardi.domain.resource import Resource
 from tracardi.domain.sign_up_data import SignUpData
 from app.api.proto.tracard_pro_client import TracardiProClient
 from tracardi.exceptions.log_handler import log_handler
+from tracardi.exceptions.log_handler import get_logger
 from tracardi.config import tracardi
 from tracardi.service.storage.mysql.service.resource_service import ResourceService
 from tracardi.service.storage.mysql.service.tracardi_pro_service import TracardiProService
 from tracardi.service.tracardi_http_client import HttpClient
 
-logging.basicConfig(level=logging.ERROR)
-logger = logging.getLogger(__name__)
-logger.setLevel(tracardi.logging_level)
-logger.addHandler(log_handler)
+logger = get_logger(__name__)
 
 router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin", "developer"]))]

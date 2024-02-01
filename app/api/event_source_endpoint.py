@@ -1,4 +1,5 @@
 import logging
+from collections import defaultdict
 from typing import Optional
 
 from fastapi import APIRouter, Depends, Response
@@ -9,13 +10,15 @@ from tracardi.domain.event_source import EventSource
 from tracardi.exceptions.log_handler import log_handler
 from tracardi.service.storage.mysql.mapping.event_source_mapping import map_to_event_source
 from tracardi.service.storage.mysql.service.event_source_service import EventSourceService
+from tracardi.exceptions.log_handler import get_logger
+from tracardi.service.event_source_manager import event_source_types, save_source
+from tracardi.service.storage.driver.elastic import event_source as event_source_db
+from app.service.grouper import search
 from .auth.permissions import Permissions
 from tracardi.config import tracardi
 from ..service.grouping import get_grouped_result
 
-logger = logging.getLogger(__name__)
-logger.setLevel(tracardi.logging_level)
-logger.addHandler(log_handler)
+logger = get_logger(__name__)
 
 router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin", "developer"]))]
