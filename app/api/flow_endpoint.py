@@ -246,7 +246,6 @@ async def debug_flow(flow: FlowGraph, event_id: Optional[str] = None):
             id='@debug-event-id',
             name="Debug event id",
             type="@debug-event-type",
-            name="debug-event",
             source=source,
             session=event_session,
             profile=profile,

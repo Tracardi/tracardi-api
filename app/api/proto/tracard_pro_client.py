@@ -6,11 +6,9 @@ from app.api.proto.stubs import pro_services_pb2 as pb2, pro_services_pb2_grpc a
 from google.protobuf import json_format
 
 from tracardi.config import tracardi
-from tracardi.exceptions.log_handler import log_handler
 from tracardi.service.storage.mysql.service.tracardi_pro_service import TracardiProService
 
 from tracardi.exceptions.log_handler import get_logger
-from tracardi.service.pro.auth import get_tpro_token
 
 _local_path = os.path.dirname(__file__)
 
