@@ -20,7 +20,7 @@ router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin", "developer"]))]
 )
 
-rs = ResourceService(True)
+rs = ResourceService()
 
 async def _load_record(id: str) -> Optional[Resource]:
     record = await rs.load_by_id(id)
