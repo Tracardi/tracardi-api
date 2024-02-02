@@ -11,6 +11,7 @@ from tracardi.service.storage.mysql.service.destination_service import Destinati
 from tracardi.service.storage.mysql.service.resource_service import ResourceService
 from .auth.permissions import Permissions
 from tracardi.config import tracardi
+from tracardi.service.license import License
 
 router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin", "developer"]))]
@@ -42,31 +43,6 @@ async def get_destination(id: str, response: Response):
         return None
 
     return record.map_to_object(map_to_destination)
-
-
-# # This may be not used
-# @router.get("/destinations", tags=["destination"], response_model=dict,
-#             include_in_schema=tracardi.expose_gui_api)
-# async def get_destinations_list():
-#     """
-#     Returns destinations.
-#     """
-#
-#     ds = DestinationService()
-#     records = await ds.load_all()
-#
-#     if not records.exists():
-#         return {
-#             "total": 0,
-#             "result": []
-#         }
-#
-#     result = list(records.map_to_objects(map_to_destination))
-#
-#     return {
-#         "total": records.count(),
-#         "result": result
-#     }
 
 
 @router.get("/destinations/type", tags=["destination"], response_model=dict, include_in_schema=tracardi.expose_gui_api)
@@ -118,8 +94,10 @@ async def list_destination_resources():
     rs = ResourceService()
     records = await rs.load_resource_with_destinations()
 
-    return {resource.id: resource for resource in records.map_to_objects(map_to_resource)}
-
-    # data, total = await resource_db.load_destinations()
-    # result = {r.id: r for r in data if r.is_destination()}
-    # return result
+    result = {}
+    for resource in records.map_to_objects(map_to_resource):
+        if resource.is_destination():
+            if resource.destination.pro is True and not License.has_license():
+                continue
+            result[resource.id] = resource
+    return result
