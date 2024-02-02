@@ -453,6 +453,13 @@ system_settings = [
             "desc": "Default: tracardi. Merge profile automatically on change of defined profile fields. AUTO_PROFILE_MERGING value is used to salt the profile merging keys hashing. Set value to random value, min 20 letters."
         }
     ),
+    SystemSettings(
+        **{
+            "label": "ALLOW_BOT_TRAFFIC",
+            "value": tracardi.allow_bot_traffic,
+            "desc": "Default: No. If set to Yes then block bot traffic."
+        }
+    ),
 
 ]
 
