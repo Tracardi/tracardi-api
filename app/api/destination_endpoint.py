@@ -3,6 +3,7 @@ from typing import Optional
 from fastapi import APIRouter, Response, Depends
 
 from tracardi.domain.value_object.bulk_insert_result import BulkInsertResult
+from tracardi.service.license import License
 from tracardi.service.setup.setup_resources import get_destinations
 from tracardi.service.storage.driver.elastic import destination as destination_db
 from tracardi.service.storage.driver.elastic import resource as resource_db
@@ -89,5 +90,10 @@ async def delete_destination(id: str, response: Response):
             include_in_schema=tracardi.expose_gui_api)
 async def list_destination_resources():
     data, total = await resource_db.load_destinations()
-    result = {r.id: r for r in data if r.is_destination()}
+    result = {}
+    for resource in data:
+        if resource.is_destination():
+            if resource.destination.pro is True and not License.has_license():
+                continue
+            result[resource.id] = resource
     return result
