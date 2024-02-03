@@ -196,9 +196,13 @@ Use this template to generate the documentation:
 
 <Put here required resources. If none recourse defined in the plugin form or code write "This plugin does not require external resources tobe configured".>
 
+# Event prerequisites
+
+<Put here information if the plugin only works for sync event or for all events. Plugins that are UIX widgets (usually placed in UIX Widgets group) require an event to synchronious and wait for the workflow to finish. All other plugins do not have this requirement.>
+
 # Errors
 
-<Put here all possible errors. Put here Exception message (not exception type) theat means if there is ` raise ValueError("Profile event sequencing can not be performed without profile. Is this a profile less event?")` "Profile event sequencing can not be performed without profile. Is this a profile less event?" not `ValueError`.
+<Put here all possible errors. Put here Exception message (not exception type) that means if there is ` raise ValueError("Profile event sequencing can not be performed without profile. Is this a profile less event?")` "Profile event sequencing can not be performed without profile. Is this a profile less event?" not `ValueError`.
 and after the error the description when it may occur.>
 
 ```
@@ -211,62 +215,78 @@ There is only one, do not use `` in the response. So `some text` is not allowed.
 Here is the full plugin code:
 
 ```python
-from typing import List
+import json
 
 from pydantic import field_validator
-from tracardi.domain.profile import Profile
 
-from tracardi.service.plugin.domain.register import Plugin, Spec, MetaData, Form, FormGroup, FormField, FormComponent, \
-    Documentation, PortDoc
-from tracardi.service.plugin.runner import ActionRunner
-from tracardi.service.plugin.domain.result import Result
+from tracardi.service.integration_id import save_integration_id
+from tracardi.service.notation.dict_traverser import DictTraverser
 from tracardi.service.plugin.domain.config import PluginConfig
+from tracardi.service.plugin.domain.register import Plugin, Spec, MetaData, Documentation, PortDoc, Form, FormGroup, \
+    FormField, FormComponent
+from tracardi.service.plugin.domain.result import Result
+from tracardi.service.plugin.runner import ActionRunner
 
 
-class MergeProfileConfiguration(PluginConfig):
-    mergeBy: List[str]
+class Config(PluginConfig):
+    id: str
+    name: str
+    data: str = "{}"
 
-    @field_validator("mergeBy")
+    @field_validator("id")
     @classmethod
-    def list_must_not_be_empty(cls, value):
-        # Merge by keys must exist and come from profile
-        if not len(value) > 0:
-            raise ValueError("Field mergeBy is empty and has no effect on merging. "
-                             "Add merging key or remove this action from flow.")
+    def id_can_not_be_empty(cls, value):
+        if not value:
+            raise ValueError("Id can not be empty.")
+        return value
 
-        for key in value:
-            if not key.startswith('profile@'):
-                raise ValueError(
-                    f"Field `{key}` does not start with profile@... Only profile fields are used during merging.")
+    @field_validator("name")
+    @classmethod
+    def name_can_not_be_empty(cls, value):
+        if not value:
+            raise ValueError("Name can not be empty.")
+        return value
 
+    @field_validator("data")
+    @classmethod
+    def data_can_not_be_empty(cls, value):
+        if not value:
+            return "{}"
         return value
 
 
-def validate(config: dict) -> MergeProfileConfiguration:
-    return MergeProfileConfiguration(**config)
+def validate(config: dict) -> Config:
+    return Config(**config)
 
 
-class MergeProfilesAction(ActionRunner):
-    merge_key: List[str]
+class AddIntegrationIdAction(ActionRunner):
+    config: Config
 
     async def set_up(self, init):
-        config = validate(init)
-        self.merge_key = [key.lower() for key in config.mergeBy]
+        self.config = validate(init)
 
-    async def run(self, payload: dict, in_edge=None) -> Result:
-        if isinstance(self.profile, Profile):
-            # TODO LOOK for self.profile.operation.needs_merging()
-            # TODO operation can be overwritten by update form cache. maybe mrege here not at the end of workflow.
-            self.profile.operation.merge = self.merge_key
-        else:
-            if self.event.metadata.profile_less is True:
-                self.console.warning("Can not merge profile when processing profile less events.")
-            else:
-                message = "Can not merge profile. Profile is empty."
-                self.console.error(message)
-                return Result(value={"message": message}, port="error")
+    """
+    If your profile has some id in external system this plugin can be used to add the connection between these
+    systems and put external id o the profile in tracardi
+    """
 
-        return Result(value=payload, port="payload")
+    async def run(self, payload: dict, in_edge=None):
+        try:
+            dot = self._get_dot_accessor(payload)
+            external_id = dot[self.config.id]
+            traverser = DictTraverser(dot)
+            data = json.loads(self.config.data)
+            data = traverser.reshape(data)
+            system_name = self.config.name.lower().replace(" ","-")
+
+            await save_integration_id(self.profile.id, system_name, external_id, data)
+
+            return Result(port="payload", value=payload)
+        except Exception as e:
+            self.console.error(str(e))
+            return Result(port="error", value={
+                "message": str(e)
+            })
 
 
 def register() -> Plugin:
@@ -274,78 +294,63 @@ def register() -> Plugin:
         start=False,
         spec=Spec(
             module=__name__,
-            className='MergeProfilesAction',
+            className=AddIntegrationIdAction.__name__,
             inputs=["payload"],
             outputs=["payload", "error"],
-            init={"mergeBy": []},
-            version="0.9.0",
+            version='0.8.2',
+            license="MIT + CC",
+            author="Risto Kowaczewski",
+            init={
+                "id": "event@properties",
+                "name": "",
+                "data": "{}"
+            },
+            manual="add_external_id_action",
             form=Form(groups=[
                 FormGroup(
                     fields=[
                         FormField(
-                            id="mergeBy",
-                            name="Merge by fields",
-                            description="Provide a list of fields that can identify user. For example profile@data.contact.email.main. "
-                                        "These fields will be treated as primary keys for merging. Profiles will be "
-                                        "grouped by this value and merged.",
-                            component=FormComponent(type="listOfDotPaths", props={"label": "condition",
-                                                                                  "defaultSourceValue": "profile"
-                                                                                  })
+                            id="id",
+                            name="External ID",
+                            description="Reference external ID.",
+                            component=FormComponent(type="dotPath", props={"label": "External ID"})
+                        ),
+                        FormField(
+                            id="name",
+                            name="External System Name",
+                            description="The name will be lower-cased and spaces will be replaced by hyphens.",
+                            component=FormComponent(type="text", props={"label": "External System Name"})
+                        ),
+                        FormField(
+                            id="data",
+                            name="Additional Data",
+                            description="Add additional data related to external system. You can reference any data from event or payload.",
+                            component=FormComponent(type="json", props={"label": "External System Data"})
                         )
                     ]
-                ),
+                )
             ]),
-            manual="merge_profiles_action"
         ),
         metadata=MetaData(
-            name='Merge profiles',
-            desc='Merges profile in storage when flow ends. This operation is expensive so use it with caution, '
-                 'only when there is a new PII information added.',
-            icon='merge',
+            name='Save Integration Id',
+            desc='Save external system ID for current profile.',
             group=["Operations"],
+            purpose=['collection', 'segmentation'],
             documentation=Documentation(
                 inputs={
-                    "payload": PortDoc(desc="This port takes any JSON-like object.")
+                    "payload": PortDoc(desc="This port takes payload object.")
                 },
                 outputs={
-                    "payload": PortDoc(desc="This port returns exactly same payload as given one.")
+                    "payload": PortDoc(desc="This port returns payload object."),
+                    "error": PortDoc(desc="This port returns error message if plugin fails.")
                 }
             )
         )
     )
-
-
-```
 
 ```
 
 
 Available manual:
 
-Merge Profile Action
-
-When new personal information is added to a customer's profile, it might need to be combined with other profiles in the system to create one consistent profile. This is done through the "merge profile" action.
-
-When this action is used in the workflow, it will set the profile to be merged at the end of the process. To finish the merging process, you'll need to provide a merge key in the settings of the "merge profile" step.
-Configuration
-
-The merge key is an important part of the system that helps to combine different customer profiles into one. This key can be something unique like an email, phone number, or ID. The system will look for other profiles that have the same key and merge them together.
-
-When the profiles are merged, all their information is combined into one single profile and any actions related to those profiles are now related to the merged one. Any extra profiles that are no longer needed will be deleted, but their ID will still be connected to the new merged profile. This means that if you try to look for an old profile, the system will show you the new merged one.
-
-If you want to merge profiles using more than one key, like email and name, the system will look for profiles that have both those keys. The merge key should be provided in a JSON array. To access the merge key data, you should use dotted notation. For more information on this notation, check the Notations/Dot notation section in the documentation.
-
-{
-  "mergeBy": ["profile@data.contact.email"]
-}
-
-A simpler way to merge profile
-
-An identification point is a feature (in commercial Tracardi) that allows the system to identify customers during their journey. When this point is set, the system will monitor for events that can be used to match the anonymous customer's identified profile.
-
-To give an analogy, think of an identification point like the ones at an airport or during a police check. You stay anonymous until there is a moment when you need to show your ID. This is an identification point. At this point, you are no longer anonymous. The same goes for Tracardi, once you identify yourself, all your past events become part of your identified profile. If identification happens multiple times on different communication channels, all the anonymous actions will become not anonymous anymore.
-
-For example, if a customer's profile in the system has an email address that matches the email delivered in a new event, then the system can match anonymous customer data with the existing profile and merge all previous interactions/events.
-
-In simpler terms, identification point is a way for the system to identify customers and keep their information consistent throughout their journey.
-
+None
