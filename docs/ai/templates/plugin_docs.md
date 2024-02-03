@@ -215,61 +215,75 @@ There is only one, do not use `` in the response. So `some text` is not allowed.
 Here is the full plugin code:
 
 ```python
-from tracardi.service.utils.date import now_in_utc
+import json
 
+from pydantic import field_validator
+
+from tracardi.service.integration_id import save_integration_id
+from tracardi.service.notation.dict_traverser import DictTraverser
+from tracardi.service.plugin.domain.config import PluginConfig
 from tracardi.service.plugin.domain.register import Plugin, Spec, MetaData, Documentation, PortDoc, Form, FormGroup, \
     FormField, FormComponent
-from tracardi.service.plugin.runner import ActionRunner
 from tracardi.service.plugin.domain.result import Result
-from .model.config import Config
-from datetime import datetime, timedelta
-from dateutil import parser
-from dateutil.parser import ParserError
+from tracardi.service.plugin.runner import ActionRunner
 
 
-def validate(config: dict):
+class Config(PluginConfig):
+    id: str
+    name: str
+    data: str = "{}"
+
+    @field_validator("id")
+    @classmethod
+    def id_can_not_be_empty(cls, value):
+        if not value:
+            raise ValueError("Id can not be empty.")
+        return value
+
+    @field_validator("name")
+    @classmethod
+    def name_can_not_be_empty(cls, value):
+        if not value:
+            raise ValueError("Name can not be empty.")
+        return value
+
+    @field_validator("data")
+    @classmethod
+    def data_can_not_be_empty(cls, value):
+        if not value:
+            return "{}"
+        return value
+
+
+def validate(config: dict) -> Config:
     return Config(**config)
 
 
-class TimeDelay(ActionRunner):
-
+class AddIntegrationIdAction(ActionRunner):
     config: Config
 
     async def set_up(self, init):
         self.config = validate(init)
 
-    @staticmethod
-    def parse_date(date):
+    """
+    If your profile has some id in external system this plugin can be used to add the connection between these
+    systems and put external id o the profile in tracardi
+    """
+
+    async def run(self, payload: dict, in_edge=None):
         try:
-            if isinstance(date, str):
-                if date == 'now':
-                    date = now_in_utc()
-                else:
-                    date = parser.parse(date)
-            elif not isinstance(date, datetime):
-                raise ValueError("Date can be either string or datetime object")
-            return date
-        except ParserError:
-            raise ValueError("Could not parse data `{}`".format(date))
-
-    async def run(self, payload: dict, in_edge=None) -> Result:
-
-        try:
-
             dot = self._get_dot_accessor(payload)
+            external_id = dot[self.config.id]
+            traverser = DictTraverser(dot)
+            data = json.loads(self.config.data)
+            data = traverser.reshape(data)
+            system_name = self.config.name.lower().replace(" ","-")
 
-            ref_date = self.parse_date(dot[self.config.reference_date])
+            await save_integration_id(self.profile.id, system_name, external_id, data)
 
-            if self.config.sign == "+":
-                new_date = ref_date + timedelta(seconds=int(self.config.delay))
-            else:
-                new_date = ref_date - timedelta(seconds=int(self.config.delay))
-
-            return Result(port="date", value={
-                "date": new_date
-            })
-
+            return Result(port="payload", value=payload)
         except Exception as e:
+            self.console.error(str(e))
             return Result(port="error", value={
                 "message": str(e)
             })
@@ -280,82 +294,63 @@ def register() -> Plugin:
         start=False,
         spec=Spec(
             module=__name__,
-            className='TimeDelay',
+            className=AddIntegrationIdAction.__name__,
             inputs=["payload"],
-            outputs=["date", "error"],
+            outputs=["payload", "error"],
             version='0.8.2',
             license="MIT + CC",
             author="Risto Kowaczewski",
-            manual='time_delay',
             init={
-                "reference_date": "profile@metadata.time.insert",
-                "sign": "+",
-                "delay": "60"
+                "id": "event@properties",
+                "name": "",
+                "data": "{}"
             },
-            form=Form(
-                groups=[
-                    FormGroup(
-                        name="Time delta",
-                        description="Calculates the time difference between two dates.",
-                        fields=[
-                            FormField(
-                                id="reference_date",
-                                name="Reference date",
-                                description="Please type path to the date.",
-                                component=FormComponent(type="dotPath", props={
-                                    "label": "Date"
-                                }),
-                                required=True
-                            ),
-                            FormField(
-                                id="sign",
-                                name="Operation",
-                                description="Please select if you would like to add delay or subtract delay.",
-                                component=FormComponent(type="select", props={
-                                    "label": "Operation",
-                                    "items": {
-                                        "+": "Add",
-                                        "-": "Subtract"
-                                    }
-                                }),
-                                required=True
-                            ),
-                            FormField(
-                                id="delay",
-                                name="A delay in seconds",
-                                description="Please type delay that will be added to the reference date.",
-                                component=FormComponent(type="text", props={"label": "Delay"}),
-                                required=True
-                            )
-                        ]
-                    )
-                ]
-            )
+            manual="add_external_id_action",
+            form=Form(groups=[
+                FormGroup(
+                    fields=[
+                        FormField(
+                            id="id",
+                            name="External ID",
+                            description="Reference external ID.",
+                            component=FormComponent(type="dotPath", props={"label": "External ID"})
+                        ),
+                        FormField(
+                            id="name",
+                            name="External System Name",
+                            description="The name will be lower-cased and spaces will be replaced by hyphens.",
+                            component=FormComponent(type="text", props={"label": "External System Name"})
+                        ),
+                        FormField(
+                            id="data",
+                            name="Additional Data",
+                            description="Add additional data related to external system. You can reference any data from event or payload.",
+                            component=FormComponent(type="json", props={"label": "External System Data"})
+                        )
+                    ]
+                )
+            ]),
         ),
         metadata=MetaData(
-            name='Time delay',
-            desc='Returns date plus the defined delay.',
-            type='flowNode',
-            icon='time',
-            group=["Time"],
+            name='Save Integration Id',
+            desc='Save external system ID for current profile.',
+            group=["Operations"],
             purpose=['collection', 'segmentation'],
             documentation=Documentation(
                 inputs={
-                    "payload": PortDoc(desc="This port payload object.")
+                    "payload": PortDoc(desc="This port takes payload object.")
                 },
                 outputs={
-                    "date": PortDoc(desc="This port returns a date."),
-                    "error": PortDoc(desc="This port returns an error.")
+                    "payload": PortDoc(desc="This port returns payload object."),
+                    "error": PortDoc(desc="This port returns error message if plugin fails.")
                 }
             )
         )
     )
-
 
 ```
 
 
 Available manual:
 
-This plugin calucates a date based on the date and a time delay. It can add or subtract the delay in seconds.  
-
+None
