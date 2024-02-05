@@ -34,7 +34,6 @@ async def add_consent_type(data: CustomerConsent, all: Optional[bool] = False):
     profile_key = Lock.get_key(Collection.lock_tracker, "profile", get_entity_id(data.profile))
     profile_lock = Lock(_redis, profile_key, default_lock_ttl=3)
 
-
     async with async_mutex(profile_lock, name='add_consent_type'):
 
         profile = await load_profile(data.profile.id)
