@@ -347,9 +347,9 @@ async def app_starts():
 
     await wait_for_connection(no_of_tries=10)
 
-    if server.performance_tracking:
+    if server.performance_tracking is not None:
         sentry_sdk.init(
-            dsn="https://9c7c026fcfb5f9bd0ee63eec492316ab@o1093519.ingest.sentry.io/4505827219734528",
+            dsn=server.performance_tracking,
             # Set traces_sample_rate to 1.0 to capture 100%
             # of transactions for performance monitoring.
             # We recommend adjusting this value in production.
