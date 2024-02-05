@@ -1,3 +1,5 @@
+import asyncio
+
 import logging
 import os
 import sys
@@ -6,6 +8,7 @@ from datetime import datetime
 import sentry_sdk
 
 from app.middleware.context import ContextRequestMiddleware
+from com_tracardi.service.pulsar.pulsar_set_up import PulsarSetup
 from tracardi.service.license import License, SCHEDULER, IDENTIFICATION, COMPLIANCE, RESHAPING, REDIRECTS, VALIDATOR, \
     LICENSE, MULTI_TENANT
 from tracardi.service.logging.formater import CustomFormatter
@@ -323,29 +326,40 @@ application.include_router(cache_endpoint.router)
 if License.has_service(MULTI_TENANT):
     application.include_router(tenant_install_endpoint.router)
 
-if server.performance_tracking:
-    sentry_sdk.init(
-        dsn="https://9c7c026fcfb5f9bd0ee63eec492316ab@o1093519.ingest.sentry.io/4505827219734528",
-        # Set traces_sample_rate to 1.0 to capture 100%
-        # of transactions for performance monitoring.
-        # We recommend adjusting this value in production.
-        traces_sample_rate=1.0,
-        # Set profiles_sample_rate to 1.0 to profile 100%
-        # of sampled transactions.
-        # We recommend adjusting this value in production.
-        profiles_sample_rate=1.0,
-    )
+
 
 @application.on_event("startup")
 async def app_starts():
     logging.getLogger("uvicorn.access").handlers[0].setFormatter(CustomFormatter())
 
     logger.info(f"TRACARDI version {str(tracardi.version)} set-up starts.")
-    if License.has_license():
+    if License.has_service(LICENSE):
         logger.info(f"TRACARDI async processing:  {com_tracardi_settings.async_processing}.")
         logger.info(f"TRACARDI multi-tenancy:  {tracardi.multi_tenant}.")
         logger.info(f"TRACARDI multi-tenancy API:  {tracardi.multi_tenant_manager_url}.")
+
+        pulsar = PulsarSetup(
+            broker_host=com_tracardi_settings.pulsar_host,
+            service_host=com_tracardi_settings.pulsar_manager_host,
+            token=com_tracardi_settings.pulsar_auth_token
+        )
+        await pulsar.auto_setup()
+
     await wait_for_connection(no_of_tries=10)
+
+    if server.performance_tracking:
+        sentry_sdk.init(
+            dsn="https://9c7c026fcfb5f9bd0ee63eec492316ab@o1093519.ingest.sentry.io/4505827219734528",
+            # Set traces_sample_rate to 1.0 to capture 100%
+            # of transactions for performance monitoring.
+            # We recommend adjusting this value in production.
+            traces_sample_rate=1.0,
+            # Set profiles_sample_rate to 1.0 to profile 100%
+            # of sampled transactions.
+            # We recommend adjusting this value in production.
+            profiles_sample_rate=1.0,
+        )
+
     logger.info("TRACARDI set-up finished.")
     logger.info(f"TRACARDI version {str(tracardi.version)} ready to operate.")
 
