@@ -1,5 +1,4 @@
-import asyncio
-
+# import setup_environment  # This checks the evnironment
 import logging
 import os
 import sys
@@ -8,7 +7,6 @@ from datetime import datetime
 import sentry_sdk
 
 from app.middleware.context import ContextRequestMiddleware
-from com_tracardi.service.pulsar.pulsar_set_up import PulsarSetup
 from tracardi.service.license import License, SCHEDULER, IDENTIFICATION, COMPLIANCE, RESHAPING, REDIRECTS, VALIDATOR, \
     LICENSE, MULTI_TENANT
 from tracardi.service.logging.formater import CustomFormatter
@@ -19,7 +17,6 @@ sys.path.append(f"{_local_dir}/api/proto/stubs")
 from starlette.responses import JSONResponse
 from time import time
 from app.config import server
-from tracardi.service.elastic.connection import wait_for_connection
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI, Request
 from starlette.staticfiles import StaticFiles
@@ -125,28 +122,6 @@ if License.has_service(MULTI_TENANT):
     from com_tracardi.endpoint import tenant_install_endpoint
 
 logger = get_logger(__name__)
-
-print(f"""
-88888888888 8888888b.         d8888  .d8888b.         d8888 8888888b.  8888888b. 8888888
-    888     888   Y88b       d88888 d88P  Y88b       d88888 888   Y88b 888   Y88b  888
-    888     888    888      d88P888 888    888      d88P888 888    888 888    888  888
-    888     888   d88P     d88P 888 888            d88P 888 888   d88P 888    888  888
-    888     8888888P"     d88P  888 888           d88P  888 8888888P"  888    888  888
-    888     888 T88b     d88P   888 888    888   d88P   888 888 T88b   888    888  888
-    888     888  T88b   d8888888888 Y88b  d88P  d8888888888 888  T88b  888   d88P  888
-    888     888   T88b d88P     888  "Y8888P"  d88P     888 888   T88b 8888888P" 8888888
-
-{str(tracardi.version)}""", flush=True)
-if License.has_license():
-    license = License.check()
-
-    print(
-        f"Commercial Licensed issued for: {license.owner}, expires: {datetime.fromtimestamp(license.expires) if license.expires > 0 else 'Perpetual'} ",
-        flush=True)
-
-    print(f"Services {list(license.get_service_ids())}", flush=True)
-else:
-    print("License: MIT + “Commons Clause” License Condition v1.0", flush=True)
 
 tags_metadata = [
     {
@@ -332,21 +307,6 @@ if License.has_service(MULTI_TENANT):
 async def app_starts():
     logging.getLogger("uvicorn.access").handlers[0].setFormatter(CustomFormatter())
 
-    logger.info(f"TRACARDI version {str(tracardi.version)} set-up starts.")
-    if License.has_service(LICENSE):
-        logger.info(f"TRACARDI async processing:  {com_tracardi_settings.async_processing}.")
-        logger.info(f"TRACARDI multi-tenancy:  {tracardi.multi_tenant}.")
-        logger.info(f"TRACARDI multi-tenancy API:  {tracardi.multi_tenant_manager_url}.")
-
-        pulsar = PulsarSetup(
-            broker_host=com_tracardi_settings.pulsar_host,
-            service_host=com_tracardi_settings.pulsar_manager_host,
-            token=com_tracardi_settings.pulsar_auth_token
-        )
-        await pulsar.auto_setup()
-
-    await wait_for_connection(no_of_tries=10)
-
     if server.performance_tracking is not None:
         sentry_sdk.init(
             dsn=server.performance_tracking,
@@ -360,8 +320,33 @@ async def app_starts():
             profiles_sample_rate=1.0,
         )
 
-    logger.info("TRACARDI set-up finished.")
-    logger.info(f"TRACARDI version {str(tracardi.version)} ready to operate.")
+    if License.has_service(LICENSE):
+        logger.info(f"TRACARDI async processing:  {com_tracardi_settings.async_processing}.")
+        logger.info(f"TRACARDI multi-tenancy:  {tracardi.multi_tenant}.")
+        logger.info(f"TRACARDI multi-tenancy API:  {tracardi.multi_tenant_manager_url}.")
+
+    print(f"""
+    88888888888 8888888b.         d8888  .d8888b.         d8888 8888888b.  8888888b. 8888888
+        888     888   Y88b       d88888 d88P  Y88b       d88888 888   Y88b 888   Y88b  888
+        888     888    888      d88P888 888    888      d88P888 888    888 888    888  888
+        888     888   d88P     d88P 888 888            d88P 888 888   d88P 888    888  888
+        888     8888888P"     d88P  888 888           d88P  888 8888888P"  888    888  888
+        888     888 T88b     d88P   888 888    888   d88P   888 888 T88b   888    888  888
+        888     888  T88b   d8888888888 Y88b  d88P  d8888888888 888  T88b  888   d88P  888
+        888     888   T88b d88P     888  "Y8888P"  d88P     888 888   T88b 8888888P" 8888888
+
+    {str(tracardi.version)}""", flush=True)
+
+    if License.has_license():
+        license = License.check()
+
+        print(
+            f"Commercial Licensed issued for: {license.owner}, expires: {datetime.fromtimestamp(license.expires) if license.expires > 0 else 'Perpetual'} ",
+            flush=True)
+
+        print(f"Services {list(license.get_service_ids())}", flush=True)
+    else:
+        print("License: MIT + “Commons Clause” License Condition v1.0", flush=True)
 
 
 @application.middleware("http")
