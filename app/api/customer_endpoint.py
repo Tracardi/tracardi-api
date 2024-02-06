@@ -6,7 +6,6 @@ from pytimeparse.timeparse import timeparse
 
 from tracardi.service.storage.redis.collections import Collection
 from tracardi.service.storage.redis_client import RedisClient
-from tracardi.service.tracking.cache.profile_cache import save_profile_cache
 from tracardi.service.tracking.locking import Lock, async_mutex
 from tracardi.service.tracking.storage.profile_storage import load_profile, save_profile
 from tracardi.service.tracking.storage.session_storage import load_session
@@ -68,5 +67,4 @@ async def add_consent_type(data: CustomerConsent, all: Optional[bool] = False):
 
         profile.aux['consents'] = {"granted": True}
 
-        save_profile_cache(profile)
-        return await save_profile(profile)
+        return await save_profile(profile, refresh=True)
