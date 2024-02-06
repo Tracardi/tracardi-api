@@ -5,6 +5,10 @@ from tracardi.config import elastic, redis_config, tracardi, memory_cache
 from app.config import *
 from fastapi import APIRouter, Depends
 from tracardi.domain.settings import SystemSettings
+from tracardi.service.license import License
+
+if License.has_license():
+    from com_tracardi.service.settings import com_system_settings
 
 system_settings = [
     SystemSettings(
@@ -475,4 +479,7 @@ async def get_system_settings() -> List[SystemSettings]:
     """
     Lists all system settings
     """
+    if License.has_license():
+        return system_settings + com_system_settings
+
     return system_settings

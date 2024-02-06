@@ -1,4 +1,3 @@
-# import setup_environment  # This checks the evnironment
 import logging
 import os
 import sys
