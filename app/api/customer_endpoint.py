@@ -27,7 +27,8 @@ async def add_consent_type(data: CustomerConsent, all: Optional[bool] = False):
     Adds customer consent
     """
 
-    source = (await EventSourceService().load_by_id_in_deployment_mode(data.source.id)).map_to_object(map_to_event_source)
+    source = (await EventSourceService().load_by_id_in_deployment_mode(data.source.id)).map_to_object(
+        map_to_event_source)
     session = await load_session(data.session.id)
 
     _redis = RedisClient()
