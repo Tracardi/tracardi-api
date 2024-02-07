@@ -1,6 +1,7 @@
 from typing import Optional
 from fastapi import APIRouter, HTTPException
 
+from tracardi.domain.installation_status import InstallationStatus
 from tracardi.service.installation import install_system, check_installation
 from tracardi.config import tracardi
 from tracardi.domain.credentials import Credentials
@@ -9,7 +10,7 @@ from tracardi.service.plugin.plugin_install import install_default_plugins
 router = APIRouter()
 
 
-@router.get("/install", tags=["installation"], include_in_schema=tracardi.expose_gui_api, response_model=dict)
+@router.get("/install", tags=["installation"], include_in_schema=tracardi.expose_gui_api, response_model=InstallationStatus)
 async def check_if_installation_complete():
     """
     Returns list of missing and updated indices
