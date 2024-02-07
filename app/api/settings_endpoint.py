@@ -464,7 +464,20 @@ system_settings = [
             "desc": "Default: No. If set to Yes then block bot traffic."
         }
     ),
-
+    SystemSettings(
+        **{
+            "label": "KEEP_PROFILE_IN_CACHE_FOR",
+            "value": tracardi.keep_profile_in_cache_for,
+            "desc": "Default: 3600. How many seconds should the profile be kept in cache."
+        }
+    ),
+    SystemSettings(
+        **{
+            "label": "KEEP_SESSION_IN_CACHE_FOR",
+            "value": tracardi.keep_session_in_cache_for,
+            "desc": "Default: 1800. How many seconds should the session be kept in cache."
+        }
+    ),
 ]
 
 router = APIRouter(
