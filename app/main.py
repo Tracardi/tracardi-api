@@ -322,7 +322,8 @@ async def app_starts():
             # We recommend adjusting this value in production.
             profiles_sample_rate=1.0,
         )
-
+    es = ElasticClient.instance()
+    await es.auto_create_index(False)
     if License.has_service(LICENSE):
         logger.info(f"TRACARDI async processing:  {com_tracardi_settings.async_processing}.")
         logger.info(f"TRACARDI multi-tenancy:  {tracardi.multi_tenant}.")
