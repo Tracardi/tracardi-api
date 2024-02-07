@@ -49,26 +49,26 @@ async def _track(tracker_payload: TrackerPayload, host: str, allowed_bridges):
             tracker_payload,
             host,
             allowed_bridges=allowed_bridges)
-    except UnauthorizedException as e:
+    except (UnauthorizedException, PermissionError) as e:
         message = str(e)
         logger.error(message)
         raise HTTPException(detail=message,
-                             status_code=status.HTTP_401_UNAUTHORIZED)
+                            status_code=status.HTTP_401_UNAUTHORIZED)
     except FieldTypeConflictException as e:
         message = "FieldTypeConflictException: {} - {}".format(str(e), e.explain())
         logger.error(message)
         raise HTTPException(detail=message,
-                             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY)
+                            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY)
     except EventValidationException as e:
         message = "Validation failed with error: {}".format(str(e))
         logger.error(message)
         raise HTTPException(detail=message,
-                             status_code=status.HTTP_406_NOT_ACCEPTABLE)
+                            status_code=status.HTTP_406_NOT_ACCEPTABLE)
     except Exception as e:
         message = str(e)
         logger.error(message)
         raise HTTPException(detail=message,
-                             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @router.post("/track", tags=['collector'])
