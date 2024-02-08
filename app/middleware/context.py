@@ -5,7 +5,6 @@ from tracardi.context import Context, ServerContext
 from starlette.types import ASGIApp, Receive, Scope, Send
 from app.api.auth.user_db import token2user
 from tracardi.exceptions.log_handler import get_logger
-from tracardi.service.installation import check_installation
 from tracardi.service.license import License, MULTI_TENANT
 from tracardi.service.logger_manager import save_logs
 
@@ -83,11 +82,6 @@ class ContextRequestMiddleware:
                     user = token2user.get(token)
                     # This is dangerous user mutation. Never do this in other places.
                     cm.get_context().user = user
-
-            if not tracardi.version.installed:
-                installation_status = await check_installation()
-                tracardi.version.installed = installation_status.is_installed()
-                print(installation_status)
 
             try:
                 await self.app(scope, receive, send)
