@@ -97,7 +97,7 @@ async def tracardi_pro_sign_up(sign_up_data: SignUpData):
         token = tracardi_pro_client.sign_up(sign_up_data.username, sign_up_data.password)
 
         tps = TracardiProService()
-        await tps.insert(token)
+        await tps.upsert(token)
 
         return True
 
