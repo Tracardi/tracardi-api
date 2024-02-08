@@ -3,6 +3,7 @@ from datetime import datetime
 from fastapi import APIRouter
 
 from tracardi.domain.api_instance import ApiInstance
+from tracardi.service.installation import check_installation
 from tracardi.service.license import License
 
 from tracardi.config import tracardi
@@ -28,6 +29,9 @@ async def get_current_backend_version():
 
     version = tracardi.version.model_dump(mode='json')
     version['instance'] = ApiInstance().id
+    installation = await check_installation()
+    version['installed'] = installation
+
 
     if License.has_license():
         license = License.check()
