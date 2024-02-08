@@ -9,3 +9,4 @@
 - /flow/production - removed
 - /flow/{production_draft}/{id}/restore - removed
 - /flow/draft/metadata - removed
+- /event-redirect/list - changed to /event-redirect
