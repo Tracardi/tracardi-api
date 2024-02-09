@@ -11,13 +11,11 @@ from tracardi.domain.metadata import ProfileMetadata
 from tracardi.domain.payload.event_payload import EventPayload
 from tracardi.domain.payload.tracker_payload import TrackerPayload
 from tracardi.domain.time import EventTime, ProfileTime, Time
-from tracardi.service.console_log import ConsoleLog
 from tracardi.service.storage.driver.elastic import event as event_db
 from tracardi.service.storage.driver.elastic import session as session_db
 from tracardi.service.storage.mysql.mapping.workflow_mapping import map_to_workflow_record
 from tracardi.service.storage.mysql.service.workflow_service import WorkflowService
 from tracardi.service.storage.mysql.service.workflow_trigger_service import WorkflowTriggerService
-from tracardi.service.utils.getters import get_entity_id
 from tracardi.service.wf.domain.flow_history import FlowHistory
 from tracardi.service.wf.domain.work_flow import WorkFlow
 from tracardi.domain.flow_meta_data import FlowMetaData
@@ -301,21 +299,13 @@ async def debug_flow(flow: FlowGraph, event_id: Optional[str] = None):
 
     flow_invoke_result = await workflow.invoke(flow, event, profile, session, ux, debug=True)
 
-    console_log = ConsoleLog()
     profile_save_result = None
-
-    # TODO REMOVE
-    # Store logs in one console log
-    console_log.append_event_log_list(
-        get_entity_id(flow_invoke_result.event),
-        flow.id,
-        flow_invoke_result.log_list)
 
     # Pass logs to central log
     flow_invoke_result.register_logs_in_logger()
 
     return {
-        'logs': [log.model_dump() for log in console_log],
+        'logs': [],
         "debugInfo": flow_invoke_result.debug_info.model_dump(),
         "update": profile_save_result,
         "ux": ux

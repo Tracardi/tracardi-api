@@ -2,7 +2,6 @@ from fastapi import APIRouter, Depends
 
 from app.api.auth.permissions import Permissions
 from tracardi.config import tracardi
-from tracardi.domain.console import Console
 
 from tracardi.service.storage.driver.elastic import console_log as console_log_db
 
@@ -17,12 +16,12 @@ async def get_event_logs(event_id: str, sort: str = None):
 
     if sort in ['asc', 'desc']:
         sort = [{
-            "metadata.timestamp": sort
+            "date": sort
         }]
 
     storage_records = await console_log_db.load_by_event(event_id, sort=sort)
     return {
-        "result": [Console.decode_record(log) for log in storage_records],
+        "result": list(storage_records),
         "total": storage_records.total
     }
 
@@ -36,13 +35,13 @@ async def get_node_logs(node_id: str, sort: str = None):
 
     if sort in ['asc', 'desc']:
         sort = [{
-            "metadata.timestamp": sort
+            "date": sort
         }]
 
     storage_records = await console_log_db.load_by_node(node_id, sort=sort)
 
     return {
-        "result": [Console.decode_record(log) for log in storage_records],
+        "result": list(storage_records),
         "total": storage_records.total
     }
 
@@ -55,13 +54,13 @@ async def get_flow_logs(flow_id: str, sort: str = None):
     """
     if sort in ['asc', 'desc']:
         sort = [{
-            "metadata.timestamp": sort
+            "date": sort
         }]
 
     storage_records = await console_log_db.load_by_flow(flow_id, sort=sort)
 
     return {
-        "result": [Console.decode_record(log) for log in storage_records],
+        "result": list(storage_records),
         "total": storage_records.total
     }
 
@@ -76,12 +75,11 @@ async def get_profile_logs(id: str, sort: str = None):
 
     if sort in ['asc', 'desc']:
         sort = [{
-            "metadata.timestamp": sort
+            "date": sort
         }]
 
     storage_records = await console_log_db.load_by_profile(id, sort=sort)
-
     return {
-        "result": [Console.decode_record(log) for log in storage_records],
+        "result": list(storage_records),
         "total": storage_records.total
     }
