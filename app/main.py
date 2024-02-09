@@ -47,7 +47,6 @@ from app.api import (
     task_endpoint,
     storage_endpoint,
     destination_endpoint,
-    user_log_endpoint,
     user_account_endpoint,
     install_endpoint,
     delete_indices_endpoint,
@@ -270,7 +269,6 @@ application.include_router(log_endpoint.router)
 application.include_router(tracardi_pro_endpoint.router)
 application.include_router(storage_endpoint.router)
 application.include_router(destination_endpoint.router)
-application.include_router(user_log_endpoint.router)
 application.include_router(user_account_endpoint.router)
 application.include_router(install_endpoint.router)
 application.include_router(import_endpoint.router)

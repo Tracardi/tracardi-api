@@ -1,5 +1,5 @@
+from tracardi.domain import ExtraInfo
 from tracardi.exceptions.log_handler import get_logger
-from tracardi.service.storage.driver.elastic import user_log as user_log_db
 from tracardi.service.storage.mysql.service.user_service import UserService
 from ..auth.user_db import token2user
 from fastapi.security import OAuth2PasswordBearer
@@ -17,7 +17,15 @@ class Authentication:
 
     @staticmethod
     async def _authorize(username, password) -> User:  # username exists
-        logger.info(f"Authorizing {username}...")
+        logger.debug(
+            f"Authorizing {username}...",
+            extra=ExtraInfo.exact(
+                "Authentication",
+                class_name="Authentication",
+                package=__name__,
+                user_id=username
+            )
+        )
 
         try:
             us = UserService()
@@ -29,19 +37,50 @@ class Authentication:
             raise LoginException(f"System not installed. Got error {str(e)}")
 
         if user is None:
-            await user_log_db.add_log(email=username, successful=False)
+            logger.warning(
+                "Incorrect username or password.",
+                extra=ExtraInfo.exact(
+                    origin="authentication",
+                    class_name=Authentication,
+                    package=__name__,
+                    user_id=username
+                )
+            )
             raise LoginException("Incorrect username or password.")
 
         if not user.enabled:
-            await user_log_db.add_log(email=username, successful=False)
+            logger.warning(
+                "This account was disabled.",
+                extra=ExtraInfo.exact(
+                    origin="authentication",
+                    class_name=Authentication,
+                    package=__name__,
+                    user_id=username
+                )
+            )
             raise LoginException("This account was disabled")
 
         if user.is_expired():
-            await user_log_db.add_log(email=username, successful=False)
+            logger.warning(
+                "This account has expired.",
+                extra=ExtraInfo.exact(
+                    origin="authentication",
+                    class_name=Authentication,
+                    package=__name__,
+                    user_id=username
+                )
+            )
             raise LoginException("This account has expired.")
 
-        await user_log_db.add_log(email=username, successful=True)
-
+        logger.info(
+            "User logged-in.",
+            extra=ExtraInfo.exact(
+                origin="authentication",
+                class_name="Authentication",
+                package=__name__,
+                user_id=username
+            )
+        )
         return user
 
     async def login(self, email, password):
