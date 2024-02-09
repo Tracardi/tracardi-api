@@ -4,6 +4,7 @@ from tracardi.config import tracardi
 from tracardi.context import Context, ServerContext
 from starlette.types import ASGIApp, Receive, Scope, Send
 from app.api.auth.user_db import token2user
+from tracardi.domain import ExtraInfo
 from tracardi.exceptions.log_handler import get_logger
 from tracardi.service.license import License, MULTI_TENANT
 from tracardi.service.logger_manager import save_logs
@@ -82,11 +83,13 @@ class ContextRequestMiddleware:
                     user = token2user.get(token)
                     # This is dangerous user mutation. Never do this in other places.
                     cm.get_context().user = user
-
             try:
                 await self.app(scope, receive, send)
             except Exception as e:
-                logger.error(str(e))
+                logger.error(str(e), extra=ExtraInfo.build(
+                    "context-middleware",
+                    object=self,
+                ))
                 raise e
             finally:
                 await save_logs()

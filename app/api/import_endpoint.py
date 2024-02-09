@@ -88,16 +88,6 @@ async def get_status(task_id):
     return result
 
 
-@router.delete("/import/task/{task_id}", tags=["import"], include_in_schema=tracardi.expose_gui_api)
-def delete_import_task(task_id):
-
-    """
-    Takes worker task id and cancels task
-    """
-    raise NotImplemented("Not implemented")
-    # return celery.control.revoke(task_id, terminate=True)
-
-
 # Tracardi endpoints
 
 @router.get("/import/types", tags=["import"], include_in_schema=tracardi.expose_gui_api)

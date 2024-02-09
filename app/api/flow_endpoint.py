@@ -11,8 +11,6 @@ from tracardi.domain.metadata import ProfileMetadata
 from tracardi.domain.payload.event_payload import EventPayload
 from tracardi.domain.payload.tracker_payload import TrackerPayload
 from tracardi.domain.time import EventTime, ProfileTime, Time
-from tracardi.exceptions.exception import StorageException
-from tracardi.domain.console import Console
 from tracardi.service.console_log import ConsoleLog
 from tracardi.service.storage.driver.elastic import event as event_db
 from tracardi.service.storage.driver.elastic import session as session_db
@@ -305,24 +303,16 @@ async def debug_flow(flow: FlowGraph, event_id: Optional[str] = None):
 
     console_log = ConsoleLog()
     profile_save_result = None
-    try:
-        # Store logs in one console log
-        console_log.append_event_log_list(
-            get_entity_id(flow_invoke_result.event),
-            flow.id,
-            flow_invoke_result.log_list)
 
-    except StorageException as e:
-        console = Console(
-            origin="profile",
-            event_id=get_entity_id(flow_invoke_result.event),
-            flow_id=flow.id,
-            module='tracardi_api.flow_endpoint',
-            class_name='log.class_name',
-            type='debug_flow',
-            message=str(e)
-        )
-        console_log.append(console)
+    # TODO REMOVE
+    # Store logs in one console log
+    console_log.append_event_log_list(
+        get_entity_id(flow_invoke_result.event),
+        flow.id,
+        flow_invoke_result.log_list)
+
+    # Pass logs to central log
+    flow_invoke_result.register_logs_in_logger()
 
     return {
         'logs': [log.model_dump() for log in console_log],

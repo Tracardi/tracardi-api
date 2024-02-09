@@ -304,8 +304,6 @@ application.include_router(deploy_endpoint.router)
 if License.has_service(MULTI_TENANT):
     application.include_router(tenant_install_endpoint.router)
 
-
-
 @application.on_event("startup")
 async def app_starts():
     logging.getLogger("uvicorn.access").handlers[0].setFormatter(CustomFormatter())
