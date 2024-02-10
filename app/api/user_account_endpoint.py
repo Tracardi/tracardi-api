@@ -1,11 +1,12 @@
 from fastapi import APIRouter, Depends, HTTPException
+from pydantic import ValidationError
 
 from app.api.auth.user_db import token2user
-from tracardi.config import tracardi
-from pydantic import ValidationError
-from app.api.user_endpoint import UserPayload, UserSoftEditPayload
-
+from app.api.user_endpoint import UserSoftEditPayload
 from app.api.auth.permissions import Permissions
+from tracardi.config import tracardi
+from tracardi.domain.user_payload import UserPayload
+
 from tracardi.domain.user import User
 from tracardi.service.storage.mysql.service.user_service import UserService
 

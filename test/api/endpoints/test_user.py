@@ -1,6 +1,6 @@
 from uuid import uuid4
 
-from app.api.domain.user_payload import UserPayload
+from tracardi.domain.user_payload import UserPayload
 from test.utils import Endpoint
 
 

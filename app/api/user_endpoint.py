@@ -12,7 +12,7 @@ from tracardi.service.storage.mysql.mapping.user_mapping import map_to_user
 from tracardi.service.storage.mysql.schema.table import UserTable
 from tracardi.service.storage.mysql.service.user_service import UserService
 from .auth.permissions import Permissions
-from .domain.user_payload import UserPayload
+from tracardi.domain.user_payload import UserPayload
 from .auth.user_db import token2user
 from fastapi.security import OAuth2PasswordRequestForm
 from starlette import status
