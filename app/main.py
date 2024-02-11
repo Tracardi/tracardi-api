@@ -10,7 +10,7 @@ from tracardi.service.elastic.connection import wait_for_connection
 from tracardi.service.license import License, SCHEDULER, IDENTIFICATION, COMPLIANCE, RESHAPING, REDIRECTS, VALIDATOR, \
     LICENSE, MULTI_TENANT
 from tracardi.service.logging.formater import CustomFormatter
-from tracardi.service.storage.mysql.service.table_service import wait_for_mysql_connection
+from tracardi.service.storage.mysql.service.mysql_installation import wait_for_mysql_connection
 from tracardi.service.storage.redis_client import wait_for_redis_connection
 
 _local_dir = os.path.dirname(__file__)
@@ -309,9 +309,9 @@ if License.has_service(MULTI_TENANT):
 async def app_starts():
     logging.getLogger("uvicorn.access").handlers[0].setFormatter(CustomFormatter())
 
+    await wait_for_mysql_connection()
     wait_for_redis_connection()
     await wait_for_connection()
-    await wait_for_mysql_connection()
 
     if server.performance_tracking is not None:
         sentry_sdk.init(
