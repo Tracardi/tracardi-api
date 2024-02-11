@@ -6,9 +6,12 @@ from datetime import datetime
 import sentry_sdk
 
 from app.middleware.context import ContextRequestMiddleware
+from tracardi.service.elastic.connection import wait_for_connection
 from tracardi.service.license import License, SCHEDULER, IDENTIFICATION, COMPLIANCE, RESHAPING, REDIRECTS, VALIDATOR, \
     LICENSE, MULTI_TENANT
 from tracardi.service.logging.formater import CustomFormatter
+from tracardi.service.storage.mysql.service.table_service import wait_for_mysql_connection
+from tracardi.service.storage.redis_client import wait_for_redis_connection
 
 _local_dir = os.path.dirname(__file__)
 sys.path.append(f"{_local_dir}/api/proto/stubs")
@@ -305,6 +308,10 @@ if License.has_service(MULTI_TENANT):
 @application.on_event("startup")
 async def app_starts():
     logging.getLogger("uvicorn.access").handlers[0].setFormatter(CustomFormatter())
+
+    wait_for_redis_connection()
+    await wait_for_connection()
+    await wait_for_mysql_connection()
 
     if server.performance_tracking is not None:
         sentry_sdk.init(
