@@ -2,7 +2,7 @@ from datetime import datetime
 
 from fastapi import APIRouter
 
-from service.grouping import get_grouped_result
+from app.service.grouping import get_grouped_result
 from tracardi.domain.api_instance import ApiInstance
 from tracardi.domain.installation_status import installation_status
 from tracardi.service.license import License
