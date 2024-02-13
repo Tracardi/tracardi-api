@@ -106,13 +106,14 @@ else:
     event_validator_endpoint = get_router(prefix="/event-validator")
 
 if License.has_service(LICENSE):
+    from com_tracardi.config import com_tracardi_settings
     from com_tracardi.endpoint import event_to_profile_copy
     from com_tracardi.endpoint import event_props_to_event_traits_copy
     from com_tracardi.endpoint import metric_endpoint
-    from com_tracardi.config import com_tracardi_settings
     from com_tracardi.endpoint import field_update_log_endpoint
     from com_tracardi.endpoint import profile_activation
     from com_tracardi.endpoint import event_data_compliance_endpoint
+    from com_tracardi.endpoint import deploy_endpoint
 else:
     event_to_profile_copy = get_router(prefix="/events/copy")
     event_props_to_event_traits_copy = get_router(prefix="/events/index")
@@ -120,6 +121,7 @@ else:
     field_update_log_endpoint = get_router(prefix="/field/update")
     profile_activation = get_router(prefix="/profile/activate")
     event_data_compliance_endpoint = get_router(prefix="/consent/compliance")
+    deploy_endpoint = get_router(prefix="/deploy")
 
 
 if License.has_service(MULTI_TENANT):
