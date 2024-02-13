@@ -6,6 +6,7 @@ services:
     environment:
       ELASTIC_HOST: http://elasticsearch:9200
       REDIS_HOST: redis://redis:6379
+      MYSQL_HOST: mysql
       LOGGING_LEVEL: info
       DEMO: "yes"
       PRODUCTION: "no"
@@ -29,17 +30,31 @@ services:
       ES_JAVA_OPTS: "-Xms512m -Xmx512m"
       discovery.type: single-node
       xpack.security.enabled: "false"
-      cluster.name: contextElasticSearch
+      cluster.name: ElasticSearchCluster
     volumes:
       - elasticsearch-data:/usr/share/elasticsearch/data
 
   redis:
     image: redis
 
-#  worker:
-#    image: tracardi/update-worker:0.9.0-rc1
-#    environment:
-#      REDIS_HOST: redis://redis:6379
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: tracardi
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+  worker:
+    image: tracardi/update-worker:0.9.0-rc1
+    environment:
+      ELASTIC_HOST: http://elasticsearch:9200
+      REDIS_HOST: redis://redis:6379
+      MYSQL_HOST: mysql
 
 volumes:
   elasticsearch-data:
