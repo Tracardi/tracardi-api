@@ -63,8 +63,7 @@ from app.api import (
     entity_endpoint,
     customer_endpoint,
     event_to_profile,
-    cache_endpoint,
-    deploy_endpoint
+    cache_endpoint
 )
 from app.api.track import event_server_endpoint
 from tracardi.config import tracardi
