@@ -113,6 +113,7 @@ if License.has_service(LICENSE):
     from com_tracardi.endpoint import profile_activation
     from com_tracardi.endpoint import event_data_compliance_endpoint
     from com_tracardi.endpoint import deploy_endpoint
+    from com_tracardi.endpoint import audience_endpoint
 else:
     event_to_profile_copy = get_router(prefix="/events/copy")
     event_props_to_event_traits_copy = get_router(prefix="/events/index")
@@ -121,6 +122,7 @@ else:
     profile_activation = get_router(prefix="/profile/activate")
     event_data_compliance_endpoint = get_router(prefix="/consent/compliance")
     deploy_endpoint = get_router(prefix="/deploy")
+    audience_endpoint = get_router(prefix="/audience")
 
 
 if License.has_service(MULTI_TENANT):
@@ -301,6 +303,7 @@ application.include_router(setting_endpoint.router)
 application.include_router(field_update_log_endpoint.router)
 application.include_router(cache_endpoint.router)
 application.include_router(deploy_endpoint.router)
+application.include_router(audience_endpoint.router)
 
 
 if License.has_service(MULTI_TENANT):
