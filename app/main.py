@@ -63,7 +63,8 @@ from app.api import (
     entity_endpoint,
     customer_endpoint,
     event_to_profile,
-    cache_endpoint
+    cache_endpoint,
+    configuration_endpoint
 )
 from app.api.track import event_server_endpoint
 from tracardi.config import tracardi
@@ -307,6 +308,7 @@ application.include_router(cache_endpoint.router)
 application.include_router(deploy_endpoint.router)
 application.include_router(audience_endpoint.router)
 application.include_router(subscription_endpoint.router)
+application.include_router(configuration_endpoint.router)
 
 
 if License.has_service(MULTI_TENANT):

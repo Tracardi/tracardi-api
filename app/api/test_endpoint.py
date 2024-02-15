@@ -1,14 +1,17 @@
+from typing import Optional
+
 from fastapi import APIRouter, Depends, HTTPException
 
+from app.service.grouping import get_grouped_result
+from tracardi.domain.test import Test
 from tracardi.service.storage.index import Resource
+from tracardi.service.storage.mysql.mapping.test_mapping import map_to_test
+from tracardi.service.storage.mysql.service.test_service import TestService
 from tracardi.service.storage.redis_client import RedisClient
 from tracardi.service.storage.elastic_client import ElasticClient
 
 from app.api.auth.permissions import Permissions
 from tracardi.config import tracardi
-# from app.service.data_generator import generate_fake_data, generate_random_date
-# from tracardi.domain.event_source import EventSource
-# from tracardi.service.storage.driver.elastic import event_source as event_source_db
 from tracardi.service.storage.driver.elastic import raw as raw_db
 from datetime import datetime
 
@@ -16,35 +19,7 @@ router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin", "maintainer", "developer"]))]
 )
 
-
-# # Not in tests
-# @router.get("/test/resource", tags=["test"], include_in_schema=tracardi.expose_gui_api)
-# async def create_test_data():
-#     """
-#     Creates test resource data and saves it to database. Accessible for roles: "admin"
-#     """
-#     resource = EventSource(
-#         id="@test-resource",
-#         type=["web-page"],
-#         name="Test resource",
-#         description="This resource is created for test purposes.",
-#         tags=['test']
-#     )
-#     return await event_source_db.save(resource)
-
-
-# # not in test
-# @router.get("/test/data", tags=["test"], include_in_schema=tracardi.expose_gui_api)
-# async def make_fake_data():
-#     """
-#     Creates fake data and saves it to database. Accessible for roles: "admin"
-#     """
-#     for index, data in generate_fake_data().items():
-#         for record in data:
-#             record = record.dict()
-#             if index in ['event', 'session']:
-#                 record['metadata']['time']['insert'] = generate_random_date()
-#             await raw_db.index(index).upsert(record)
+ts = TestService()
 
 
 @router.get("/test/redis", tags=["test"], include_in_schema=tracardi.expose_gui_api)
@@ -99,3 +74,31 @@ async def get_es_indices():
         output[key] = index
 
     return output
+
+@router.get("/test/{id}", tags=["deployment"], include_in_schema=tracardi.expose_gui_api)
+async def get_test(id: str):
+    record = await ts.load_by_id(id)
+    if not record.exists():
+        raise HTTPException(status_code=404, detail=f"Test with ID {id} not found.")
+
+    return record.map_to_object(map_to_test)
+
+
+@router.get("/test", tags=["deployment"], include_in_schema=tracardi.expose_gui_api)
+async def list_tests(query: Optional[str] = None, limit: int = 200):
+    records = await ts.load_all(search=query, limit=limit)
+
+    return get_grouped_result("Tests", records, map_to_test)
+
+
+@router.post("/test", tags=["deployment"], include_in_schema=tracardi.expose_gui_api)
+async def add_test(test: Test):
+    return await ts.upsert(test)
+
+
+@router.delete("/test/{id}", tags=["report"], include_in_schema=tracardi.expose_gui_api)
+async def delete_test(id: str):
+    """
+    Deletes test from the database
+    """
+    return await ts.delete_by_id(id)
