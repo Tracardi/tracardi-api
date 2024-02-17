@@ -2,7 +2,7 @@ version: "3.7"
 services:
 
   tracardi-api:
-    image: tracardi/tracardi-api:0.9.0-rc1
+    image: tracardi/tracardi-api:0.9.0-rc2
     environment:
       ELASTIC_HOST: http://elasticsearch:9200
       REDIS_HOST: redis://redis:6379
@@ -18,7 +18,7 @@ services:
       - mysql
 
   tracardi-gui:
-    image: tracardi/tracardi-gui:0.9.0-rc1
+    image: tracardi/tracardi-gui:0.9.0-rc2
     ports:
       - 8787:80
     depends_on:
@@ -54,7 +54,7 @@ services:
       - mysql-data:/var/lib/mysql
 
   worker:
-    image: tracardi/update-worker:0.9.0-rc1
+    image: tracardi/update-worker:0.9.0-rc2
     environment:
       ELASTIC_HOST: http://elasticsearch:9200
       REDIS_HOST: redis://redis:6379

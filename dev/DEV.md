@@ -55,7 +55,7 @@ docker run -p 18686:80 \
 -e ELASTIC_HOST=http://192.168.1.107:9200 \
 -e REDIS_HOST=redis://192.168.1.107:6379 \
 -e LOGGING_LEVEL=info \
-tracardi/tracardi-api:0.9.0-rc1
+tracardi/tracardi-api:0.9.0-rc2
 
 # Rabbit mq
 
@@ -142,7 +142,7 @@ SYNC
 docker run -p 8686:80 \
 -e ELASTIC_HOST=http://192.168.1.104:9200 \
 -e REDIS_HOST=redis://192.168.1.104:6379 \
-tracardi/tracardi-api:0.9.0-rc1
+tracardi/tracardi-api:0.9.0-rc2
 
 
 ASYNC
@@ -154,7 +154,7 @@ docker run -p 8686:80 \
 -e LICENSE=<license> \
 -e ASYNC_PROCESSING=yes \
 -e LOCK_ON_DATA_COMPUTATION=no \
-tracardi/com-tracardi-api:0.9.0-rc1
+tracardi/com-tracardi-api:0.9.0-rc2
 
 
 # ISSUES:
