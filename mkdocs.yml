@@ -312,7 +312,6 @@ nav:
           - Operations:
               - flow/actions/update_profile_action.md
               - flow/actions/merge_profiles_action.md
-              - flow/actions/segment_profiles_action.md
               - flow/actions/new_profile_action.md
               - flow/actions/update_session_action.md
           - Stats:
