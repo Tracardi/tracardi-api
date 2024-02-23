@@ -4,7 +4,6 @@ from fastapi import APIRouter, Response, Depends
 
 from service.grouping import get_grouped_result
 from tracardi.domain.resource import Resource
-from tracardi.service.domain import resource as resource_db
 from tracardi.domain.destination import Destination
 from tracardi.service.storage.mysql.mapping.destination_mapping import map_to_destination
 from tracardi.service.storage.mysql.mapping.resource_mapping import map_to_resource
