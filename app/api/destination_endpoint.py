@@ -1,7 +1,7 @@
 from typing import Optional, Dict
 
 from fastapi import APIRouter, Response, Depends
-
+from .auth.permissions import Permissions
 from service.grouping import get_grouped_result
 from tracardi.domain.resource import Resource
 from tracardi.domain.destination import Destination
@@ -9,7 +9,6 @@ from tracardi.service.storage.mysql.mapping.destination_mapping import map_to_de
 from tracardi.service.storage.mysql.mapping.resource_mapping import map_to_resource
 from tracardi.service.storage.mysql.service.destination_service import DestinationService
 from tracardi.service.storage.mysql.service.resource_service import ResourceService
-from .auth.permissions import Permissions
 from tracardi.config import tracardi
 from tracardi.service.license import License
 
