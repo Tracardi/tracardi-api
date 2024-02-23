@@ -30,12 +30,12 @@ router = APIRouter()
 
 
 async def parse_properties(request: Request):
-    if request.headers.get('Content-Type', '').startswith('application/json'):
+    if request.headers.get('Content-Type', '').lower().startswith('application/json'):
         try:
             return await request.json()
         except JSONDecodeError:
             return {}
-    elif request.headers.get('Content-Type', '') in ['multipart/form-data', 'application/x-www-form-urlencoded']:
+    elif request.headers.get('Content-Type', '').lower() in ['multipart/form-data', 'application/x-www-form-urlencoded']:
         return await request.form()
     else:
         return await request.body()
@@ -254,7 +254,7 @@ async def request_redirect(request: Request, redirect_id: str, session_id: Optio
     if request.method in ['POST', 'PUT', 'DELETE']:
         body = await request.body()
         content_type = request.headers.get('content-type', 'xform')
-        if content_type.startswith('application/json'):
+        if content_type.lower().startswith('application/json'):
             try:
                 body = await request.json()
             except Exception:
