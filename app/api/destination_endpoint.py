@@ -2,6 +2,7 @@ from typing import Optional, Dict
 
 from fastapi import APIRouter, Response, Depends
 
+from service.grouping import get_grouped_result
 from tracardi.domain.resource import Resource
 from tracardi.service.domain import resource as resource_db
 from tracardi.domain.destination import Destination
@@ -55,7 +56,7 @@ async def get_destinations_type_list():
 
 @router.get("/destinations/by_tag", tags=["destination"], response_model=dict, include_in_schema=tracardi.expose_gui_api)
 async def get_destinations_by_tag(query: str = None, start: int = 0, limit: int = 100) -> dict:
-    ds = DestinationService(True)
+    ds = DestinationService()
     records = await ds.load_all(query, start, limit)
 
     if not records.exists():
@@ -64,14 +65,7 @@ async def get_destinations_by_tag(query: str = None, start: int = 0, limit: int 
             "grouped": {}
         }
 
-    result = list(records.map_to_objects(map_to_destination))
-
-    return {
-        "total": len(result),
-        "grouped": {
-            "Destinations": result
-        }
-    }
+    return get_grouped_result("Destinations", records, map_to_destination)
 
 
 @router.delete("/destination/{id}", tags=["destination"], include_in_schema=tracardi.expose_gui_api)
