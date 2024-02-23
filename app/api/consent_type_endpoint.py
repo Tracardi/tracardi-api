@@ -5,6 +5,7 @@ from tracardi.config import tracardi
 
 from tracardi.domain.consent_type import ConsentType
 from tracardi.service.storage.mysql.mapping.consent_type_mapping import map_to_consent_type
+from tracardi.service.storage.mysql.mapping.generic_mapping import map_to_id
 from tracardi.service.storage.mysql.service.consent_type_service import ConsentTypeService
 
 router = APIRouter()
@@ -86,9 +87,13 @@ async def get_consent_ids(query: str = None, limit: int = 100):
     """
 
     cts = ConsentTypeService()
-    records = await cts.load_keys(limit=limit)
+    records = await cts.load_enabled(limit=limit)
 
-    return {
-        "total": records.count(),
-        "result": [id for id in records.rows]
-    }
+    if not records.exists():
+        return {
+            "total": 0,
+            "result": []
+        }
+
+    return get_result_dict(records, map_to_id)
+
