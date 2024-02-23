@@ -44,6 +44,7 @@ async def get_current_backend_version():
     version = tracardi.version.model_dump(mode='json')
     version['instance'] = ApiInstance().id
     version['installed'] = await installation_status.get_status()
+    version['multi-tenant'] = tracardi.multi_tenant
 
     if License.has_license():
         license = License.check()
