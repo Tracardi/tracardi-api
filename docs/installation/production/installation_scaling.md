@@ -75,6 +75,11 @@ per batch, but this may need adjustment based on your specific needs.
 Set the logging level to "warning" by default to minimize data overhead. Detailed logging can significantly increase
 data volume and should be used selectively during system tuning phases. Please see `LOGGING_LEVEL` env variable.
 
+
+### 13. Security
+
+Set the `AUTO_PROFILE_MERGING` and `INSTALLATION_TOKEN` to your custom values. See [guide on separating the APIs](guide.md).
+
 ### Conclusion
 
 Deploying Tracardi in a production environment requires a detailed understanding of your performance needs and careful
