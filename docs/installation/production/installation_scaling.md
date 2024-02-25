@@ -42,7 +42,7 @@ ElasticSearch. Please see Elasticsearch documentation for nodes settings.
 
 Like ElasticSearch, Apache Pulsar requires a data retention policy that specifies the duration data is stored and the
 offloading process when data is no longer needed. S3 storage is a good option for offloading, with considerations for
-data deletion over time.
+data deletion over time. Default retention policy is set to 30 days and 1GB of storage.
 
 ### 7. Apache Pulsar Configuration
 
