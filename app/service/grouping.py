@@ -1,15 +1,20 @@
+from typing import Callable
+
 from tracardi.service.storage.mysql.utils.select_result import SelectResult
 
 
-def get_result_dict(records: SelectResult, mapping):
+def get_result_dict(records: SelectResult, mapping, filter: Callable=None):
     if not records.exists():
         return {
             "total": 0,
             "result": []
         }
+
+    result = list(records.map_to_objects(mapping, filter))
+
     return {
         "total": records.count(),
-        "result": list(records.map_to_objects(mapping))
+        "result": result
     }
 
 
