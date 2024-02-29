@@ -64,7 +64,8 @@ from app.api import (
     customer_endpoint,
     event_to_profile,
     cache_endpoint,
-    configuration_endpoint
+    configuration_endpoint,
+    github_endpoint
 )
 from app.api.track import event_server_endpoint
 from tracardi.config import tracardi
@@ -309,7 +310,7 @@ application.include_router(deploy_endpoint.router)
 application.include_router(audience_endpoint.router)
 application.include_router(subscription_endpoint.router)
 application.include_router(configuration_endpoint.router)
-
+application.include_router(github_endpoint.router)
 
 if License.has_service(MULTI_TENANT):
     application.include_router(tenant_install_endpoint.router)
@@ -400,4 +401,4 @@ async def app_shutdown():
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("app.main:application", host="0.0.0.0", port=8686, log_level='info', workers=1)
+    uvicorn.run("app.main:application", host="0.0.0.0", port=18686, log_level='info', workers=1)
