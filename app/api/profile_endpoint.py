@@ -8,7 +8,7 @@ from tracardi.domain.profile import Profile
 from tracardi.service.storage.driver.elastic import profile as profile_db
 from tracardi.service.storage.driver.elastic import event as event_db
 from tracardi.service.storage.index import Resource
-from tracardi.service.tracking.storage.profile_storage import delete_profile
+from tracardi.service.tracking.storage.profile_storage import delete_profile, load_profile
 from .auth.permissions import Permissions
 from tracardi.config import tracardi
 
@@ -23,6 +23,17 @@ router = APIRouter(
             include_in_schema=tracardi.expose_gui_api)
 async def count_profiles():
     return await profile_db.count()
+
+@router.get("/profile/duplicates/count", tags=["profile"],
+            dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer", "maintainer"]))],
+            include_in_schema=tracardi.expose_gui_api)
+async def count_profile_duplicates(id: str):
+    profile = await load_profile(id)
+    if profile:
+        result = await profile_db.count_profile_duplicates(profile.ids)
+        return result.get("count", 0)
+    return 0
+
 
 
 @router.post("/profiles/import", dependencies=[Depends(Permissions(roles=["admin"]))], tags=["profile"],
