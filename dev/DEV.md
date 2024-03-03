@@ -44,12 +44,6 @@ docker run -p 9030:9030 -p 8030:8030 -p 8040:8040 -itd \
 # Run local Tracardi GUI
 docker run -p 8787:80 -e API_URL=//127.0.0.1:8686 -e TRACK_DEBUG="yes" tracardi/tracardi-gui
 
-# Run local OpenSearch
-docker run -p 9200:9200 -p 9600:9600 -e "discovery.type=single-node" opensearchproject/opensearch:latest
-
-# Run OpenDisto
-docker run -p 9200:9200 -p 9600:9600 -e "discovery.type=single-node" amazon/opendistro-for-elasticsearch:latest
-
 # Run local API
 docker run -p 18686:80 \
 -e ELASTIC_HOST=http://192.168.1.107:9200 \
@@ -61,30 +55,6 @@ tracardi/tracardi-api:0.9.0-rc2
 
 docker run -p 15672:15672 -p 5672:5672 --hostname my-rabbit-2 --name some-rabbit-2 rabbitmq:3-management
 
-
-# Run local jupyter notebook
-docker run -p 8888:8888 jupyter/minimal-notebook
-
-
-
-# Run local mongo
-docker run -p 27017:27017 mongo
-
-# Run local PG
-docker run -e POSTGRES_PASSWORD=root -p 5432:5432 postgres
-
-# Run clickhouse
-docker run -d -p 18123:8123 -p19000:9000 --ulimit nofile=262144:262144 clickhouse/clickhouse-server
-
-
-# Run tracardi api with SSL
-
-docker run -v /home/risto/PycharmProjects/tracardi-api/ssl:/ssl -p 8686:443 -e USER_NAME=admin -e PASSWORD=admin -e WORKERS=2 -e ELASTIC_HOST=http://192.168.1.103:9200 -e GUNICORN_CMD_ARGS="--keyfile=/ssl/key.pem --certfile=/ssl/cert.pem" tracardi/tracardi-api-ssl
-docker run -p 8686:80 -e ELASTIC_HOST=http://192.168.1.106:9200 -e tracardi/tracardi-api:0.9.0-dev
-
-
-# Run GUI HTTPS and HTTP
-docker run -p 443:443 -p 80:80 -e API_URL=//127.0.0.1:8686 tracardi/tracardi-gui-https
 
 
 # Run Mkdocs
@@ -105,18 +75,6 @@ docker run -p 8080:8080 -e KEYCLOAK_USER=admin -e KEYCLOAK_PASSWORD=admin jboss/
 
 openssl req -newkey rsa:2048 -nodes -keyout key.pem -x509 -days 365 -out cert.pem
 
-# Meatbeat
-docker run docker.elastic.co/beats/metricbeat:7.13.4 setup -E setup.kibana.host=192.168.1.103:5601 -E output.elasticsearch.hosts=["192.168.1.103:9200"]
-
-# Common Name must be localhost
-
-
-# Celery worker
-celery -A worker.celery_worker worker --loglevel=info -E
-docker run -e REDIS_HOST=redis://redis-0.redis.redis.svc.cluster.local tracardi/worker
-docker run -e REDIS_HOST=redis://192.168.1.101 tracardi/worker
-
-
 # Kafka UI
 
 docker run -p 8080:8080 \
@@ -128,37 +86,3 @@ docker run -p 8080:8080 \
 # Kafka
 
 docker run --rm --net=host landoop/fast-data-dev
-
-
-# Matomo
-
-helm upgrade matomo --set service.ports.http=9080,service.ports.https=9443,externalDatabase.host=192.168.1.190,externalDatabase.user=root,externalDatabase.password=root bitnami/matomo
-
-
-
-
-SYNC
-
-docker run -p 8686:80 \
--e ELASTIC_HOST=http://192.168.1.104:9200 \
--e REDIS_HOST=redis://192.168.1.104:6379 \
-tracardi/tracardi-api:0.9.0-rc2
-
-
-ASYNC
-
-docker run -p 8686:80 \
--e ELASTIC_HOST=http://192.168.1.104:9200 \
--e REDIS_HOST=redis://192.168.1.104:6379 \
--e PULSAR_HOST=pulsar://192.168.1.104:6650 \
--e LICENSE=<license> \
--e ASYNC_PROCESSING=yes \
--e LOCK_ON_DATA_COMPUTATION=no \
-tracardi/com-tracardi-api:0.9.0-rc2
-
-
-# ISSUES:
- Can't logi in:
- 
-delete the user index and reinstall
-
