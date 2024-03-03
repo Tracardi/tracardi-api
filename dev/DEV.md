@@ -46,10 +46,12 @@ docker run -p 8787:80 -e API_URL=//127.0.0.1:8686 -e TRACK_DEBUG="yes" tracardi/
 
 # Run local API
 docker run -p 18686:80 \
--e ELASTIC_HOST=http://192.168.1.107:9200 \
--e REDIS_HOST=redis://192.168.1.107:6379 \
+-e ELASTIC_HOST=http://192.168.1.110:9200 \
+-e REDIS_HOST=redis://192.168.1.110:6379 \
+-e MYSQL_HOST=192.168.1.110 \
+-e PULSAR_HOST=pulsar://192.168.1.110:6650 \
 -e LOGGING_LEVEL=info \
-tracardi/tracardi-api:0.9.0-rc2
+tracardi/tracardi-api-k8s:0.9.0-dev
 
 # Rabbit mq
 

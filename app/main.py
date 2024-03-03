@@ -65,7 +65,8 @@ from app.api import (
     event_to_profile,
     cache_endpoint,
     configuration_endpoint,
-    github_endpoint
+    github_endpoint,
+    maintanace_endpoint
 )
 from app.api.track import event_server_endpoint
 from tracardi.config import tracardi
@@ -311,6 +312,7 @@ application.include_router(audience_endpoint.router)
 application.include_router(subscription_endpoint.router)
 application.include_router(configuration_endpoint.router)
 application.include_router(github_endpoint.router)
+application.include_router(maintanace_endpoint.router)
 
 if License.has_service(MULTI_TENANT):
     application.include_router(tenant_install_endpoint.router)

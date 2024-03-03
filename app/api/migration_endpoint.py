@@ -1,3 +1,7 @@
+import os
+
+import alembic.config
+
 from collections import defaultdict
 from fastapi import APIRouter, Depends, HTTPException
 from tracardi.context import get_context
@@ -12,9 +16,12 @@ from tracardi.domain.migration_payload import MigrationPayload
 from tracardi.process_engine.migration.migration_manager import MigrationManager, MigrationNotFoundException
 from tracardi.service.url_constructor import construct_elastic_url
 from tracardi.config import elastic, tracardi
+import tracardi as base_tracardi
+
+
 
 router = APIRouter(
-    dependencies=[Depends(Permissions(roles=["admin", "developer", "maintainer"]))]
+    dependencies=[Depends(Permissions(roles=["admin", "maintainer"]))]
 )
 
 
@@ -80,8 +87,8 @@ async def check_migration_consistency(version: str):
     }
 
 
-@router.post("/migration", tags=["migration"], include_in_schema=tracardi.expose_gui_api)
-async def run_migration(migration: MigrationPayload):
+@router.post("/migration/elasticsearch", tags=["migration"], include_in_schema=tracardi.expose_gui_api)
+async def run_elasticsearch_migration(migration: MigrationPayload):
     try:
 
         context = get_context()
@@ -146,3 +153,24 @@ async def get_migration_schemas(from_db_version: str, from_tenant_name: str = No
 @router.get("/migrations", tags=["migration"], include_in_schema=tracardi.expose_gui_api, response_model=list)
 async def get_migrations_for_current_version():
     return MigrationManager.get_available_migrations_for_version(tracardi.version)
+
+
+@router.post("/migration/mysql", tags=["migration"], include_in_schema=tracardi.expose_gui_api)
+def run_mysql_migration_script():
+    # Get the path to the __init__.py file of the package
+    package_path = base_tracardi.__file__
+
+    # If you want the directory containing the package, not the path to __init__.py
+    package_directory = os.path.dirname(package_path)
+
+    print("Package path:", package_path)
+    print("Package directory:", package_directory)
+
+    alembicArgs = [
+        '--raiseerr',
+        'upgrade', 'head',
+    ]
+    os.listdir(os.path.realpath(f"{package_directory}/.."))
+
+    os.chdir(os.path.realpath(f"{package_directory}/.."))
+    alembic.config.main(argv=alembicArgs)
