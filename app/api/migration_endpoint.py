@@ -16,7 +16,6 @@ from tracardi.domain.migration_payload import MigrationPayload
 from tracardi.process_engine.migration.migration_manager import MigrationManager, MigrationNotFoundException
 from tracardi.service.url_constructor import construct_elastic_url
 from tracardi.config import elastic, tracardi
-import tracardi as base_tracardi
 
 
 
@@ -26,7 +25,7 @@ router = APIRouter(
 
 
 logger = get_logger(__name__)
-
+_local_path = os.path.dirname(__file__)
 
 # todo can not find usages
 @router.get("/migration/check/from/{version}", tags=["migration"], include_in_schema=tracardi.expose_gui_api)
@@ -155,22 +154,16 @@ async def get_migrations_for_current_version():
     return MigrationManager.get_available_migrations_for_version(tracardi.version)
 
 
-@router.post("/migration/mysql", tags=["migration"], include_in_schema=tracardi.expose_gui_api)
-def run_mysql_migration_script():
-    # Get the path to the __init__.py file of the package
-    package_path = base_tracardi.__file__
+@router.post("/migration/mysql/upgrade", tags=["migration"], include_in_schema=tracardi.expose_gui_api)
+def run_mysql_migration_script(generate_revision: bool = False):
+    os.chdir(os.path.realpath(f"{_local_path}/.."))
 
-    # If you want the directory containing the package, not the path to __init__.py
-    package_directory = os.path.dirname(package_path)
+    if generate_revision:
+        try:
+            alembicArgs = ['revision', '--autogenerate', '-m', 'Create migrations form API']
+            alembic.config.main(argv=alembicArgs)
+        except Exception as e:
+            return str(e)
 
-    print("Package path:", package_path)
-    print("Package directory:", package_directory)
-
-    alembicArgs = [
-        '--raiseerr',
-        'upgrade', 'head',
-    ]
-    os.listdir(os.path.realpath(f"{package_directory}/.."))
-
-    os.chdir(os.path.realpath(f"{package_directory}/.."))
+    alembicArgs = ['--raiseerr', 'upgrade', 'head' ]
     alembic.config.main(argv=alembicArgs)
