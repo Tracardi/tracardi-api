@@ -23,7 +23,7 @@ async def get_user_account(user: User = Depends(Permissions(["admin", "developer
     return user.model_dump(mode='json', exclude={"password": ...})
 
 
-@router.post("/user-account", tags=["user"], include_in_schema=tracardi.expose_gui_api, response_model=dict)
+@router.post("/user-account", tags=["user"], include_in_schema=tracardi.expose_gui_api)
 async def edit_user_account(payload: UserSoftEditPayload,
                             user: User = Depends(Permissions(["admin", "developer", "marketer", "maintainer"]))):
     """
@@ -31,10 +31,12 @@ async def edit_user_account(payload: UserSoftEditPayload,
     """
 
     try:
-
         existing_user = user.model_copy()
-        if payload.password:
-            existing_user.password = User.encode_password(payload.password)
+
+        if payload.password and payload.password.strip()  != "":
+            password = payload.password
+        else:
+            password = None
 
         if payload.name:
             existing_user.name = payload.name
@@ -45,10 +47,11 @@ async def edit_user_account(payload: UserSoftEditPayload,
             user.id,
             UserPayload(
                 name=existing_user.name,
-                password=existing_user.password,
+                password=password,  # None password will leave old one
                 roles=existing_user.roles,
                 enabled=existing_user.enabled,
-                email=existing_user.email)
+                email=existing_user.email
+            )
         )
 
         token2user.set(new_user)

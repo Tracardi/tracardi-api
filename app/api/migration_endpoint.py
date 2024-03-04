@@ -1,21 +1,56 @@
 import os
 
 import alembic.config
+from alembic.config import Config
+from alembic.script import ScriptDirectory
+from alembic.runtime.environment import EnvironmentContext
+from sqlalchemy import create_engine
 
 from collections import defaultdict
 from fastapi import APIRouter, Depends, HTTPException
-from tracardi.context import get_context
 
+from app.api.auth.permissions import Permissions
+from tracardi.context import get_context
 from tracardi.domain.version import Version
 from tracardi.exceptions.log_handler import get_logger
 from tracardi.service.logger_manager import save_logs
 from tracardi.service.storage.driver.elastic import raw as raw_db
 from tracardi.service.storage.indices_manager import check_indices_mappings_consistency
-from app.api.auth.permissions import Permissions
 from tracardi.domain.migration_payload import MigrationPayload
 from tracardi.process_engine.migration.migration_manager import MigrationManager, MigrationNotFoundException
 from tracardi.service.url_constructor import construct_elastic_url
-from tracardi.config import elastic, tracardi
+from tracardi.config import elastic, tracardi, mysql
+
+def get_pending_migrations(alembic_cfg_path, sqlalchemy_url):
+    # Load Alembic configuration and set the SQLALCHEMY database URL
+    alembic_cfg = Config(alembic_cfg_path)
+    alembic_cfg.set_main_option('sqlalchemy.url', sqlalchemy_url)
+
+    # Create an engine and bind it to the Alembic configuration
+    engine = create_engine(sqlalchemy_url)
+    alembic_cfg.attributes['connection'] = engine.connect()
+
+    # Get script directory from configuration
+    script = ScriptDirectory.from_config(alembic_cfg)
+
+    # List to hold pending migrations
+    pending_migrations = []
+
+    # Use EnvironmentContext to get the current revision and heads
+    with EnvironmentContext(
+            alembic_cfg,
+            script,
+            fn=lambda rev, context: pending_migrations.extend(
+                script.iterate_revisions(rev, "heads"))
+    ):
+        # Get current revision
+        current_revision = script.get_current_revision()
+
+    # Cleanup
+    alembic_cfg.attributes['connection'].close()
+
+    # Filter migrations, starting from the current revision to the head
+    return [rev.cmd_format(False) for rev in pending_migrations if rev.revision > current_revision]
 
 
 
@@ -167,3 +202,14 @@ def run_mysql_migration_script(generate_revision: bool = False):
 
     alembicArgs = ['--raiseerr', 'upgrade', 'head' ]
     alembic.config.main(argv=alembicArgs)
+
+
+# Example usage
+# alembic_cfg_path = '../alembic.ini'
+#
+# sqlalchemy_url = f"{mysql.uri(async_driver=False)}/{mysql.mysql_database}"
+# print(sqlalchemy_url)
+# pending_migrations = get_pending_migrations(alembic_cfg_path, sqlalchemy_url)
+# print("Pending Migrations:")
+# for migration in pending_migrations:
+#     print(migration)
