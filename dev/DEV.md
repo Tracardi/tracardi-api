@@ -8,13 +8,13 @@ uvicorn app.main:application --reload --host 0.0.0.0 --port 8686 --ssl-keyfile s
 gunicorn -b 0.0.0.0:443 --keyfile ssl/key.pem --certfile ssl/cert.pem -k uvicorn.workers.UvicornWorker app.main:application
 
 # Run local Kibana
-docker run -p 5601:5601 -m 4g -e ELASTICSEARCH_HOSTS=http://192.168.1.110:9400 docker.elastic.co/kibana/kibana:7.13.2
+docker run -p 5601:5601 -m 4g -e ELASTICSEARCH_HOSTS=http://192.168.1.110:9201 docker.elastic.co/kibana/kibana:7.13.2
 docker run -p 5601:5601 -m 4g \
--e ELASTICSEARCH_HOSTS="https://192.168.1.110:9400" \
+-e ELASTICSEARCH_HOSTS="https://192.168.1.110:9201" \
 -e ELASTICSEARCH_USERNAME=elastic \
 -e ELASTICSEARCH_PASSWORD=VwcljE20X3i05n64iPSP311z \
 -e ELASTICSEARCH_SSL_VERIFICATIONMODE=none \
-docker.elastic.co/kibana/kibana:7.17.7
+docker.elastic.co/kibana/kibana:7.13.2
 
 # Run local ElasticSearch
 docker run -p 9200:9200 -p 9300:9300 -m 8g -e "discovery.type=single-node" -v "/opt/esdata:/usr/share/elasticsearch/data" docker.elastic.co/elasticsearch/elasticsearch:7.13.2
