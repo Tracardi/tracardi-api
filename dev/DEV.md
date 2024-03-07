@@ -51,7 +51,7 @@ docker run -p 18686:80 \
 -e MYSQL_HOST=192.168.1.110 \
 -e PULSAR_HOST=pulsar://192.168.1.110:6650 \
 -e LOGGING_LEVEL=info \
-tracardi/tracardi-api-k8s:0.9.0-dev
+tracardi/com-tracardi-api:0.9.0-rc3
 
 # Rabbit mq
 
