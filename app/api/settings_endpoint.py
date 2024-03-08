@@ -459,9 +459,9 @@ system_settings = [
     ),
     SystemSettings(
         **{
-            "label": "ALLOW_BOT_TRAFFIC",
-            "value": tracardi.allow_bot_traffic,
-            "desc": "Default: No. If set to Yes then block bot traffic."
+            "label": "DISALLOW_BOT_TRAFFIC",
+            "value": tracardi.disallow_bot_traffic,
+            "desc": "Default: Yes. If set to Yes then block bot traffic."
         }
     ),
     SystemSettings(
