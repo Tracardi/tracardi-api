@@ -3,6 +3,7 @@ from datetime import datetime
 from fastapi import APIRouter
 
 from app.service.grouping import get_grouped_result
+from tracardi.context import get_context
 from tracardi.domain.api_instance import ApiInstance
 from tracardi.domain.installation_status import installation_status
 from tracardi.service.license import License
@@ -40,11 +41,13 @@ async def get_current_backend_version():
     """
     Returns current backend version with previous versions.
     """
+    context = get_context()
 
     version = tracardi.version.model_dump(mode='json')
     version['instance'] = ApiInstance().id
     version['installed'] = await installation_status.get_status()
     version['multi-tenant'] = tracardi.multi_tenant
+    version['tenant'] = context.tenant
 
     if License.has_license():
         license = License.check()
