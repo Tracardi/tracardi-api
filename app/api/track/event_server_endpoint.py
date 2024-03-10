@@ -1,3 +1,4 @@
+from time import time
 from json import JSONDecodeError
 from typing import Optional
 
@@ -76,6 +77,8 @@ async def _track(tracker_payload: TrackerPayload, host: str, allowed_bridges):
 @router.post("/track", tags=['collector'])
 async def track(tracker_payload: TrackerPayload, request: Request, response: Response, profile_less: bool = False):
 
+    start = time()
+
     tracker_payload.set_headers(dict(request.headers))
     tracker_payload.profile_less = profile_less
     result = await _track(tracker_payload,
@@ -84,6 +87,8 @@ async def track(tracker_payload: TrackerPayload, request: Request, response: Res
 
     if result and result.get('errors', []):
         response.status_code = 226
+
+    logger.info(f"Track finished with: status {response.status_code} in {time()-start}s")
 
     return result
 
