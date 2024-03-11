@@ -29,9 +29,6 @@ of all the environment variable names below.
 * `ELASTIC_HTTP_COMPRESS`- default value: None. Set compression on data when the client calls the server.
 * `ELASTIC_VERIFY_CERTS` - default value: None. Verify certificates when https schema is set. Set it to no if
   certificates has no CA.
-* `ELASTIC_REFRESH_PROFILES_AFTER_SAVE` - Default: no. When set to yes profile index will be forced to refresh its data
-  after each update. That means that elastic will write all updates without buffering. This may slow the elastic
-  significantly so be cautious with this setting.
 * `TENANT_NAME` - Default: None. It defines prefix for all elastic indexes. This can be used to run multiple
   instances of Tracardi on one elastic instance.
 * `ELASTIC_LOGGING_LEVEL` - Default WARNING. Sets logging level of elastic requests. It may be useful to set it to INFO

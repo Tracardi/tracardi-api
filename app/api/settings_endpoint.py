@@ -33,7 +33,6 @@ system_settings = [
             "desc": "Default: Yes. Register system events like: profile-created, session-opened, etc."
         }
     ),
-
     SystemSettings(
         **{
             "label": "MULTI_TENANT",
@@ -370,15 +369,6 @@ system_settings = [
     ),
     SystemSettings(
         **{
-            "label": "ELASTIC_REFRESH_PROFILES_AFTER_SAVE",
-            "value": elastic.refresh_profiles_after_save,
-            "desc": "Default: no. When set to yes profile index will be forced to refresh its data after each update. "
-                    "That means that elastic will write all updates without buffering. This may slow the elastic "
-                    "significantly so be cautious with this setting."
-        }
-    ),
-    SystemSettings(
-        **{
             "label": "ELASTIC_LOGGING_LEVEL",
             "value": elastic.logging_level,
             "desc": "Default WARNING. Sets logging level of elastic requests. It may be useful to set it to INFO when"
@@ -413,13 +403,6 @@ system_settings = [
             "label": "ENABLE_WORKFLOW",
             "value": tracardi.enable_workflow,
             "desc": "Default: yes. Enables processing events by workflows."
-        }
-    ),
-    SystemSettings(
-        **{
-            "label": "ENABLE_SEGMENTATION_WF_TRIGGERS",
-            "value": tracardi.enable_segmentation_wf_triggers,
-            "desc": "Default: yes. Enables triggering events by profile added to segments."
         }
     ),
     SystemSettings(
