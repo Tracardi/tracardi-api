@@ -29,7 +29,6 @@ from app.api import (
     profile_endpoint,
     flow_endpoint,
     generic_endpoint,
-    segments_endpoint,
     tql_endpoint,
     health_endpoint,
     session_endpoint,
@@ -56,7 +55,6 @@ from app.api import (
     setting_endpoint,
     migration_endpoint,
     report_endpoint,
-    live_segments_endpoint,
     console_log_endpoint,
     event_type_mapping,
     bridge_endpoint,
@@ -256,7 +254,7 @@ application.mount("/uix",
 application.include_router(activation_endpoint.router)
 application.include_router(event_server_endpoint.router)
 application.include_router(tql_endpoint.router)
-application.include_router(segments_endpoint.router)
+# application.include_router(segments_endpoint.router)
 application.include_router(resource_endpoint.router)
 application.include_router(rule_endpoint.router)
 application.include_router(flow_endpoint.router)
@@ -287,7 +285,6 @@ application.include_router(task_endpoint.router)
 application.include_router(delete_indices_endpoint.router)
 application.include_router(migration_endpoint.router)
 application.include_router(report_endpoint.router)
-application.include_router(live_segments_endpoint.router)
 application.include_router(event_reshaping_schema_endpoint.router)
 application.include_router(event_validator_endpoint.router)
 application.include_router(console_log_endpoint.router)
