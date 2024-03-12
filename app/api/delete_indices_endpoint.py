@@ -3,7 +3,6 @@ from tracardi.config import tracardi
 from tracardi.service.storage.driver.elastic import raw as raw_db
 from .auth.permissions import Permissions
 from typing import Optional
-from tracardi.domain.version import Version
 
 router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin"]))]
