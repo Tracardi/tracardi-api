@@ -34,7 +34,17 @@
             },
             source: {
                 id: "demo-website"
-            }
+            },
+            auto: {
+                    events: [
+                        ["increase-interest", {"interest": "laptops", "value": 1}],
+                        ["page-view", {"category": "laptops"}]
+                    ],
+                    triggers: [
+                        {tag:"product", trigger:'onVisible', data: {event: 'image-viewed'}},
+                        {tag:"title", trigger:'onTextSelect', data: {event: 'text-selected'}}
+                    ]
+                }
             // Please see the documentation for more settings: http://docs.tracardi.com/integration/js-integration/
         }
     }
@@ -1453,7 +1463,7 @@
                             <div class="pd u-s-m-b-30">
                                 <div class="slider-fouc pd-wrap">
                                     <div id="pd-o-initiate">
-                                        <div class="pd-o-img-wrap" data-src="images/product/product-d-1.jpg">
+                                        <div class="pd-o-img-wrap" data-src="images/product/product-d-1.jpg" data-tracardi-tag="product">
 
                                             <img class="u-img-fluid" src="images/product/product-d-1.jpg" data-zoom-image="images/product/product-d-1.jpg" alt=""></div>
                                         <div class="pd-o-img-wrap" data-src="images/product/product-d-2.jpg">
@@ -1502,7 +1512,7 @@
                             <div class="pd-detail">
                                 <div>
 
-                                    <span class="pd-detail__name">Nikon Camera 4k Lens Zoom Pro</span></div>
+                                    <span class="pd-detail__name" data-tracardi-tag="title">Nikon Camera 4k Lens Zoom Pro</span></div>
                                 <div>
                                     <div class="pd-detail__inline">
 
@@ -1526,7 +1536,7 @@
                                 </div>
                                 <div class="u-s-m-b-15">
 
-                                    <span class="pd-detail__preview-desc">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</span></div>
+                                    <span class="pd-detail__preview-desc" data-tracardi-tag="title">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</span></div>
                                 <div class="u-s-m-b-15">
                                     <div class="pd-detail__inline">
 
