@@ -10,6 +10,7 @@ services:
       LOGGING_LEVEL: info
       DEMO: "yes"
       PRODUCTION: "no"
+      SAVE_LOGS: "no"
     ports:
       - 8686:80
     depends_on:
