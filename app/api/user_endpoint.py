@@ -198,6 +198,7 @@ async def get_user(id: str):
         raise HTTPException(status_code=500, detail=f"User {id} has multiple rows in database.")
 
     user_table: UserTable = record.rows
+    user_table.password = None
 
     return user_table
 
@@ -242,6 +243,12 @@ async def edit_user(id: str, user_payload: UserPayload, user=Depends(Permissions
         raise HTTPException(status_code=403, detail="You cannot remove the role of admin from your own account")
 
     try:
+
+        if user_payload.password and user_payload.password.strip() != "":
+            user_payload.password = user_payload.password
+        else:
+            user_payload.password = None
+
         us = UserService()
 
         saved, updated_user = await us.update_if_exist(id, user_payload)
