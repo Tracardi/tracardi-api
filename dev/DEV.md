@@ -1,3 +1,5 @@
+docker compose -f dev-docker-compose.yaml up
+
 # Run local server
 
 uvicorn app.main:application --reload --host 0.0.0.0 --port 8686 --workers 25 --log-level warning
