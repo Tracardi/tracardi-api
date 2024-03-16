@@ -106,10 +106,8 @@ else:
     event_validator_endpoint = get_router(prefix="/event-validator")
 
 if License.has_service(LICENSE):
-    from com_tracardi.config import com_tracardi_settings
     from com_tracardi.endpoint import event_to_profile_copy
     from com_tracardi.endpoint import event_props_to_event_traits_copy
-    from com_tracardi.endpoint import metric_endpoint
     from com_tracardi.endpoint import field_update_log_endpoint
     from com_tracardi.endpoint import activation_endpoint
     from com_tracardi.endpoint import event_data_compliance_endpoint
@@ -295,7 +293,6 @@ application.include_router(entity_endpoint.router)
 application.include_router(event_data_compliance_endpoint.router)
 application.include_router(identification_point_endpoint.router)
 application.include_router(scheduler_endpoint.router)
-application.include_router(metric_endpoint.router)
 application.include_router(customer_endpoint.router)
 application.include_router(event_to_profile.router)
 application.include_router(event_to_profile_copy.router)
@@ -336,7 +333,6 @@ async def app_starts():
         )
 
     if License.has_service(LICENSE):
-        logger.info(f"TRACARDI async processing:  {com_tracardi_settings.async_processing}.")
         logger.info(f"TRACARDI multi-tenancy:  {tracardi.multi_tenant}.")
         logger.info(f"TRACARDI multi-tenancy API:  {tracardi.multi_tenant_manager_url}.")
 

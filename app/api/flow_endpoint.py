@@ -1,3 +1,5 @@
+from tracardi.service.storage.elastic.interface.event import load_event_from_db
+from tracardi.service.storage.elastic.interface.session import load_session_from_db
 from tracardi.service.tracking.storage.profile_storage import load_profile
 from tracardi.service.utils.date import now_in_utc
 
@@ -11,8 +13,6 @@ from tracardi.domain.metadata import ProfileMetadata
 from tracardi.domain.payload.event_payload import EventPayload
 from tracardi.domain.payload.tracker_payload import TrackerPayload
 from tracardi.domain.time import EventTime, ProfileTime, Time
-from tracardi.service.storage.driver.elastic import event as event_db
-from tracardi.service.storage.driver.elastic import session as session_db
 from tracardi.service.storage.mysql.mapping.workflow_mapping import map_to_workflow_record
 from tracardi.service.storage.mysql.service.workflow_service import WorkflowService
 from tracardi.service.storage.mysql.service.workflow_trigger_service import WorkflowTriggerService
@@ -249,11 +249,11 @@ async def debug_flow(flow: FlowGraph, event_id: Optional[str] = None):
         )
 
     else:
-        event = await event_db.load(event_id)
+        event = await load_event_from_db(event_id)
 
         if event is None:
             raise ValueError(f"Could not find event id {event_id}.")
-        event = event.to_entity(Event)
+
         source = event.source
 
         if event.has_profile():
@@ -265,7 +265,7 @@ async def debug_flow(flow: FlowGraph, event_id: Optional[str] = None):
             profile = None
 
         if event.has_session():
-            session = await session_db.load_by_id(event.session.id)
+            session = await load_session_from_db(event.session.id)
             event_session = EventSession(
                 id=session.id,
                 start=session.metadata.time.insert,

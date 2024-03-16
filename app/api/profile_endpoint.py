@@ -6,7 +6,7 @@ from fastapi.responses import Response
 
 from tracardi.domain.profile import Profile
 from tracardi.service.storage.driver.elastic import profile as profile_db
-from tracardi.service.storage.driver.elastic import event as event_db
+from tracardi.service.storage.elastic.interface.event import load_events_by_profile_and_field
 from tracardi.service.storage.index import Resource
 from tracardi.service.tracking.storage.profile_storage import delete_profile, load_profile
 from .auth.permissions import Permissions
@@ -101,14 +101,7 @@ async def delete_profile_by_id(id: str, response: Response):
 
 @router.get("/profile/{profile_id}/by/{field}", tags=["profile"], include_in_schema=tracardi.expose_gui_api)
 async def profile_data_by(profile_id: str, field: str, table: bool = False):
-    bucket_name = f"by_{field}"
-    result = await event_db.aggregate_profile_events_by_field(profile_id,
-                                                              field=field,
-                                                              bucket_name=bucket_name)
-
-    if table:
-        return {id: count for id, count in result.aggregations[bucket_name][0].items()}
-    return [{"name": id, "value": count} for id, count in result.aggregations[bucket_name][0].items()]
+    return await load_events_by_profile_and_field(profile_id, field, table)
 
 
 @router.get("/profiles/{qualify}/segment/{segment_names}", tags=["profile"], include_in_schema=tracardi.expose_gui_api)

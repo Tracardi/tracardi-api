@@ -1,6 +1,8 @@
 from tracardi.context import ServerContext, Context
 from test.utils import get_test_tenant
 from tracardi.service.profile_deduplicator import deduplicate_profile
+from tracardi.service.storage.elastic.interface.event import refresh_event_db, delete_event_from_db, load_event_from_db
+from tracardi.service.storage.elastic.interface.session import refresh_session_db, load_session_from_db
 from tracardi.service.tracking.storage.profile_storage import load_profile
 from tracardi.service.tracking.storage.session_storage import load_session
 
@@ -14,8 +16,6 @@ with ServerContext(Context(production=False, tenant=get_test_tenant())):
     from test.api.endpoints.test_event_source_endpoint import _create_event_source
     from tracardi.domain.profile import Profile
     from tracardi.exceptions.exception import DuplicatedRecordException
-    from tracardi.service.storage.driver.elastic import event as event_db
-    from tracardi.service.storage.driver.elastic import session as session_db
     from tracardi.service.storage.driver.elastic import profile as profile_db
     from tracardi.service.storage.elastic_client import ElasticClient
     from tracardi.service.storage.factory import storage_manager
@@ -111,9 +111,9 @@ with ServerContext(Context(production=False, tenant=get_test_tenant())):
             assert event.saved == 1
             events.append(event.ids[0])
 
-        await session_db.refresh()
+        await refresh_session_db()
         await profile_db.refresh()
-        await event_db.refresh()
+        await refresh_event_db()
 
         return profile, session, events
 
@@ -158,8 +158,8 @@ with ServerContext(Context(production=False, tenant=get_test_tenant())):
                 assert response.status_code == 200
 
                 await profile_db.refresh()
-                await session_db.refresh()
-                await event_db.refresh()
+                await refresh_session_db()
+                await refresh_event_db()
 
                 await load_session(session_id)
                 await load_profile(profile_id)
@@ -169,11 +169,11 @@ with ServerContext(Context(production=False, tenant=get_test_tenant())):
                 assert endpoint.delete(f'/session/{session_id}').status_code in [200, 404]
                 assert endpoint.delete(f'/profile/{profile_id}').status_code in [200, 404]
                 for event_id in events:
-                    await event_db.delete_by_id(event_id)
+                    await delete_event_from_db(event_id)
 
                 await profile_db.refresh()
-                await session_db.refresh()
-                await event_db.refresh()
+                await refresh_session_db()
+                await refresh_event_db()
 
 
     async def test_should_deduplicate_profile():
@@ -213,7 +213,7 @@ with ServerContext(Context(production=False, tenant=get_test_tenant())):
 
             # When record is duplicated also session gets duplicated
             with pytest.raises(DuplicatedRecordException):
-                await session_db.load_by_id(session_id)
+                await load_session_from_db(session_id)
 
             profile_records = await storage_manager('profile').load_by("ids", profile_id, limit=10)
 
@@ -269,7 +269,7 @@ with ServerContext(Context(production=False, tenant=get_test_tenant())):
 
             # When record is duplicated also session gets duplicated
             with pytest.raises(DuplicatedRecordException):
-                await session_db.load_by_id(session_id)
+                await load_session_from_db(session_id)
 
             # Now track the duplicated profile. It should de duplicate the session and profile
 
@@ -300,15 +300,15 @@ with ServerContext(Context(production=False, tenant=get_test_tenant())):
                 assert response.status_code == 200
 
                 await profile_db.refresh()
-                await session_db.refresh()
-                await event_db.refresh()
+                await refresh_session_db()
+                await refresh_event_db()
 
                 # Should be no errors
                 await load_profile(profile_id)
                 await load_session(session_id)
 
                 for event_id in events1 + events2:
-                    event = await event_db.load(event_id)
+                    event = await load_event_from_db(event_id)
                     assert event['id'] == event_id
 
             finally:
@@ -316,8 +316,9 @@ with ServerContext(Context(production=False, tenant=get_test_tenant())):
                 assert endpoint.delete(f'/session/{session_id}').status_code in [200, 404]
                 assert endpoint.delete(f'/profile/{profile_id}').status_code in [200, 404]
                 for event_id in events1 + events2:
-                    await event_db.delete_by_id(event_id)
+                    await delete_event_from_db(event_id)
 
                 await profile_db.refresh()
-                await session_db.refresh()
-                await event_db.refresh()
+                await refresh_session_db()
+                await refresh_event_db()
+
