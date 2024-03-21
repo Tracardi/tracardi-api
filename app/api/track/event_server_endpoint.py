@@ -88,7 +88,7 @@ async def track(tracker_payload: TrackerPayload, request: Request, response: Res
     if result and result.get('errors', []):
         response.status_code = 226
 
-    logger.info(f"Track finished with: status {response.status_code} in {time()-start}s")
+    logger.info(f"Track finished with in {time()-start}s")
 
     return result
 
