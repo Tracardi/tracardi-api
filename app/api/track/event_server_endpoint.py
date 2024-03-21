@@ -17,12 +17,12 @@ from tracardi.domain.time import Time
 from tracardi.service.storage.elastic.interface.session import load_session_from_db
 from tracardi.service.storage.mysql.mapping.event_redirect_mapping import map_to_event_redirect
 from tracardi.service.storage.mysql.service.event_redirect_service import EventRedirectService
-from tracardi.service.tracker import track_event
 from tracardi.domain.payload.tracker_payload import TrackerPayload
 from tracardi.exceptions.exception import UnauthorizedException, FieldTypeConflictException, \
     EventValidationException
 from tracardi.exceptions.log_handler import get_logger
 from app.api.track.service.ip_address import get_ip_address
+from tracardi.service.track_event import track_event
 from tracardi.service.url_constructor import url_query_params_to_dict
 
 logger = get_logger(__name__)
