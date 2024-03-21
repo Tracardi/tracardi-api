@@ -177,7 +177,8 @@ async def delete_session(id: str, response: Response):
             dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer"]))],
             include_in_schema=tracardi.expose_gui_api)
 async def get_nth_last_session_for_profile(profile_id: str, n: Optional[int] = 0):
-    result = await load_nth_last_session_for_profile(profile_id, n + 1)
+
+    result = await load_nth_last_session_for_profile(profile_id, n)
 
     if result is None:
         return None
