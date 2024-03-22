@@ -46,8 +46,7 @@ async def add_consent_type(data: CustomerConsent, all: Optional[bool] = False):
         if all:
             cts = ConsentTypeService()
             consent_type_records = await cts.load_all()
-            for consent_type in consent_type_records.map_to_object(map_to_consent_type):
-
+            for consent_type in consent_type_records.map_to_objects(map_to_consent_type):
                 if consent_type.auto_revoke:
                     try:
                         seconds = timeparse(consent_type.auto_revoke)
@@ -61,6 +60,7 @@ async def add_consent_type(data: CustomerConsent, all: Optional[bool] = False):
                     revoke = ConsentRevoke()
 
                 profile.consents[consent_type.id] = revoke
+
         else:
             for consent, flag in data.consents.items():
                 if flag:
@@ -69,6 +69,5 @@ async def add_consent_type(data: CustomerConsent, all: Optional[bool] = False):
                     if consent in profile.consents:
                         del profile.consents[consent]
 
-            profile.aux['consents'] = {"granted": True}
-
-            return await save_profile(profile, refresh=True)
+        profile.aux['consents'] = {"granted": True}
+        return await save_profile(profile, refresh=True)

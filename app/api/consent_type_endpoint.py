@@ -80,7 +80,7 @@ async def get_consent_types(query: str = None, start: int = 0, limit: int = 10):
     return get_grouped_result("Consent types", result, map_to_consent_type)
 
 
-@router.get("/consents/type/ids", tags=["consent"], include_in_schema=tracardi.expose_gui_api, response_model=dict)
+@router.get("/consents/type/ids", tags=["consent"], include_in_schema=tracardi.expose_gui_api)
 async def get_consent_ids(query: str = None, limit: int = 100):
     """
     Returns list of all enabled consent ids
@@ -97,3 +97,19 @@ async def get_consent_ids(query: str = None, limit: int = 100):
 
     return get_result_dict(records, map_to_id)
 
+@router.get("/consents/type/enabled", tags=["consent"], include_in_schema=tracardi.expose_gui_api)
+async def get_consent_ids(query: str = None, limit: int = 100):
+    """
+    Returns list of all enabled consent ids
+    """
+
+    cts = ConsentTypeService()
+    records = await cts.load_enabled(limit=limit)
+
+    if not records.exists():
+        return {
+            "total": 0,
+            "result": []
+        }
+
+    return get_result_dict(records, map_to_consent_type)
