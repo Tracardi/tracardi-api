@@ -215,174 +215,158 @@ There is only one, do not use `` in the response. So `some text` is not allowed.
 Here is the full plugin code:
 
 ```python
-import json
-from pydantic import field_validator
-from tracardi.service.plugin.domain.config import PluginConfig
+import jwt
+import ssl
+import aiohttp
+import certifi
+
+from datetime import datetime as date
+
+from tracardi.domain.resources.ghost import GhostResourceCredentials
 from tracardi.service.plugin.domain.register import Plugin, Spec, MetaData, Documentation, PortDoc, Form, FormGroup, \
     FormField, FormComponent
 from tracardi.service.plugin.domain.result import Result
 from tracardi.service.plugin.runner import ActionRunner
+from tracardi.service.domain import resource as resource_db
+from tracardi.service.tracardi_http_client import HttpClient
 from tracardi.domain.profile import Profile
-from tracardi.service.segmentation.profile_segmentation_services import add_segment_to_profile
+from .model.config import Configuration
 
 
-class Configuration(PluginConfig):
-    interests: str
-    segment_mapping: str
-    segments_to_apply: str
-
-    @field_validator('interests')
-    @classmethod
-    def interests_must_not_be_empty(cls, value):
-        if value.strip() == "":
-            raise ValueError("Interests must not be empty.")
-        return value
-    
-    @field_validator('segment_mapping')
-    @classmethod
-    def mapping_must_not_be_empty(cls, value):
-        if value.strip() == "":
-            raise ValueError("Segment Mapping must not be empty.")
-        return value
-    
-    @field_validator('segments_to_apply')
-    @classmethod
-    def segments_to_apply_must_not_be_empty(cls, value):
-        if value.strip() == "" or value.isnumeric() != True:
-            raise ValueError("Segments to Apply must not be empty and must be a number.")
-        return value
-    
-def validate(config: dict):
+def validate(config):
+    print(config)
     return Configuration(**config)
 
-class GroupAndRankInterestsAction(ActionRunner):
-    
+
+class GhostAction(ActionRunner):
+    credentials: GhostResourceCredentials
     config: Configuration
-    
+
     async def set_up(self, init):
-        self.config = validate(init)
+        config = validate(init)
+        resource = await resource_db.load(config.resource.id)
+        self.config = config
+        self.credentials = resource.credentials.get_credentials(self, output=GhostResourceCredentials)
 
     async def run(self, payload: dict, in_edge=None) -> Result:
         dot = self._get_dot_accessor(payload)
         profile = Profile(**dot.profile)
 
-        # How plugin works.
-        # Example of segment_mapping:
-        """
-        segment_mapping = {
-            "segment_name": ["interest1", "interest2", "interest3"] // Adds 
+        try:
+            _id, secret = self.credentials.api_key.split(':')
+        except Exception:
+            message = f"Could not split API key into id and secret. Is the API_KEY ok. It should have : char in its body. Please check the resource configuration."
+            self.console.error(message)
+            return Result(port='error', value={"message": message})
+
+        iat = int(date.now().timestamp())
+        header = {'alg': 'HS256', 'typ': 'JWT', 'kid': _id}
+        payload = {
+            'iat': iat,
+            'exp': iat + 5 * 60,
+            'aud': '/admin/'
         }
-        """
-
-        # This defines how the segment will be built. The above tells create a `segment_name` from the "interest1" and "interest2", and "interest3".
-        # For example "apple-fan-boy": ["iphone", "ipad", "imac"]
-        # Profile may have interests associated which can be:
-
-        """
-        {
-        "ipad": 2,
-        "iphone": 5,
-        "imac": 1
-        }
-        """
-
-        # based on that interest new segment is computed. It adds all the interest counts and computes segment rank, which will be in this example 8.
-        # Then based on the segments_to_apply only the segments that are above the defined threshold will be applied to the profile.
 
         try:
-            segment_mapping = json.loads(dot[self.config.segment_mapping])
-            interests = dot[self.config.interests]
+            token = jwt.encode(payload, bytes.fromhex(secret), algorithm='HS256', headers=header)
+            ssl_context = ssl.create_default_context(cafile=certifi.where())
 
-            segment_count = {segment: 0 for segment in segment_mapping.keys()}
+            async with HttpClient(
+                    1,
+                    200,
+                    headers={'Authorization': 'Ghost {}'.format(token)},
+                    connector=aiohttp.TCPConnector(ssl=ssl_context)
+            ) as client:
+                async with client.get(
+                        url=self.credentials.api_url + '/ghost/api/admin/members/?filter=uuid:' + dot[self.config.uuid]
+                ) as response:
+                    member = await response.json()
 
-            for interest, count in interests.items():
-                for segment, keywords in segment_mapping.items():
-                    if isinstance(keywords, list) and interest.lower() in keywords:
-                        segment_count[segment] += count
+            ghost_id = member['members'][0]['id']
+            labels = list(map(lambda x: x['name'], list(member['members'][0]['labels'])))
+            labels.sort()
 
-            ranked_segments = sorted(segment_count.keys(), key=lambda x: segment_count[x], reverse=True)
-            try:
-                segments_to_apply=int(dot[self.config.segments_to_apply])
-            except Exception:
-                # If segments to apply not a number
-                message = "Segments To Apply must be a number"
-                self.console.error(message)
-                return Result(value={"message": message}, port="error")
+            profile_segments = profile.segments
+            profile_segments.sort()
 
-            if segments_to_apply > len(ranked_segments):
-                segments_to_apply=len(ranked_segments)
+            if labels == profile_segments:
+                return Result(port='result', value={'labels': labels})
+            labels = profile.segments
 
-            # Apply segments to profile
-            for index in range(0, segments_to_apply):
-                profile = add_segment_to_profile(profile, ranked_segments[index])
-                
-            self.profile.replace(profile)
+            async with HttpClient(
+                    self.node.on_connection_error_repeat,
+                    200,
+                    headers={'Authorization': 'Ghost {}'.format(token)},
+                    connector=aiohttp.TCPConnector(ssl=ssl_context)
+            ) as client:
+                async with client.put(
+                        url=self.credentials.api_url + '/ghost/api/admin/members/' + ghost_id,
+                        json={'members': [{'labels': labels}]}
+                ) as response:
+                    result = await response.json()
+                    if response.status == 200:
+                        return Result(port='result', value={'labels': labels, "response": result})
+                    return Result(port='error', value={"message": result})
 
-            return Result(port='result', value={'applied_segments':ranked_segments})
         except Exception as e:
-            return Result(value={"message": str(e)}, port="error")            
+            message = str(e)
+            self.console.error(message)
+            return Result(value={"message": message}, port="error")
+
 
 def register() -> Plugin:
     return Plugin(
         start=False,
         spec=Spec(
             module=__name__,
-            className=GroupAndRankInterestsAction.__name__,
+            className=GhostAction.__name__,
             inputs=["payload"],
             outputs=["result", "error"],
             version='0.9.0',
             init={
-                "interests": "profile@interests",  # Interests is a path the where the interests are stored.
-                "segment_mapping": "",  # See the "Example of segment_mapping" above
-                "segments_to_apply": ""
+                'resource': {'id': '', 'name': ''},
+                "uuid": ""
             },
             form=Form(groups=[
                 FormGroup(
-                    name="Group And Rank Interests configuration",
+                    name="Ghost configuration",
                     fields=[
                         FormField(
-                            id="interests",
-                            name="Interests",
-                            description="Location of profile interests, usually profile@interests",
-                            component=FormComponent(type="dotPath", props={
-                                "label": "Interests",
-                                "defaultSourceValue": "profile"
+                            id="resource",
+                            name="Ghost Resource",
+                            description="Ghost Resource",
+                            component=FormComponent(type="resource", props={
+                                "label": "Resource",
+                                "tag": "ghost"
                             })
                         ),
                         FormField(
-                            id="segment_mapping",
-                            name="Segment Mapping",
-                            description="Defines how the segment rank is computed based on profile's interests. It maps key which is a segment name to a list of interests that build this segment.",
-                            component=FormComponent(type="json", props={
-                                "label": "segment_mapping"
-                            })
-                        ),
-                        FormField(
-                            id="segments_to_apply",
-                            name="Segments To Apply",
-                            description="This setting decides which computed segments get added to a profile. For instance, if the limit is set to 5, the sum of the interests must be more than 5",
+                            id="uuid",
+                            name="UUID",
+                            description="Ghost member UUID.",
                             component=FormComponent(type="dotPath", props={
-                                "label": "segments_to_apply"
+                                "label": "UUID",
+                                "defaultSourceValue": "payload"
                             })
                         )
-                        
                     ])
             ]),
             license="MIT",
             author="Matt Cameron",
-            manual="group_and_rank_interests"
+            manual="ghost"
         ),
         metadata=MetaData(
-            name='Group and Rank Interests',
-            desc='Maps interests to profiles and returns matched profiles in order of importance.',
-            icon='GroupAndRankInterests',
-            group=['Segmentation'],
+            name='Ghost',
+            desc='Adds labels to a Ghost member.',
+            icon='ghost',
+            group=["Connectors"],
+            purpose=['collection'],
             documentation=Documentation(
                 inputs={
                     "payload": PortDoc(desc="This port takes payload object.")
                 },
                 outputs={
-                    "result": PortDoc(desc="Returns response from GroupAndRankInterests service."),
+                    "result": PortDoc(desc="Returns response from Ghost service."),
                     "error": PortDoc(desc="Returns error message if plugin fails.")
                 }
             )
@@ -390,9 +374,10 @@ def register() -> Plugin:
     )
 
 
+
 ```
 
 
 Additional manual:
 
-Use the comments from code and add examples.
+None
