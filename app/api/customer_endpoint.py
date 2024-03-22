@@ -4,6 +4,7 @@ from typing import Optional
 from fastapi import APIRouter, HTTPException
 from pytimeparse.timeparse import timeparse
 
+from tracardi.service.storage.mysql.mapping.consent_type_mapping import map_to_consent_type
 from tracardi.service.storage.redis.collections import Collection
 from tracardi.service.storage.redis_client import RedisClient
 from tracardi.service.tracking.locking import Lock, async_mutex
@@ -45,7 +46,7 @@ async def add_consent_type(data: CustomerConsent, all: Optional[bool] = False):
         if all:
             cts = ConsentTypeService()
             consent_type_records = await cts.load_all()
-            for consent_type in consent_type_records.map_to_object(ConsentType):
+            for consent_type in consent_type_records.map_to_object(map_to_consent_type):
 
                 if consent_type.auto_revoke:
                     try:
