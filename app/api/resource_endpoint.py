@@ -1,5 +1,3 @@
-import logging
-from collections import defaultdict
 from typing import Optional
 from fastapi import APIRouter, Depends
 
@@ -92,31 +90,6 @@ async def list_resources_by_type(query: str = None, limit:int = 200):
     records = await rs.load_all(search=query, limit=limit)
 
     return get_grouped_result("Resources", records, map_to_resource)
-
-
-# @router.get("/resource/{id}/enabled/on",
-#             tags=["resource"],
-#             include_in_schema=tracardi.expose_gui_api)
-# async def set_resource_property_on(id: str):
-#     resource = await _load_record(id)
-#     if resource:
-#         resource.enabled = True
-#         return await _store_record(resource)
-#
-#     return None
-#
-#
-# @router.get("/resource/{id}/enabled/off",
-#             tags=["resource"],
-#             include_in_schema=tracardi.expose_gui_api)
-# async def set_resource_property_off(id: str):
-#     resource = await _load_record(id)
-#     if resource:
-#         resource.enabled = False
-#         return await _store_record(resource)
-#
-#     return None
-
 
 @router.get("/resource/{id}",
             tags=["resource"],
