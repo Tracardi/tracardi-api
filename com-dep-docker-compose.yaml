@@ -1,0 +1,69 @@
+version: "3.7"
+services:
+
+  tracardi-init:
+    image: tracardi/init:0.9.0-rc4
+    environment:
+      AUTO_PROFILE_MERGING: "1234567890-qwertyuiopasdfghjkl"
+      REDIS_HOST: redis://redis:6379
+      PULSAR_HOST: pulsar://pulsar:6650
+      PULSAR_API: http://pulsar:8080
+      PULSAR_CLUSTER: "standalone"
+      LOGGING_LEVEL: "debug"
+    depends_on:
+      - pulsar
+      - redis
+
+  pulsar:
+    image: apachepulsar/pulsar:3.1.0
+    container_name: pulsar
+    restart: always
+    ports:
+      - 6650:6650
+      - 8080:8080
+    environment:
+      PULSAR_LOG_LEVEL: "warn"
+    command: bin/pulsar standalone
+    networks:
+      - tracardi-network
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.13.2
+    container_name: elasticsearch
+    environment:
+      bootstrap.memory_lock: "true"
+      ES_JAVA_OPTS: "-Xms512m -Xmx512m"
+      discovery.type: single-node
+      xpack.security.enabled: "false"
+      cluster.name: contextElasticSearch
+    networks:
+      - tracardi-network
+
+  redis:
+    image: redis
+    networks:
+      - tracardi-network
+        
+  mysql:
+    image: mysql:5.7
+    restart: always
+    environment:
+      MYSQL_DATABASE: 'tracardi'
+      MYSQL_ROOT_PASSWORD: 'root'
+    ports:
+      - '3306:3306'
+    expose:
+      - '3306'
+
+    volumes:
+      - mysql-db:/var/lib/mysql
+
+volumes:
+  elasticsearch-data:
+    driver: local
+  mysql-db:
+    driver: local
+
+networks:
+  tracardi-network:
+    external: true

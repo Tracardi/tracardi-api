@@ -1,0 +1,138 @@
+version: "3.7"
+services:
+
+  tracardi-apm:
+    image: tracardi/amp:0.9.0-rc4
+    container_name: tracardi-apm
+    restart: always
+    environment:
+      ELASTIC_HOST: http://elasticsearch:9200
+      REDIS_HOST: redis://redis:6379
+      PULSAR_HOST: pulsar://pulsar:6650
+      MYSQL_HOST: mysql
+      LOGGING_LEVEL: "info"
+      AUTO_PROFILE_MERGING: "1234567890-qwertyuiopasdfghjkl"
+      LICENSE: ${API_LICENSE}
+
+  tracardi-private-api:
+    image: tracardi/com-tracardi-api:0.9.0-rc4
+    container_name: tracardi-private-api
+    restart: always
+    environment:
+      ELASTIC_HOST: http://elasticsearch:9200
+      REDIS_HOST: redis://redis:6379
+      PULSAR_HOST: pulsar://pulsar:6650
+      MYSQL_HOST: mysql
+      LOGGING_LEVEL: "info"
+      DEMO: "yes"
+      PRODUCTION: "no"
+      EXPOSE_GUI_API: "yes"
+      MULTI_TENANT: "yes"
+      MULTI_TENANT_MANAGER_URL: "http://tracardi-tms:8383"
+      ENABLE_VISIT_ENDED: "yes"
+      ENABLE_WORKFLOW: "yes"
+      ENABLE_PROFILE_DESTINATIONS: "yes"
+      ENABLE_EVENT_DESTINATIONS: "yes"
+      ENABLE_FIELD_UPDATE_LOG: "yes"
+      AUTO_PROFILE_MERGING: "1234567890-qwertyuiopasdfghjkl"
+      LICENSE: ${API_LICENSE}
+    ports:
+      - 8686:80
+    networks:
+      - local-network
+    depends_on:
+      - tracardi-init
+      - redis
+      - elasticsearch
+      - pulsar
+      - mysql
+
+  tracardi-public-api:
+    image: tracardi/com-tracardi-api:0.9.0-rc4
+    container_name: tracardi-public-api
+    restart: always
+    environment:
+      ELASTIC_HOST: http://elasticsearch:9200
+      REDIS_HOST: redis://redis:6379
+      PULSAR_HOST: pulsar://pulsar:6650
+      MYSQL_HOST: mysql
+      LOGGING_LEVEL: "info"
+      PRODUCTION: "yes"
+      EXPOSE_GUI_API: "no"
+      MULTI_TENANT: "yes"
+      ENABLE_VISIT_ENDED: "yes"
+      ENABLE_WORKFLOW: "yes"
+      ENABLE_PROFILE_DESTINATIONS: "yes"
+      ENABLE_EVENT_DESTINATIONS:  "yes"
+      ENABLE_FIELD_UPDATE_LOG: "yes"
+      LICENSE: ${API_LICENSE}
+      AUTO_PROFILE_MERGING: "1234567890-qwertyuiopasdfghjkl"
+    ports:
+      - 8585:80
+    networks:
+      - local-network
+    depends_on:
+      - tracardi-init
+      - redis
+      - elasticsearch
+      - pulsar
+      - mysql
+
+  tracardi-background-worker:
+    image: tracardi/background-worker:0.9.0-rc4
+    container_name: background
+    environment:
+      ELASTIC_HOST: http://elasticsearch:9200
+      REDIS_HOST: redis://redis:6379
+      PULSAR_HOST: pulsar://pulsar:6650
+      MYSQL_HOST: mysql
+      LOGGING_LEVEL: "info"
+      PRODUCTION: "yes"
+      EXPOSE_GUI_API: "no"
+      MULTI_TENANT: "yes"
+      ENABLE_VISIT_ENDED: "yes"
+      ENABLE_WORKFLOW: "yes"
+      ENABLE_PROFILE_DESTINATIONS: "yes"
+      ENABLE_EVENT_DESTINATIONS:  "yes"
+      ENABLE_FIELD_UPDATE_LOG: "yes"
+      LICENSE: ${API_LICENSE}
+    networks:
+      - local-network
+    depends_on:
+      - tracardi-init
+      - redis
+      - elasticsearch
+      - pulsar
+      - mysql
+
+  tracardi-tms:
+    image: tracardi/tms:0.9.0-rc4
+    container_name: tms
+    environment:
+      MYSQL_HOST: mysql
+      LOGGING_LEVEL: "info"
+      LICENSE: ${API_LICENSE}
+    networks:
+      - local-network
+    depends_on:
+      - mysql
+    ports:
+      - 8383:80
+
+
+  tracardi-gui:
+    image: tracardi/tracardi-gui:0.9.0-rc4
+    container_name: tracardi-gui
+    ports:
+      - 8787:80
+    depends_on:
+      - tracardi-private-api
+
+#  worker:
+#    image: tracardi/update-worker:0.9.0-rc4
+#    environment:
+#      REDIS_HOST: redis://redis:6379
+
+networks:
+  tracardi-network:
+    external: true
