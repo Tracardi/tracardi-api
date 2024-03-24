@@ -11,6 +11,8 @@ services:
       PULSAR_CLUSTER: "standalone"
       LOGGING_LEVEL: "debug"
       LICENSE: "xxx"
+    networks:
+      - tracardi-network
     depends_on:
       - pulsar
       - redis
@@ -55,6 +57,8 @@ services:
       - '3306:3306'
     expose:
       - '3306'
+    networks:
+      - tracardi-network
 
     volumes:
       - mysql-db:/var/lib/mysql

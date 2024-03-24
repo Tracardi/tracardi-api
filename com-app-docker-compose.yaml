@@ -2,7 +2,7 @@ version: "3.7"
 services:
 
   tracardi-apm:
-    image: tracardi/amp:0.9.0-rc4
+    image: tracardi/apm:0.9.0-rc4
     container_name: tracardi-apm
     restart: always
     environment:
@@ -13,6 +13,8 @@ services:
       LOGGING_LEVEL: "info"
       AUTO_PROFILE_MERGING: "1234567890-qwertyuiopasdfghjkl"
       LICENSE: ${API_LICENSE}
+    networks:
+      - tracardi-network
 
   tracardi-private-api:
     image: tracardi/com-tracardi-api:0.9.0-rc4
@@ -29,6 +31,7 @@ services:
       EXPOSE_GUI_API: "yes"
       MULTI_TENANT: "yes"
       MULTI_TENANT_MANAGER_URL: "http://tracardi-tms:8383"
+      MULTI_TENANT_MANAGER_API_KEY: "604e5043-a28f-4b4d-baa7-13eb196e7537"
       ENABLE_VISIT_ENDED: "yes"
       ENABLE_WORKFLOW: "yes"
       ENABLE_PROFILE_DESTINATIONS: "yes"
@@ -39,9 +42,8 @@ services:
     ports:
       - 8686:80
     networks:
-      - local-network
+      - tracardi-network
     depends_on:
-      - tracardi-init
       - redis
       - elasticsearch
       - pulsar
@@ -60,6 +62,8 @@ services:
       PRODUCTION: "yes"
       EXPOSE_GUI_API: "no"
       MULTI_TENANT: "yes"
+      MULTI_TENANT_MANAGER_URL: "http://tracardi-tms:8383"
+      MULTI_TENANT_MANAGER_API_KEY: "604e5043-a28f-4b4d-baa7-13eb196e7537"
       ENABLE_VISIT_ENDED: "yes"
       ENABLE_WORKFLOW: "yes"
       ENABLE_PROFILE_DESTINATIONS: "yes"
@@ -70,9 +74,8 @@ services:
     ports:
       - 8585:80
     networks:
-      - local-network
+      - tracardi-network
     depends_on:
-      - tracardi-init
       - redis
       - elasticsearch
       - pulsar
@@ -90,6 +93,8 @@ services:
       PRODUCTION: "yes"
       EXPOSE_GUI_API: "no"
       MULTI_TENANT: "yes"
+      MULTI_TENANT_MANAGER_URL: "http://tracardi-tms:8383"
+      MULTI_TENANT_MANAGER_API_KEY: "604e5043-a28f-4b4d-baa7-13eb196e7537"
       ENABLE_VISIT_ENDED: "yes"
       ENABLE_WORKFLOW: "yes"
       ENABLE_PROFILE_DESTINATIONS: "yes"
@@ -97,9 +102,8 @@ services:
       ENABLE_FIELD_UPDATE_LOG: "yes"
       LICENSE: ${API_LICENSE}
     networks:
-      - local-network
+      - tracardi-network
     depends_on:
-      - tracardi-init
       - redis
       - elasticsearch
       - pulsar
@@ -113,7 +117,7 @@ services:
       LOGGING_LEVEL: "info"
       LICENSE: ${API_LICENSE}
     networks:
-      - local-network
+      - tracardi-network
     depends_on:
       - mysql
     ports:
@@ -125,6 +129,8 @@ services:
     container_name: tracardi-gui
     ports:
       - 8787:80
+    networks:
+      - tracardi-network
     depends_on:
       - tracardi-private-api
 
