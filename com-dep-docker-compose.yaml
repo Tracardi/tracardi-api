@@ -10,6 +10,7 @@ services:
       PULSAR_API: http://pulsar:8080
       PULSAR_CLUSTER: "standalone"
       LOGGING_LEVEL: "debug"
+      LICENSE: "xxx"
     depends_on:
       - pulsar
       - redis
