@@ -18,7 +18,7 @@ router = APIRouter(
 )
 
 
-class GitHupCommit(BaseModel):
+class GitHubCommit(BaseModel):
     file_name: str
     message: Optional[str] = None
 
@@ -30,7 +30,7 @@ class GitHupCommit(BaseModel):
         return value
 
 @router.post("/github/workflow/{workflow_id}", tags=["github"], include_in_schema=tracardi.expose_gui_api)
-async def commit_workflow_to_github(workflow_id: str, commit: GitHupCommit):
+async def commit_workflow_to_github(workflow_id: str, commit: GitHubCommit):
     cs = ConfigurationService()
     record = await cs.load_by_id(GITHUB_CONFIGURATION)
     if not record.exists():
@@ -52,3 +52,37 @@ async def commit_workflow_to_github(workflow_id: str, commit: GitHupCommit):
     file_payload = workflow.model_dump_json(indent=2)
     return await client.send_file(file_path=commit.file_name, content=file_payload, message=commit.message)
 
+@router.get("/github/list", tags=["github"], include_in_schema=tracardi.expose_gui_api)
+async def list_github_files(path: Optional[str] = None):
+
+    if path is None:
+        path = '/'
+
+    cs = ConfigurationService()
+    record = await cs.load_by_id(GITHUB_CONFIGURATION)
+    if not record.exists():
+        raise HTTPException(status_code=404, detail="Github configuration missing.")
+
+    configuration = record.map_to_object(map_to_configuration)
+    client = GitHubClient(
+        token=configuration.get_token(),
+        repo_name=configuration.get_repo_name(),
+        repo_owner=configuration.get_repo_owner()
+    )
+    print(client.list_files(path))
+    return [item async for item in client.list_files(path)]
+
+@router.get("/github/load", tags=["github"], include_in_schema=tracardi.expose_gui_api)
+async def get_github_file(path: str):
+    cs = ConfigurationService()
+    record = await cs.load_by_id(GITHUB_CONFIGURATION)
+    if not record.exists():
+        raise HTTPException(status_code=404, detail="Github configuration missing.")
+
+    configuration = record.map_to_object(map_to_configuration)
+    client = GitHubClient(
+        token=configuration.get_token(),
+        repo_name=configuration.get_repo_name(),
+        repo_owner=configuration.get_repo_owner()
+    )
+    return await client.load_file(path)
