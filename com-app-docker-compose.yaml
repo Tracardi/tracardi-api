@@ -13,6 +13,7 @@ services:
       LOGGING_LEVEL: "info"
       AUTO_PROFILE_MERGING: "1234567890-qwertyuiopasdfghjkl"
       LICENSE: ${API_LICENSE}
+      MODE: "worker"
     networks:
       - tracardi-network
 
@@ -30,7 +31,7 @@ services:
       PRODUCTION: "no"
       EXPOSE_GUI_API: "yes"
       MULTI_TENANT: "yes"
-      MULTI_TENANT_MANAGER_URL: "http://tracardi-tms:8383"
+      MULTI_TENANT_MANAGER_URL: "http://tracardi-tms"
       MULTI_TENANT_MANAGER_API_KEY: "604e5043-a28f-4b4d-baa7-13eb196e7537"
       ENABLE_VISIT_ENDED: "yes"
       ENABLE_WORKFLOW: "yes"
@@ -62,7 +63,7 @@ services:
       PRODUCTION: "yes"
       EXPOSE_GUI_API: "no"
       MULTI_TENANT: "yes"
-      MULTI_TENANT_MANAGER_URL: "http://tracardi-tms:8383"
+      MULTI_TENANT_MANAGER_URL: "http://tracardi-tms"
       MULTI_TENANT_MANAGER_API_KEY: "604e5043-a28f-4b4d-baa7-13eb196e7537"
       ENABLE_VISIT_ENDED: "yes"
       ENABLE_WORKFLOW: "yes"
@@ -112,10 +113,15 @@ services:
   tracardi-tms:
     image: tracardi/tms:0.9.0-rc4
     container_name: tms
+    restart: always
     environment:
       MYSQL_HOST: mysql
+      MYSQL_USERNAME: "root"
+      MYSQL_PASSWORD: "root"
       LOGGING_LEVEL: "info"
       LICENSE: ${API_LICENSE}
+      API_KEY: "604e5043-a28f-4b4d-baa7-13eb196e7537"
+      SECRET: "a28f-4b4d-baa7-13eb196e7537604e5043"
     networks:
       - tracardi-network
     depends_on:
@@ -134,10 +140,16 @@ services:
     depends_on:
       - tracardi-private-api
 
-#  worker:
-#    image: tracardi/update-worker:0.9.0-rc4
-#    environment:
-#      REDIS_HOST: redis://redis:6379
+  worker:
+    image: tracardi/update-worker:0.9.0-rc4
+    container_name: upgrade-worker
+    environment:
+      ELASTIC_HOST: http://elasticsearch:9200
+      REDIS_HOST: redis://redis
+      PULSAR_HOST: pulsar://pulsar:6650
+      MYSQL_HOST: mysql
+    networks:
+      - tracardi-network
 
 networks:
   tracardi-network:

@@ -39,11 +39,16 @@ services:
       discovery.type: single-node
       xpack.security.enabled: "false"
       cluster.name: contextElasticSearch
+    ports:
+      - 9200:9200
     networks:
       - tracardi-network
 
   redis:
     image: redis
+    restart: always
+    ports:
+      - 6379:6379
     networks:
       - tracardi-network
         
