@@ -1,3 +1,5 @@
+from os.path import realpath
+
 from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -17,6 +19,12 @@ router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin", "developer"]))]
 )
 
+def up_path(path) -> str:
+    path_list = path.split('/')
+    try:
+        return "/".join(path_list[:-1])
+    except Exception:
+        return "/"
 
 class GitHubCommit(BaseModel):
     file_name: str
@@ -28,6 +36,7 @@ class GitHubCommit(BaseModel):
         if not value.strip():
             raise ValueError("File name can not be empty")
         return value
+
 
 @router.post("/github/workflow/{workflow_id}", tags=["github"], include_in_schema=tracardi.expose_gui_api)
 async def commit_workflow_to_github(workflow_id: str, commit: GitHubCommit):
@@ -52,6 +61,7 @@ async def commit_workflow_to_github(workflow_id: str, commit: GitHubCommit):
     file_payload = workflow.model_dump_json(indent=2)
     return await client.send_file(file_path=commit.file_name, content=file_payload, message=commit.message)
 
+
 @router.get("/github/list", tags=["github"], include_in_schema=tracardi.expose_gui_api)
 async def list_github_files(path: Optional[str] = None):
 
@@ -69,8 +79,30 @@ async def list_github_files(path: Optional[str] = None):
         repo_name=configuration.get_repo_name(),
         repo_owner=configuration.get_repo_owner()
     )
-    print(client.list_files(path))
-    return [item async for item in client.list_files(path)]
+
+    sorted_files = sorted([item async for item in client.list_files(path)], key=lambda x: x[0], reverse=False)
+    sorted_files =  [{
+        "type": item[0],
+        "file": item[1],
+        "path": item[2],
+        "sha": item[3],
+        "url": item[4]
+    } for item in sorted_files]
+
+    if path=='/':
+        return sorted_files
+
+    return [
+        {
+            "type": "dir",
+            "file": "..",
+            "path": up_path(path),
+            "sha": None,
+            "url": None
+        }
+
+    ] + sorted_files
+
 
 @router.get("/github/load", tags=["github"], include_in_schema=tracardi.expose_gui_api)
 async def get_github_file(path: str):
