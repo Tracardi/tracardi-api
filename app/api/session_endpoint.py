@@ -99,8 +99,6 @@ async def count_sessions_by_location():
     result = await count_online_sessions_by_location_in_db()
     return {
         "events": result.total,
-        "country": [{"name": item['key'], "count": item['doc_count']} for item in
-                    result.aggregations("country").buckets()],
         "tz": [{"name": item['key'], "count": item['doc_count']} for item in result.aggregations("tz").buckets()]
     }
 

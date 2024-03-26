@@ -51,7 +51,7 @@ async def select_by_sql(index: IndexesSearch, query: Optional[SqlQuery] = None):
              include_in_schema=tracardi.expose_gui_api)
 async def time_range_with_sql(index: IndexesHistogram, query: DatetimeRangePayload, page: Optional[int] = None):
     if page is not None:
-        page_size = 25
+        page_size = query.limit
         query.start = page_size * page
         query.limit = page_size
     return await raw_db.index(index.value).query_by_sql_in_time_range(query)
