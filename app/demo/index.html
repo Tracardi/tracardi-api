@@ -54,6 +54,10 @@
     function sendEvent(type, props) {
      window.tracker.track(type, props, {"fire": true});
     }
+
+    function sendUIEvent(type, props) {
+     window.tracker.track(type, props, {"fire": true, "async": false});
+    }
     
     function sendBeacon(type, props) {
      window.tracker.track(type, props, {"fire": true, "beacon": true});
@@ -1457,7 +1461,7 @@
 
                                             <span class="u-c-brand">$1050.00</span></span>
 
-                                        <a class="shop-now-link btn--e-brand" href="shop-side-version-2.html">SHOP NOW</a></div>
+                                        <a class="shop-now-link btn--e-brand" href="shop-side-version-2.html" onclick="sendEvent('shop-now-clicked', {})">SHOP NOW</a></div>
                                 </div>
                             </div>
                         </div>
@@ -1518,7 +1522,7 @@
                         <div class="row">
                             <div class="col-lg-12">
                                 <div class="section__text-wrap">
-                                    <h1 class="section__heading u-c-secondary u-s-m-b-12">SHOP BY DEALS</h1>
+                                    <h1 class="section__heading u-c-secondary u-s-m-b-12" onclick="sendUIEvent('deals-clicked',{})">SHOP BY DEALS</h1>
 
                                     <span class="section__span u-c-silver">BROWSE FAVOURITE DEALS</span>
                                 </div>
