@@ -32,7 +32,7 @@ source .env-docker
 ```bash
 git clone https://github.com/Tracardi/tracardi-api.git
 cd tracardi-api
-git checkout 0.9.0
+git checkout 1.0.0
 ```
 
 ## Run docker compose (Dependencies)
