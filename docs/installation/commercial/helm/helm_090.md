@@ -1,4 +1,4 @@
-# Installation with HelmChart version 0.9.0
+# Installation with HelmChart after version 0.9.0
 
 This document provides comprehensive instructions for installing the commercial Tracardi application on a Kubernetes (
 K8s) cluster using the Helm chart.
@@ -383,7 +383,7 @@ api:
   image:
     repository: tracardi/com-tracardi-api  # Docker repository for the API image
     pullPolicy: IfNotPresent  # Image pull policy
-    tag: 0.9.0.3  # Image tag, should be the same for GUI and backend
+    tag: 1.0.0  # Image tag, should be the same for GUI and backend
 
   private:
     enabled: true  # Whether the private API is enabled
@@ -437,7 +437,7 @@ api:
 |--------------|--------|-----------------------------------------------------|--------------------------|
 | **repository**| String | Docker repository for the API image.               | `tracardi/com-tracardi-api` |
 | **pullPolicy**| String | Image pull policy. Common values are `Always`, `IfNotPresent`, and `Never`. | `IfNotPresent`           |
-| **tag**      | String | Image tag, ensuring compatibility between GUI and backend. | `0.9.0.3`                |
+| **tag**      | String | Image tag, ensuring compatibility between GUI and backend. | `1.0.0`                |
 
 ##### Private/Public API Configuration
 
@@ -481,7 +481,7 @@ gui:
   image:
     repository: tracardi/tracardi-gui  # Docker repository for the GUI image
     pullPolicy: IfNotPresent  # Image pull policy
-    tag: 0.9.0.3  # Image tag, should be the same for GUI and backend
+    tag: 1.0.0  # Image tag, should be the same for GUI and backend
 
   console:
     enabled: true  # Whether the GUI is enabled
@@ -520,7 +520,7 @@ tms:
   image:
     repository: tracardi/tms  # Docker repository for the TMS image
     pullPolicy: IfNotPresent  # Image pull policy
-    tag: 0.9.0.3  # Image tag, should be the same for GUI and backend
+    tag: 1.0.0  # Image tag, should be the same for GUI and backend
   docker:
     enabled: true  # Whether Docker is enabled
     replicas: 1  # Number of replicas for TMS
@@ -558,7 +558,7 @@ worker:
   background:
     image:
       repository: tracardi/background-worker  # Docker repository for the background worker image
-      tag: 0.9.0.3  # Image tag for the background worker
+      tag: 1.0.0  # Image tag for the background worker
       pullPolicy: IfNotPresent  # Image pull policy
     enabled: true  # Whether the background worker is enabled
     replicas: 1  # Number of replicas for the background worker
@@ -593,7 +593,7 @@ worker:
   apm:
     image:
       repository: tracardi/apm  # Docker repository for the APM image
-      tag: 0.9.0.3  # Image tag for the APM
+      tag: 1.0.0  # Image tag for the APM
       pullPolicy: IfNotPresent  # Image pull policy
     profile:
       enabled: true  # Whether the APM profile is enabled
@@ -604,7 +604,7 @@ worker:
   upgrade:
     image:
       repository: tracardi/update-worker  # Docker repository for the upgrade worker image
-      tag: 0.9.0.3  # Image tag for the upgrade worker
+      tag: 1.0.0  # Image tag for the upgrade worker
       pullPolicy: IfNotPresent  # Image pull policy
     docker:
       enabled: true  # Whether Docker is enabled
@@ -634,7 +634,7 @@ bridge:
   queue:
     image:
       repository: tracardi/com-bridge-queue  # Docker repository for the queue bridge image
-      tag: 0.9.0.3  # Image tag for the queue bridge
+      tag: 1.0.0  # Image tag for the queue bridge
       pullPolicy: IfNotPresent  # Image pull policy
     docker:
       enabled: false  # Whether Docker is enabled for the queue bridge
@@ -722,7 +722,7 @@ config:
 
 api:
   image:
-    tag: 0.9.0.4
+    tag: 1.0.0
 
   private:
     replicas: 1
@@ -736,7 +736,7 @@ api:
 
 gui:
   image:
-    tag: 0.9.0.4
+    tag: 1.0.0
   console:
     service:
       port: 48787
@@ -746,7 +746,7 @@ gui:
 
 tms:
   image:
-    tag: 0.9.0.4
+    tag: 1.0.0
   docker:
     replicas: 1
     service:
@@ -759,19 +759,19 @@ worker:
   background:
     enabled: true
     image:
-      tag: 0.9.0.4
+      tag: 1.0.0
     replicas: 1
 
   apm:
     image:
-      tag: 0.9.0.4
+      tag: 1.0.0
     profile:
       enabled: true
       replicas: 1
 
   upgrade:
     image:
-      tag: 0.9.0.4
+      tag: 1.0.0
     docker:
       enabled: true
       replicas: 1

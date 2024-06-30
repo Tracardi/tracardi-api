@@ -85,14 +85,14 @@ docker-compose -f com-app-docker-compose.yaml up
    To upgrade to the latest version, fetch the latest Docker images for the components. Run the following commands in your terminal:
 
    ```bash
-   docker pull tracardi/tracardi-api:0.9.0.4
-   docker pull tracardi/tracardi-gui:0.9.0.4
-   docker pull tracardi/update-worker:0.9.0.4
-   docker pull tracardi/com-tracardi-api:0.9.0.4
-   docker pull tracardi/amp:0.9.0.4
-   docker pull tracardi/tms:0.9.0.4
-   docker pull tracardi/background-worker:0.9.0.4
-   docker pull tracardi/init:0.9.0.4
+   docker pull tracardi/tracardi-api:1.0.0
+   docker pull tracardi/tracardi-gui:1.0.0
+   docker pull tracardi/update-worker:1.0.0
+   docker pull tracardi/com-tracardi-api:1.0.0
+   docker pull tracardi/amp:1.0.0
+   docker pull tracardi/tms:1.0.0
+   docker pull tracardi/background-worker:1.0.0
+   docker pull tracardi/init:1.0.0
    ```
 
 ## Handling Errors
