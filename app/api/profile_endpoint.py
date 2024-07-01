@@ -13,7 +13,6 @@ from tracardi.service.tracking.storage.profile_storage import delete_profile, lo
 from .auth.permissions import Permissions
 from tracardi.config import tracardi
 
-
 router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer", "maintainer"]))]
 )
@@ -24,6 +23,7 @@ router = APIRouter(
 async def count_profiles():
     return await profile_db.count()
 
+
 @router.get("/profile/duplicates/count", tags=["profile"],
             include_in_schema=tracardi.expose_gui_api)
 async def count_profile_duplicates(id: str):
@@ -32,7 +32,6 @@ async def count_profile_duplicates(id: str):
         result = await profile_db.count_profile_duplicates(profile.ids)
         return result.get("count", 0)
     return 0
-
 
 
 @router.post("/profiles/import", dependencies=[Depends(Permissions(roles=["admin"]))], tags=["profile"],
@@ -67,6 +66,7 @@ async def get_profile_by_id(profile_id: str, response: Response) -> Optional[dic
     """
     Returns profile with given ID (str)
     """
+
     # This is acceptable - we see the profile from the database
     record = await profile_db.load_by_id(profile_id)
 
@@ -105,7 +105,6 @@ async def profile_data_by(profile_id: str, field: str, table: bool = False):
 
 @router.get("/profiles/{qualify}/segment/{segment_names}", tags=["profile"], include_in_schema=tracardi.expose_gui_api)
 async def find_profiles_by_segments(segment_names: str, qualify: str):
-
     """
     Returns profiles in given segments.
 

@@ -2,7 +2,7 @@ version: "3.7"
 services:
 
   tracardi-init:
-    image: tracardi/init:0.9.0
+    image: tracardi/init:1.0.0
     environment:
       AUTO_PROFILE_MERGING: "1234567890-qwertyuiopasdfghjkl"
       REDIS_HOST: redis://redis:6379

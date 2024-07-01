@@ -2,7 +2,7 @@ version: "3.7"
 services:
 
   tracardi-apm:
-    image: tracardi/apm:0.9.0
+    image: tracardi/apm:1.0.0
     container_name: tracardi-apm
     restart: always
     environment:
@@ -18,7 +18,7 @@ services:
       - tracardi-network
 
   tracardi-private-api:
-    image: tracardi/com-tracardi-api:0.9.0
+    image: tracardi/com-tracardi-api:1.0.0
     container_name: tracardi-private-api
     restart: always
     environment:
@@ -51,7 +51,7 @@ services:
       - mysql
 
   tracardi-public-api:
-    image: tracardi/com-tracardi-api:0.9.0
+    image: tracardi/com-tracardi-api:1.0.0
     container_name: tracardi-public-api
     restart: always
     environment:
@@ -83,7 +83,7 @@ services:
       - mysql
 
   tracardi-background-worker:
-    image: tracardi/background-worker:0.9.0
+    image: tracardi/background-worker:1.0.0
     container_name: background
     environment:
       ELASTIC_HOST: http://elasticsearch:9200
@@ -111,7 +111,7 @@ services:
       - mysql
 
   tracardi-tms:
-    image: tracardi/tms:0.9.0
+    image: tracardi/tms:1.0.0
     container_name: tms
     restart: always
     environment:
@@ -131,7 +131,7 @@ services:
 
 
   tracardi-gui:
-    image: tracardi/tracardi-gui:0.9.0
+    image: tracardi/tracardi-gui:1.0.0
     container_name: tracardi-gui
     ports:
       - 8787:80
@@ -141,7 +141,7 @@ services:
       - tracardi-private-api
 
   worker:
-    image: tracardi/update-worker:0.9.0
+    image: tracardi/update-worker:1.0.0
     container_name: upgrade-worker
     environment:
       ELASTIC_HOST: http://elasticsearch:9200

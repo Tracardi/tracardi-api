@@ -25,9 +25,12 @@ There are two types of merging processes.
     - If there is no identification point for this event, two profiles with the same email will be detected with the
       [Automatic Profile Merging](apm.md) (APM) and the profile will be merged.
 
-4. **Data Consolidation**:
+4. **Data Merging**:
     - The system combines the data from both profiles, updating `profile-id-123` with any new information
-      from `profile-id-456` and retaining all historical data.
+      from `profile-id-456` and retaining all historical data.Is updates events and sessions to link to the new merged profile.
+
+5. **[Conflict Resolution](merging_strategy.md)**:
+    - Conflicting data inf profiles is resolved using predefined set of merging strategies. For example there are 3 different lastnames in the profile. 
 
 5. **Unified Profile**:
     - The final unified profile under `profile-id-123` now contains data from both interactions, providing a complete

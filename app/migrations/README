@@ -8,5 +8,5 @@ alembic revision --autogenerate -m "Create a baseline migrations"
 ```
 
 ```
-docker run -e MYSQL_HOST=192.168.1.110 tracardi/migration:0.9.1-dev
+docker run -e MYSQL_HOST=192.168.1.110 tracardi/migration:1.0.0
 ```

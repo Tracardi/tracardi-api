@@ -14,7 +14,7 @@ with ServerContext(Context(production=False, tenant=get_test_tenant())):
 
         event_source = dict(
             id=id,
-            bridge=dict(id="1", name="Api"),
+            bridge=dict(id="778ded05-4ff3-4e08-9a86-72c0195fa95d", name="Test Api"),
             type=type,
             name=id,
             timestamp="2022-01-07T16:18:09.278Z",

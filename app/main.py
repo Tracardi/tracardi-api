@@ -65,6 +65,8 @@ from app.api import (
     configuration_endpoint,
     github_endpoint,
     maintanace_endpoint,
+    feed_endpoint,
+    maintanace_endpoint,
     system_entity_property_endpoint,
     system_entity_table_column_endpoint
 )
@@ -73,8 +75,6 @@ from tracardi.config import tracardi
 from tracardi.exceptions.log_handler import get_logger
 from tracardi.service.storage.elastic_client import ElasticClient
 from app.api.licensed_endpoint import get_router
-
-
 
 # Licensed software
 if License.has_service(SCHEDULER):
@@ -311,11 +311,13 @@ application.include_router(configuration_endpoint.router)
 application.include_router(github_endpoint.router)
 application.include_router(maintanace_endpoint.router)
 application.include_router(queue_endpoint.router)
+application.include_router(feed_endpoint.router)
 application.include_router(system_entity_property_endpoint.router)
 application.include_router(system_entity_table_column_endpoint.router)
 
 if License.has_service(MULTI_TENANT):
     application.include_router(tenant_install_endpoint.router)
+
 
 @application.on_event("startup")
 async def app_starts():
@@ -402,4 +404,5 @@ async def app_shutdown():
 
 if __name__ == "__main__":
     import uvicorn
+
     uvicorn.run("app.main:application", host="0.0.0.0", port=8686, log_level='info', workers=1)
