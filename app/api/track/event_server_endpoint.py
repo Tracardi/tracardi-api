@@ -35,15 +35,15 @@ async def parse_properties(request: Request):
         try:
             return await request.json()
         except JSONDecodeError:
-            return {}
-    elif request.headers.get('Content-Type', '').lower() in ['multipart/form-data', 'application/x-www-form-urlencoded']:
+            raise ValueError(f"Could not parse body content to JSON. Body content {await request.body()}")
+    elif request.headers.get('Content-Type', '').lower() in ['multipart/form-data',
+                                                             'application/x-www-form-urlencoded']:
         return await request.form()
     else:
         return await request.body()
 
 
 async def _track(tracker_payload: TrackerPayload, host: str, allowed_bridges):
-
     if tracker_payload.source.id.startswith("@"):
         raise PermissionError("Internal event sources are not allowed via API.")
 
@@ -81,7 +81,6 @@ async def _track(tracker_payload: TrackerPayload, host: str, allowed_bridges):
 
 @router.post("/track", tags=['collector'])
 async def track(tracker_payload: TrackerPayload, request: Request, response: Response, profile_less: bool = False):
-
     start = time()
 
     tracker_payload.set_headers(dict(request.headers))
@@ -93,36 +92,21 @@ async def track(tracker_payload: TrackerPayload, request: Request, response: Res
     if result and result.get('errors', []):
         response.status_code = 226
 
-    logger.info(f"Track finished with in {time()-start}s")
+    logger.info(f"Track finished with in {time() - start}s")
 
     return result
 
 
-@router.put("/track", tags=['collector'])
-async def track_async(tracker_payload: TrackerPayload, request: Request, profile_less: bool = False):
-
-    tracker_payload.set_headers(dict(request.headers))
-    tracker_payload.profile_less = profile_less
-
-    # validate source
-
-    # validate event and reshape event
-
-    # queue for saving and processing
-
-
 @router.post("/collect/{event_type}/{source_id}/{session_id}", tags=['collector'])
 @router.post("/collect/{event_type}/{source_id}/{session_id}/", tags=['collector'])
-async def track_post_webhook_with_session(event_type: str, source_id: str, request: Request, session_id: Optional[str] = None):
+async def track_post_webhook_with_session(event_type: str, source_id: str, request: Request,
+                                          session_id: Optional[str] = None):
     """
     Collects data from request POST and adds event type. It stays profile-less if no session provided.
     Session is saved when event is not profile less.
     """
 
-    try:
-        properties = await request.json()
-    except JSONDecodeError:
-        properties = {}
+    properties = await parse_properties(request)
 
     tracker_payload = TrackerPayload(
         source=Entity(id=source_id),
@@ -152,10 +136,7 @@ async def track_get_webhook(event_type: str, source_id: str, request: Request, s
     Session is saved when event is not profile less.
     """
 
-    try:
-        properties = url_query_params_to_dict(request.url.query)
-    except JSONDecodeError:
-        properties = {}
+    properties = url_query_params_to_dict(request.url.query)
 
     tracker_payload = TrackerPayload(
         source=Entity(id=source_id),
@@ -185,10 +166,7 @@ async def track_get_webhook(event_type: str, source_id: str, request: Request):
     Session is saved when event is not profile less.
     """
 
-    try:
-        properties = url_query_params_to_dict(request.url.query)
-    except JSONDecodeError:
-        properties = {}
+    properties = url_query_params_to_dict(request.url.query)
 
     tracker_payload = TrackerPayload(
         source=Entity(id=source_id),
@@ -218,7 +196,6 @@ async def track_post_webhook(event_type: str, source_id: str, request: Request):
     """
 
     properties = await parse_properties(request)
-
     tracker_payload = TrackerPayload(
         source=Entity(id=source_id),
         session=None,
@@ -314,9 +291,9 @@ async def request_redirect(request: Request, redirect_id: str, session_id: Optio
     tracker_payload.set_headers(dict(request.headers))
     tracker_payload.profile_less = True if not session else False
     await _track(
-            tracker_payload,
-            get_ip_address(request),
-            allowed_bridges=['redirect']
-        )
+        tracker_payload,
+        get_ip_address(request),
+        allowed_bridges=['redirect']
+    )
 
     return RedirectResponse(event_redirect.url)
