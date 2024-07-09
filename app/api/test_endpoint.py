@@ -7,8 +7,8 @@ from tracardi.domain.test import Test
 from tracardi.service.storage.index import Resource
 from tracardi.service.storage.mysql.mapping.test_mapping import map_to_test
 from tracardi.service.storage.mysql.service.test_service import TestService
-from tracardi.service.storage.redis_client import RedisClient
-from tracardi.service.storage.elastic_client import ElasticClient
+from tracardi.service.storage.redis.driver.redis_client import RedisClient
+from tracardi.service.storage.elastic.driver.elastic_client import ElasticClient
 
 from app.api.auth.permissions import Permissions
 from tracardi.config import tracardi

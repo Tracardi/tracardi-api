@@ -12,7 +12,7 @@ from tracardi.service.license import License, SCHEDULER, IDENTIFICATION, COMPLIA
 from tracardi.service.logging.formater import CustomFormatter
 from tracardi.service.storage.elastic.interface.client import elastic_close
 from tracardi.service.storage.mysql.service.mysql_installation import wait_for_mysql_connection
-from tracardi.service.storage.redis_client import wait_for_redis_connection
+from tracardi.service.storage.redis.driver.redis_client import wait_for_redis_connection
 
 _local_dir = os.path.dirname(__file__)
 sys.path.append(f"{_local_dir}/api/proto/stubs")

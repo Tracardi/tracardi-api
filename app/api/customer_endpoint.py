@@ -6,12 +6,11 @@ from pytimeparse.timeparse import timeparse
 
 from tracardi.service.storage.mysql.mapping.consent_type_mapping import map_to_consent_type
 from tracardi.service.storage.redis.collections import Collection
-from tracardi.service.storage.redis_client import RedisClient
+from tracardi.service.storage.redis.driver.redis_client import RedisClient
 from tracardi.service.tracking.locking import Lock, async_mutex
 from tracardi.service.tracking.storage.profile_storage import load_profile, save_profile
 from tracardi.service.tracking.storage.session_storage import load_session
 from tracardi.service.utils.date import now_in_utc
-from tracardi.domain.consent_type import ConsentType
 from tracardi.domain.payload.customer_consent import CustomerConsent
 from tracardi.domain.profile import ConsentRevoke
 from tracardi.service.storage.mysql.mapping.event_source_mapping import map_to_event_source
