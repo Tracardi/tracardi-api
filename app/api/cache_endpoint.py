@@ -60,6 +60,6 @@ async def get_memory_cache_count():
     return {
         "cache": {
             "size": len(cache),
-            "keys": cache.keys()
+            "keys": [(key, item.get_cached_items()) for key, item in cache.items()]
         }
     }
