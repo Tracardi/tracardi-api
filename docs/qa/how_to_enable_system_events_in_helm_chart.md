@@ -12,7 +12,7 @@ you can do it:
 
 Here is an example of what the relevant part of your `values.yaml` file should look like:
 
-```yaml
+```yaml title="Part of values.yaml file"  hl_lines="5"
 config:
   multiTenant:
     multi: "yes"  # Enable multi-tenancy if needed
