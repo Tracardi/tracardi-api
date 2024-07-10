@@ -28,7 +28,7 @@ config:
    following command to apply the changes:
 
 ```bash
-helm upgrade --install tracardi ./tracardi-chart -f values.yaml
+helm upgrade --install tracardi ./tracardi -f values.yaml
 ```
 
 By setting `systemEvents` to `"yes"`, you enable the system events in Tracardi, allowing the platform to generate and
