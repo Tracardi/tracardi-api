@@ -2,7 +2,7 @@ from typing import List
 
 from fastapi import APIRouter
 
-from api.domain.rss import RssItem
+from app.api.domain.rss import RssItem
 from tracardi.service.tracardi_http_client import HttpClient
 import feedparser
 from bs4 import BeautifulSoup
