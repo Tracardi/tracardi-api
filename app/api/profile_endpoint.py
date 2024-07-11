@@ -9,7 +9,9 @@ from tracardi.service.storage.driver.elastic import profile as profile_db
 from tracardi.service.storage.elastic.interface.profile import load_modified_top_profiles
 from tracardi.service.storage.elastic.interface.event import load_events_by_profile_and_field
 from tracardi.service.storage.index import Resource
-from tracardi.service.tracking.storage.profile_storage import delete_profile, load_profile
+from tracardi.service.storage.elastic.interface.collector.mutation import profile as mutation_profile_db
+
+from tracardi.service.storage.elastic.interface.collector.load.profile import load_profile
 from .auth.permissions import Permissions
 from tracardi.config import tracardi
 
@@ -89,7 +91,7 @@ async def delete_profile_by_id(id: str, response: Response):
     """
     # Delete from all indices
     index = Resource().get_index_constant("profile")
-    result = await delete_profile(id, index=index.get_multi_storage_alias())
+    result = await mutation_profile_db.delete_profile(id, index=index.get_multi_storage_alias())
 
     if result['deleted'] == 0:
         response.status_code = 404

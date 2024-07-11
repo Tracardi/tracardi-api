@@ -8,7 +8,8 @@ from tracardi.service.storage.mysql.mapping.consent_type_mapping import map_to_c
 from tracardi.service.storage.redis.collections import Collection
 from tracardi.service.storage.redis.driver.redis_client import RedisClient
 from tracardi.service.tracking.locking import Lock, async_mutex
-from tracardi.service.tracking.storage.profile_storage import load_profile, save_profile
+from tracardi.service.storage.elastic.interface.collector.mutation import profile as mutation_profile_db
+from tracardi.service.storage.elastic.interface.collector.load.profile import load_profile
 from tracardi.service.tracking.storage.session_storage import load_session
 from tracardi.service.utils.date import now_in_utc
 from tracardi.domain.payload.customer_consent import CustomerConsent
@@ -69,4 +70,4 @@ async def add_consent_type(data: CustomerConsent, all: Optional[bool] = False):
                         del profile.consents[consent]
 
         profile.aux['consents'] = {"granted": True}
-        return await save_profile(profile, refresh=True)
+        return await mutation_profile_db.save_profile(profile, refresh=True)
