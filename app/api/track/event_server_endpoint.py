@@ -14,7 +14,7 @@ from tracardi.domain.entity import Entity
 from tracardi.domain.event_metadata import EventPayloadMetadata
 from tracardi.domain.payload.event_payload import EventPayload
 from tracardi.domain.time import Time
-from tracardi.service.storage.elastic.interface.session import load_session_from_db
+from tracardi.service.storage.elastic.interface.collector.load.session import load_session_from_db
 from tracardi.service.storage.mysql.mapping.event_redirect_mapping import map_to_event_redirect
 from tracardi.service.storage.mysql.service.event_redirect_service import EventRedirectService
 from tracardi.domain.payload.tracker_payload import TrackerPayload
