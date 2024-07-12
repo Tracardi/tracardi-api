@@ -65,10 +65,10 @@ async def get_flow_logs(flow_id: str, sort: str = None):
     }
 
 
-@router.get("/profile/logs/{id}", tags=["profile"],
+@router.get("/profile/logs/{profile_id}", tags=["profile"],
             dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer"]))],
             include_in_schema=tracardi.expose_gui_api)
-async def get_profile_logs(id: str, sort: str = None):
+async def get_profile_logs(profile_id: str, sort: str = None):
     """
     Gets logs for profile with given ID (str)
     """
@@ -78,7 +78,7 @@ async def get_profile_logs(id: str, sort: str = None):
             "date": sort
         }]
 
-    storage_records = await console_log_db.load_by_profile(id, sort=sort)
+    storage_records = await console_log_db.load_by_profile(profile_id, sort=sort)
     return {
         "result": list(storage_records),
         "total": storage_records.total
