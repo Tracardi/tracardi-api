@@ -65,10 +65,10 @@ async def get_flow_logs(flow_id: str, sort: str = None):
     }
 
 
-@router.get("/profile/logs/{id}", tags=["profile"],
+@router.get("/profile/logs/{profile_id}", tags=["profile"],
             dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer"]))],
             include_in_schema=tracardi.expose_gui_api)
-async def get_profile_logs(id: str, sort: str = None):
+async def get_profile_logs(profile_id: str, sort: str = None):
     """
     Gets logs for profile with given ID (str)
     """
