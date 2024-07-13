@@ -11,7 +11,7 @@ To find your Google Analytics 4 Measurement ID:
 4. Select a data stream from the list
 5. Your code will appear in the top right-hand corner of the page. For GA4 users, the codes start with “G.”
 6. Copy the code and paste to the Tracardi Resource Form into __measurement_id__.
-7. Find on the page Secret API Keys in Events section and click on it.
+7. Find on the page Secret API Keys for Measurement Protocol in Events section and click on it.
 8. If you do not see the key click __create__ in the upper right corner.
 9. Give a key a name
 10. Save it.
