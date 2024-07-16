@@ -3,6 +3,7 @@ services:
 
   tracardi-api:
     image: tracardi/tracardi-api:1.0.0
+    restart: on-failure
     environment:
       ELASTIC_HOST: http://elasticsearch:9200
       REDIS_HOST: redis://redis:6379
@@ -52,7 +53,7 @@ services:
     ports:
       - "3306:3306"
     volumes:
-      - mysql-data:/var/lib/mysql
+      - mydata:/var/lib/mysql
 
   worker:
     image: tracardi/update-worker:1.0.0
@@ -81,5 +82,5 @@ services:
 volumes:
   elasticsearch-data:
     driver: local
-  mysql-data:
+  mydata:
     driver: local
