@@ -41,7 +41,7 @@ async def resource_types_list(type: TypeEnum) -> dict:
     * Endpoint /resources/type/configuration will return all data.
     """
 
-    resources = sorted(list(get_type_of_resources()))
+    resources = sorted(list(get_type_of_resources()), key=lambda x: x[0])
 
     if type.value == 'name':
         resource_types = {id: value['name'] for id, value in resources}

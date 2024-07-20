@@ -10,8 +10,9 @@ from tracardi.service.elastic.connection import wait_for_connection
 from tracardi.service.license import License, SCHEDULER, IDENTIFICATION, COMPLIANCE, RESHAPING, REDIRECTS, VALIDATOR, \
     LICENSE, MULTI_TENANT
 from tracardi.service.logging.formater import CustomFormatter
+from tracardi.service.storage.elastic.interface.client import elastic_close
 from tracardi.service.storage.mysql.service.mysql_installation import wait_for_mysql_connection
-from tracardi.service.storage.redis_client import wait_for_redis_connection
+from tracardi.service.storage.redis.driver.redis_client import wait_for_redis_connection
 
 _local_dir = os.path.dirname(__file__)
 sys.path.append(f"{_local_dir}/api/proto/stubs")
@@ -42,7 +43,6 @@ from app.api import (
     info_endpoint,
     user_endpoint,
     debug_endpoint,
-    log_endpoint,
     tracardi_pro_endpoint,
     event_type_predefined,
     import_endpoint,
@@ -73,7 +73,6 @@ from app.api import (
 from app.api.track import event_server_endpoint
 from tracardi.config import tracardi
 from tracardi.exceptions.log_handler import get_logger
-from tracardi.service.storage.elastic_client import ElasticClient
 from app.api.licensed_endpoint import get_router
 
 # Licensed software
@@ -275,7 +274,6 @@ application.include_router(info_endpoint.router)
 application.include_router(user_endpoint.router)
 application.include_router(event_source_endpoint.router)
 application.include_router(debug_endpoint.router)
-application.include_router(log_endpoint.router)
 application.include_router(tracardi_pro_endpoint.router)
 application.include_router(storage_endpoint.router)
 application.include_router(destination_endpoint.router)
@@ -398,8 +396,7 @@ async def add_process_time_header(request: Request, call_next):
 
 @application.on_event("shutdown")
 async def app_shutdown():
-    elastic = ElasticClient.instance()
-    await elastic.close()
+    await elastic_close()
 
 
 if __name__ == "__main__":

@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from tracardi.config import tracardi
-from tracardi.service.storage.driver.elastic import raw as raw_db
+from tracardi.service.storage.elastic.interface import raw as raw_db
 from .auth.permissions import Permissions
 from typing import Optional
 

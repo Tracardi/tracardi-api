@@ -13,7 +13,6 @@ from app.api.domain.credentials import Credentials
 from tracardi.domain.resource import Resource
 from tracardi.domain.sign_up_data import SignUpData
 from app.api.proto.tracard_pro_client import TracardiProClient
-from tracardi.exceptions.log_handler import log_handler
 from tracardi.exceptions.log_handler import get_logger
 from tracardi.config import tracardi
 from tracardi.service.storage.mysql.service.resource_service import ResourceService

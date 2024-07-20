@@ -7,7 +7,7 @@ from tracardi.service.storage.index import Resource
 from tracardi.service.storage.mysql.service.database_service import DatabaseService
 from tracardi.config import tracardi
 from .auth.permissions import Permissions
-from tracardi.service.storage.driver.elastic import raw as raw_db
+from tracardi.service.storage.elastic.interface import raw as raw_db
 
 router = APIRouter(
     dependencies=[Depends(Permissions(roles=["maintainer"]))]
