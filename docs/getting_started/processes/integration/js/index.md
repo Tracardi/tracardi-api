@@ -120,7 +120,7 @@ Configuration can be extended with *context* parameter, where you may define the
     session. This dynamic data is sent in the event context. Although It is configured on the tracker level it 
     will be attached to each event.
 
-```javascript title="Example of tracker configuration with scope of event context" linenums="1" hl_lines="10-16"
+```javascript title="Example of tracker configuration with scope of event context" linenums="1" hl_lines="10-19"
     const options = {
       tracker: {
         url: {
@@ -137,7 +137,8 @@ Configuration can be extended with *context* parameter, where you may define the
             page: true,
             screen: true,
             performance: false,
-            location: false
+            location: false,
+            utm: true
         }
     }
 }
@@ -153,7 +154,8 @@ If you omit the context configuration it will be set to the default value:
   "page": true,
   "browser": true,
   "performance": false,
-  "location": false
+  "location": false,
+   "utm": true
 }
 ```
 
