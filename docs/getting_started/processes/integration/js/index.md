@@ -259,6 +259,43 @@ navigation")__ will be sent as event context.
 }
 ```
 
+### Event UTM collection
+
+#### What is UTM?
+
+UTM (Urchin Tracking Module) parameters are used to track the effectiveness of online marketing campaigns across traffic
+sources and publishing media. They are appended to URLs and help in identifying the source, medium, and campaign name
+associated with the marketing efforts. Common UTM parameters include:
+
+* **utm_source**: Identifies the source of the traffic (e.g., Google, newsletter).
+* **utm_medium**: Identifies the medium (e.g., email, CPC).
+* **utm_campaign**: Identifies the specific campaign (e.g., spring_sale).
+* **utm_term**: Identifies the paid keywords (used for paid search).
+* **utm_content**: Differentiates similar content or links within the same ad (e.g., banner, link).
+
+#### Turn on UTM collection
+
+To turn UTM collection you need to configure it in tracker script.
+
+```javascript title="Example of tracker configuration with UTM collection" linenums="1" hl_lines="10-12"
+    const options = {
+      tracker: {
+        url: {
+            script: '//localhost:8686/tracker',
+            api: '//localhost:8686'
+        },
+        source: {
+            id: "3ee63fc6-490a-4fd8-bfb3-bf0c8c8d3387"
+        },
+        context: {
+            utm: true
+        }
+    }
+}
+```
+
+UTM data will be saved in event and session UTM fields.
+
 ## Append profile ID to external links (Tagging links)
 
 The tracking script has the capability to include the current profile ID, session ID, and source ID in the URL
