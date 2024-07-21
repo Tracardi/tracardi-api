@@ -759,6 +759,32 @@ nav:
           - qa/what_versions_of_dependencies.md
           - qa/when_profile_is_marked_for_merging.md
 
+          - qa/describe_some_of_the_merging_scenarios.md
+          - qa/does_system_store_update_timestamp_for_each_field_in_profile.md
+          - qa/how_merging_strategies_are_matched.md
+          - qa/how_to_configure_number_of_shards.md
+          - qa/how_to_download_tracardi_helm_chart.md
+          - qa/how_to_enable_system_events.md
+          - qa/how_to_enable_system_events_in_docker.md
+          - qa/how_to_enable_system_events_in_docker_compose.md
+          - qa/how_to_enable_system_events_in_helm_chart.md
+          - qa/how_to_install_elastic_on_k3s.md
+          - qa/how_to_install_k3s.md
+          - qa/how_to_install_percons_on_k8s.md
+          - qa/how_to_install_redis_on_k3s.md
+          - qa/what_are_available_merge_strategies.md
+          - qa/what_is_a_set_of_strategies.md
+          - qa/what_is_cross_domain_click.md
+          - qa/what_is_merge_strategy_fallback.md
+          - qa/what_is_merging_strategy.md
+          - qa/what_is_the_difference_between_os_and_commercial.md
+          - qa/what_is_the_mimimum_ram_for_es.md
+          - qa/what_is_the_minimum_ram_for_mysql.md
+          - qa/what_upfront_decisions_do_i_have_to_make_before_install.md
+          - qa/which_env_variabes_to_tweak_before_install.md
+          - qa/why_my_script_is_not_sending_events.md
+          - qa/why_some_of_the_update_timestamp_on_profile_fields_are_different.md
+
           - qa/errors/error_1.md
           - qa/errors/error_10.md
           - qa/errors/error_11.md
