@@ -1,13 +1,14 @@
 from typing import Optional, Dict
 
 from fastapi import APIRouter, Response, Depends
+
+from tracardi.service.destination.utils import get_destination_types
+from tracardi.service.storage.mysql.interface.destination import load_all_destinations, load_destination_by_id, \
+    insert_destination, delete_destination
 from .auth.permissions import Permissions
-from app.service.grouping import get_grouped_result
 from tracardi.domain.resource import Resource
 from tracardi.domain.destination import Destination
-from tracardi.service.storage.mysql.mapping.destination_mapping import map_to_destination
 from tracardi.service.storage.mysql.mapping.resource_mapping import map_to_resource
-from tracardi.service.storage.mysql.service.destination_service import DestinationService
 from tracardi.service.storage.mysql.service.resource_service import ResourceService
 from tracardi.config import tracardi
 from tracardi.service.license import License
@@ -22,9 +23,7 @@ async def save_destination(destination: Destination):
     """
     Upserts destination data.
     """
-
-    ds = DestinationService()
-    await ds.insert(destination)
+    await insert_destination(destination)
 
 
 @router.get("/destination/{id}", tags=["destination"], response_model=Optional[Destination],
@@ -34,14 +33,13 @@ async def get_destination(id: str, response: Response):
     Returns destination or None if destination does not exist.
     """
 
-    ds = DestinationService()
-    record = await ds.load_by_id(id)
+    destination = await load_destination_by_id(id)
 
-    if not record.exists():
+    if not destination:
         response.status_code = 404
         return None
 
-    return record.map_to_object(map_to_destination)
+    return destination
 
 
 @router.get("/destinations/type", tags=["destination"], response_model=dict, include_in_schema=tracardi.expose_gui_api)
@@ -49,31 +47,28 @@ async def get_destinations_type_list():
     """
     Returns destination types.
     """
-    return {key: value for key, value in DestinationService.get_destination_types()}
+    return {key: value for key, value in get_destination_types()}
 
 
-@router.get("/destinations/by_tag", tags=["destination"], response_model=dict, include_in_schema=tracardi.expose_gui_api)
-async def get_destinations_by_tag(query: str = None, start: int = 0, limit: int = 100) -> dict:
-    ds = DestinationService()
-    records = await ds.load_all(query, start, limit)
+@router.get("/destinations/by_tag", tags=["destination"], response_model=dict,
+            include_in_schema=tracardi.expose_gui_api)
+async def get_destinations(query: str = None, start: int = 0, limit: int = 100) -> dict:
+    destinations, total = await load_all_destinations(query, start, limit)
 
-    if not records.exists():
-        return {
-            "total": 0,
-            "grouped": {}
+    return {
+        "total": total,
+        "grouped": {
+            "Destinations": destinations
         }
-
-    return get_grouped_result("Destinations", records, map_to_destination)
+    }
 
 
 @router.delete("/destination/{id}", tags=["destination"], include_in_schema=tracardi.expose_gui_api)
-async def delete_destination(id: str):
+async def delete_destination_by_id(id: str):
     """
     Deletes destination with given id
     """
-
-    ds = DestinationService()
-    await ds.delete_by_id(id)
+    await delete_destination(id)
 
     return True
 
