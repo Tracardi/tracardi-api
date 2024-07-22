@@ -1,5 +1,5 @@
 import logging
-from collections import defaultdict
+from tracardi.service.storage.mysql.interface import event_source_dao
 from typing import Optional
 
 from fastapi import APIRouter, Depends, Response
@@ -32,7 +32,7 @@ async def list_event_sources(query: str = None):
     Lists all event sources that match given query (str) parameter
     """
 
-    records = await EventSourceService().load_all_in_deployment_mode(query, limit=500)
+    records = await event_source_dao.load_all_event_sources(query, limit=500)
 
     return get_grouped_result("Event sources", records, map_to_event_source)
 
@@ -84,7 +84,7 @@ async def save_event_source(event_source: EventSource):
     """
     Adds new event source in database
     """
-    return await EventSourceService().save(event_source)
+    return await event_source_dao.insert_event_source(event_source)
 
 @router.delete("/event-source/{source_id}", tags=["event-source"],
                include_in_schema=tracardi.expose_gui_api)
@@ -94,7 +94,7 @@ async def delete_event_source(source_id: str):
     Return False if it is available in draft or production. True if all the instances where deleted
     """
 
-    return await EventSourceService().delete_by_id_in_deployment_mode(source_id)
+    return await event_source_dao.delete_event_source(source_id)
 
 @router.get("/event-sources/entity",
             tags=["event-source"],
