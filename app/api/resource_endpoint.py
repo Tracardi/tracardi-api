@@ -4,15 +4,15 @@ from fastapi import APIRouter, Depends
 from tracardi.domain.enum.type_enum import TypeEnum
 from tracardi.exceptions.log_handler import get_logger
 from tracardi.service.setup.setup_resources import get_type_of_resources
-from tracardi.service.storage.mysql.interface.resource import load_all_resources, load_all_resource_entities, \
-    load_resource_by_id
 from tracardi.service.storage.mysql.map_to_named_entity import map_to_named_entity
 from tracardi.service.storage.mysql.mapping.resource_mapping import map_to_resource
 from tracardi.service.storage.mysql.service.resource_service import ResourceService
 from tracardi.domain.resource import Resource
 from .auth.permissions import Permissions
 from tracardi.config import tracardi
-from ..service.grouping import get_result_dict, get_grouped_result
+from ..service.grouping import get_result_dict
+
+import tracardi.service.storage.mysql.interface as mysql
 
 logger = get_logger(__name__)
 
@@ -73,7 +73,7 @@ async def list_resources_names_by_tag(tag: str):
             dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer"]))],
             include_in_schema=tracardi.expose_gui_api)
 async def list_all_resources():
-    resources, total = await load_all_resource_entities(limit=250)
+    resources, total = await mysql.resource_dao.load_all_resource_entities(limit=250)
     return {
         "total": total,
         "result": resources
@@ -87,7 +87,7 @@ async def list_all_resources():
             dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer"]))],
             include_in_schema=tracardi.expose_gui_api)
 async def list_resources():
-    resources, total = await load_all_resources()
+    resources, total = await mysql.resource_dao.load_all_resources()
     return {
         "total": total,
         "result": resources
@@ -101,7 +101,7 @@ async def list_resources():
             dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer"]))],
             include_in_schema=tracardi.expose_gui_api)
 async def list_resources_by_type(query: str = None, limit:int = 200):
-    resources, total = await load_all_resources(search=query, limit=limit)
+    resources, total = await mysql.resource_dao.load_all_resources(search=query, limit=limit)
     return {
         "total": total,
         "grouped": {"Resources":resources}
@@ -120,7 +120,7 @@ async def get_resource_by_id(id: str) -> Optional[Resource]:
     Returns source data with given id.
     """
 
-    return await load_resource_by_id(id)
+    return await mysql.resource_dao.load_resource_by_id(id)
     #
     # record = await rs.load_by_id(id)
     # return record.map_to_object(map_to_resource)

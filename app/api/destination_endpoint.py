@@ -1,10 +1,8 @@
+import tracardi.service.storage.mysql.interface as mysql
+
 from typing import Optional, Dict
-
 from fastapi import APIRouter, Response, Depends
-
 from tracardi.service.destination.utils import get_destination_types
-from tracardi.service.storage.mysql.interface.destination import load_all_destinations, load_destination_by_id, \
-    insert_destination, delete_destination
 from .auth.permissions import Permissions
 from tracardi.domain.resource import Resource
 from tracardi.domain.destination import Destination
@@ -23,7 +21,7 @@ async def save_destination(destination: Destination):
     """
     Upserts destination data.
     """
-    await insert_destination(destination)
+    await mysql.destination_dao.insert_destination(destination)
 
 
 @router.get("/destination/{id}", tags=["destination"], response_model=Optional[Destination],
@@ -33,7 +31,7 @@ async def get_destination(id: str, response: Response):
     Returns destination or None if destination does not exist.
     """
 
-    destination = await load_destination_by_id(id)
+    destination = await mysql.destination_dao.load_destination_by_id(id)
 
     if not destination:
         response.status_code = 404
@@ -53,7 +51,7 @@ async def get_destinations_type_list():
 @router.get("/destinations/by_tag", tags=["destination"], response_model=dict,
             include_in_schema=tracardi.expose_gui_api)
 async def get_destinations(query: str = None, start: int = 0, limit: int = 100) -> dict:
-    destinations, total = await load_all_destinations(query, start, limit)
+    destinations, total = await mysql.destination_dao.load_all_destinations(query, start, limit)
 
     return {
         "total": total,
@@ -68,7 +66,7 @@ async def delete_destination_by_id(id: str):
     """
     Deletes destination with given id
     """
-    await delete_destination(id)
+    await mysql.destination_dao.delete_destination(id)
 
     return True
 
