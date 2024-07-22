@@ -6,10 +6,7 @@ from tracardi.service.destination.utils import get_destination_types
 from .auth.permissions import Permissions
 from tracardi.domain.resource import Resource
 from tracardi.domain.destination import Destination
-from tracardi.service.storage.mysql.mapping.resource_mapping import map_to_resource
-from tracardi.service.storage.mysql.service.resource_service import ResourceService
 from tracardi.config import tracardi
-from tracardi.service.license import License
 
 router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin", "developer"]))]
@@ -76,13 +73,5 @@ async def delete_destination_by_id(id: str):
             response_model=Dict[str, Resource],
             include_in_schema=tracardi.expose_gui_api)
 async def list_destination_resources():
-    rs = ResourceService()
-    records = await rs.load_resource_with_destinations()
+    return await mysql.resource_dao.list_resources_with_destinations()
 
-    result = {}
-    for resource in records.map_to_objects(map_to_resource):
-        if resource.is_destination():
-            if resource.destination.pro is True and not License.has_license():
-                continue
-            result[resource.id] = resource
-    return result
