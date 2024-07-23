@@ -65,7 +65,6 @@ from app.api import (
     cache_endpoint,
     configuration_endpoint,
     github_endpoint,
-    maintanace_endpoint,
     feed_endpoint,
     maintanace_endpoint,
     system_entity_property_endpoint,
