@@ -15,6 +15,7 @@ else:
 
 logger = get_logger(__name__)
 
+
 def _get_header_value(scope, key) -> Optional[str]:
     headers = scope.get('headers', None)
 

@@ -9,7 +9,6 @@ from app.api.auth.permissions import Permissions
 from tracardi.context import get_context
 from tracardi.domain.version import Version
 from tracardi.exceptions.log_handler import get_logger
-from tracardi.service.logger_manager import save_logs
 from tracardi.service.storage.elastic.interface import raw as raw_db
 from tracardi.service.storage.elastic.interface.indices_manager import check_indices_mappings_consistency
 from tracardi.domain.migration_payload import MigrationPayload
@@ -120,9 +119,6 @@ async def run_elasticsearch_migration(migration: MigrationPayload):
     except MigrationNotFoundException as e:
         raise HTTPException(status_code=404, detail=str(e))
 
-    finally:
-        await save_logs()
-
 
 @router.get("/migration/{from_db_version}", tags=["migration"], include_in_schema=tracardi.expose_gui_api)
 async def get_migration_schemas(from_db_version: str, from_tenant_name: str = None):
@@ -143,9 +139,6 @@ async def get_migration_schemas(from_db_version: str, from_tenant_name: str = No
 
     except MigrationNotFoundException as e:
         raise HTTPException(status_code=404, detail=str(e))
-
-    finally:
-        await save_logs()
 
 
 @router.get("/migrations", tags=["migration"], include_in_schema=tracardi.expose_gui_api, response_model=list)

@@ -17,6 +17,7 @@ router = APIRouter(
 
 cs = ConfigurationService()
 
+
 @router.get("/configuration/{id}", tags=["configuration"], include_in_schema=tracardi.expose_gui_api)
 async def get_configuration(id: str):
     record = await cs.load_by_id(id)
@@ -44,6 +45,7 @@ async def delete_configuration(id: str):
     Deletes configuration from the database
     """
     return await cs.delete_by_id(id)
+
 
 # Lists
 
