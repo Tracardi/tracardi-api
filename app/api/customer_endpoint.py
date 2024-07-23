@@ -14,10 +14,9 @@ from tracardi.service.tracking.storage.session_storage import load_session
 from tracardi.service.utils.date import now_in_utc
 from tracardi.domain.payload.customer_consent import CustomerConsent
 from tracardi.domain.profile import ConsentRevoke
-from tracardi.service.storage.mysql.mapping.event_source_mapping import map_to_event_source
 from tracardi.service.storage.mysql.service.consent_type_service import ConsentTypeService
-from tracardi.service.storage.mysql.service.event_source_service import EventSourceService
 from tracardi.service.utils.getters import get_entity_id
+from tracardi.service.storage.mysql.interface import event_source_dao
 
 router = APIRouter()
 
@@ -28,8 +27,7 @@ async def add_consent_type(data: CustomerConsent, all: Optional[bool] = False):
     Adds customer consent
     """
 
-    source = (await EventSourceService().load_by_id_in_deployment_mode(data.source.id)).map_to_object(
-        map_to_event_source)
+    source = await event_source_dao.load_event_source_by_id(data.source.id)
     session = await load_session(data.session.id)
 
     _redis = RedisClient()
