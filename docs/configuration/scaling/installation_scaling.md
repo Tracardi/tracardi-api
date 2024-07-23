@@ -56,9 +56,16 @@ To process data quickly, scale the number of background workers. Ensure there ar
 no data is left in the Apache Pulsar topic. Depending on the number of bulked events, you may need different numbers of
 background worker replicas.
 
-Monitor the backlog of Apache Pulsar via the Tracardi API using the `/queue/{namespace}/{topic}/backlog` endpoint. The
-namespace and topic you want to monitor are `system` and `functions`, respectively. The response will look something
-like this:
+```yaml title="Example of Helm Chart values file. Param replicas will scale the number of worker" linenums="1" hl_lines="4"
+# Worker configuration
+worker:
+  background:
+    replicas: 1  # Number of replicas for the background worker
+```
+
+Run a test and monitor the backlog of Apache Pulsar via the Tracardi API using the `/queue/{namespace}/{topic}/backlog`
+endpoint. This will tell you how quickly the data is consumed. The namespace and topic you want to monitor are `system`
+and `functions`, respectively. The response will look something like this:
 
 ```json
 {
@@ -74,51 +81,12 @@ like this:
       "subscription": "tracardi-function-subscription",
       "count": 0
     },
-    {
-      "partition": "persistent://tracardi/system/functions-partition-1",
-      "subscription": "tracardi-function-subscription",
-      "count": 0
-    },
-    {
-      "partition": "persistent://tracardi/system/functions-partition-4",
-      "subscription": "tracardi-function-subscription",
-      "count": 0
-    },
-    {
-      "partition": "persistent://tracardi/system/functions-partition-3",
-      "subscription": "tracardi-function-subscription",
-      "count": 0
-    },
-    {
-      "partition": "persistent://tracardi/system/functions-partition-6",
-      "subscription": "tracardi-function-subscription",
-      "count": 0
-    },
-    {
-      "partition": "persistent://tracardi/system/functions-partition-5",
-      "subscription": "tracardi-function-subscription",
-      "count": 0
-    },
-    {
-      "partition": "persistent://tracardi/system/functions-partition-8",
-      "subscription": "tracardi-function-subscription",
-      "count": 0
-    },
-    {
-      "partition": "persistent://tracardi/system/functions-partition-7",
-      "subscription": "tracardi-function-subscription",
-      "count": 0
-    },
-    {
-      "partition": "persistent://tracardi/system/functions-partition-9",
-      "subscription": "tracardi-function-subscription",
-      "count": 0
-    }
+    ...
   ]
 }
 ```
 
-Ensure the `count` on each partition is low or equal to 0. This number tells how many messages are not consumer. Near
+Ensure the `count` on each partition is low or equal to 0. This number tells how many messages are not consumed. Near
 realtime consumption will keep this number low.
 
 ## Infrastructure Scaling
@@ -136,13 +104,15 @@ traffic and data loads.
 
 ### Elasticsearch
 
-By default, Tracardi saves events in bulks to Elasticsearch with a bulk size of 500 events. Monitor if the background workers are filling
+By default, Tracardi saves events in bulks to Elasticsearch with a bulk size of 500 events. Monitor if the background
+workers are filling
 the predefined bulk size or if they trigger saving due to buffer timeout. Tracardi will save 500 events at once if they
 arrive within a specific timeframe (e.g., 30 seconds). If not, the buffer will be emptied, and only the collected events
 will be saved.
 
 To ensure Elasticsearch can handle the data, define the number of nodes and the number of shards for the event index.
-Changing the number of shards post-setup is not possible. When installing Tracardi use environment variables to configure at least
+Changing the number of shards post-setup is not possible. When installing Tracardi use environment variables to
+configure at least
 one data replica and set up shards for each index. Look for `ELASTIC_INDEX_REPLICAS` and `ELASTIC_INDEX_SHARDS`.
 
 Proper scaling ensures that Tracardi can efficiently handle large volumes of data, providing a robust solution for
@@ -170,23 +140,26 @@ Start by establishing the maximum number of events you expect to process.
 
 ElasticSearch plays a critical role in Tracardi's performance. Deciding on the number of nodes, shards per index, and
 data replicas is essential. Remember, altering the number of shards post-setup can be challenging. Utilize Tracardi
-environment variables to configure at least one data replica and set up shards for each index. Please look for `ELASTIC_INDEX_REPLICAS`, and `ELASTIC_INDEX_SHARDS`. 
+environment variables to configure at least one data replica and set up shards for each index. Please look
+for `ELASTIC_INDEX_REPLICAS`, and `ELASTIC_INDEX_SHARDS`.
 
 ### 4. Data Backup
 
 For ElasticSearch data, using S3 storage for backups is recommended. This should be defined during the ElasticSearch
-installation process to ensure data durability and availability. Please see Elasticsearch documentation for backup settings. 
+installation process to ensure data durability and availability. Please see Elasticsearch documentation for backup
+settings.
 
 ### 5. Data Partitioning
 
 Data partitioning is a critical strategy for managing large datasets. It involves dividing a database into distinct,
-parts to improve manageability, performance, and availability. Please see this [documentation on data partitioning](data_partitioning.md).
+parts to improve manageability, performance, and availability. Please see
+this [documentation on data partitioning](data_partitioning.md).
 
 ### 5. Data Retention in ElasticSearch
 
 Determine how long data should reside on hot nodes, considering that ElasticSearch doesn't define cold nodes by default.
 Plan the transition of data from hot to warm and cold nodes, setting up a comprehensive data retention policy within
-ElasticSearch. Please see Elasticsearch documentation for nodes settings. 
+ElasticSearch. Please see Elasticsearch documentation for nodes settings.
 
 ### 6. Apache Pulsar Data Policy
 
@@ -224,7 +197,6 @@ per batch, but this may need adjustment based on your specific needs.
 
 Set the logging level to "warning" by default to minimize data overhead. Detailed logging can significantly increase
 data volume and should be used selectively during system tuning phases. Please see `LOGGING_LEVEL` env variable.
-
 
 ### 13. Security
 
