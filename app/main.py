@@ -6,6 +6,7 @@ from datetime import datetime
 import sentry_sdk
 
 from app.middleware.context import ContextRequestMiddleware
+from tracardi.service.cluster.settings import GlobalSettingsBroadcaster
 from tracardi.service.elastic.connection import wait_for_connection
 from tracardi.service.license import License, SCHEDULER, IDENTIFICATION, COMPLIANCE, RESHAPING, REDIRECTS, VALIDATOR, \
     LICENSE, MULTI_TENANT
@@ -364,6 +365,10 @@ async def app_starts():
         print(f"Services {list(license.get_service_ids())}", flush=True)
     else:
         print("License: MIT + “Commons Clause” License Condition v1.0", flush=True)
+
+    bs = GlobalSettingsBroadcaster()
+    bs.start_background_listener()
+    logger.info("Starting Cluster Settings Broadcaster...")
 
 
 @application.middleware("http")

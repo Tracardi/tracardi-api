@@ -2,6 +2,7 @@ from collections import OrderedDict
 from typing import Optional
 
 import grpc
+from tracardi.service.storage.mysql.interface import resource_dao
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import ValidationError
 
@@ -15,7 +16,6 @@ from tracardi.domain.sign_up_data import SignUpData
 from app.api.proto.tracard_pro_client import TracardiProClient
 from tracardi.exceptions.log_handler import get_logger
 from tracardi.config import tracardi
-from tracardi.service.storage.mysql.service.resource_service import ResourceService
 from tracardi.service.storage.mysql.service.tracardi_pro_service import TracardiProService
 from tracardi.service.tracardi_http_client import HttpClient
 
@@ -31,8 +31,7 @@ tracardi_pro_client = TracardiProClient(host=tracardi.tracardi_pro_host,
 
 
 async def _store_resource_record(data: Resource):
-    rs = ResourceService()
-    return await rs.insert(data)
+    return await resource_dao.insert_resource(data)
 
 
 @router.get("/tpro/validate", tags=["tpro"], include_in_schema=tracardi.expose_gui_api)

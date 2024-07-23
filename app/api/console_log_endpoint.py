@@ -78,7 +78,7 @@ async def get_profile_logs(profile_id: str, sort: str = None):
             "date": sort
         }]
 
-    records, total = await console_log_db.load_by_profile(id, sort=sort)
+    records, total = await console_log_db.load_by_profile(profile_id, sort=sort)
     return {
         "result": list(records),
         "total": total
