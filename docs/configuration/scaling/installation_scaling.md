@@ -50,6 +50,16 @@ Each API call takes time to process, so a single API instance has a limited numb
 more API calls, replicate the `tracardi-api` Docker container. Starting with at least 10 replicas is a good approach.
 The API sends data to Apache Pulsar, which is then consumed by background workers.
 
+```yaml title="Example of Helm Chart values file. Param replicas will scale the number of private/public API" linenums="1" hl_lines="7"
+# API configuration
+api:
+  private:
+    replicas: 1  # Number of replicas for the private API
+
+  public:
+    replicas: 1  # Number of replicas for the public API (This is the API you need to scale for consumption) 
+```
+
 ### Scaling Background Workers
 
 To process data quickly, scale the number of background workers. Ensure there are enough workers to process data so that
