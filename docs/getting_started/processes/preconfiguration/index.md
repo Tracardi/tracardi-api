@@ -25,8 +25,7 @@ deployment and consistent operation.
 First, obtain the JSON configuration for your resources, event sources, and destinations from the GUI. Ensure your
 system is properly configured and running smoothly. For example, to get the configuration for event sources, navigate to
 the event sources section, select the desired event source, and click the "JSON" button to display the current
-configuration. You will need this JSON configuration to predefine your system settings. This configuration is crucial
-for defining the preconfigured settings in your Helm chart.
+configuration. You will need this JSON configuration to predefine your system settings. 
 
 ### Step 2: Define Helm Values
 
@@ -104,11 +103,12 @@ Note that each element in the preconfiguration, such as a destination, has a key
 ```
 
 **Explanation:**
-    - **config.preConfiguration:** Contains the JSON configuration for event sources, resources, and destinations.
-    - **eventSources:** JSON object defining the event sources. Each event source must have a unique key (ID) and its
-      configuration.
-    - **resources:** JSON object defining the resources. Each resource must have a unique key (ID) and its
-      configuration.
-    - **destinations:** JSON object defining the destinations. Each destination must have a unique key (ID) and its
-      configuration.
-    - **locked:** Attribute must be set to `true` to ensure the configuration cannot be modified post-deployment.
+
+  * **config.preConfiguration:** Contains the JSON configuration for event sources, resources, and destinations.
+  * **eventSources:** JSON object defining the event sources. Each event source must have a unique key (ID) and its
+    configuration.
+  * **resources:** JSON object defining the resources. Each resource must have a unique key (ID) and its
+    configuration.
+  * **destinations:** JSON object defining the destinations. Each destination must have a unique key (ID) and its
+    configuration.
+  * **locked:** Attribute must be set to `true` to ensure the configuration cannot be modified post-deployment.
