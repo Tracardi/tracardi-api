@@ -1,4 +1,4 @@
-# Preconfiguring Resources, Event Sources, and Destinations Using Helm
+# Preconfiguration
 
 
 !!! Note 
