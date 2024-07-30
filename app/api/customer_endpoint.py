@@ -1,22 +1,13 @@
-from datetime import timedelta
 from typing import Optional
 
-from fastapi import APIRouter, HTTPException
-from pytimeparse.timeparse import timeparse
-
-from tracardi.service.storage.mysql.mapping.consent_type_mapping import map_to_consent_type
-from tracardi.service.storage.redis.collections import Collection
-from tracardi.service.storage.redis.driver.redis_client import RedisClient
-from tracardi.service.tracking.locking import Lock, async_mutex
-from tracardi.service.storage.elastic.interface.collector.mutation import profile as mutation_profile_db
-from tracardi.service.storage.elastic.interface.collector.load.profile import load_profile
-from tracardi.service.tracking.storage.session_storage import load_session
-from tracardi.service.utils.date import now_in_utc
+from fastapi import APIRouter
+from tracardi.service.license import License
 from tracardi.domain.payload.customer_consent import CustomerConsent
-from tracardi.domain.profile import ConsentRevoke
-from tracardi.service.storage.mysql.service.consent_type_service import ConsentTypeService
-from tracardi.service.utils.getters import get_entity_id
-from tracardi.service.storage.mysql.interface import event_source_dao
+
+if License.has_license():
+    from com_tracardi.service.consent.consent_manager import add_consent
+else:
+    from tracardi.service.consent.consent_manager import add_consent
 
 router = APIRouter()
 
@@ -26,46 +17,4 @@ async def add_consent_type(data: CustomerConsent, all: Optional[bool] = False):
     """
     Adds customer consent
     """
-
-    source = await event_source_dao.load_event_source_by_id(data.source.id)
-    session = await load_session(data.session.id)
-
-    _redis = RedisClient()
-    profile_key = Lock.get_key(Collection.lock_tracker, "profile", get_entity_id(data.profile))
-    profile_lock = Lock(_redis, profile_key, default_lock_ttl=3)
-
-    async with async_mutex(profile_lock, name='add_consent_type'):
-
-        profile = await load_profile(data.profile.id)
-
-        if not source or not profile or not session:
-            raise HTTPException(status_code=403, detail="Access denied")
-
-        if all:
-            cts = ConsentTypeService()
-            consent_type_records = await cts.load_all()
-            for consent_type in consent_type_records.map_to_objects(map_to_consent_type):
-                if consent_type.auto_revoke:
-                    try:
-                        seconds = timeparse(consent_type.auto_revoke)
-                        now = now_in_utc()
-                        revoke = now + timedelta(seconds=seconds)
-                        revoke = ConsentRevoke(revoke=revoke)
-                    except Exception:
-                        revoke = ConsentRevoke()
-
-                else:
-                    revoke = ConsentRevoke()
-
-                profile.consents[consent_type.id] = revoke
-
-        else:
-            for consent, flag in data.consents.items():
-                if flag:
-                    profile.consents[consent] = ConsentRevoke()
-                else:
-                    if consent in profile.consents:
-                        del profile.consents[consent]
-
-        profile.aux['consents'] = {"granted": True}
-        return await mutation_profile_db.save_profile(profile, refresh=True)
+    await add_consent(data, all)

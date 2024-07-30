@@ -73,6 +73,8 @@ class TracardiProClient(object):
 
     async def get_available_services(self, query="", category=""):
         message = pb2.ServiceQuery(query=query, category=category, version=tracardi.image_tag)
+        logger.info(f"Fetched PRO services fro version {tracardi.image_tag}")
+        message = pb2.ServiceQuery(query=query, category=category, version=tracardi.image_tag)
 
         services = self.stub.get_available_services(message, metadata=[('token', await get_tpro_token())])
         return json_format.MessageToDict(services)
