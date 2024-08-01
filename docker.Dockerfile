@@ -31,10 +31,12 @@ RUN rm -rf app/tracker/index.css
 
 WORKDIR /
 
-### Copy manual
+### Copy manual - from tracardi/doumentation
+
 COPY docs app/docs/
 
-#
+# Remove after 30-08-2024
+# Commented bo nie bedziemy robic dokumentacji w kazdym dokerze
 #WORKDIR /docs
 #
 ### Install docs dependencies
