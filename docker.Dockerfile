@@ -33,7 +33,7 @@ WORKDIR /
 
 ## Copy manual
 COPY docs docs/
-COPY mkdocs.yml /
+COPY docs/mkdocs.yml /
 
 ## Install docs dependencies
 RUN pip --default-timeout=240 install -r docs/requirements.txt
