@@ -31,19 +31,19 @@ RUN rm -rf app/tracker/index.css
 
 WORKDIR /
 
-## Copy manual
-COPY docs docs/
-
-WORKDIR /docs
-
-## Install docs dependencies
-RUN pip --default-timeout=240 install -r requirements.txt
-
-# Install manual
-
-RUN mkdocs build
-RUN mv site app
-RUN mv docs app
+### Copy manual
+#COPY docs docs/
+#
+#WORKDIR /docs
+#
+### Install docs dependencies
+#RUN pip --default-timeout=240 install -r requirements.txt
+#
+## Install manual
+#
+#RUN mkdocs build
+#RUN mv site app
+#RUN mv docs app
 
 # Start up
 
