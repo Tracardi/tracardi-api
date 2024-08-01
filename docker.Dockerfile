@@ -37,7 +37,7 @@ COPY docs docs/
 WORKDIR /docs
 
 ## Install docs dependencies
-RUN pip --default-timeout=240 install -r docs/requirements.txt
+RUN pip --default-timeout=240 install -r requirements.txt
 
 # Install manual
 
