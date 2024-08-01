@@ -31,7 +31,8 @@ RUN rm -rf app/tracker/index.css
 
 WORKDIR /
 
-### Copy manual - from tracardi/doumentation
+# Prepare in CD from REPO tracardi/doumentation
+# +:docs => docs
 
 COPY docs app/docs/
 
