@@ -233,7 +233,7 @@ if os.path.exists(documentation):
                           html=True,
                           directory=documentation),
                       name="documentation")
-
+# Docs are pulled from tracardi/documentation - from folder docs - by CI/CD
 md_docs = os.path.join(_local_dir, "../docs")
 
 if os.path.exists(md_docs):
