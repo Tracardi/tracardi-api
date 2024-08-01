@@ -234,7 +234,7 @@ if os.path.exists(documentation):
                           directory=documentation),
                       name="documentation")
 
-md_docs = os.path.join(_local_dir, "../docs/docs")
+md_docs = os.path.join(_local_dir, "../docs")
 
 if os.path.exists(md_docs):
     application.mount("/manual/en/docs",
