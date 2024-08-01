@@ -27,4 +27,5 @@ Identity resolution includes several key processes:
 
 !!! Note
 
-    The profile ID sent in the tracking payload may be different in the Tracardi response. For more details, see [why my profile ID in the response from Tracardi is different from the one I have sent](merging.md#why-my-profile-id-in-the-response-from-tracardi-is-different-then-the-one-i-have-sent).
+    The profile ID sent in the tracking payload may be different in the Tracardi response. For more details, 
+    see [why my profile ID in the response from Tracardi is different from the one I have sent](merging.md).

@@ -21,9 +21,6 @@ markdown_extensions:
       options:
         custom_icons:
           - overrides/.icons
-#plugins:
-#  - git-revision-date-localized:
-#      enable_creation_date: true
 theme:
   name: material
   features:
@@ -45,6 +42,8 @@ theme:
   icon:
     repo: fontawesome/brands/github
 extra:
+  version:
+    provider: mike
   social:
     - icon: fontawesome/brands/twitter
       link: https://twitter.com/tracardi
