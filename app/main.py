@@ -234,7 +234,7 @@ if os.path.exists(documentation):
                           directory=documentation),
                       name="documentation")
 
-md_docs = os.path.join(_local_dir, "../docs")
+md_docs = os.path.join(_local_dir, "../docs/docs")
 
 if os.path.exists(md_docs):
     application.mount("/manual/en/docs",
@@ -401,4 +401,4 @@ async def app_shutdown():
 if __name__ == "__main__":
     import uvicorn
 
-    uvicorn.run("app.main:application", host="0.0.0.0", port=8686, log_level='info', workers=1)
+    uvicorn.run("app.main:application", host="0.0.0.0", port=18686, log_level='info', workers=1)
