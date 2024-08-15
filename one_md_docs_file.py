@@ -27,7 +27,7 @@ def merge_md_files(md_files, output_file):
 
 
 if __name__ == "__main__":
-    root_folder = "/home/risto/PycharmProjects/tracardi-api/docs"  # Replace with the path to your folder
+    root_folder = "/home/risto/PycharmProjects/tracardi-api/docs/docs"  # Replace with the path to your folder
     output_file = "documentation.md"  # Name of the merged output file
     skip_folders = ['ai', 'hacktoberfest']  # Specify folders to skip (e.g., 'ai')
 

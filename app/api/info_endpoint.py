@@ -55,7 +55,9 @@ async def get_current_backend_version():
 
         # New license
 
-        version["license"] = {}
+        version["license"] = {
+            "type": "Propriety License"
+        }
         if license.id:
             version['license']['id'] = license.id
         if license.version:
@@ -66,7 +68,10 @@ async def get_current_backend_version():
         version['license']['expires'] = datetime.fromtimestamp(license.expires)
         version['license']['services'] = list(license.get_service_ids())
     else:
-        version['owner'] = "Tracardi"
-        version['expires'] = "Never"
-        version['licenses'] = ["MIT + Common Clause"]
+        version['license'] = {
+            "owner": "Tracardi",
+            "company": "Tracardi",
+            "expires": "Never",
+            "type": ["Open Source (MIT + Common Clause)"]
+        }
     return version
