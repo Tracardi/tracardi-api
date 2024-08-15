@@ -31,18 +31,23 @@ RUN rm -rf app/tracker/index.css
 
 WORKDIR /
 
-## Copy manual
-COPY docs docs/
-COPY mkdocs.yml /
+# Prepare in CD from REPO tracardi/doumentation
+# +:docs => docs
 
-## Install docs dependencies
-RUN pip --default-timeout=240 install -r docs/requirements.txt
+COPY docs app/docs/
 
-# Install manual
-
-RUN mkdocs build
-RUN mv site app
-RUN mv docs app
+# Remove after 30-08-2024
+# Commented bo nie bedziemy robic dokumentacji w kazdym dokerze
+#WORKDIR /docs
+#
+### Install docs dependencies
+#RUN pip --default-timeout=240 install -r requirements.txt
+#
+## Install manual
+#
+#RUN mkdocs build
+#RUN mv site app
+#RUN mv docs app
 
 # Start up
 

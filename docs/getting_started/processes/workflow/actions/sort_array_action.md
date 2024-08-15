@@ -1,1 +1,0 @@
-Developer have not provided the documentation.
