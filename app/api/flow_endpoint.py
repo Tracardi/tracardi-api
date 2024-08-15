@@ -1,6 +1,5 @@
 from tracardi.service.storage.elastic.interface.event import load_event_from_db
 from tracardi.service.storage.elastic.interface.collector.load.session import load_session_from_db
-from tracardi.service.storage.elastic.interface.collector.load.profile import load_profile
 from tracardi.service.utils.date import now_in_utc
 
 from datetime import datetime
@@ -28,6 +27,8 @@ from tracardi.domain.profile import Profile
 from tracardi.domain.session import Session, SessionMetadata, SessionTime
 from .auth.permissions import Permissions
 from tracardi.config import tracardi
+
+from tracardi.service.storage.interface import profile_load_dao
 
 
 router = APIRouter(
@@ -257,7 +258,7 @@ async def debug_flow(flow: FlowGraph, event_id: Optional[str] = None):
         source = event.source
 
         if event.has_profile():
-            profile = await load_profile(event.profile.id)
+            profile = await profile_load_dao.load_profile(event.profile.id)
             if profile is None:
                 raise ValueError(f"Could not find profile id {event.profile.id} attached to event id {event_id}. "
                                  f"Debugging will fail if profile is expected.")
