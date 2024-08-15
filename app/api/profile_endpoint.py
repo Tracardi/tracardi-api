@@ -9,7 +9,8 @@ from tracardi.service.storage.driver.elastic import profile as profile_db
 from tracardi.service.storage.elastic.interface.profile import load_modified_top_profiles
 from tracardi.service.storage.elastic.interface.event import load_events_by_profile_and_field
 from tracardi.service.storage.index import Resource
-from tracardi.service.storage.interface import profile_mutation_dao
+from tracardi.service.storage.interface import profile_mutation_dao, profile_load_dao
+
 
 from .auth.permissions import Permissions
 from tracardi.config import tracardi
@@ -70,8 +71,8 @@ async def get_profile_by_id(profile_id: str, response: Response) -> Optional[dic
     Returns profile with given ID (str)
     """
 
-    # This is acceptable - we see the profile from the database
-    record = await profile_db.load_by_id(profile_id)
+    # This is acceptable - we see the profile from the database, no cache
+    record = await profile_load_dao.load_profile_by_id(profile_id)
 
     if record is None:
         response.status_code = 404
