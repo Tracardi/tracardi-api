@@ -1,3 +1,3 @@
 # Manual
 
-Manual is available at: http://localhost:8686/documentation/
+Manual is available at: https://tracardi.github.io/documentation/latest/
