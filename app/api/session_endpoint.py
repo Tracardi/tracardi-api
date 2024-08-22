@@ -4,10 +4,10 @@ from fastapi import Depends
 from fastapi.responses import Response
 from tracardi.domain.session import Session
 from tracardi.service.storage.driver.elastic.session import _aggregate_session
-from tracardi.service.storage.elastic.interface.collector.load.session import count_sessions_online_in_db, \
+from tracardi.service.storage.elastic.dal.collector.load.session import count_sessions_online_in_db, \
     count_online_sessions_by_location_in_db, count_sessions_in_db, refresh_session_db, flush_session_db, load_session_from_db, load_nth_last_session_for_profile
-from tracardi.service.storage.elastic.interface.collector.mutation.session import delete_session_from_db
-from tracardi.service.storage.elastic.interface.collector.mutation.session import save_sessions_in_db
+from tracardi.service.storage.elastic.dal.collector.mutation.session import delete_session_from_db
+from tracardi.service.storage.elastic.dal.collector.mutation.session import save_sessions_in_db
 from tracardi.service.storage.index import Resource
 from .auth.permissions import Permissions
 from tracardi.config import tracardi

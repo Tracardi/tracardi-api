@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends
 from app.api.auth.permissions import Permissions
 from tracardi.config import tracardi
 
-from tracardi.service.storage.elastic.interface import console_log as console_log_db
+from tracardi.service.storage.elastic.dal import console_log as console_log_db
 
 router = APIRouter()
 

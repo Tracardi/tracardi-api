@@ -12,7 +12,7 @@ from tracardi.service.storage.elastic.driver.elastic_client import ElasticClient
 
 from app.api.auth.permissions import Permissions
 from tracardi.config import tracardi
-from tracardi.service.storage.elastic.interface import raw as raw_db
+from tracardi.service.storage.elastic.dal import raw as raw_db
 from datetime import datetime
 
 router = APIRouter(

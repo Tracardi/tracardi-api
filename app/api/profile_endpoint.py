@@ -6,8 +6,8 @@ from fastapi.responses import Response
 
 from tracardi.domain.profile import Profile
 from tracardi.service.storage.driver.elastic import profile as profile_db
-from tracardi.service.storage.elastic.interface.profile import load_modified_top_profiles
-from tracardi.service.storage.elastic.interface.event import load_events_by_profile_and_field
+from tracardi.service.storage.elastic.dal.profile import load_modified_top_profiles
+from tracardi.service.storage.elastic.dal.event import load_events_by_profile_and_field
 from tracardi.service.storage.index import Resource
 from tracardi.service.storage.interface import profile_mutation_collector_dao, profile_load_collector_dao, profile_gui_dao
 

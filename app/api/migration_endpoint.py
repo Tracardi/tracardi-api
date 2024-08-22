@@ -9,8 +9,8 @@ from app.api.auth.permissions import Permissions
 from tracardi.context import get_context
 from tracardi.domain.version import Version
 from tracardi.exceptions.log_handler import get_logger
-from tracardi.service.storage.elastic.interface import raw as raw_db
-from tracardi.service.storage.elastic.interface.indices_manager import check_indices_mappings_consistency
+from tracardi.service.storage.elastic.dal import raw as raw_db
+from tracardi.service.storage.elastic.dal.indices_manager import check_indices_mappings_consistency
 from tracardi.domain.migration_payload import MigrationPayload
 from tracardi.process_engine.migration.migration_manager import MigrationManager, MigrationNotFoundException
 from tracardi.service.url_constructor import construct_elastic_url

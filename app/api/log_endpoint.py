@@ -4,7 +4,7 @@
 # from app.api.auth.permissions import Permissions
 # from tracardi.config import server
 # from tracardi.config import tracardi
-# from tracardi.service.storage.elastic.interface import log as log_db
+# from tracardi.service.storage.elastic.dal import log as log_db
 #
 # router = APIRouter(
 #     dependencies=[Depends(Permissions(roles=["maintainer"]))]

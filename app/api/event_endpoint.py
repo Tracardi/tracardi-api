@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, Response
 from tracardi.domain.enum.time_span import TimeSpan
 from tracardi.service import events
 from tracardi.service.events import get_default_event_type_schema
-from tracardi.service.storage.elastic.interface.event import aggregate_events_by_type_and_source, refresh_event_db, \
+from tracardi.service.storage.elastic.dal.event import aggregate_events_by_type_and_source, refresh_event_db, \
     flush_event_db, count_events_in_db, load_events_avg_requests, load_event_avg_process_time, \
     aggregate_event_types_from_db, aggregate_event_tags_from_db, aggregate_event_statuses_from_db, \
     aggregate_event_devices_geo_from_db, aggregate_event_os_names_from_db, aggregate_event_channels_from_db, \

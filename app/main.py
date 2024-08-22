@@ -11,7 +11,7 @@ from tracardi.service.elastic.connection import wait_for_connection
 from tracardi.service.license import License, SCHEDULER, IDENTIFICATION, COMPLIANCE, RESHAPING, REDIRECTS, VALIDATOR, \
     LICENSE, MULTI_TENANT
 from tracardi.service.logging.formater import CustomFormatter
-from tracardi.service.storage.elastic.interface.client import elastic_close
+from tracardi.service.storage.elastic.dal.client import elastic_close
 from tracardi.service.storage.mysql.service.mysql_installation import wait_for_mysql_connection
 from tracardi.service.storage.redis.driver.redis_client import wait_for_redis_connection
 

@@ -2,11 +2,11 @@ from fastapi import APIRouter, Depends, HTTPException
 
 from app.api.auth.permissions import Permissions
 from tracardi.config import tracardi
-from tracardi.service.storage.elastic.interface import raw as raw_db
+from tracardi.service.storage.elastic.dal import raw as raw_db
 from tracardi.service.storage.elastic.driver.elastic_client import ElasticClient
 from tracardi.service.storage.index import Resource
-from tracardi.service.storage.elastic.interface.indices_manager import check_indices_mappings_consistency
-from tracardi.service.storage.elastic.interface.mapping import get_mappings_by_field_type
+from tracardi.service.storage.elastic.dal.indices_manager import check_indices_mappings_consistency
+from tracardi.service.storage.elastic.dal.mapping import get_mappings_by_field_type
 
 router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin", "maintainer"]))]
