@@ -4,7 +4,7 @@ from tracardi.context import ServerContext, Context
 from test.utils import get_test_tenant
 from com_tracardi.service.merging.facade import compute_one_profile_in_db
 
-from tracardi.service.storage.interface import profile_load_dao
+from tracardi.service.storage.interface import profile_load_collector_dao
 
 from datetime import datetime, timedelta
 from test.utils import Endpoint
@@ -19,7 +19,7 @@ prev_month = (datetime.now() - timedelta(days=32)).month
 
 async def should_deduplicate_profile():
     with ServerContext(Context(production=False, tenant=get_test_tenant())):
-        profile = await profile_load_dao.load_profile('a')
+        profile = await profile_load_collector_dao.load_profile('a')
 
         profile, del_ids = await compute_one_profile_in_db(profile)
 

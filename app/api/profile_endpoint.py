@@ -9,13 +9,12 @@ from tracardi.service.storage.driver.elastic import profile as profile_db
 from tracardi.service.storage.elastic.interface.profile import load_modified_top_profiles
 from tracardi.service.storage.elastic.interface.event import load_events_by_profile_and_field
 from tracardi.service.storage.index import Resource
-from tracardi.service.storage.interface import profile_mutation_dao, profile_load_dao
+from tracardi.service.storage.interface import profile_mutation_collector_dao, profile_load_collector_dao, profile_gui_dao
 
 
 from .auth.permissions import Permissions
 from tracardi.config import tracardi
 
-from tracardi.service.storage.interface import profile_load_dao
 
 router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer", "maintainer"]))]
@@ -25,16 +24,21 @@ router = APIRouter(
 @router.get("/profile/count", tags=["profile"],
             include_in_schema=tracardi.expose_gui_api)
 async def count_profiles():
-    return await profile_db.count()
+    """
+    Returns:
+        {
+          "count": 77
+        }
+    """
+    return await profile_gui_dao.profile_count()
 
 
 @router.get("/profile/duplicates/count", tags=["profile"],
             include_in_schema=tracardi.expose_gui_api)
 async def count_profile_duplicates(id: str):
-    profile = await profile_load_dao.load_profile(id)
+    profile = await profile_load_collector_dao.load_profile(id.strip())
     if profile:
-        result = await profile_db.count_profile_duplicates(profile.ids)
-        return result.get("count", 0)
+        return await profile_gui_dao.count_profile_duplicates(profile.ids)
     return 0
 
 
@@ -72,7 +76,7 @@ async def get_profile_by_id(profile_id: str, response: Response) -> Optional[dic
     """
 
     # This is acceptable - we see the profile from the database, no cache
-    record = await profile_load_dao.load_profile_by_id(profile_id)
+    record = await profile_load_collector_dao.load_profile_by_id(profile_id)
 
     if record is None:
         response.status_code = 404
@@ -93,7 +97,7 @@ async def delete_profile_by_id(id: str):
     """
     # Delete from all indices
     index = Resource().get_index_constant("profile")
-    await profile_mutation_dao.delete_profile(id, index=index.get_multi_storage_alias())
+    await profile_mutation_collector_dao.delete_profile(id, index=index.get_multi_storage_alias())
 
 
 @router.get("/profile/{profile_id}/by/{field}", tags=["profile"], include_in_schema=tracardi.expose_gui_api)
