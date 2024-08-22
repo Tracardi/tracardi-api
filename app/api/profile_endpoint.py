@@ -5,16 +5,16 @@ from fastapi import Depends
 from fastapi.responses import Response
 
 from tracardi.domain.profile import Profile
-from tracardi.service.storage.driver.elastic import profile as profile_db
-from tracardi.service.storage.elastic.dal.profile import load_modified_top_profiles
+
+from tracardi.service.storage.elastic.dal.collector.mutation.profile import save
+from tracardi.service.storage.elastic.dal.profile import load_modified_top_profiles, refresh, flush
 from tracardi.service.storage.elastic.dal.event import load_events_by_profile_and_field
 from tracardi.service.storage.index import Resource
-from tracardi.service.storage.interface import profile_mutation_collector_dao, profile_load_collector_dao, profile_gui_dao
-
+from tracardi.service.storage.interface import profile_mutation_collector_dao, profile_load_collector_dao, \
+    profile_gui_dao
 
 from .auth.permissions import Permissions
 from tracardi.config import tracardi
-
 
 router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer", "maintainer"]))]
@@ -48,7 +48,7 @@ async def import_profiles(profiles: List[Profile]):
     """
     Saves given profiles (list of profiles) to database. Accessible by roles: "admin"
     """
-    return await profile_db.save_all(profiles)
+    return await save(profiles)
 
 
 @router.get("/profiles/refresh", tags=["profile"], include_in_schema=tracardi.expose_gui_api)
@@ -56,7 +56,7 @@ async def refresh_profile():
     """
     Refreshes profile index
     """
-    return await profile_db.refresh()
+    return await refresh()
 
 
 @router.get("/profiles/flash", tags=["profile"], include_in_schema=tracardi.expose_gui_api)
@@ -64,7 +64,7 @@ async def flash_profile():
     """
     Flashes profile index
     """
-    return await profile_db.flush()
+    return await flush()
 
 
 @router.get("/profile/{profile_id}", tags=["profile"],
@@ -105,21 +105,21 @@ async def profile_data_by(profile_id: str, field: str, table: bool = False):
     return await load_events_by_profile_and_field(profile_id, field, table)
 
 
-@router.get("/profiles/{qualify}/segment/{segment_names}", tags=["profile"], include_in_schema=tracardi.expose_gui_api)
-async def find_profiles_by_segments(segment_names: str, qualify: str):
-    """
-    Returns profiles in given segments.
-
-    Segment names is a string with segment names, like: segment1,segment2
-    Qualify takes any string like: any or all
-    """
-
-    if qualify.lower() == 'any':
-        condition = 'should'
-    else:
-        condition = 'must'
-    records = await profile_db.load_profiles_by_segments(segment_names.split(','), condition=condition)
-    return records.dict()
+# @router.get("/profiles/{qualify}/segment/{segment_names}", tags=["profile"], include_in_schema=tracardi.expose_gui_api)
+# async def find_profiles_by_segments(segment_names: str, qualify: str):
+#     """
+#     Returns profiles in given segments.
+#
+#     Segment names is a string with segment names, like: segment1,segment2
+#     Qualify takes any string like: any or all
+#     """
+#
+#     if qualify.lower() == 'any':
+#         condition = 'should'
+#     else:
+#         condition = 'must'
+#     records = await profile_db.load_profiles_by_segments(segment_names.split(','), condition=condition)
+#     return records.dict()
 
 
 @router.get('/profiles/top/modified', tags=['profile'], include_in_schema=tracardi.expose_gui_api)
