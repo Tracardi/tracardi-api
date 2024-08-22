@@ -81,8 +81,8 @@ async def _upsert_flow(workflow: Flow, rearrange_nodes: Optional[bool] = False):
 
 
 @router.post("/flow/draft/nodes/rearrange",
-             tags=["flow"], 
-             response_model=Flow, 
+             tags=["flow"],
+             response_model=Flow,
              include_in_schema=tracardi.expose_gui_api)
 async def rearrange_flow(flow: Flow):
     """
@@ -127,8 +127,8 @@ async def load_flow_draft(id: str, response: Response):
     return flow_record.get_empty_workflow(id)
 
 
-@router.get("/flow/metadata/{id}", 
-            tags=["flow"], 
+@router.get("/flow/metadata/{id}",
+            tags=["flow"],
             response_model=Optional[FlowRecord],
             include_in_schema=tracardi.expose_gui_api)
 async def get_flow_details(id: str):
@@ -143,7 +143,7 @@ async def get_flow_details(id: str):
     return flow_record
 
 
-@router.post("/flow/metadata", 
+@router.post("/flow/metadata",
              tags=["flow"],
              include_in_schema=tracardi.expose_gui_api)
 async def upsert_flow_details(flow_metadata: FlowMetaData):
@@ -172,12 +172,29 @@ async def upsert_flow_details(flow_metadata: FlowMetaData):
         return await ws.insert(flow_record)
 
     else:
-        return await ws.update_by_id(flow_metadata.id, new_data=dict(
-            name=flow_metadata.name,
-            description=flow_metadata.description,
-            tags=",".join(flow_metadata.tags),
-            type=flow_metadata.type
-        ))
+        if isinstance(flow_record.draft, dict):
+
+            flow_record.draft['name'] = flow_metadata.name
+            flow_record.draft['description'] = flow_metadata.description
+            flow_record.draft['tags'] = flow_metadata.tags
+
+            return await ws.update_by_id(flow_metadata.id, new_data=dict(
+                name=flow_metadata.name,
+                description=flow_metadata.description,
+                tags=",".join(flow_metadata.tags),
+                type=flow_metadata.type,
+                draft=flow_record.draft
+            ))
+
+        else:
+
+            return await ws.update_by_id(flow_metadata.id, new_data=dict(
+                name=flow_metadata.name,
+                description=flow_metadata.description,
+                tags=",".join(flow_metadata.tags),
+                type=flow_metadata.type
+            ))
+
 
 # TODO obsolete delete
 @router.post("/flow/draft/metadata", tags=["flow"],
@@ -313,7 +330,7 @@ async def debug_flow(flow: FlowGraph, event_id: Optional[str] = None):
     }
 
 
-@router.delete("/flow/{id}", tags=["flow"], 
+@router.delete("/flow/{id}", tags=["flow"],
                response_model=dict,
                include_in_schema=tracardi.expose_gui_api)
 async def delete_flow(id: str):
