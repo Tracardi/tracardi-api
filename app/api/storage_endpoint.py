@@ -4,8 +4,8 @@ from app.api.auth.permissions import Permissions
 from tracardi.config import tracardi
 from tracardi.service.storage.elastic.interface.gui.storage import get_indices_mappings_consistency, \
     load_index_mapping_metadata, remove_index
-from tracardi.service.storage.elastic.interface.gui.mapping import load_mappings_by_field_type, load_index_field_names,\
-    load_task_status
+from tracardi.service.storage.elastic.interface.gui.mapping import load_mappings_by_field_type, load_index_field_names
+from tracardi.service.storage.elastic.interface.gui.storage import load_task_status
 from tracardi.service.storage.index import Resource
 
 router = APIRouter(
@@ -43,7 +43,8 @@ async def return_index_mapping_metadata(index: str, filter: str = None):
     return load_index_mapping_metadata(index, filter)
 
 
-@router.get("/storage/mapping/{index}/metadata/type/{field_types}", tags=["storage"], include_in_schema=tracardi.expose_gui_api,
+@router.get("/storage/mapping/{index}/metadata/type/{field_types}", tags=["storage"],
+            include_in_schema=tracardi.expose_gui_api,
             response_model=dict)
 async def get_index_mapping_metadata(index: str, field_types: str):
     """
@@ -61,7 +62,6 @@ async def get_index_mapping_metadata(index: str, field_types: str):
 @router.get("/storage/mapping/{index}", tags=["storage"], include_in_schema=tracardi.expose_gui_api,
             response_model=list)
 async def get_index_mapping(index: str):
-
     # TODO check if this is used
 
     """
