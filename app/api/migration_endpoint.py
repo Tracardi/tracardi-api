@@ -9,12 +9,12 @@ from app.api.auth.permissions import Permissions
 from tracardi.context import get_context
 from tracardi.domain.version import Version
 from tracardi.exceptions.log_handler import get_logger
-from tracardi.service.storage.elastic.dal import raw as raw_db
 from tracardi.service.storage.elastic.dal.indices_manager import check_indices_mappings_consistency
 from tracardi.domain.migration_payload import MigrationPayload
 from tracardi.process_engine.migration.migration_manager import MigrationManager, MigrationNotFoundException
 from tracardi.service.url_constructor import construct_elastic_url
 from tracardi.config import elastic, tracardi
+from tracardi.service.storage.elastic.interface.gui import storage as storage_dao
 
 
 router = APIRouter(
@@ -51,8 +51,8 @@ async def check_migration_consistency(version: str):
     }
 
     # Find differences in index counts between versions
-    current_version = {index: count async for index, count in raw_db.count_all_indices_by_alias()}
-    prev_version = {index: count async for index, count in raw_db.count_all_indices_by_alias()}
+    current_version = {index: count async for index, count in storage_dao.count_all_indices_by_alias()}
+    prev_version = {index: count async for index, count in storage_dao.count_all_indices_by_alias()}
 
     count_errors = defaultdict(list)
     for index, count in current_version.items():

@@ -4,13 +4,13 @@ from fastapi import APIRouter
 from fastapi import Depends
 
 from tracardi.service.query.autocomplete import KQLAutocomplete
-from tracardi.service.storage.elastic.dal import raw as raw_db
 from tracardi.domain.enum.indexes_histogram import IndexesHistogram
 from tracardi.domain.enum.indexes_search import IndexesSearch
 from tracardi.domain.sql_query import SqlQuery
 from tracardi.domain.time_range_query import DatetimeRangePayload
 from .auth.permissions import Permissions
 from tracardi.config import tracardi
+from tracardi.service.storage.elastic.interface.gui import storage as storage_dao
 
 router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer", "maintainer"]))]
@@ -39,7 +39,7 @@ async def autocomplete_kql(index: IndexesSearch, query: Optional[str] = ""):
 async def select_by_sql(index: IndexesSearch, query: Optional[SqlQuery] = None):
     if query is None:
         query = SqlQuery()
-    result = await raw_db.index(index.value).query_by_sql(query.where, start=0, limit=query.limit)
+    result = await storage_dao.query_by_sql(index.value, query.where, start=0, limit=query.limit)
     return result.dict()
 
 
@@ -54,7 +54,7 @@ async def time_range_with_sql(index: IndexesHistogram, query: DatetimeRangePaylo
         page_size = query.limit
         query.start = page_size * page
         query.limit = page_size
-    return await raw_db.index(index.value).query_by_sql_in_time_range(query)
+    return await storage_dao.query_by_sql_in_time_range(index.value, query)
 
 
 @router.post("/{index}/select/histogram",
@@ -62,4 +62,4 @@ async def time_range_with_sql(index: IndexesHistogram, query: DatetimeRangePaylo
              include_in_schema=tracardi.expose_gui_api)
 async def histogram_with_sql(index: IndexesHistogram, query: DatetimeRangePayload, group_by: str = None):
 
-    return await raw_db.index(index.value).histogram_by_sql_in_time_range(query, group_by)
+    return await storage_dao.histogram_by_sql_in_time_range(index.value, query, group_by)
