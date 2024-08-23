@@ -8,11 +8,11 @@ from tracardi.service.storage.index import Resource
 from tracardi.service.storage.mysql.mapping.test_mapping import map_to_test
 from tracardi.service.storage.mysql.service.test_service import TestService
 from tracardi.service.storage.redis.driver.redis_client import RedisClient
-from tracardi.service.storage.elastic.driver.elastic_client import ElasticClient
+from tracardi.service.storage.elastic.interface.gui import debug as debug_dao
+from tracardi.service.storage.elastic.interface.gui import storage as storage_dao
 
 from app.api.auth.permissions import Permissions
 from tracardi.config import tracardi
-from tracardi.service.storage.elastic.dal import raw as raw_db
 from datetime import datetime
 
 router = APIRouter(
@@ -38,7 +38,7 @@ async def get_es_cluster_health():
     """
     Tests connection between Elasticsearch and Tracardi by returning cluster info. Accessible for roles: "admin"
     """
-    health = await raw_db.health()
+    health = await storage_dao.health()
     if not isinstance(health, dict):
         raise ConnectionError("Elasticsearch did not pass health check.")
     return health
@@ -54,9 +54,8 @@ async def get_es_indices():
         raise HTTPException(status_code=405, detail="This section is not allowed for multi-tenant server.")
 
     resource_aliases = Resource().list_aliases()
+    result = await debug_dao.get_indices_list()
 
-    es = ElasticClient.instance()
-    result = await es.list_indices()
     output = {}
     for key in result:
 
@@ -74,6 +73,7 @@ async def get_es_indices():
         output[key] = index
 
     return output
+
 
 @router.get("/test/{id}", tags=["deployment"], include_in_schema=tracardi.expose_gui_api)
 async def get_test(id: str):

@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends
 from app.api.auth.permissions import Permissions
 from tracardi.config import tracardi
 
-from tracardi.service.storage.elastic.dal import console_log as console_log_db
+from tracardi.service.storage.elastic.interface.gui import console_log as console_log_dao
 
 router = APIRouter()
 
@@ -19,11 +19,7 @@ async def get_event_logs(event_id: str, sort: str = None):
             "date": sort
         }]
 
-    records, total = await console_log_db.load_by_event(event_id, sort=sort)
-    return {
-        "result": records,
-        "total": total
-    }
+    return await console_log_dao.load_by_event(event_id, sort=sort)
 
 
 @router.get("/node/logs/{node_id}", tags=["console_log"],
@@ -38,12 +34,7 @@ async def get_node_logs(node_id: str, sort: str = None):
             "date": sort
         }]
 
-    records, total = await console_log_db.load_by_node(node_id, sort=sort)
-
-    return {
-        "result": records,
-        "total": total
-    }
+    return await console_log_dao.load_by_node(node_id, sort=sort)
 
 
 @router.get("/flow/logs/{flow_id}", tags=["console_log"],
@@ -57,12 +48,7 @@ async def get_flow_logs(flow_id: str, sort: str = None):
             "date": sort
         }]
 
-    records, total = await console_log_db.load_by_flow(flow_id, sort=sort)
-
-    return {
-        "result": records,
-        "total": total
-    }
+    return await console_log_dao.load_by_flow(flow_id, sort=sort)
 
 
 @router.get("/profile/logs/{profile_id}", tags=["profile"],
@@ -78,8 +64,4 @@ async def get_profile_logs(profile_id: str, sort: str = None):
             "date": sort
         }]
 
-    records, total = await console_log_db.load_by_profile(profile_id, sort=sort)
-    return {
-        "result": list(records),
-        "total": total
-    }
+    return await console_log_dao.load_by_profile(profile_id, sort=sort)

@@ -52,7 +52,6 @@ from app.api import (
     destination_endpoint,
     user_account_endpoint,
     install_endpoint,
-    delete_indices_endpoint,
     setting_endpoint,
     migration_endpoint,
     report_endpoint,
@@ -281,7 +280,6 @@ application.include_router(user_account_endpoint.router)
 application.include_router(install_endpoint.router)
 application.include_router(import_endpoint.router)
 application.include_router(task_endpoint.router)
-application.include_router(delete_indices_endpoint.router)
 application.include_router(migration_endpoint.router)
 application.include_router(report_endpoint.router)
 application.include_router(event_reshaping_schema_endpoint.router)
