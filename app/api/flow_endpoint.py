@@ -1,4 +1,4 @@
-from tracardi.service.storage.elastic.dal.event import load_event_from_db
+from tracardi.service.storage.elastic.interface.gui.event import load_event_from_db
 from tracardi.service.storage.elastic.dal.collector.load.session import load_session_from_db
 from tracardi.service.utils.date import now_in_utc
 
