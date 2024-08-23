@@ -24,7 +24,7 @@ async def get_entity_index_mapping(index: str):
         index = f"entity-{index}"
         return await raw_db.get_mapping(index)
     except NotFoundError as e:
-        return HTTPException(status_code=404, detail=str(e))
+        raise HTTPException(status_code=404, detail=str(e))
 
 
 @router.get("/entity/count", tags=["entity"], include_in_schema=tracardi.expose_gui_api)
