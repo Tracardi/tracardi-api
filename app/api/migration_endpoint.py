@@ -9,7 +9,6 @@ from app.api.auth.permissions import Permissions
 from tracardi.context import get_context
 from tracardi.domain.version import Version
 from tracardi.exceptions.log_handler import get_logger
-from tracardi.service.storage.elastic.dal.indices_manager import check_indices_mappings_consistency
 from tracardi.domain.migration_payload import MigrationPayload
 from tracardi.process_engine.migration.migration_manager import MigrationManager, MigrationNotFoundException
 from tracardi.service.url_constructor import construct_elastic_url
@@ -39,7 +38,7 @@ async def check_migration_consistency(version: str):
 
     # If there are differences in local mapping settings and database mappings then this
     # function will list all the errors
-    mapping_errors = await check_indices_mappings_consistency()
+    mapping_errors = await storage_dao.get_indices_mappings_consistency()
 
     # list of acceptable differences
     acceptable_differences = {

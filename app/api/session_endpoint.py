@@ -3,11 +3,12 @@ from fastapi import APIRouter
 from fastapi import Depends
 from fastapi.responses import Response
 from tracardi.domain.session import Session
-from tracardi.service.storage.elastic.dal.session import aggregate_session
-from tracardi.service.storage.elastic.dal.collector.load.session import count_sessions_online_in_db, \
-    count_online_sessions_by_location_in_db, count_sessions_in_db, refresh_session_db, flush_session_db, load_session_from_db, load_nth_last_session_for_profile
-from tracardi.service.storage.elastic.dal.collector.mutation.session import delete_session_from_db
-from tracardi.service.storage.elastic.dal.collector.mutation.session import save_sessions_in_db
+from tracardi.service.storage.elastic.interface.collector.load.session import count_sessions_online_in_db, \
+    count_online_sessions_by_location_in_db, count_sessions_in_db, refresh_session_db, flush_session_db, \
+    load_session_from_db, load_nth_last_session_for_profile
+from tracardi.service.storage.elastic.interface.collector.mutation.session import delete_session_from_db, \
+    save_sessions_in_db
+from tracardi.service.storage.elastic.interface.gui import session as session_gui_dao
 from tracardi.service.storage.index import Resource
 from .auth.permissions import Permissions
 from tracardi.config import tracardi
@@ -33,12 +34,7 @@ async def count_sessions_online():
             include_in_schema=tracardi.expose_gui_api)
 async def get_sessions_by_app():
     bucket_name = 'sessions_by_app'
-    result = await aggregate_session(bucket_name, by='app.name', buckets_size=20)
-
-    if bucket_name not in result.aggregations:
-        return []
-
-    return [{"name": id, "value": count} for id, count in result.aggregations[bucket_name][0].items()]
+    return await session_gui_dao.aggregate_session_data(bucket_name, by='app.name', buckets_size=20)
 
 
 @router.get("/sessions/count/by_os_name", tags=["session"],
@@ -46,12 +42,7 @@ async def get_sessions_by_app():
             include_in_schema=tracardi.expose_gui_api)
 async def get_sessions_by_os_name():
     bucket_name = 'sessions_by_os_name'
-    result = await aggregate_session(bucket_name, by='os.name', buckets_size=20)
-
-    if bucket_name not in result.aggregations:
-        return []
-
-    return [{"name": id, "value": count} for id, count in result.aggregations[bucket_name][0].items()]
+    return await session_gui_dao.aggregate_session_data(bucket_name, by='app.name', buckets_size=20)
 
 
 @router.get("/sessions/count/by_device_geo", tags=["session"],
@@ -59,12 +50,7 @@ async def get_sessions_by_os_name():
             include_in_schema=tracardi.expose_gui_api)
 async def get_sessions_by_device_location():
     bucket_name = 'sessions_by_device_geo'
-    result = await aggregate_session(bucket_name, by='device.geo.country.name', buckets_size=20)
-
-    if bucket_name not in result.aggregations:
-        return []
-
-    return [{"name": id, "value": count} for id, count in result.aggregations[bucket_name][0].items()]
+    return await session_gui_dao.aggregate_session_data(bucket_name, by='app.name', buckets_size=20)
 
 
 @router.get("/sessions/count/by_channel", tags=["session"],
@@ -72,12 +58,7 @@ async def get_sessions_by_device_location():
             include_in_schema=tracardi.expose_gui_api)
 async def get_sessions_by_channel():
     bucket_name = 'sessions_by_channel'
-    result = await aggregate_session(bucket_name, by='metadata.channel', buckets_size=20)
-
-    if bucket_name not in result.aggregations:
-        return []
-
-    return [{"name": id, "value": count} for id, count in result.aggregations[bucket_name][0].items()]
+    return await session_gui_dao.aggregate_session_data(bucket_name, by='app.name', buckets_size=20)
 
 
 @router.get("/sessions/count/by_resolution", tags=["session"],
@@ -85,12 +66,7 @@ async def get_sessions_by_channel():
             include_in_schema=tracardi.expose_gui_api)
 async def get_sessions_by_resolution():
     bucket_name = 'sessions_by_resolution'
-    result = await aggregate_session(bucket_name, by='device.resolution', buckets_size=20)
-
-    if bucket_name not in result.aggregations:
-        return []
-
-    return [{"name": id, "value": count} for id, count in result.aggregations[bucket_name][0].items()]
+    return await session_gui_dao.aggregate_session_data(bucket_name, by='app.name', buckets_size=20)
 
 
 @router.get("/session/count/online/by_location", tags=["session"],
@@ -176,7 +152,6 @@ async def delete_session(id: str, response: Response):
             dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer"]))],
             include_in_schema=tracardi.expose_gui_api)
 async def get_nth_last_session_for_profile(profile_id: str, n: Optional[int] = 0):
-
     result = await load_nth_last_session_for_profile(profile_id, n)
 
     if result is None:

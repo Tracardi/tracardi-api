@@ -6,15 +6,16 @@ from fastapi.responses import Response
 
 from tracardi.domain.profile import Profile
 
-from tracardi.service.storage.elastic.dal.collector.mutation.profile import save
-from tracardi.service.storage.elastic.dal.profile import load_modified_top_profiles, refresh, flush
-from tracardi.service.storage.elastic.dal.event import load_events_by_profile_and_field
+
 from tracardi.service.storage.index import Resource
-from tracardi.service.storage.interface import profile_mutation_collector_dao, profile_load_collector_dao, \
-    profile_gui_dao
 
 from .auth.permissions import Permissions
 from tracardi.config import tracardi
+
+from tracardi.service.storage.interface import profile_mutation_collector_dao, profile_load_collector_dao, \
+    profile_gui_dao
+from tracardi.service.storage.elastic.interface.gui import profile as profile_gui_dao
+from tracardi.service.storage.elastic.interface.collector.mutation import profile as profile_collector_dao
 
 router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer", "maintainer"]))]
@@ -48,7 +49,7 @@ async def import_profiles(profiles: List[Profile]):
     """
     Saves given profiles (list of profiles) to database. Accessible by roles: "admin"
     """
-    return await save(profiles)
+    return await profile_collector_dao.save_profiles_in_db(profiles)
 
 
 @router.get("/profiles/refresh", tags=["profile"], include_in_schema=tracardi.expose_gui_api)
@@ -56,7 +57,7 @@ async def refresh_profile():
     """
     Refreshes profile index
     """
-    return await refresh()
+    return await profile_gui_dao.profile_refresh()
 
 
 @router.get("/profiles/flash", tags=["profile"], include_in_schema=tracardi.expose_gui_api)
@@ -64,7 +65,7 @@ async def flash_profile():
     """
     Flashes profile index
     """
-    return await flush()
+    return await profile_gui_dao.profile_flush()
 
 
 @router.get("/profile/{profile_id}", tags=["profile"],
@@ -102,7 +103,7 @@ async def delete_profile_by_id(id: str):
 
 @router.get("/profile/{profile_id}/by/{field}", tags=["profile"], include_in_schema=tracardi.expose_gui_api)
 async def profile_data_by(profile_id: str, field: str, table: bool = False):
-    return await load_events_by_profile_and_field(profile_id, field, table)
+    return await profile_gui_dao.load_events_by_profile_and_field(profile_id, field, table)
 
 
 # @router.get("/profiles/{qualify}/segment/{segment_names}", tags=["profile"], include_in_schema=tracardi.expose_gui_api)
@@ -124,4 +125,4 @@ async def profile_data_by(profile_id: str, field: str, table: bool = False):
 
 @router.get('/profiles/top/modified', tags=['profile'], include_in_schema=tracardi.expose_gui_api)
 async def load_top_profiles(limit: Optional[int] = 5):
-    return await load_modified_top_profiles(limit)
+    return await profile_gui_dao.load_modified_top_profiles(limit)
