@@ -5,7 +5,7 @@ from fastapi import APIRouter
 from app.service.grouping import get_grouped_result
 from tracardi.context import get_context
 from tracardi.domain.api_instance import ApiInstance
-from tracardi.domain.installation_status import installation_status
+from tracardi.service.installation_status import installation_status
 from tracardi.service.license import License
 
 from tracardi.config import tracardi
