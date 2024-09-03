@@ -282,6 +282,11 @@ async def debug_flow(flow: FlowGraph, event_id: Optional[str] = None):
 
         if event.has_session():
             session = await load_session_from_db(event.session.id)
+            if session is None:
+                raise ValueError(
+                    f"Event id {event.id} points to session {event.session.id}, but it does not exists. "
+                    f"Please retry in 15s.")
+
             event_session = EventSession(
                 id=session.id,
                 start=session.metadata.time.insert,
@@ -299,9 +304,7 @@ async def debug_flow(flow: FlowGraph, event_id: Optional[str] = None):
         context={},
         request={},
         properties={},
-        events=[EventPayload(id=event.id, type=event.type, properties=event.properties)],
-        # options={"scheduledFlowId": "c186d8b4-5b66-426b-89bb-a546931e083b",
-        # "scheduledNodeId": "e61e6a7e-a847-4754-99e7-74fb7446a748"}
+        events=[EventPayload(id=event.id, type=event.type, properties=event.properties)]
     )
 
     tracker_payload.set_ephemeral(True)
