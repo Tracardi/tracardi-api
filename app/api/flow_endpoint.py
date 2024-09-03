@@ -301,9 +301,7 @@ async def debug_flow(flow: FlowGraph, event_id: Optional[str] = None):
         context={},
         request={},
         properties={},
-        events=[EventPayload(id=event.id, type=event.type, properties=event.properties)],
-        # options={"scheduledFlowId": "c186d8b4-5b66-426b-89bb-a546931e083b",
-        # "scheduledNodeId": "e61e6a7e-a847-4754-99e7-74fb7446a748"}
+        events=[EventPayload(id=event.id, type=event.type, properties=event.properties)]
     )
 
     tracker_payload.set_ephemeral(True)
