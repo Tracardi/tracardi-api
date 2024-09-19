@@ -6,6 +6,7 @@ from fastapi import APIRouter, Request, status, HTTPException, Response
 from fastapi.responses import RedirectResponse
 
 from tracardi.domain.event_redirect import EventRedirect
+from tracardi.service.ip_address import get_ip_address
 from tracardi.service.notation.dict_traverser import DictTraverser
 from tracardi.service.notation.dot_accessor import DotAccessor
 
@@ -21,7 +22,6 @@ from tracardi.domain.payload.tracker_payload import TrackerPayload
 from tracardi.exceptions.exception import UnauthorizedException, FieldTypeConflictException, \
     EventValidationException, BlockedException
 from tracardi.exceptions.log_handler import get_logger
-from app.api.track.service.ip_address import get_ip_address
 from tracardi.service.track_event import track_event
 from tracardi.service.url_constructor import url_query_params_to_dict
 
