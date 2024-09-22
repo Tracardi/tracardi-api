@@ -370,6 +370,7 @@ async def app_starts():
     bs = GlobalSettingsBroadcaster()
     bs.start_background_listener()
     logger.info("Starting Cluster Settings Broadcaster...")
+    logger.info(f"APM (Auto Profile Merging): {tracardi.is_apm_on()}")
 
 
 @application.middleware("http")
