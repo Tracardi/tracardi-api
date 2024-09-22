@@ -56,7 +56,7 @@ async def get_current_backend_version():
         # New license
 
         version["license"] = {
-            "type": "Propriety License"
+            "type": "Proprietary License"
         }
         if license.id:
             version['license']['id'] = license.id
