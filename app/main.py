@@ -115,6 +115,8 @@ if License.has_service(LICENSE):
     from com_tracardi.endpoint import audience_endpoint
     from com_tracardi.endpoint import subscription_endpoint
     from com_tracardi.endpoint import queue_endpoint
+    # from com_tracardi.endpoint import enhancer_endpoint
+    from com_tracardi.endpoint import track as com_track
 else:
     event_to_profile_copy = get_router(prefix="/events/copy")
     event_props_to_event_traits_copy = get_router(prefix="/events/index")
@@ -126,6 +128,7 @@ else:
     audience_endpoint = get_router(prefix="/audience")
     subscription_endpoint = get_router(prefix="/subscription")
     queue_endpoint = get_router(prefix="/queue")
+    # enhancer_endpoint = get_router(prefix="/enhancer")
 
 
 if License.has_service(MULTI_TENANT):
@@ -310,6 +313,10 @@ application.include_router(queue_endpoint.router)
 application.include_router(feed_endpoint.router)
 application.include_router(system_entity_property_endpoint.router)
 application.include_router(system_entity_table_column_endpoint.router)
+# application.include_router(enhancer_endpoint.router)
+
+if License.has_service(LICENSE):
+    application.include_router(com_track.router)
 
 if License.has_service(MULTI_TENANT):
     application.include_router(tenant_install_endpoint.router)

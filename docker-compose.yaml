@@ -34,7 +34,7 @@ services:
       xpack.security.enabled: "false"
       cluster.name: ElasticSearchCluster
     volumes:
-      - elasticsearch-data:/usr/share/elasticsearch/data
+      - es-data:/usr/share/elasticsearch/data
     ports:
       - "9200:9200"
 
@@ -79,7 +79,7 @@ services:
       - mysql
 
 volumes:
-  elasticsearch-data:
+  es-data:
     driver: local
   mydata:
     driver: local
