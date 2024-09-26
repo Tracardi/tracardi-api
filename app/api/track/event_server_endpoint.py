@@ -97,6 +97,25 @@ async def track(tracker_payload: TrackerPayload, request: Request, response: Res
     return result
 
 
+@router.patch("/track", tags=['collector'])
+async def track(tracker_payload: TrackerPayload, request: Request, response: Response, profile_less: bool = False):
+    start = time()
+
+    tracker_payload.options['queue'] = True
+    tracker_payload.set_headers(dict(request.headers))
+    tracker_payload.profile_less = profile_less
+    result = await _track(tracker_payload,
+                          get_ip_address(request),
+                          allowed_bridges=['rest'])
+
+    if result and result.get('errors', []):
+        response.status_code = 226
+
+    logger.info(f"Track finished with in {time() - start}s")
+
+    return result
+
+
 @router.post("/collect/{event_type}/{source_id}/{session_id}", tags=['collector'])
 @router.post("/collect/{event_type}/{source_id}/{session_id}/", tags=['collector'])
 async def track_post_webhook_with_session(event_type: str, source_id: str, request: Request,
