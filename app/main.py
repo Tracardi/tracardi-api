@@ -227,16 +227,7 @@ if os.path.exists(demo) and os.environ.get("DEMO", None) == 'yes':
                           html=True,
                           directory=os.path.join(_local_dir, "demo")),
                       name="demo")
-# TODO Remove after 30.08.2024
-# documentation = os.path.join(_local_dir, "../site")
-#
-# if os.path.exists(documentation):
-#     application.mount("/documentation",
-#                       StaticFiles(
-#                           html=True,
-#                           directory=documentation),
-#                       name="documentation")
-# Docs are pulled from tracardi/documentation - from folder docs - by CI/CD
+
 md_docs = os.path.join(_local_dir, "../docs/docs")
 
 if os.path.exists(md_docs):
