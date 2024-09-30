@@ -1361,18 +1361,6 @@ async def test_should_set_up_plugin_key_counter_action():
     await plugin.set_up({'key': '1', 'save_in': '2'})
 
 
-async def test_should_set_up_plugin_microservice_action():
-    
-    module = import_package("tracardi.process_engine.action.v1.microservice.plugin")
-    plugin_class = load_callable(module, "MicroserviceAction")
-    plugin = plugin_class()
-    plugin.node = Node(id="node-id", 
-                       name="test-node", 
-                       module="tracardi.process_engine.action.v1.microservice.plugin", 
-                       className="MicroserviceAction")
-    await plugin.set_up({})
-
-
 async def test_should_set_up_plugin_consent_adder():
     
     module = import_package("tracardi.process_engine.action.v1.consents.add_consent_action.plugin")
