@@ -8,19 +8,20 @@ client = pulsar.Client('pulsar://localhost:6650')
 
 consumer = client.subscribe(pulsar_topics.system_function_topic,
                             'my-subscription-2',
-        consumer_name="my-consumer",
-        schema=JsonSchema(FunctionRecord),
-        consumer_type=ConsumerType.Shared,
-        initial_position=InitialPosition.Earliest)
+                            consumer_name="my-consumer",
+                            schema=JsonSchema(FunctionRecord),
+                            consumer_type=ConsumerType.Shared,
+                            initial_position=InitialPosition.Earliest)
 while True:
     try:
         msg = consumer.receive(timeout_millis=5000)
         message: FunctionRecord = msg.value()
+        args, kwargs, context = message.deserialize()
         print('----------------------------------------------------------------')
         print("System Event:", message.type)
         print("Internal Function", message.name)
-        print("Data", FunctionRecord.deserializer(message.args))
-        print("Context", FunctionRecord.deserializer(message.context))
+        print("Data", args)
+        print("Context", context)
         # Acknowledge successful processing of the message
         consumer.acknowledge(msg)
     except Exception as e:
