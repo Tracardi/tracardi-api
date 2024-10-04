@@ -1,7 +1,8 @@
 import pulsar
 from _pulsar import ConsumerType, InitialPosition
 from pulsar.schema import JsonSchema
-from com_tracardi.decorator.deffer_decorator import FunctionRecord
+
+from com_tracardi.service.pulsar.factories.default import FunctionRecord
 from com_tracardi.service.tracking.queue.pulsar_topics import pulsar_topics
 
 client = pulsar.Client('pulsar://localhost:6650')
@@ -16,14 +17,14 @@ while True:
     try:
         msg = consumer.receive(timeout_millis=5000)
         message: FunctionRecord = msg.value()
-        args, kwargs, context = message.deserialize()
         print('----------------------------------------------------------------')
         print("System Event:", message.type)
         print("Internal Function", message.name)
-        print("Data", args)
-        print("Context", context)
+        print("Data", message.args)
+        print("Context", message.context)
         # Acknowledge successful processing of the message
         consumer.acknowledge(msg)
     except Exception as e:
         pass
+
 client.close()
