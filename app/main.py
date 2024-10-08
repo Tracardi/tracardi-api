@@ -105,8 +105,6 @@ else:
     event_validator_endpoint = get_router(prefix="/event-validator")
 
 if License.has_service(LICENSE):
-    from com_tracardi.endpoint import event_to_profile_copy
-    from com_tracardi.endpoint import event_props_to_event_traits_copy
     from com_tracardi.endpoint import field_update_log_endpoint
     from com_tracardi.endpoint import activation_endpoint
     from com_tracardi.endpoint import event_data_compliance_endpoint
@@ -118,8 +116,6 @@ if License.has_service(LICENSE):
     from com_tracardi.endpoint import track as com_track
     from com_tracardi.endpoint import upload_endpoint
 else:
-    event_to_profile_copy = get_router(prefix="/events/copy")
-    event_props_to_event_traits_copy = get_router(prefix="/events/index")
     metric_endpoint = get_router(prefix="/metric")
     field_update_log_endpoint = get_router(prefix="/field/update")
     activation_endpoint = get_router(prefix="/activation")
@@ -288,8 +284,6 @@ application.include_router(identification_point_endpoint.router)
 application.include_router(scheduler_endpoint.router)
 application.include_router(customer_endpoint.router)
 application.include_router(event_to_profile.router)
-application.include_router(event_to_profile_copy.router)
-application.include_router(event_props_to_event_traits_copy.router)
 application.include_router(event_type_predefined.router)
 application.include_router(setting_endpoint.router)
 application.include_router(field_update_log_endpoint.router)
