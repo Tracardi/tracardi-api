@@ -8,7 +8,7 @@ import sentry_sdk
 from app.middleware.context import ContextRequestMiddleware
 from tracardi.service.cluster.settings import GlobalSettingsBroadcaster
 from tracardi.service.elastic.connection import wait_for_connection
-from tracardi.service.license import License, SCHEDULER, IDENTIFICATION, COMPLIANCE, RESHAPING, REDIRECTS, VALIDATOR, \
+from tracardi.service.license import License, SCHEDULER, IDENTIFICATION, COMPLIANCE, RESHAPING, VALIDATOR, \
     LICENSE, MULTI_TENANT
 from tracardi.service.logging.formater import CustomFormatter
 from tracardi.service.storage.elastic.interface.client import elastic_close
@@ -66,7 +66,8 @@ from app.api import (
     configuration_endpoint,
     github_endpoint,
     maintanace_endpoint,
-    feed_endpoint
+    feed_endpoint,
+    event_source_redirects
 )
 from app.api.track import event_server_endpoint
 from tracardi.config import tracardi
@@ -93,11 +94,6 @@ if License.has_service(RESHAPING):
     from com_tracardi.endpoint import event_reshaping_schema_endpoint
 else:
     event_reshaping_schema_endpoint = get_router(prefix="/event-reshape-schema")
-
-if License.has_service(REDIRECTS):
-    from com_tracardi.endpoint import event_source_redirects
-else:
-    event_source_redirects = get_router(prefix="/event-redirect")
 
 if License.has_service(VALIDATOR):
     from com_tracardi.endpoint import event_validator_endpoint
