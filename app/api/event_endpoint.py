@@ -1,6 +1,9 @@
+from typing import Optional
+
 from datetime import datetime
 from fastapi import APIRouter, Depends, Response
 from tracardi.domain.enum.time_span import TimeSpan
+from tracardi.domain.event import Event
 from tracardi.service import events
 from tracardi.service.events import get_default_event_type_schema
 from tracardi.service.storage.elastic.interface.event import aggregate_events_by_type_and_source, refresh_event_db, \
@@ -148,7 +151,7 @@ async def get_event(id: str, response: Response):
     """
     Returns event with given ID
     """
-    record = await load_event_from_db(id)
+    record: Optional[Event] = await load_event_from_db(id)
 
     if record is None:
         response.status_code = 404

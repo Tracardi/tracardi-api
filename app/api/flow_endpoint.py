@@ -266,7 +266,7 @@ async def debug_flow(flow: FlowGraph, event_id: Optional[str] = None):
         )
 
     else:
-        event = await load_event_from_db(event_id)
+        event: Event = await load_event_from_db(event_id)
 
         if event is None:
             raise ValueError(f"Could not find event id {event_id}.")
