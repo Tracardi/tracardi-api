@@ -3,7 +3,7 @@ from tracardi.config import tracardi
 from tracardi.context import get_context
 from tracardi.service.decorators.function_memory_cache import cache
 from tracardi.service.storage.redis.cache import RedisCache
-from tracardi.service.tracking.cache.profile_cache import get_profile_key_namespace
+from tracardi.service.tracking.cache.flat_profile_cache import get_flat_profile_key_namespace
 from tracardi.service.tracking.cache.session_cache import get_session_key_namespace
 from .auth.permissions import Permissions
 
@@ -18,7 +18,7 @@ async def get_profile_cache_ttl(profile_id: str):
     """
     Returns cache expiration data
     """
-    namespace = get_profile_key_namespace(profile_id, get_context())
+    namespace = get_flat_profile_key_namespace(profile_id, get_context())
     return {
         "ttl": redis_cache.get_ttl(profile_id, namespace),
         "namespace": namespace
@@ -39,7 +39,7 @@ async def get_profile_data(profile_id: str):
     """
     Returns cache expiration data
     """
-    namespace = get_profile_key_namespace(profile_id, get_context())
+    namespace = get_flat_profile_key_namespace(profile_id, get_context())
     return {"profile": redis_cache.get(profile_id, namespace)}
 
 
