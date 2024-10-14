@@ -1,3 +1,5 @@
+import email
+
 from time import time
 from json import JSONDecodeError
 from typing import Optional
@@ -11,11 +13,10 @@ from tracardi.service.notation.dict_traverser import DictTraverser
 from tracardi.service.notation.dot_accessor import DotAccessor
 
 from app.api.track.service.http import get_headers
-from tracardi.domain.entity import Entity
+from tracardi.domain.entity import Entity, PrimaryEntity
 from tracardi.domain.event_metadata import EventPayloadMetadata
 from tracardi.domain.payload.event_payload import EventPayload
 from tracardi.domain.time import Time
-from tracardi.service.storage.elastic.interface.collector.load.session import load_session_from_db
 from tracardi.service.storage.mysql.mapping.event_redirect_mapping import map_to_event_redirect
 from tracardi.service.storage.mysql.service.event_redirect_service import EventRedirectService
 from tracardi.domain.payload.tracker_payload import TrackerPayload
@@ -24,6 +25,7 @@ from tracardi.exceptions.exception import UnauthorizedException, FieldTypeConfli
 from tracardi.exceptions.log_handler import get_logger
 from tracardi.service.track_event import track_event
 from tracardi.service.url_constructor import url_query_params_to_dict
+from tracardi.service.utils.hasher import hash_id
 
 logger = get_logger(__name__)
 
@@ -92,7 +94,7 @@ async def track(tracker_payload: TrackerPayload, request: Request, response: Res
     if result and result.get('errors', []):
         response.status_code = 226
 
-    logger.info(f"Track finished with in {time() - start}s")
+    logger.info(f"Track finished in {time() - start}s")
 
     return result
 
@@ -111,7 +113,7 @@ async def track(tracker_payload: TrackerPayload, request: Request, response: Res
     if result and result.get('errors', []):
         response.status_code = 226
 
-    logger.info(f"Track finished with in {time() - start}s")
+    logger.info(f"Track finished in {time() - start}s")
 
     return result
 
@@ -236,21 +238,31 @@ async def track_post_webhook(event_type: str, source_id: str, request: Request):
                         allowed_bridges=['webhook'])
 
 
-@router.put("/redirect/{redirect_id}/{session_id}", tags=["collector"])
-@router.delete("/redirect/{redirect_id}/{session_id}", tags=["collector"])
-@router.get("/redirect/{redirect_id}/{session_id}", tags=["collector"])
-@router.post("/redirect/{redirect_id}/{session_id}", tags=["collector"])
-@router.put("/redirect/{redirect_id}", tags=["collector"])
-@router.delete("/redirect/{redirect_id}", tags=["collector"])
+@router.get("/redirect/{redirect_id}/s/{session_id}", tags=["collector"])
 @router.get("/redirect/{redirect_id}", tags=["collector"])
-@router.post("/redirect/{redirect_id}", tags=["collector"])
-async def request_redirect(request: Request, redirect_id: str, session_id: Optional[str] = None):
+@router.get("/redirect/{redirect_id}/p/{profile_id}", tags=["collector"])
+@router.get("/redirect/{redirect_id}/pii/{hash_type}/{pii_data}", tags=["collector"])
+async def request_redirect(request: Request, redirect_id: str,
+                           session_id: Optional[str] = None,
+                           profile_id: Optional[str] = None,
+                           hash_type: Optional[str] = None,
+                           pii_data: Optional[str] = None,
+                           ):
     """
-       Redirects events http://localhost:8686/redirect/cce47c05-d7c3-46f8-bac9-0694d3227d9b
+       Redirects events
     """
+
+    if profile_id:
+        profile_id = profile_id.strip()
 
     if session_id:
         session_id = session_id.strip()
+
+    hashed_id = None
+    if hash_type and pii_data and hash_type in ['emm', 'phm']:
+        profile_id = hash_id(pii_data, hash_type)
+        hashed_id = [profile_id]
+
     redirect_id = redirect_id.strip()
 
     ers = EventRedirectService()
@@ -276,16 +288,11 @@ async def request_redirect(request: Request, redirect_id: str, session_id: Optio
         if request.cookies and key in request.cookies:
             session_id = request.cookies[key]
 
-    session = None
-    if session_id:
-        session = await load_session_from_db(session_id)
-
     dot = DotAccessor(
         payload={
             "params": dict(request.query_params),
             "body": body
         },
-        session=session.model_dump() if session else None
     )
     converter = DictTraverser(dot)
 
@@ -294,7 +301,8 @@ async def request_redirect(request: Request, redirect_id: str, session_id: Optio
     properties = converter.reshape(event_redirect.props)
     tracker_payload = TrackerPayload(
         source=Entity(id=event_redirect.source.id),
-        session=session,
+        session=Entity(id=session_id) if session_id else None,
+        profile=PrimaryEntity(id=profile_id, ids=hashed_id) if profile_id else None,
         metadata=EventPayloadMetadata(time=Time()),
         context={},
         request={
@@ -308,7 +316,7 @@ async def request_redirect(request: Request, redirect_id: str, session_id: Optio
     )
 
     tracker_payload.set_headers(dict(request.headers))
-    tracker_payload.profile_less = True if not session else False
+    tracker_payload.profile_less = not session_id and not profile_id
     await _track(
         tracker_payload,
         get_ip_address(request),

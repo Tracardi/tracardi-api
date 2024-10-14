@@ -19,7 +19,8 @@ from tracardi.service.wf.domain.flow_history import FlowHistory
 from tracardi.service.wf.domain.work_flow import WorkFlow
 from tracardi.domain.flow_meta_data import FlowMetaData
 from tracardi.domain.entity import Entity
-from tracardi.domain.event import Event, EventSession
+from tracardi.domain.event import Event
+from tracardi.domain.event_session import EventSession
 from tracardi.domain.flow import Flow
 from tracardi.service.wf.domain.flow_graph import FlowGraph
 from tracardi.domain.flow import FlowRecord

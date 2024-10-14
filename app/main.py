@@ -8,7 +8,7 @@ import sentry_sdk
 from app.middleware.context import ContextRequestMiddleware
 from tracardi.service.cluster.settings import GlobalSettingsBroadcaster
 from tracardi.service.elastic.connection import wait_for_connection
-from tracardi.service.license import License, SCHEDULER, IDENTIFICATION, COMPLIANCE, RESHAPING, REDIRECTS, VALIDATOR, \
+from tracardi.service.license import License, SCHEDULER, IDENTIFICATION, COMPLIANCE, RESHAPING, VALIDATOR, \
     LICENSE, MULTI_TENANT
 from tracardi.service.logging.formater import CustomFormatter
 from tracardi.service.storage.elastic.interface.gui import storage as storage_gui_dao
@@ -64,8 +64,9 @@ from app.api import (
     cache_endpoint,
     configuration_endpoint,
     github_endpoint,
-    feed_endpoint,
     maintanace_endpoint,
+    feed_endpoint,
+    event_source_redirects,
     system_entity_property_endpoint,
     system_entity_table_column_endpoint
 )
@@ -95,11 +96,6 @@ if License.has_service(RESHAPING):
 else:
     event_reshaping_schema_endpoint = get_router(prefix="/event-reshape-schema")
 
-if License.has_service(REDIRECTS):
-    from com_tracardi.endpoint import event_source_redirects
-else:
-    event_source_redirects = get_router(prefix="/event-redirect")
-
 if License.has_service(VALIDATOR):
     from com_tracardi.endpoint import event_validator_endpoint
 else:
@@ -117,6 +113,7 @@ if License.has_service(LICENSE):
     from com_tracardi.endpoint import queue_endpoint
     # from com_tracardi.endpoint import enhancer_endpoint
     from com_tracardi.endpoint import track as com_track
+    from com_tracardi.endpoint import upload_endpoint
 else:
     event_to_profile_copy = get_router(prefix="/events/copy")
     event_props_to_event_traits_copy = get_router(prefix="/events/index")
@@ -306,8 +303,10 @@ application.include_router(system_entity_property_endpoint.router)
 application.include_router(system_entity_table_column_endpoint.router)
 # application.include_router(enhancer_endpoint.router)
 
+
 if License.has_service(LICENSE):
     application.include_router(com_track.router)
+    application.include_router(upload_endpoint.router)
 
 if License.has_service(MULTI_TENANT):
     application.include_router(tenant_install_endpoint.router)
@@ -366,6 +365,7 @@ async def app_starts():
     bs = GlobalSettingsBroadcaster()
     bs.start_background_listener()
     logger.info("Starting Cluster Settings Broadcaster...")
+    logger.info(f"APM (Auto Profile Merging): {tracardi.is_apm_on()}")
 
 
 @application.middleware("http")
