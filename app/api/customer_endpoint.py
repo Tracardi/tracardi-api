@@ -17,4 +17,5 @@ async def add_consent_type(data: CustomerConsent, all: Optional[bool] = False):
     """
     Adds customer consent
     """
+    print(data)
     await add_consent(data, all)
