@@ -29,7 +29,7 @@ docker run -p 9200:9200 -p 9300:9300 -m 2g -e "discovery.type=single-node" -e ES
 docker run -p 6379:6379 redis redis-server
 
 # Run local mysql
-docker run -e MYSQL_ROOT_PASSWORD=root  -p 3306:3306 mysql:8
+docker run -e MYSQL_ROOT_PASSWORD=root  -p 3306:3306 mysql:8.4.2
 mysql -h localhost -P 3306 --protocol=tcp -u root -p root test
 mysql -h localhost -P 3306 --protocol=tcp -u root -p 
 
