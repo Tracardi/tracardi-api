@@ -266,6 +266,7 @@ async def debug_flow(flow: FlowGraph, event_id: Optional[str] = None):
         )
 
     else:
+        # TODO EOFE - End of FlatEvent
         event: Event = await load_event_from_db(event_id)
 
         if event is None:
@@ -274,6 +275,7 @@ async def debug_flow(flow: FlowGraph, event_id: Optional[str] = None):
         source = event.source
 
         if event.has_profile():
+            # TODO EOFP - End of FlatProfile
             profile = await load_profile(event.profile.id)
             if profile is None:
                 raise ValueError(f"Could not find profile id {event.profile.id} attached to event id {event_id}. "
