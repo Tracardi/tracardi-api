@@ -111,6 +111,7 @@ if License.has_service(LICENSE):
     # from com_tracardi.endpoint import enhancer_endpoint
     from com_tracardi.endpoint import track as com_track
     from com_tracardi.endpoint import upload_endpoint
+    from com_tracardi.endpoint import pcp_endpoint
 else:
     metric_endpoint = get_router(prefix="/metric")
     field_update_log_endpoint = get_router(prefix="/field/update")
@@ -293,6 +294,7 @@ application.include_router(maintanace_endpoint.router)
 application.include_router(queue_endpoint.router)
 application.include_router(feed_endpoint.router)
 # application.include_router(enhancer_endpoint.router)
+application.include_router(pcp_endpoint.router)
 
 
 if License.has_service(LICENSE):
