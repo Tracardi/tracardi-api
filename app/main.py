@@ -307,6 +307,7 @@ if License.has_service(MULTI_TENANT):
 
 @application.on_event("startup")
 async def app_starts():
+
     logging.getLogger("uvicorn.access").handlers[0].setFormatter(CustomFormatter())
 
     await wait_for_mysql_connection()
@@ -357,6 +358,8 @@ async def app_starts():
     bs.start_background_listener()
     logger.info("Starting Cluster Settings Broadcaster...")
     logger.info(f"APM (Auto Profile Merging): {tracardi.is_apm_on()}")
+
+    health_endpoint.api_ready = True
 
 
 @application.middleware("http")
