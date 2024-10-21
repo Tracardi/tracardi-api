@@ -7,6 +7,7 @@ from typing import Optional
 from fastapi import APIRouter, Request, status, HTTPException, Response
 from fastapi.responses import RedirectResponse
 
+from tracardi.context import get_context
 from tracardi.domain.event_redirect import EventRedirect
 from tracardi.service.ip_address import get_ip_address
 from tracardi.service.notation.dict_traverser import DictTraverser
@@ -94,7 +95,11 @@ async def track(tracker_payload: TrackerPayload, request: Request, response: Res
     if result and result.get('errors', []):
         response.status_code = 226
 
-    logger.info(f"Track finished in {time() - start}s")
+    passed_time = time() - start
+    logger.info(f"Regular: Track finished in {passed_time}s")
+
+    if passed_time> 1:
+        print(get_context().profiler.report())
 
     return result
 
@@ -113,7 +118,10 @@ async def track(tracker_payload: TrackerPayload, request: Request, response: Res
     if result and result.get('errors', []):
         response.status_code = 226
 
-    logger.info(f"Track finished in {time() - start}s")
+    passed_time = time() - start
+    logger.info(f"Queue: Track finished in {passed_time}s")
+    if passed_time> 1:
+        print(get_context().profiler.report())
 
     return result
 
