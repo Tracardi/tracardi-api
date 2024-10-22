@@ -76,7 +76,6 @@ async def _track(tracker_payload: TrackerPayload, host: str, allowed_bridges):
         raise HTTPException(detail=message,
                             status_code=status.HTTP_406_NOT_ACCEPTABLE)
     except Exception as e:
-        raise e
         message = str(e)
         logger.error(message)
         raise HTTPException(detail=message,
