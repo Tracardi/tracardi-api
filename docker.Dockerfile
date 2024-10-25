@@ -36,19 +36,6 @@ WORKDIR /
 
 COPY docs app/docs/
 
-# Remove after 30-08-2024
-# Commented bo nie bedziemy robic dokumentacji w kazdym dokerze
-#WORKDIR /docs
-#
-### Install docs dependencies
-#RUN pip --default-timeout=240 install -r requirements.txt
-#
-## Install manual
-#
-#RUN mkdocs build
-#RUN mv site app
-#RUN mv docs app
-
 # Start up
 
 WORKDIR /app
