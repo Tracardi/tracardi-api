@@ -15,6 +15,7 @@ sentry-sdk
 alembic==1.13.1
 feedparser
 beautifulsoup4
+# logfire
 
 git+https://github.com/Tracardi/tracardi.git@1.1.x
 

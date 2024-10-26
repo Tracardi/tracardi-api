@@ -1,3 +1,8 @@
+import logfire
+logfire.configure()
+logfire.instrument_sqlalchemy()
+logfire.instrument_redis()
+
 import os
 import logging
 import sys
@@ -126,6 +131,10 @@ else:
 if License.has_service(MULTI_TENANT):
     from com_tracardi.endpoint import tenant_install_endpoint
 
+
+
+
+
 logger = get_logger(__name__)
 
 tags_metadata = [
@@ -197,6 +206,9 @@ application = FastAPI(
         "email": "office@tracardi.com",
     }
 )
+logfire.instrument_fastapi(application)
+
+
 
 application.add_middleware(ContextRequestMiddleware)
 
