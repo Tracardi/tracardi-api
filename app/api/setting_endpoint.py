@@ -1,13 +1,10 @@
 from fastapi import APIRouter
-from fastapi import HTTPException, Depends
+from fastapi import Depends
 
 from tracardi.domain.setting import Setting
-from tracardi.service.storage.mysql.map_to_named_entity import map_to_named_entity
-from tracardi.service.storage.mysql.mapping.setting_mapping import map_to_setting
 from tracardi.service.storage.mysql.service.setting_service import SettingService
 from .auth.permissions import Permissions
 from tracardi.config import tracardi
-from ..service.grouping import get_result_dict, get_grouped_result
 from typing import Optional
 
 router = APIRouter(

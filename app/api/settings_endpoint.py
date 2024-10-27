@@ -25,7 +25,7 @@ async def get_system_settings() -> List[SystemSettings]:
 @router.get("/system/envs", tags=["system"],
             include_in_schema=tracardi.expose_gui_api,
             response_model=Dict[str, Any])
-async def get_system_envs() -> Dict[str, Any]:
+async def get_system_envs_list() -> Dict[str, Any]:
     """
     Lists all system settings as key value
     """
