@@ -3,15 +3,13 @@ from uuid import uuid4
 from fastapi import APIRouter, Depends, HTTPException
 
 from app.api.auth.permissions import Permissions
-from app.service.grouping import get_grouped_result
 from tracardi.config import tracardi
 from tracardi.domain.event_type_metadata import EventTypeMetadata
 from tracardi.service.events import get_default_mappings_for
 from typing import Optional, List
 
 from tracardi.service.license import License
-from tracardi.service.storage.mysql.mapping.event_to_event_mapping import map_to_event_mapping
-from tracardi.service.storage.mysql.service.event_mapping_service import EventMappingService
+from tracardi.service.storage.mysql.interface import event_mapping_dao
 
 router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin", "developer"]))],
@@ -24,9 +22,7 @@ async def add_event_type_mapping(event_mapping: EventTypeMetadata):
     """
     Creates new event type mapping in database
     """
-
-    ems = EventMappingService()
-    return await ems.insert(event_mapping)
+    return await event_mapping_dao.insert(event_mapping)
 
 
 @router.get("/mappings/{event_type}",
@@ -53,13 +49,10 @@ async def list_event_mappings(event_type: str):
         })
         mappings.append(build_in)
 
-    ems = EventMappingService()
-    records = await ems.load_by_event_type(event_type)
+    records, total = await event_mapping_dao.load_by_event_type(event_type)
 
-    # record = await event_management_db.get_event_type_mapping(event_type)
-    if records.exists():
-        for record in records.map_to_objects(map_to_event_mapping):
-            mappings.append(record)
+    if records:
+        mappings.extend(records)
     else:
         raise HTTPException(status_code=404, detail=f"Mapping for event type [{event_type}] not found.")
 
@@ -77,14 +70,12 @@ async def get_event_mapping_by_id(event_type_id: str):
     """
     Return custom event type mapping for given event type
     """
+    record = await event_mapping_dao.load_by_id(event_type_id)
 
-    ems = EventMappingService()
-    record =  await ems.load_by_id(event_type_id)
-
-    if not record.exists():
+    if not record:
         raise HTTPException(status_code=404, detail=f"Mapping for event type [{event_type_id}] not found.")
 
-    return record.map_to_object(map_to_event_mapping)
+    return record
 
 
 @router.delete("/mapping/{event_type_id}", tags=["event-type"], include_in_schema=tracardi.expose_gui_api)
@@ -92,8 +83,8 @@ async def del_event_type_metadata(event_type_id: str):
     """
     Deletes event type metadata for given event type
     """
-    ems = EventMappingService()
-    return await ems.delete_by_id(event_type_id)
+
+    return await event_mapping_dao.delete_by_id(event_type_id)
 
 
 @router.get("/search/mappings", tags=["event-type"], include_in_schema=tracardi.expose_gui_api,
@@ -106,8 +97,11 @@ async def list_event_type_mappings_by_tag(query: str = None, start: Optional[int
     if not License.has_license():
         raise HTTPException(status_code=402, detail="Missing license.")
 
+    records, total = await event_mapping_dao.load_all(search=query, limit=limit, offset=start)
 
-    ems = EventMappingService()
-    records = await ems.load_all(search=query, limit=limit, offset=start)
-
-    return get_grouped_result("Event mappings", records, map_to_event_mapping)
+    return {
+        "total": total,
+        "grouped": {
+            "Event mappings": records
+        }
+    }

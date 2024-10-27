@@ -62,7 +62,7 @@ from app.api import (
     migration_endpoint,
     report_endpoint,
     console_log_endpoint,
-    event_type_mapping,
+    event_mapping_endpoint,
     bridge_endpoint,
     entity_endpoint,
     customer_endpoint,
@@ -289,7 +289,7 @@ application.include_router(report_endpoint.router)
 application.include_router(event_reshaping_schema_endpoint.router)
 application.include_router(event_validator_endpoint.router)
 application.include_router(console_log_endpoint.router)
-application.include_router(event_type_mapping.router)
+application.include_router(event_mapping_endpoint.router)
 application.include_router(event_source_redirects.router)
 application.include_router(bridge_endpoint.router)
 application.include_router(entity_endpoint.router)
