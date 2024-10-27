@@ -107,10 +107,13 @@ else:
 
 if License.has_service(LICENSE):
     from com_tracardi.endpoint import field_update_log_endpoint
-    from com_tracardi.endpoint import activation_endpoint
     from com_tracardi.endpoint import event_data_compliance_endpoint
     from com_tracardi.endpoint import deploy_endpoint
-    from com_tracardi.endpoint import audience_endpoint
+
+    if tracardi.enable_audiences:
+        from com_tracardi.endpoint import audience_endpoint
+        from com_tracardi.endpoint import activation_endpoint
+
     from com_tracardi.endpoint import subscription_endpoint
     from com_tracardi.endpoint import queue_endpoint
     # from com_tracardi.endpoint import enhancer_endpoint
@@ -120,10 +123,13 @@ if License.has_service(LICENSE):
 else:
     metric_endpoint = get_router(prefix="/metric")
     field_update_log_endpoint = get_router(prefix="/field/update")
-    activation_endpoint = get_router(prefix="/activation")
+
     event_data_compliance_endpoint = get_router(prefix="/consent/compliance")
     deploy_endpoint = get_router(prefix="/deploy")
-    audience_endpoint = get_router(prefix="/audience")
+    if tracardi.enable_audiences:
+        audience_endpoint = get_router(prefix="/audience")
+        activation_endpoint = get_router(prefix="/activation")
+
     subscription_endpoint = get_router(prefix="/subscription")
     queue_endpoint = get_router(prefix="/queue")
     # enhancer_endpoint = get_router(prefix="/enhancer")
@@ -249,7 +255,6 @@ application.mount("/uix",
                       directory=os.path.join(_local_dir, "../uix")),
                   name="uix")
 
-application.include_router(activation_endpoint.router)
 application.include_router(event_server_endpoint.router)
 application.include_router(tql_endpoint.router)
 application.include_router(resource_endpoint.router)
@@ -298,7 +303,6 @@ application.include_router(setting_endpoint.router)
 application.include_router(field_update_log_endpoint.router)
 application.include_router(cache_endpoint.router)
 application.include_router(deploy_endpoint.router)
-application.include_router(audience_endpoint.router)
 application.include_router(subscription_endpoint.router)
 application.include_router(configuration_endpoint.router)
 application.include_router(github_endpoint.router)
@@ -308,6 +312,9 @@ application.include_router(feed_endpoint.router)
 # application.include_router(enhancer_endpoint.router)
 application.include_router(pcp_endpoint.router)
 
+if tracardi.enable_audiences:
+    application.include_router(audience_endpoint.router)
+    application.include_router(activation_endpoint.router)
 
 if License.has_service(LICENSE):
     application.include_router(com_track.router)
