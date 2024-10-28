@@ -1,8 +1,3 @@
-import logfire
-logfire.configure()
-logfire.instrument_sqlalchemy()
-logfire.instrument_redis()
-
 import os
 import logging
 import sys
@@ -212,8 +207,6 @@ application = FastAPI(
         "email": "office@tracardi.com",
     }
 )
-logfire.instrument_fastapi(application)
-
 
 
 application.add_middleware(ContextRequestMiddleware)
