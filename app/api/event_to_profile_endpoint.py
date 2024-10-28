@@ -1,17 +1,14 @@
 from uuid import uuid4
 
 from fastapi import APIRouter, Depends, HTTPException
-
 from app.api.auth.permissions import Permissions
-from app.service.grouping import get_grouped_result
+from typing import Optional
+
 from tracardi.config import tracardi
 from tracardi.domain.event_to_profile import EventToProfile
 from tracardi.service.events import get_default_mappings_for
-from typing import Optional
-
-from tracardi.service.storage.mysql.mapping.event_to_profile_mapping import map_to_event_to_profile
-from tracardi.service.storage.mysql.service.event_to_profile_service import EventToProfileMappingService
 from tracardi.service.string_manager import capitalize_event_type_id
+from tracardi.service.storage.mysql.interface import event_to_profile_dao
 
 router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin", "developer"]))]
@@ -24,8 +21,7 @@ async def add_event_to_profile(event_to_profile: EventToProfile):
     Creates new event to profile record in database
     """
 
-    etpms = EventToProfileMappingService()
-    return await etpms.insert(event_to_profile)
+    return await event_to_profile_dao.insert_event_to_profile_mapping(event_to_profile)
 
 
 @router.get("/event-to-profiles/type/{event_type}",
@@ -58,11 +54,10 @@ async def get_event_to_profile_by_event_type(event_type: str):
             'tags': ['General']})
         records.append(build_in)
 
-    etpms = EventToProfileMappingService()
-    custom_records = await etpms.load_by_type(event_type)
+    records, total = await event_to_profile_dao.load_event_to_profile_mapping_by_type(event_type)
 
-    if custom_records.exists():
-        for event_to_profile in custom_records.map_to_objects(map_to_event_to_profile):
+    if records:
+        for event_to_profile in records:
             event_to_profile.build_in = False
             records.append(event_to_profile)
 
@@ -86,14 +81,13 @@ async def get_event_to_profile_by_event_type_id(id: str):
     Returns event to profile schema for given event id
     """
 
-    etpms = EventToProfileMappingService()
-    record = await etpms.load_by_id(id)
+    record = await event_to_profile_dao.load_event_to_profile_mapping_by_id(id)
 
-    if not record.exists():
+    if not record:
         raise HTTPException(status_code=404,
                             detail=f"Event to profile coping schema for id {id} not found.")
 
-    return record.map_to_object(map_to_event_to_profile)
+    return record
 
 
 @router.delete("/event-to-profile/{id}", tags=["event-type"], include_in_schema=tracardi.expose_gui_api)
@@ -102,8 +96,7 @@ async def del_event_type_metadata(id: str):
     Deletes event to profile schema for given event type
     """
 
-    etpms = EventToProfileMappingService()
-    return await etpms.delete_by_id(id)
+    return await event_to_profile_dao.delete_event_to_profile_mapping_by_id(id)
 
 
 @router.get("/events-to-profiles/by_tag", tags=["event-type"], include_in_schema=tracardi.expose_gui_api,
@@ -113,8 +106,11 @@ async def list_events_to_profiles_by_tag(query: str = None, start: Optional[int]
     Lists events to profiles coping schema by tag, according to given start (int), limit (int) and query (str)
     """
 
-    etpms = EventToProfileMappingService()
-    records = await etpms.load_all(search=query, limit=limit, offset=start)
+    records, total = await event_to_profile_dao.load_all_event_to_profile_mapping(search=query, limit=limit, offset=start)
 
-    return get_grouped_result("Mappings", records, map_to_event_to_profile)
-
+    return {
+        "total": total,
+        "grouped": {
+            "Mappings": records
+        }
+    }

@@ -61,7 +61,7 @@ from app.api import (
     bridge_endpoint,
     entity_endpoint,
     customer_endpoint,
-    event_to_profile,
+    event_to_profile_endpoint,
     cache_endpoint,
     configuration_endpoint,
     github_endpoint,
@@ -290,7 +290,7 @@ application.include_router(event_data_compliance_endpoint.router)
 application.include_router(identification_point_endpoint.router)
 application.include_router(scheduler_endpoint.router)
 application.include_router(customer_endpoint.router)
-application.include_router(event_to_profile.router)
+application.include_router(event_to_profile_endpoint.router)
 application.include_router(event_type_predefined.router)
 application.include_router(setting_endpoint.router)
 application.include_router(field_update_log_endpoint.router)
