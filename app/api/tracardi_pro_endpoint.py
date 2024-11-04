@@ -1,7 +1,6 @@
 from collections import OrderedDict
 from typing import Optional
 
-from com_tracardi.pro.db.plugins import plugins
 from tracardi.service.license import License
 from tracardi.service.storage.mysql.interface import resource_dao
 from fastapi import APIRouter, Depends, HTTPException
@@ -17,6 +16,7 @@ from tracardi.config import tracardi
 
 if License.has_license():
     from com_tracardi.pro.service.tracardi_pro import get_available_services
+    from com_tracardi.pro.db.plugins import plugins
 
 logger = get_logger(__name__)
 
