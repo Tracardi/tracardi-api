@@ -303,7 +303,6 @@ application.include_router(maintanace_endpoint.router)
 application.include_router(queue_endpoint.router)
 application.include_router(feed_endpoint.router)
 # application.include_router(enhancer_endpoint.router)
-application.include_router(pcp_endpoint.router)
 
 if tracardi.enable_audiences:
     application.include_router(audience_endpoint.router)
@@ -312,6 +311,7 @@ if tracardi.enable_audiences:
 if License.has_service(LICENSE):
     application.include_router(com_track.router)
     application.include_router(upload_endpoint.router)
+    application.include_router(pcp_endpoint.router)
 
 if License.has_service(MULTI_TENANT):
     application.include_router(tenant_install_endpoint.router)
