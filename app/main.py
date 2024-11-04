@@ -132,10 +132,6 @@ else:
 if License.has_service(MULTI_TENANT):
     from com_tracardi.endpoint import tenant_install_endpoint
 
-
-
-
-
 logger = get_logger(__name__)
 
 tags_metadata = [
@@ -207,7 +203,6 @@ application = FastAPI(
         "email": "office@tracardi.com",
     }
 )
-
 
 application.add_middleware(ContextRequestMiddleware)
 
@@ -319,7 +314,6 @@ if License.has_service(MULTI_TENANT):
 
 @application.on_event("startup")
 async def app_starts():
-
     logging.getLogger("uvicorn.access").handlers[0].setFormatter(CustomFormatter())
 
     logger.info(f"Waiting for Mysql...")
