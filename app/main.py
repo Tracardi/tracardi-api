@@ -322,8 +322,16 @@ async def app_starts():
 
     logging.getLogger("uvicorn.access").handlers[0].setFormatter(CustomFormatter())
 
+    logger.info(f"Waiting for Mysql...")
+
     await wait_for_mysql_connection()
+
+    logger.info(f"Waiting for Redis...")
+
     wait_for_redis_connection()
+
+    logger.info(f"Waiting for Elasticsearch...")
+
     await wait_for_connection()
 
     if server.performance_tracking is not None:
