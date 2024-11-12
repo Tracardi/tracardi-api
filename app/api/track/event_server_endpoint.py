@@ -71,15 +71,19 @@ async def _track(tracker_payload: TrackerPayload, host: str, allowed_bridges):
         raise HTTPException(detail=message,
                             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY)
     except EventValidationException as e:
-        message = "Validation failed with error: {}".format(str(e))
-        logger.error(message)
+        message = str(e)
+
+        logger.error(f"Validation error when processing {tracker_payload}. Details: {message}")
         raise HTTPException(detail=message,
                             status_code=status.HTTP_406_NOT_ACCEPTABLE)
     except Exception as e:
         message = str(e)
-        logger.error(message)
+
+        logger.error(f"Error when processing {tracker_payload}. Details: {message}")
         raise HTTPException(detail=message,
                             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    finally:
+        pass
 
 
 @router.post("/track", tags=['collector'])
