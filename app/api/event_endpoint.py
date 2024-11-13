@@ -201,8 +201,8 @@ async def get_for_source_grouped_by_tags_time(source_id: str, time_span: TimeSpa
             response_model=dict)
 async def get_events_for_session(session_id: str, profile_id: str, limit: int = 20):
     return await load_events_by_session_and_profile(
-        profile_id,
-        session_id,
+        profile_id.strip(),
+        session_id.strip(),
         limit)
 
 @router.get("/events/profile/{profile_id}", tags=["event"],
