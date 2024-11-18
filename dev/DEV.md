@@ -49,6 +49,10 @@ docker run -p 9030:9030 -p 8030:8030 -p 8040:8040 -itd \
 # Run local Tracardi GUI
 docker run -p 8787:80 -e API_URL=//127.0.0.1:8686 -e TRACK_DEBUG="yes" tracardi/tracardi-gui
 
+# ArangoDB
+
+docker run -e ARANGO_NO_AUTH=1 -p 8529:8529 arangodb
+
 # Run local API
 docker run -p 18686:80 \
 -e OTEL_SDK_DISABLED=false \
