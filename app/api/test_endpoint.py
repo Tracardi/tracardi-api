@@ -4,10 +4,10 @@ from fastapi import APIRouter, Depends, HTTPException
 
 from app.service.grouping import get_grouped_result
 from tracardi.domain.test import Test
+from tracardi.service.adapter.cache.redis.redis_cache_adapter import redis_cache_adapter
 from tracardi.service.storage.index import Resource
 from tracardi.service.storage.mysql.mapping.test_mapping import map_to_test
 from tracardi.service.storage.mysql.service.test_service import TestService
-from tracardi.service.storage.redis.driver.redis_client import RedisClient
 from tracardi.service.storage.elastic.driver.elastic_client import ElasticClient
 
 from app.api.auth.permissions import Permissions
@@ -27,8 +27,7 @@ async def ping_redis():
     """
     Tests connection between Redis instance and Tracardi instance. Accessible for roles: "admin"
     """
-    client = RedisClient()
-    pong = client.ping()
+    pong = redis_cache_adapter.ping()
     if pong is not True:
         raise ConnectionError("Redis did not respond.")
 

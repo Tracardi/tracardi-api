@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 from tracardi.config import tracardi
 from tracardi.context import get_context
 from tracardi.service.decorators.function_memory_cache import cache
-from tracardi.service.storage.redis.cache import RedisCache
+from tracardi.service.tracking.cache.cache_helper import _ttl, _get_cache
 from tracardi.service.tracking.cache.flat_profile_cache import get_flat_profile_key_namespace
 from tracardi.service.tracking.cache.session_cache import get_session_key_namespace
 from .auth.permissions import Permissions
@@ -10,7 +10,6 @@ from .auth.permissions import Permissions
 router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer"]))]
 )
-redis_cache = RedisCache(ttl=None)
 
 
 @router.get("/cache/profile/expire", tags=["cache"], include_in_schema=tracardi.expose_gui_api)
@@ -20,7 +19,7 @@ async def get_profile_cache_ttl(profile_id: str):
     """
     namespace = get_flat_profile_key_namespace(profile_id, get_context())
     return {
-        "ttl": redis_cache.get_ttl(profile_id, namespace),
+        "ttl": _ttl(profile_id, namespace),
         "namespace": namespace
     }
 
@@ -31,7 +30,7 @@ async def get_session_cache_ttl(session_id: str):
     Returns cache expiration data
     """
     namespace = get_session_key_namespace(session_id, get_context())
-    return {"ttl": redis_cache.get_ttl(session_id, namespace)}
+    return {"ttl": _ttl(session_id, namespace)}
 
 
 @router.get("/cache/profile", tags=["cache"], include_in_schema=tracardi.expose_gui_api)
@@ -40,7 +39,7 @@ async def get_profile_data(profile_id: str):
     Returns cache expiration data
     """
     namespace = get_flat_profile_key_namespace(profile_id, get_context())
-    return {"profile": redis_cache.get(profile_id, namespace)}
+    return {"profile": _get_cache(profile_id, namespace)}
 
 
 @router.get("/cache/session", tags=["cache"], include_in_schema=tracardi.expose_gui_api)
@@ -49,7 +48,7 @@ async def get_session_data(session_id: str):
     Returns cache expiration data
     """
     namespace = get_session_key_namespace(session_id, get_context())
-    return {"session": redis_cache.get(session_id, namespace)}
+    return {"session": _get_cache(session_id, namespace)}
 
 
 @router.get("/cache/memory/count", tags=["cache"], include_in_schema=tracardi.expose_gui_api)
