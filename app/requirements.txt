@@ -17,7 +17,7 @@ feedparser
 beautifulsoup4
 # logfire
 
-git+https://github.com/Tracardi/tracardi.git@1.1.x
+git+https://github.com/Tracardi/tracardi.git@1.2.x
 
 # opentelemetry-distro==0.45b0
 # opentelemetry-instrumentation-wsgi==0.45b0
