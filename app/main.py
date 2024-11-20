@@ -345,6 +345,8 @@ async def app_starts():
         logger.info(f"TRACARDI multi-tenancy:  {tracardi.multi_tenant}.")
         logger.info(f"TRACARDI multi-tenancy API:  {tracardi.multi_tenant_manager_url}.")
 
+
+
     print(f"""
     88888888888 8888888b.         d8888  .d8888b.         d8888 8888888b.  8888888b. 8888888
         888     888   Y88b       d88888 d88P  Y88b       d88888 888   Y88b 888   Y88b  888
@@ -368,6 +370,7 @@ async def app_starts():
     else:
         print("License: MIT + “Commons Clause” License Condition v1.0", flush=True)
 
+    logger.info(f"Adapters: CACHE={tracardi.cache_adapter}, QUEUE={tracardi.queue_adapter}")
     bs = GlobalSettingsBroadcaster()
     bs.start_background_listener()
     logger.info("Starting Cluster Settings Broadcaster...")

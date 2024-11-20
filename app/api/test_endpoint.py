@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException
 
 from app.service.grouping import get_grouped_result
 from tracardi.domain.test import Test
-from tracardi.service.adapter.cache.redis.redis_cache_adapter import redis_cache_adapter
+from tracardi.service.adapter.cache_adaper_selector import cache_adapter
 from tracardi.service.storage.index import Resource
 from tracardi.service.storage.mysql.mapping.test_mapping import map_to_test
 from tracardi.service.storage.mysql.service.test_service import TestService
@@ -20,14 +20,14 @@ router = APIRouter(
 )
 
 ts = TestService()
-
+_cache = cache_adapter()
 
 @router.get("/test/redis", tags=["test"], include_in_schema=tracardi.expose_gui_api)
 async def ping_redis():
     """
     Tests connection between Redis instance and Tracardi instance. Accessible for roles: "admin"
     """
-    pong = redis_cache_adapter.ping()
+    pong = _cache.ping()
     if pong is not True:
         raise ConnectionError("Redis did not respond.")
 
