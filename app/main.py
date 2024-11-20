@@ -104,6 +104,7 @@ if License.has_service(LICENSE):
     from com_tracardi.endpoint import field_update_log_endpoint
     from com_tracardi.endpoint import event_data_compliance_endpoint
     from com_tracardi.endpoint import deploy_endpoint
+    from com_tracardi.config import com_tracardi_settings
 
     if tracardi.enable_audiences:
         from com_tracardi.endpoint import audience_endpoint
@@ -370,7 +371,10 @@ async def app_starts():
     else:
         print("License: MIT + “Commons Clause” License Condition v1.0", flush=True)
 
-    logger.info(f"Adapters: CACHE={tracardi.cache_adapter}, QUEUE={tracardi.queue_adapter}")
+    logger.info(f"Adapters: CACHE={tracardi.cache_adapter}")
+    if License.has_license():
+        logger.info(f"Adapters: QUEUE={com_tracardi_settings.queue_adapter}")
+
     bs = GlobalSettingsBroadcaster()
     bs.start_background_listener()
     logger.info("Starting Cluster Settings Broadcaster...")
