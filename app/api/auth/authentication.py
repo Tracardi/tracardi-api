@@ -21,7 +21,7 @@ class Authentication:
             f"Authorizing {username}...",
             extra=ExtraInfo.exact(
                 "Authentication",
-                class_name="Authentication",
+                class_name=Authentication.__name__,
                 package=__name__,
                 user_id=username
             )
@@ -41,7 +41,7 @@ class Authentication:
                 "Incorrect username or password.",
                 extra=ExtraInfo.exact(
                     origin="authentication",
-                    class_name=Authentication,
+                    class_name=Authentication.__name__,
                     package=__name__,
                     user_id=username
                 )
@@ -53,7 +53,7 @@ class Authentication:
                 "This account was disabled.",
                 extra=ExtraInfo.exact(
                     origin="authentication",
-                    class_name=Authentication,
+                    class_name=Authentication.__name__,
                     package=__name__,
                     user_id=username
                 )
@@ -65,7 +65,7 @@ class Authentication:
                 "This account has expired.",
                 extra=ExtraInfo.exact(
                     origin="authentication",
-                    class_name=Authentication,
+                    class_name=Authentication.__name__,
                     package=__name__,
                     user_id=username
                 )
@@ -76,7 +76,7 @@ class Authentication:
             "User logged-in.",
             extra=ExtraInfo.exact(
                 origin="authentication",
-                class_name="Authentication",
+                class_name=Authentication.__name__,
                 package=__name__,
                 user_id=username
             )
