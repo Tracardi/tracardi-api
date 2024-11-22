@@ -1,6 +1,6 @@
 pip>=21.2.4
 fastapi[all]>=0.103.0
-uvicorn[standard]>=0.22.0
+uvicorn[standard]==0.32.1
 pydantic==2.3.0
 aiofiles==22.1.0
 aioredis==2.0.1
@@ -15,7 +15,6 @@ sentry-sdk
 alembic==1.13.1
 feedparser
 beautifulsoup4
-# logfire
 
 git+https://github.com/Tracardi/tracardi.git@1.1.x
 
