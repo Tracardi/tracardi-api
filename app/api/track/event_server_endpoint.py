@@ -22,7 +22,7 @@ from tracardi.service.storage.mysql.mapping.event_redirect_mapping import map_to
 from tracardi.service.storage.mysql.service.event_redirect_service import EventRedirectService
 from tracardi.domain.payload.tracker_payload import TrackerPayload
 from tracardi.exceptions.exception import UnauthorizedException, FieldTypeConflictException, \
-    EventValidationException, BlockedException
+    EventValidationException, BlockedException, InvalidBotTrafficException
 from tracardi.exceptions.log_handler import get_logger
 from tracardi.service.track_event import track_event
 from tracardi.service.url_constructor import url_query_params_to_dict
@@ -55,6 +55,11 @@ async def _track(tracker_payload: TrackerPayload, host: str, allowed_bridges):
             tracker_payload,
             host,
             allowed_bridges=allowed_bridges)
+    except InvalidBotTrafficException as e:
+        message = str(e)
+        logger.info(message)
+        raise HTTPException(detail=message,
+                            status_code=status.HTTP_406_NOT_ACCEPTABLE)
     except BlockedException as e:
         message = str(e)
         logger.warning(message)
