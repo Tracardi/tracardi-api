@@ -101,3 +101,13 @@ async def delete_test(id: str):
     Deletes test from the database
     """
     return await ts.delete_by_id(id)
+
+
+@router.get("/es/index/{index}", tags=["report"], include_in_schema=tracardi.expose_gui_api)
+async def shards(index: str):
+    client = ElasticClient.instance()
+    shards =  client.shards
+    unassigned = [shard for shard in shards if shard["state"] == "UNASSIGNED"]
+
+    for shard in unassigned:
+        print(f"Index: {shard['index']}, Shard: {shard['shard']}, Reason: {shard['unassigned.reason']}")
