@@ -103,11 +103,24 @@ async def delete_test(id: str):
     return await ts.delete_by_id(id)
 
 
-@router.get("/es/index/{index}", tags=["report"], include_in_schema=tracardi.expose_gui_api)
+@router.get("/es/shards/unassigned", tags=["report"], include_in_schema=tracardi.expose_gui_api)
 async def shards(index: str):
     client = ElasticClient.instance()
-    shards =  client.shards
+    shards =  await client.shards()
+
     unassigned = [shard for shard in shards if shard["state"] == "UNASSIGNED"]
 
+    result = []
     for shard in unassigned:
-        print(f"Index: {shard['index']}, Shard: {shard['shard']}, Reason: {shard['unassigned.reason']}")
+        response = await client.cluster.allocation_explain(
+            body={
+                "index": shard['index'],
+                "shard": shard['shard'],
+                "primary": shard['prirep'] == 'p'
+            }
+        )
+        result.append({
+            "shard": shard,
+            "info": response
+        })
+    return result
