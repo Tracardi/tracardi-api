@@ -5,9 +5,7 @@ from tracardi.config import tracardi
 from tracardi.service.adapter.bigdata.adapter_selector import bd_search_adapter
 from tracardi.service.storage.elastic.interface import raw as raw_db
 from tracardi.service.storage.elastic.driver.elastic_client import ElasticClient
-from tracardi.service.storage.index import Resource
 from tracardi.service.storage.elastic.interface.indices_manager import check_indices_mappings_consistency
-from tracardi.service.storage.elastic.interface.mapping import get_mappings_by_field_type
 
 router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin", "maintainer"]))]
@@ -52,13 +50,11 @@ async def get_index_mapping_metadata(index: str, filter: str = None):
             response_model=dict)
 async def get_index_mapping_metadata(index: str, field_types: str):
     """
-    Returns fields with given field types of given index (str)
+    Returns fields with given field types of given index (str). Field types, eg. text, keyword
     """
-
-    resource = Resource()
-    index = resource[index]
+    # TODO not used in GUI - check
     field_types = field_types.split(',')
-    fields = await get_mappings_by_field_type(index.get_write_index(), field_types)
+    fields = await _search_adapter.get_columns_with_give_type(index, field_types)
 
     return {"result": fields, "total": len(fields)}
 
