@@ -19,7 +19,7 @@ async def get_event_logs(event_id: str, sort: str = None):
             "date": sort
         }]
 
-    records, total = await _log_adapter.load_by_event(event_id, sort=sort)
+    records, total = await _log_adapter.load_logs_by_event(event_id, sort=sort)
     return {
         "result": records,
         "total": total
@@ -38,7 +38,7 @@ async def get_node_logs(node_id: str, sort: str = None):
             "date": sort
         }]
 
-    records, total = await _log_adapter.load_by_node(node_id, sort=sort)
+    records, total = await _log_adapter.load_logs_by_node(node_id, sort=sort)
 
     return {
         "result": records,
@@ -57,7 +57,7 @@ async def get_flow_logs(flow_id: str, sort: str = None):
             "date": sort
         }]
 
-    records, total = await _log_adapter.load_by_flow(flow_id, sort=sort)
+    records, total = await _log_adapter.load_logs_by_flow(flow_id, sort=sort)
 
     return {
         "result": records,
@@ -78,7 +78,7 @@ async def get_profile_logs(profile_id: str, sort: str = None):
             "date": sort
         }]
 
-    records, total = await _log_adapter.load_by_profile(profile_id, sort=sort)
+    records, total = await _log_adapter.load_logs_by_profile(profile_id, sort=sort)
     return {
         "result": list(records),
         "total": total
@@ -90,4 +90,4 @@ async def get_log_alerts():
     """
     Returns list of all Tracardi API logs counts.
     """
-    return await _log_adapter.group_by_level()
+    return await _log_adapter.load_group_logs_by_level()

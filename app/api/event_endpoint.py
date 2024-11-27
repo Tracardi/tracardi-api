@@ -5,9 +5,10 @@ from fastapi import APIRouter, Depends, Response
 from tracardi.domain.enum.time_span import TimeSpan
 from tracardi.domain.event import Event
 from tracardi.service import events
+from tracardi.service.adapter.bigdata.adapter_selector import bd_elastic_adapter
 from tracardi.service.events import get_default_event_type_schema
-from tracardi.service.storage.elastic.interface.event import aggregate_events_by_type_and_source, refresh_event_db, \
-    flush_event_db, count_events_in_db, load_events_avg_requests, load_event_avg_process_time, \
+from tracardi.service.storage.elastic.interface.event import aggregate_events_by_type_and_source, \
+    count_events_in_db, load_events_avg_requests, load_event_avg_process_time, \
     aggregate_event_types_from_db, aggregate_event_tags_from_db, aggregate_event_statuses_from_db, \
     aggregate_event_devices_geo_from_db, aggregate_event_os_names_from_db, aggregate_event_channels_from_db, \
     aggregate_event_resolutions_from_db, aggregate_events_by_source_from_db, load_event_from_db, delete_event_from_db, \
@@ -20,6 +21,7 @@ from tracardi.config import tracardi
 router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer", "maintainer"]))]
 )
+_elastic_adapter = bd_elastic_adapter()
 
 
 def __format_time_buckets(row):
@@ -45,7 +47,7 @@ async def events_refresh_index():
     """
     Refreshes event index.
     """
-    return await refresh_event_db()
+    return await _elastic_adapter.core.refresh('event')
 
 
 @router.get("/events/flush", tags=["event"], include_in_schema=tracardi.expose_gui_api)
@@ -53,7 +55,7 @@ async def events_flush_index():
     """
     Flushes event index.
     """
-    return await flush_event_db()
+    return await _elastic_adapter.core.flush('event')
 
 
 @router.get("/event/count", tags=["event"], include_in_schema=tracardi.expose_gui_api)
