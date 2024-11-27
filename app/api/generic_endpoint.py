@@ -3,8 +3,8 @@ from typing import Optional
 from fastapi import APIRouter
 from fastapi import Depends
 
+from tracardi.service.adapter.bigdata.adapter_selector import bd_search_adapter
 from tracardi.service.query.autocomplete import KQLAutocomplete
-from tracardi.service.storage.elastic.interface import raw as raw_db
 from tracardi.domain.enum.indexes_histogram import IndexesHistogram
 from tracardi.domain.enum.indexes_search import IndexesSearch
 from tracardi.domain.sql_query import SqlQuery
@@ -15,7 +15,7 @@ from tracardi.config import tracardi
 router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer", "maintainer"]))]
 )
-
+_search_adapter = bd_search_adapter()
 
 @router.get("/{index}/query/autocomplete",
             tags=["autocomplete"],
@@ -39,8 +39,7 @@ async def autocomplete_kql(index: IndexesSearch, query: Optional[str] = ""):
 async def select_by_sql(index: IndexesSearch, query: Optional[SqlQuery] = None):
     if query is None:
         query = SqlQuery()
-    result = await raw_db.index(index.value).query_by_sql(query.where, start=0, limit=query.limit)
-    return result.dict()
+    return await _search_adapter.search_with_query(index.value, query.where, start=0, limit=query.limit)
 
 
 @router.post("/{index}/select/range/page/{page}",
@@ -54,12 +53,11 @@ async def time_range_with_sql(index: IndexesHistogram, query: DatetimeRangePaylo
         page_size = query.limit
         query.start = page_size * page
         query.limit = page_size
-    return await raw_db.index(index.value).query_by_sql_in_time_range(query)
+    return await _search_adapter.search_in_time_range(index.value, query)
 
 
 @router.post("/{index}/select/histogram",
              tags=["data"],
              include_in_schema=tracardi.expose_gui_api)
 async def histogram_with_sql(index: IndexesHistogram, query: DatetimeRangePayload, group_by: str = None):
-
-    return await raw_db.index(index.value).histogram_by_sql_in_time_range(query, group_by)
+    return await _search_adapter.search_histogram_in_time_range(index.value, query, group_by)

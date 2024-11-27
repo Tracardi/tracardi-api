@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 
 from app.api.auth.permissions import Permissions
 from tracardi.config import tracardi
+from tracardi.service.adapter.bigdata.adapter_selector import bd_search_adapter
 from tracardi.service.storage.elastic.interface import raw as raw_db
 from tracardi.service.storage.elastic.driver.elastic_client import ElasticClient
 from tracardi.service.storage.index import Resource
@@ -11,6 +12,7 @@ from tracardi.service.storage.elastic.interface.mapping import get_mappings_by_f
 router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin", "maintainer"]))]
 )
+_search_adapter = bd_search_adapter()
 
 
 @router.get("/storage/mapping/check", tags=["storage"], include_in_schema=tracardi.expose_gui_api,
@@ -40,7 +42,7 @@ async def get_index_mapping_metadata(index: str, filter: str = None):
     # if tracardi.multi_tenant:
     #     raise HTTPException(status_code=405, detail="This operation is not allowed for multi-tenant server.")
 
-    result = await raw_db.get_mapping_fields(index)
+    result = await _search_adapter.get_defined_columns_in_table(index)
     if filter is not None:
         result = [item for item in result if item.startswith(filter) and item != filter]
     return {"result": result, "total": len(result)}
