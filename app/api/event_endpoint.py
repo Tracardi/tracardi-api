@@ -193,7 +193,7 @@ async def get_for_source_grouped_by_type_time(source_id: str, time_span: TimeSpa
             response_model=list)
 async def get_for_source_grouped_by_tags_time(source_id: str, time_span: TimeSpan):
     """
-    time_span: d - last day, w - last week, M - last month, y - last year
+    time_span: d - last day, w - last week, M - last month, y - last year, EventSourceAnalytics
     """
     return await aggregate_events_by_source_and_tags(source_id, time_span)
 
