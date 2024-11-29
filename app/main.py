@@ -312,10 +312,11 @@ if License.has_service(LICENSE):
 if License.has_service(MULTI_TENANT):
     application.include_router(tenant_install_endpoint.router)
 
+_log_format_adapter = log_format_adapter()
 
 @application.on_event("startup")
 async def app_starts():
-    _log_format_adapter = log_format_adapter()
+
     logging.getLogger("uvicorn.access").handlers[0].setFormatter(_log_format_adapter)
 
     logger.info(f"Waiting for Mysql...")
@@ -374,6 +375,7 @@ async def app_starts():
     bs.start_background_listener()
     logger.info("Starting Cluster Settings Broadcaster...")
     logger.info(f"APM (Auto Profile Merging): {tracardi.is_apm_on()}")
+    logger.info(f"LOGGING_FORMAT: {_log_format_adapter}")
 
     health_endpoint.api_ready = True
 
