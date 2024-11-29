@@ -6,6 +6,7 @@ from datetime import datetime
 import sentry_sdk
 
 from app.middleware.context import ContextRequestMiddleware
+from tracardi.service.adapter.logger.logger_adapter import log_format_adapter
 from tracardi.service.cluster.settings import GlobalSettingsBroadcaster
 from tracardi.service.elastic.connection import wait_for_connection
 from tracardi.service.license import License, SCHEDULER, IDENTIFICATION, COMPLIANCE, RESHAPING, VALIDATOR, \
@@ -314,7 +315,8 @@ if License.has_service(MULTI_TENANT):
 
 @application.on_event("startup")
 async def app_starts():
-    logging.getLogger("uvicorn.access").handlers[0].setFormatter(CustomFormatter())
+    _log_format_adapter = log_format_adapter()
+    logging.getLogger("uvicorn.access").handlers[0].setFormatter(_log_format_adapter)
 
     logger.info(f"Waiting for Mysql...")
 
