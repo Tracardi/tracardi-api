@@ -23,12 +23,30 @@ router = APIRouter(
 @router.get("/event-sources/by_type",
             tags=["event-source"],
             include_in_schema=tracardi.expose_gui_api)
-async def list_event_sources(query: str = None):
+async def list_event_sources(query: str = None, limit: int=100):
     """
     Lists all event sources that match given query (str) parameter
     """
 
-    records, count = await event_source_dao.load_all_event_sources(query, limit=500)
+    records, count = await event_source_dao.load_all_event_sources(query, limit=limit)
+
+    return {
+        "total": count,
+        "grouped": {
+            "Event sources": records
+        }
+    }
+
+# Obsolete
+@router.get("/event-sources/running",
+            tags=["event-source"],
+            include_in_schema=tracardi.expose_gui_api)
+async def list_event_sources(limit: int=100):
+    """
+    Lists all event sources that match given query (str) parameter
+    """
+
+    records, count = await event_source_dao.load_active(limit=limit)
 
     return {
         "total": count,
