@@ -28,7 +28,7 @@ def _get_header_value(scope, key) -> Optional[str]:
     return None
 
 
-async def _get_context_object(scope) -> Context:
+def _get_context_object(scope) -> Context:
     # Default context comes from evn variable PRODUCTION
     production = version.production
 
