@@ -375,8 +375,10 @@ async def app_starts():
     if License.has_license():
         logger.info(f"Adapters: QUEUE={com_tracardi_settings.queue_adapter}")
 
-    bs = GlobalSettingsBroadcaster()
-    bs.start_background_listener()
+    if tracardi.enable_global_settings:
+        bs = GlobalSettingsBroadcaster()
+        bs.start_background_listener()
+
     logger.info("Starting Cluster Settings Broadcaster...")
     logger.info(f"APM (Auto Profile Merging): {tracardi.is_apm_on()}")
 
