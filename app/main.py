@@ -6,6 +6,7 @@ from datetime import datetime
 import sentry_sdk
 
 from app.middleware.context import ContextRequestMiddleware
+from tracardi.service.adapter.logger.logger_adapter import log_format_adapter
 from tracardi.service.cluster.settings import GlobalSettingsBroadcaster
 from tracardi.service.elastic.connection import wait_for_connection
 from tracardi.service.license import License, SCHEDULER, IDENTIFICATION, COMPLIANCE, RESHAPING, VALIDATOR, \
@@ -312,10 +313,12 @@ if License.has_service(LICENSE):
 if License.has_service(MULTI_TENANT):
     application.include_router(tenant_install_endpoint.router)
 
+_log_format_adapter = log_format_adapter()
 
 @application.on_event("startup")
 async def app_starts():
-    logging.getLogger("uvicorn.access").handlers[0].setFormatter(CustomFormatter())
+
+    logging.getLogger("uvicorn.access").handlers[0].setFormatter(_log_format_adapter)
 
     logger.info(f"Waiting for Mysql...")
 
@@ -381,6 +384,7 @@ async def app_starts():
 
     logger.info("Starting Cluster Settings Broadcaster...")
     logger.info(f"APM (Auto Profile Merging): {tracardi.is_apm_on()}")
+    logger.info(f"LOGGING_FORMAT: {_log_format_adapter}")
 
     health_endpoint.api_ready = True
 
