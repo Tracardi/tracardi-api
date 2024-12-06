@@ -1,6 +1,7 @@
 from typing import Optional
-from tracardi.config import tracardi
-from tracardi.context import Context, ServerContext
+
+from tracardi.version import version
+from tracardi.context import Context, ServerContext, get_context
 from starlette.types import ASGIApp, Receive, Scope, Send
 from app.api.auth.user_db import token2user
 from tracardi.domain import ExtraInfo
@@ -29,7 +30,7 @@ def _get_header_value(scope, key) -> Optional[str]:
 
 def _get_context_object(scope) -> Context:
     # Default context comes from evn variable PRODUCTION
-    production = tracardi.version.production
+    production = version.production
 
     # If env variable set to PRODUCTION=yes there is no way to change it.
     # Production means production. Otherwise the context can be changed
@@ -38,13 +39,27 @@ def _get_context_object(scope) -> Context:
     tenant, hostname = get_tenant_name_from_scope(scope)
 
     if not production:  # Staging as default
-
         context = _get_header_value(scope, "x-context")
         # if has some value
         if context and context in ['production', 'staging']:
             production = context.lower() == 'production'
 
-    return Context(production=production, user=None, tenant=tenant, host=hostname)
+    # Extract URL and query parameters
+    url_path = scope.get("path", "")
+    query_params = scope.get("query_string", b"")
+
+    return Context(
+        production=production,
+        user=None,
+        tenant=tenant,
+        host=hostname,
+        metadata={
+            "path": url_path,
+            "params": query_params,
+            "body": None,
+            "headers": scope.get('headers', [])
+        }
+    )
 
 
 class ContextRequestMiddleware:
