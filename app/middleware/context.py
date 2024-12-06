@@ -1,7 +1,7 @@
 from typing import Optional
 
 from tracardi.version import version
-from tracardi.context import Context, ServerContext, get_context
+from tracardi.context import Context, ServerContext
 from starlette.types import ASGIApp, Receive, Scope, Send
 from app.api.auth.user_db import token2user
 from tracardi.domain import ExtraInfo
