@@ -37,9 +37,13 @@ async def get_es_cluster_health():
     """
     Tests connection between Elasticsearch and Tracardi by returning cluster info. Accessible for roles: "admin"
     """
+
     health = await raw_db.health()
     if not isinstance(health, dict):
         raise ConnectionError("Elasticsearch did not pass health check.")
+    settings = await raw_db.get_settings()
+    if settings:
+        health['settings'] = settings
     return health
 
 
