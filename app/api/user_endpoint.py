@@ -30,10 +30,9 @@ router = APIRouter(
 )
 
 auth_router = APIRouter()
-# logger = get_logger(__name__)
 
 @auth_router.post("/user/token",
-                  tags=["user", "authorization"],
+                  tags=[ "authorization"],
                   include_in_schema=tracardi.expose_gui_api)
 async def get_token(login_form_data: OAuth2PasswordRequestForm = Depends(),
                     auth: Authentication = Depends(get_authentication)):
@@ -54,13 +53,12 @@ async def get_token(login_form_data: OAuth2PasswordRequestForm = Depends(),
             token = await auth.login(login_form_data.username, login_form_data.password)
         except Exception as e:
             message = f"Authentication error: {str(e)}"
-            # logger.error(message)
             raise HTTPException(status_code=400, detail=message)
 
         return token
 
 
-@auth_router.post("/user/logout", tags=["user", "authorization"], include_in_schema=tracardi.expose_gui_api)
+@auth_router.post("/user/logout", tags=["authorization"], include_in_schema=tracardi.expose_gui_api)
 async def logout(authorization: Union[str, None] = Header(default=None),
                  auth: Authentication = Depends(get_authentication)):
     """
