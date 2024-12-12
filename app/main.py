@@ -359,12 +359,12 @@ async def app_starts():
     if License.has_license():
         license = License.check()
 
-        print(f"{str(tracardi.version)} (Multi-Tenant: {tracardi.multi_tenant}) (Adapters: {tracardi.cache_adapter},{com_tracardi_settings.queue_adapter})", flush=True)
+        print(f"{str(tracardi.version)} (Tag: {tracardi.image_tag}) (Multi-Tenant: {tracardi.multi_tenant}) (Adapters: {tracardi.cache_adapter},{com_tracardi_settings.queue_adapter})", flush=True)
         print(f"Commercial Licensed issued for: {license.owner}, expires: {datetime.fromtimestamp(license.expires) if license.expires > 0 else 'Perpetual'} ", flush=True)
         print(f"TRACARDI Services {list(license.get_service_ids())}", flush=True)
         print(f"TRACARDI multi-tenancy API:  {tracardi.multi_tenant_manager_url}.", flush=True)
     else:
-        print(f"{str(tracardi.version)}(Multi - Tenant: {tracardi.multi_tenant}", flush=True)
+        print(f"{str(tracardi.version)} (Tag: {tracardi.image_tag}) (Multi-Tenant: {tracardi.multi_tenant}", flush=True)
         print("License: MIT + “Commons Clause” License Condition v1.0", flush=True)
 
 
