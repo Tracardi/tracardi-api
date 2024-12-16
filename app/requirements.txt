@@ -1,7 +1,7 @@
 pip>=21.2.4
-fastapi[all]>=0.103.0
+fastapi[all]>=0.115.6  #0.103.0
 uvicorn[standard]==0.32.1
-pydantic==2.3.0
+pydantic==2.10.3
 aiofiles==22.1.0
 aioredis==2.0.1
 hiredis==2.2.3
@@ -13,7 +13,7 @@ cron-validator==1.0.6
 python-multipart
 sentry-sdk
 alembic==1.13.1
-feedparser
+feedparser==6.0.11
 beautifulsoup4
 
 git+https://github.com/Tracardi/tracardi.git@1.2.x
