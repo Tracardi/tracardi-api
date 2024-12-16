@@ -53,5 +53,6 @@ ENV VARIABLE_NAME="application"
 # Set a default value for TAG_VERSION
 ARG IMAGE_TAG=unknown
 ENV IMAGE_TAG=${IMAGE_TAG}
+ENV SERVER_LOGGING_LEVEL=warning
 
-CMD ["uvicorn", "app.main:application", "--proxy-headers", "--host", "0.0.0.0",  "--port", "80", "--log-level", "warning"]
+CMD ["uvicorn", "app.main:application", "--proxy-headers", "--host", "0.0.0.0",  "--port", "80", "--log-level", "${SERVER_LOGGING_LEVEL}"]
