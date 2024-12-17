@@ -13,7 +13,7 @@ cron-validator==1.0.6
 python-multipart
 sentry-sdk
 alembic==1.13.1
-feedparser==6.0.11
+feedparser
 beautifulsoup4
 
 git+https://github.com/Tracardi/tracardi.git@1.0.x
