@@ -46,4 +46,5 @@ ARG IMAGE_TAG=unknown
 ENV IMAGE_TAG=${IMAGE_TAG}
 ENV SERVER_LOGGING_LEVEL=info
 
-CMD ["uvicorn", "app.main:application", "--proxy-headers", "--host", "0.0.0.0",  "--port", "80", "--log-level", "${SERVER_LOGGING_LEVEL}"]
+#CMD ["uvicorn", "app.main:application", "--proxy-headers", "--host", "0.0.0.0",  "--port", "80", "--log-level", "${SERVER_LOGGING_LEVEL}"]
+CMD ["sh", "-c", "uvicorn app.main:application --proxy-headers --host 0.0.0.0 --port 80 --log-level $SERVER_LOGGING_LEVEL"]
