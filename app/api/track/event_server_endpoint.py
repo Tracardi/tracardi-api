@@ -1,5 +1,3 @@
-import email
-
 from time import time
 from json import JSONDecodeError
 from typing import Optional
@@ -7,8 +5,6 @@ from typing import Optional
 from fastapi import APIRouter, Request, status, HTTPException, Response
 from fastapi.responses import RedirectResponse
 
-from tracardi.context import get_context
-from tracardi.domain.event_redirect import EventRedirect
 from tracardi.service.ip_address import get_ip_address
 from tracardi.service.notation.dict_traverser import DictTraverser
 from tracardi.service.notation.dot_accessor import DotAccessor
@@ -18,8 +14,6 @@ from tracardi.domain.entity import Entity, PrimaryEntity
 from tracardi.domain.event_metadata import EventPayloadMetadata
 from tracardi.domain.payload.event_payload import EventPayload
 from tracardi.domain.time import Time
-from tracardi.service.storage.mysql.mapping.event_redirect_mapping import map_to_event_redirect
-from tracardi.service.storage.mysql.service.event_redirect_service import EventRedirectService
 from tracardi.domain.payload.tracker_payload import TrackerPayload
 from tracardi.exceptions.exception import UnauthorizedException, FieldTypeConflictException, \
     EventValidationException, BlockedException, InvalidBotTrafficException
@@ -27,6 +21,7 @@ from tracardi.exceptions.log_handler import get_logger
 from tracardi.service.track_event import track_event
 from tracardi.service.url_constructor import url_query_params_to_dict
 from tracardi.service.utils.hasher import hash_id
+from tracardi.service.storage.mysql.interface import event_redirect_dao
 
 logger = get_logger(__name__)
 
@@ -282,11 +277,9 @@ async def request_redirect(request: Request, redirect_id: str,
 
     redirect_id = redirect_id.strip()
 
-    ers = EventRedirectService()
+    event_redirect = await event_redirect_dao.load_by_id(redirect_id)
 
-    redirect_record = await ers.load_by_id(redirect_id)
-
-    if not redirect_record.exists():
+    if not event_redirect:
         raise HTTPException(status_code=404)
 
     body = {}
@@ -312,8 +305,6 @@ async def request_redirect(request: Request, redirect_id: str,
         },
     )
     converter = DictTraverser(dot)
-
-    event_redirect: EventRedirect = redirect_record.map_to_object(map_to_event_redirect)
 
     properties = converter.reshape(event_redirect.props)
     tracker_payload = TrackerPayload(

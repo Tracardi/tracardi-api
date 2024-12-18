@@ -5,14 +5,11 @@ from fastapi import APIRouter, Response, HTTPException, Depends
 from tracardi.domain.event_source import EventSource
 from tracardi.domain.flow import FlowRecord
 from tracardi.domain.rule import Rule
-from tracardi.service.storage.mysql.mapping.workflow_mapping import map_to_workflow_record
-from tracardi.service.storage.mysql.mapping.workflow_trigger_mapping import map_to_workflow_trigger_rule
-from tracardi.service.storage.mysql.service.workflow_service import WorkflowService
-from tracardi.service.storage.mysql.service.workflow_trigger_service import WorkflowTriggerService
 from .auth.permissions import Permissions
 from tracardi.config import tracardi
-from ..service.grouping import get_grouped_result, get_result_dict
 from tracardi.service.storage.mysql.interface import event_source_dao
+from tracardi.service.storage.mysql.interface import workflow_dao
+from tracardi.service.storage.mysql.interface import workflow_trigger_dao
 
 router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer"]))]
@@ -45,17 +42,14 @@ async def upsert_rule(rule: Rule):
             rule.description = f"Triggers workflow: \"{rule.flow.name}\" when event \"{rule.event_type.name}\" " \
                                f"is collected from source: \"{rule.source.name}\""
 
-    ws = WorkflowService()
-    record = await ws.load_by_id(rule.flow.id)
-    flow_record = record.map_to_object(map_to_workflow_record)
+    flow_record = await workflow_dao.load_by_id(rule.flow.id)
 
     if flow_record is None:
         new_flow = FlowRecord(id=rule.flow.id, name=rule.flow.name, description="", type='collection')
-        await ws.insert(new_flow)
+        await workflow_dao.insert(new_flow)
         # await flow_db.save(new_flow)
 
-    wts = WorkflowTriggerService()
-    return await wts.insert(rule)
+    return await workflow_trigger_dao.insert(rule)
 
 
 @router.get("/rule/{id}", tags=["rule"], response_model=Optional[Rule], include_in_schema=tracardi.expose_gui_api)
@@ -63,14 +57,13 @@ async def get_rule(id: str, response: Response):
     """
     Returns rule or None if rule does not exist.
     """
-    wts = WorkflowTriggerService()
-    record = await wts.load_by_id(id)
+    trigger_rule = await workflow_trigger_dao.load_by_id(id)
 
-    if not record.exists():
+    if not trigger_rule:
         response.status_code = 404
         return None
 
-    return record.map_to_object(map_to_workflow_trigger_rule)
+    return trigger_rule
 
 
 @router.delete("/rule/{id}", tags=["rule"], include_in_schema=tracardi.expose_gui_api)
@@ -78,20 +71,17 @@ async def delete_rule(id: str):
     """
     Deletes rule with given ID (str) from database
     """
-
-    wts = WorkflowTriggerService()
-    return await wts.delete_by_id(id)
+    return await workflow_trigger_dao.delete_by_id(id)
 
 
-@router.get("/rules/by_flow/{workflow_id}", tags=["rules"], response_model=List[Rule], include_in_schema=tracardi.expose_gui_api)
+@router.get("/rules/by_flow/{workflow_id}", tags=["rules"], response_model=List[Rule],
+            include_in_schema=tracardi.expose_gui_api)
 async def get_rules_attached_to_flow(workflow_id: str) -> List[Rule]:
     """
     Returns list of rules attached to flow with given ID (str)
     """
-    wts = WorkflowTriggerService()
-    results = await wts.load_by_workflow(workflow_id=workflow_id)
-    return list(results.map_to_objects(map_to_workflow_trigger_rule))
-
+    results, _ = await workflow_trigger_dao.load_by_workflow(workflow_id=workflow_id)
+    return results
 
 
 @router.get("/rules/by_tag", tags=["rules"], response_model=dict, include_in_schema=tracardi.expose_gui_api)
@@ -99,19 +89,23 @@ async def get_rules_by_tag(query: str = None, start: int = 0, limit: int = 100) 
     """
     Lists rules by tags, according to query (str), start (int) and limit (int) parameters
     """
+    records, total = await workflow_trigger_dao.load_all(search=query, offset=start, limit=limit)
+    return {
+        "total": total,
+        "grouped": {
+            "Triggers": records
+        }
+    }
 
-    wts = WorkflowTriggerService()
-    records = await wts.load_all(search=query, offset=start, limit=limit)
-    return get_grouped_result("Triggers", records, map_to_workflow_trigger_rule)
 
-
-@router.get("/rules/by_event_type/{event_type_id}", tags=["rules"], response_model=dict, include_in_schema=tracardi.expose_gui_api)
+@router.get("/rules/by_event_type/{event_type_id}", tags=["rules"], response_model=dict,
+            include_in_schema=tracardi.expose_gui_api)
 async def get_rules_by_event_type(event_type_id: str) -> dict:
     """
     Lists rules by event types
     """
-    wts = WorkflowTriggerService()
-    records = await wts.load_by_event_type(event_type_id=event_type_id)
-
-    return get_result_dict(records, map_to_workflow_trigger_rule)
-
+    records, total = await workflow_trigger_dao.load_by_event_type(event_type_id=event_type_id)
+    return {
+        "total": total,
+        "result": records
+    }

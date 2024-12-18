@@ -13,9 +13,6 @@ from tracardi.domain.metadata import ProfileMetadata
 from tracardi.domain.payload.event_payload import EventPayload
 from tracardi.domain.payload.tracker_payload import TrackerPayload
 from tracardi.domain.time import EventTime, ProfileTime, Time
-from tracardi.service.storage.mysql.mapping.workflow_mapping import map_to_workflow_record
-from tracardi.service.storage.mysql.service.workflow_service import WorkflowService
-from tracardi.service.storage.mysql.service.workflow_trigger_service import WorkflowTriggerService
 from tracardi.service.wf.domain.flow_history import FlowHistory
 from tracardi.service.wf.domain.work_flow import WorkFlow
 from tracardi.domain.flow_meta_data import FlowMetaData
@@ -29,27 +26,16 @@ from tracardi.domain.profile import Profile
 from tracardi.domain.session import Session, SessionMetadata, SessionTime
 from .auth.permissions import Permissions
 from tracardi.config import tracardi
+from tracardi.service.storage.mysql.interface import workflow_dao
+from tracardi.service.storage.mysql.interface import workflow_trigger_dao
 
 router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin", "developer"]))]
 )
 
 
-async def _record_exists_in_current_context(id: str) -> Optional[FlowRecord]:
-    ws = WorkflowService()
-    record = await ws.load_in_current_context(id)
-    return record.map_to_object(map_to_workflow_record)
-
-
 async def _load_record(id: str) -> Optional[FlowRecord]:
-    ws = WorkflowService()
-    record = await ws.load_by_id(id)
-    return record.map_to_object(map_to_workflow_record)
-
-
-async def _store_record(workflow_record: FlowRecord) -> str:
-    ws = WorkflowService()
-    return await ws.insert(workflow_record)
+    return await workflow_dao.load_by_id(id)
 
 
 async def _upsert_flow(workflow: Flow, rearrange_nodes: Optional[bool] = False):
@@ -74,7 +60,7 @@ async def _upsert_flow(workflow: Flow, rearrange_nodes: Optional[bool] = False):
     flow_record.draft = workflow.model_dump(mode='json')
     flow_record.timestamp = now_in_utc()
 
-    result = await _store_record(flow_record)
+    result = await workflow_dao.insert(flow_record)
 
     return result, flow_record
 
@@ -150,9 +136,8 @@ async def upsert_flow_details(flow_metadata: FlowMetaData):
     Adds new flow metadata for flow with given id (str)
     """
 
-    ws = WorkflowService()
 
-    flow_record = await _record_exists_in_current_context(flow_metadata.id)
+    flow_record = await workflow_dao.load_in_current_context(flow_metadata.id)
 
     if flow_record is None:
 
@@ -168,7 +153,7 @@ async def upsert_flow_details(flow_metadata: FlowMetaData):
             type=flow_metadata.type
         ).model_dump(mode='json')
 
-        return await ws.insert(flow_record)
+        return await workflow_dao.insert(flow_record)
 
     else:
         if isinstance(flow_record.draft, dict):
@@ -177,7 +162,7 @@ async def upsert_flow_details(flow_metadata: FlowMetaData):
             flow_record.draft['description'] = flow_metadata.description
             flow_record.draft['tags'] = flow_metadata.tags
 
-            return await ws.update_by_id(flow_metadata.id, new_data=dict(
+            return await workflow_dao.update_by_id(flow_metadata.id, new_data=dict(
                 name=flow_metadata.name,
                 description=flow_metadata.description,
                 tags=",".join(flow_metadata.tags),
@@ -187,7 +172,7 @@ async def upsert_flow_details(flow_metadata: FlowMetaData):
 
         else:
 
-            return await ws.update_by_id(flow_metadata.id, new_data=dict(
+            return await workflow_dao.update_by_id(flow_metadata.id, new_data=dict(
                 name=flow_metadata.name,
                 description=flow_metadata.description,
                 tags=",".join(flow_metadata.tags),
@@ -203,8 +188,7 @@ async def upsert_flow_draft_details(flow_metadata: FlowMetaData):
     Adds new draft metadata to flow with defined ID (str)
     """
 
-    ws = WorkflowService()
-    return await ws.update_by_id(flow_metadata.id, new_data=dict(
+    return await workflow_dao.update_by_id(flow_metadata.id, new_data=dict(
         name=flow_metadata.name,
         description=flow_metadata.description,
         tags=",".join(flow_metadata.tags),
@@ -215,8 +199,7 @@ async def upsert_flow_draft_details(flow_metadata: FlowMetaData):
 @router.get("/flow/{id}/lock/{lock}", tags=["flow"],
             include_in_schema=tracardi.expose_gui_api)
 async def update_flow_lock(id: str, lock: str):
-    ws = WorkflowService()
-    return await ws.update_by_id(id, new_data=dict(
+    return await workflow_dao.update_by_id(id, new_data=dict(
         lock=lock.lower() == 'yes'
     ))
 
@@ -344,12 +327,12 @@ async def delete_flow(id: str):
 
     # TODO use constrains
 
-    # Delete rule before flow
-    wts = WorkflowTriggerService()
-    await wts.delete_by_workflow_id(id)
+    # TODO could be a transaction
 
-    ws = WorkflowService()
-    await ws.delete_by_id(id)
+    # Delete rule before flow
+    await workflow_trigger_dao.delete_by_workflow_id(id)
+    # Delete flow
+    await workflow_dao.delete_by_id(id)
 
     return {
         "rule": True,
