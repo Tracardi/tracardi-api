@@ -71,7 +71,7 @@ async def get_consent_types(query: str = None, start: int = 0, limit: int = 10):
     """
     Returns consent types grouped by query on name field.
     """
-    result, total = await consent_type_dao.load_all(query, offset=start, limit=limit)
+    result, total = await consent_type_dao.load(search=query, offset=start, limit=limit)
     return {
         "total": total,
         "grouped": {
