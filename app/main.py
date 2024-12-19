@@ -15,55 +15,23 @@ from tracardi.config import server
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI, Request
 from starlette.staticfiles import StaticFiles
-from app.api import (
-    rule_endpoint,
-    resource_endpoint,
-    event_endpoint,
-    profile_endpoint,
-    flow_endpoint,
-    generic_endpoint,
-    tql_endpoint,
-    health_endpoint,
-    session_endpoint,
-    plugins_endpoint,
-    settings_endpoint,
-    event_source_endpoint,
-    test_endpoint,
-    consent_type_endpoint,
-    flow_action_endpoint,
-    flows_endpoint,
-    info_endpoint,
-    user_endpoint,
-    debug_endpoint,
-    tracardi_pro_endpoint,
-    event_type_predefined,
-    import_endpoint,
-    task_endpoint,
-    storage_endpoint,
-    destination_endpoint,
-    user_account_endpoint,
-    install_endpoint,
-    delete_indices_endpoint,
-    setting_endpoint,
-    migration_endpoint,
-    report_endpoint,
-    console_log_endpoint,
-    event_mapping_endpoint,
-    bridge_endpoint,
-    entity_endpoint,
-    customer_endpoint,
-    event_to_profile_endpoint,
-    cache_endpoint,
-    configuration_endpoint,
-    github_endpoint,
-    maintanace_endpoint,
-    feed_endpoint,
-    event_source_redirects
-)
-from app.api.track import event_server_endpoint
+from app.api.routes import cache_endpoint, console_log_endpoint, session_endpoint, user_account_endpoint, \
+    plugins_endpoint, profile_endpoint, resource_endpoint, test_endpoint, tracardi_pro_endpoint, debug_endpoint, \
+    event_type_predefined, event_endpoint, tql_endpoint, user_endpoint, storage_endpoint, task_endpoint, \
+    settings_endpoint, entity_endpoint, report_endpoint, import_endpoint
+from app.api.routes.consent import customer_endpoint, consent_type_endpoint
+from app.api.routes.mapping import event_mapping_endpoint, event_to_profile_endpoint
+from app.api.routes.data import generic_endpoint
+from app.api.routes.management import health_endpoint, info_endpoint, install_endpoint, maintanace_endpoint, \
+    migration_endpoint, delete_indices_endpoint, configuration_endpoint
+from app.api.routes.outbound import destination_endpoint
+from app.api.routes.inbound import bridge_endpoint, event_source_endpoint, event_source_redirects
+from app.api.routes.gui import github_endpoint, feed_endpoint, setting_endpoint
+from app.api.routes.workflow import flow_action_endpoint, flow_endpoint, rule_endpoint, flows_endpoint
+from app.api.routes.track import event_server_endpoint
 from tracardi.config import tracardi
 from tracardi.exceptions.log_handler import get_logger
-from app.api.licensed_endpoint import get_router
+from app.api.routes.licensed_endpoint import get_router
 
 # Licensed software
 if License.has_service(SCHEDULER):
@@ -95,7 +63,6 @@ if License.has_service(LICENSE):
     from com_tracardi.endpoint import field_update_log_endpoint
     from com_tracardi.endpoint import event_data_compliance_endpoint
     from com_tracardi.endpoint import deploy_endpoint
-    from com_tracardi.config import com_tracardi_settings
 
     if tracardi.enable_audiences:
         from com_tracardi.endpoint import audience_endpoint
