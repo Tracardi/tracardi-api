@@ -100,7 +100,7 @@ async def track(tracker_payload: TrackerPayload, request: Request, response: Res
         response.status_code = 226
 
     passed_time = time() - start
-    logger.info(f"Regular: Track finished in {passed_time}s")
+    logger.info(f"Track finished in {passed_time}s")
 
     # if passed_time> 5:
     #     print(get_context().profiler.report())
@@ -123,7 +123,7 @@ async def track(tracker_payload: TrackerPayload, request: Request, response: Res
         response.status_code = 226
 
     passed_time = time() - start
-    logger.info(f"Queue: Track finished in {passed_time}s")
+    logger.info(f"Track queued in {passed_time}s")
     # if passed_time> 5:
     #     print(get_context().profiler.report())
 
