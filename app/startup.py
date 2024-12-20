@@ -12,7 +12,7 @@ from tracardi.service.storage.elastic.interface.client import elastic_close
 from tracardi.service.storage.mysql.service.mysql_installation import wait_for_mysql_connection
 from tracardi.service.storage.redis.connection import wait_for_redis_connection
 
-from tracardi.config import server
+from tracardi.config import server, memory_cache
 from fastapi import FastAPI
 
 from tracardi.config import tracardi
@@ -101,6 +101,15 @@ async def app_starts():
     logger.info(f"ENABLE_EVENT_SOURCE_CHECK: {tracardi.enable_event_source_check}")
     logger.info(f"ENABLE_AUDIENCES: {tracardi.enable_audiences}")
     logger.info(f"MULTI_TENANT_MANAGER_URL:  {tracardi.multi_tenant_manager_url}.")
+    print(f"EVENT_MAPPING_CACHE_TTL: {memory_cache.event_mapping_cache_ttl}")
+    print(f"EVENT_RESHAPING_CACHE_TTL: {memory_cache.event_reshaping_cache_ttl}")
+    print(f"EVENT_VALIDATION_CACHE_TTL: {memory_cache.event_validation_cache_ttl}")
+    print(f"EVENT_DESTINATION_CACHE_TTL: {memory_cache.event_destination_cache_ttl}")
+    print(f"EVENT_TO_PROFILE_COPING_TTL: {memory_cache.event_to_profile_coping_ttl}")
+    print(f"PROFILE_DESTINATION_CACHE_TTL: {memory_cache.profile_destination_cache_ttl}")
+    print(f"DATA_COMPLIANCE_CACHE_TTL: {memory_cache.data_compliance_cache_ttl}")
+    print(f"IDENTIFICATION_POINTS_CACHE_TTL: {memory_cache.identification_points_cache_ttl}")
+    print(f"EVENT_SOURCE_CACHE_TTL: {memory_cache.source_ttl}")
 
 async def app_shutdown():
     await elastic_close()
