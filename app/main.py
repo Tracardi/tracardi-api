@@ -28,7 +28,7 @@ from app.api.routes.outbound import destination_endpoint
 from app.api.routes.inbound import bridge_endpoint, event_source_endpoint, event_source_redirects
 from app.api.routes.gui import github_endpoint, feed_endpoint, setting_endpoint
 from app.api.routes.workflow import flow_action_endpoint, flow_endpoint, rule_endpoint, flows_endpoint
-from app.api.routes.track import event_server_endpoint
+from app.api.routes.track import track_endpoint
 from tracardi.config import tracardi
 from tracardi.exceptions.log_handler import get_logger
 from app.api.routes.licensed_endpoint import get_router
@@ -203,7 +203,7 @@ application.mount("/uix",
                       directory=os.path.join(_local_dir, "../uix")),
                   name="uix")
 
-application.include_router(event_server_endpoint.router)
+application.include_router(track_endpoint.router)
 application.include_router(tql_endpoint.router)
 application.include_router(resource_endpoint.router)
 application.include_router(rule_endpoint.router)

@@ -75,7 +75,7 @@ async def app_starts():
             f"Commercial Licensed issued for: {license.owner}, expires: {datetime.fromtimestamp(license.expires) if license.expires > 0 else 'Perpetual'} ",
             flush=True)
         print(f"TRACARDI Services {list(license.get_service_ids())}", flush=True)
-        print(f"TRACARDI multi-tenancy API:  {tracardi.multi_tenant_manager_url}.", flush=True)
+
     else:
         print(f"{str(tracardi.version)} (Tag: {tracardi.image_tag}) (Multi-Tenant: {tracardi.multi_tenant}", flush=True)
         print("License: MIT + “Commons Clause” License Condition v1.0", flush=True)
@@ -85,9 +85,22 @@ async def app_starts():
         bs.start_background_listener()
 
     logger.info("Starting Cluster Settings Broadcaster...")
-    logger.info(f"APM (Auto Profile Merging): {tracardi.is_apm_on()}")
+    logger.info(f"AUTO_PROFILE_MERGING: {tracardi.is_apm_on()}")
     logger.info(f"LOGGING_FORMAT: {_log_format_adapter}")
-
+    logger.info(f"ENABLE_WORKFLOW: {tracardi.enable_workflow}")
+    logger.info(f"ENABLE_EVENT_DESTINATIONS: {tracardi.enable_event_destinations}")
+    logger.info(f"ENABLE_PROFILE_DESTINATIONS: {tracardi.enable_profile_destinations}")
+    logger.info(f"ENABLE_EVENT_RESHAPING: {tracardi.enable_event_reshaping}")
+    logger.info(f"ENABLE_DATA_COMPLIANCE: {tracardi.enable_data_compliance}")
+    logger.info(f"ENABLE_EVENT_VALIDATION: {tracardi.enable_event_validation}")
+    logger.info(f"ENABLE_EVENT_MAPPING: {tracardi.enable_event_mapping}")
+    logger.info(f"ENABLE_EVENT_TO_PROFILE_MAPPING: {tracardi.enable_event_to_profile_mapping}")
+    logger.info(f"ENABLE_IDENTIFICATION_POINTS: {tracardi.enable_identification_points}")
+    logger.info(f"ENABLE_FIELD_UPDATE_LOG: {tracardi.enable_field_update_log}")
+    logger.info(f"ENABLE_ERRORS_ON_RESPONSE: {tracardi.enable_errors_on_response}")
+    logger.info(f"ENABLE_EVENT_SOURCE_CHECK: {tracardi.enable_event_source_check}")
+    logger.info(f"ENABLE_AUDIENCES: {tracardi.enable_audiences}")
+    logger.info(f"MULTI_TENANT_MANAGER_URL:  {tracardi.multi_tenant_manager_url}.")
 
 async def app_shutdown():
     await elastic_close()
