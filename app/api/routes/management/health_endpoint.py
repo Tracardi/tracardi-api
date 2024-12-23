@@ -3,6 +3,7 @@ from fastapi import APIRouter, Request, HTTPException
 
 from app import state
 from tracardi.config import tracardi
+from tracardi.context import get_context
 
 router = APIRouter()
 
@@ -24,8 +25,7 @@ async def post_healthcheck(r: Request):
     try:
         return {
             "headers": r.headers,
-            "json": await r.json(),
-            "body": await r.body()
+            "json": await r.json()
         }
     except JSONDecodeError:
         return await r.body()
@@ -36,9 +36,13 @@ async def get_healthcheck(r: Request):
     """
        Enables you to see if API responds to HTTP GET requests
     """
+
+    context = get_context()
+
     if state.server_ready:
         return {
             "headers": r.headers,
+            "context": context.dict(without_user=True)
         }
     raise HTTPException(
         status_code=404, detail="Not ready."
