@@ -13,6 +13,7 @@ from tracardi.service.storage.mysql.service.mysql_installation import wait_for_m
 from tracardi.service.storage.redis.connection import wait_for_redis_connection
 
 from tracardi.config import server, memory_cache
+from app import state
 from fastapi import FastAPI
 
 from tracardi.config import tracardi
@@ -24,7 +25,7 @@ if License.has_license():
 logger = get_logger(__name__)
 
 _log_format_adapter = log_format_adapter()
-
+api_ready = False
 
 async def app_starts():
     logging.getLogger("uvicorn.access").handlers[0].setFormatter(_log_format_adapter)
@@ -118,5 +119,6 @@ async def app_shutdown():
 @asynccontextmanager
 async def app_lifespan(app: FastAPI):
     await app_starts()
+    state.server_ready = True
     yield
     await app_shutdown()

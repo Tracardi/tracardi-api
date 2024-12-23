@@ -1,14 +1,19 @@
 from json import JSONDecodeError
 from fastapi import APIRouter, Request, HTTPException
+
+from app import state
 from tracardi.config import tracardi
 
 router = APIRouter()
-api_ready = False
 
 
 @router.get("/ping", tags=["health"], include_in_schema=tracardi.expose_gui_api)
 async def get_healthcheck():
-    return 'pong'
+    if state.server_ready:
+        return 'pong'
+    raise HTTPException(
+        status_code=404, detail="Not ready."
+    )
 
 
 @router.post("/healthcheck", tags=["health"], include_in_schema=tracardi.expose_gui_api)
@@ -31,18 +36,13 @@ async def get_healthcheck(r: Request):
     """
        Enables you to see if API responds to HTTP GET requests
     """
-    try:
-        if api_ready:
-            return {
-                "headers": r.headers,
-                "json": await r.json(),
-                "body": await r.body()
-            }
-        raise HTTPException(
-            status_code=404, detail="Not ready."
-        )
-    except JSONDecodeError:
-        return await r.body()
+    if state.server_ready:
+        return {
+            "headers": r.headers,
+        }
+    raise HTTPException(
+        status_code=404, detail="Not ready."
+    )
 
 
 @router.put("/healthcheck", tags=["health"], include_in_schema=tracardi.expose_gui_api)
