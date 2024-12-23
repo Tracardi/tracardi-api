@@ -5,6 +5,12 @@ from tracardi.config import tracardi
 router = APIRouter()
 api_ready = False
 
+
+@router.get("/ping", tags=["health"], include_in_schema=tracardi.expose_gui_api)
+async def get_healthcheck():
+    return 'pong'
+
+
 @router.post("/healthcheck", tags=["health"], include_in_schema=tracardi.expose_gui_api)
 async def post_healthcheck(r: Request):
     """
@@ -67,5 +73,3 @@ async def delete_healthcheck(r: Request):
         }
     except JSONDecodeError:
         return await r.body()
-
-
