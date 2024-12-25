@@ -3,7 +3,7 @@ from uuid import uuid4
 from fastapi import APIRouter, Depends, HTTPException
 
 from app.api.auth.permissions import Permissions
-from tracardi.config import tracardi
+from tracardi.config import tracardi, memory_cache
 from tracardi.domain.event_type_metadata import EventTypeMetadata
 from tracardi.service.events import get_default_mappings_for
 from typing import Optional, List
@@ -103,5 +103,6 @@ async def list_event_type_mappings_by_tag(query: str = None, start: Optional[int
         "total": total,
         "grouped": {
             "Event mappings": records
-        }
+        },
+        "cache": memory_cache.event_mapping_cache_ttl
     }

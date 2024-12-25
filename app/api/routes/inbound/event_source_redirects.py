@@ -32,7 +32,8 @@ async def list_redirects(query: Optional[str] = None, start: int = 0, limit: int
         "total": total,
         "grouped": {
             "Redirects": result
-        }
+        },
+        "cache": None
     }
 
 

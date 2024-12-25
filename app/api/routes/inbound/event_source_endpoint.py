@@ -7,7 +7,7 @@ from tracardi.domain.enum.type_enum import TypeEnum
 from tracardi.domain.event_source import EventSource
 from tracardi.exceptions.log_handler import get_logger
 from app.api.auth.permissions import Permissions
-from tracardi.config import tracardi
+from tracardi.config import tracardi, memory_cache
 
 logger = get_logger(__name__)
 
@@ -34,7 +34,8 @@ async def list_event_sources(query: str = None, limit: int=100):
         "total": count,
         "grouped": {
             "Event sources": records
-        }
+        },
+        "cache": memory_cache.source_ttl
     }
 
 # Obsolete

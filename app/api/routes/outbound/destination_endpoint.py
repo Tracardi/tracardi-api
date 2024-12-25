@@ -6,7 +6,7 @@ from tracardi.service.destination.utils import get_destination_types
 from app.api.auth.permissions import Permissions
 from tracardi.domain.resource import Resource
 from tracardi.domain.destination import Destination
-from tracardi.config import tracardi
+from tracardi.config import tracardi, memory_cache
 
 router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin", "developer"]))]
@@ -54,7 +54,8 @@ async def get_destinations(query: str = None, start: int = 0, limit: int = 100) 
         "total": total,
         "grouped": {
             "Destinations": destinations
-        }
+        },
+        "cache": memory_cache.event_destination_cache_ttl
     }
 
 

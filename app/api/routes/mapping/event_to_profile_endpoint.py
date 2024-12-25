@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from app.api.auth.permissions import Permissions
 from typing import Optional
 
-from tracardi.config import tracardi
+from tracardi.config import tracardi, memory_cache
 from tracardi.domain.event_to_profile import EventToProfile
 from tracardi.service.events import get_default_mappings_for
 from tracardi.service.string_manager import capitalize_event_type_id
@@ -112,5 +112,6 @@ async def list_events_to_profiles_by_tag(query: str = None, start: Optional[int]
         "total": total,
         "grouped": {
             "Mappings": records
-        }
+        },
+        "cache": memory_cache.event_to_profile_coping_ttl
     }
