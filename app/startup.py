@@ -17,7 +17,7 @@ from app import state
 from fastapi import FastAPI
 
 from tracardi.config import tracardi
-from tracardi.exceptions.log_handler import get_logger
+from tracardi.common.logging.log_handler import get_logger
 
 if License.has_license():
     from com_tracardi.config import com_tracardi_settings

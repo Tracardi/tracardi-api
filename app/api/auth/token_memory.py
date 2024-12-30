@@ -1,6 +1,6 @@
 from tracardi.service.adapter.cache.cache_protocol import CacheProtocol
 from tracardi.service.adapter.cache_adaper_selector import cache_adapter
-from tracardi.service.singleton import Singleton
+from tracardi.common.singleton import Singleton
 from tracardi.service.storage.redis.collections import Collection
 from tracardi.config import tracardi
 from hashlib import sha1

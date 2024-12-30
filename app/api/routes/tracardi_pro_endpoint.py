@@ -11,7 +11,7 @@ from tracardi.domain.pro_service_form_data import ProService
 from tracardi.service.plugin.domain.register import Plugin
 from tracardi.service.plugin.plugin_install import install_plugin
 from tracardi.domain.resource import Resource
-from tracardi.exceptions.log_handler import get_logger
+from tracardi.common.logging.log_handler import get_logger
 from tracardi.config import tracardi
 
 if License.has_license():

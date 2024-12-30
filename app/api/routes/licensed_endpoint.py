@@ -1,7 +1,7 @@
 from collections import namedtuple
 
 from fastapi import APIRouter, Depends, HTTPException
-from tracardi.exceptions.log_handler import get_logger
+from tracardi.common.logging.log_handler import get_logger
 from app.api.auth.permissions import Permissions
 from tracardi.config import tracardi
 

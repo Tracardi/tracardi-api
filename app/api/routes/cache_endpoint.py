@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 from tracardi.config import tracardi
 from tracardi.context import get_context
-from tracardi.service.decorators.function_memory_cache import cache
+from tracardi.common.decorator.function_memory_cache import cache
 from tracardi.service.tracking.cache.cache_helper import _ttl, _get_cache
 from tracardi.service.tracking.cache.flat_profile_cache import get_flat_profile_key_namespace
 from tracardi.service.tracking.cache.session_cache import get_session_key_namespace

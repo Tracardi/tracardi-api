@@ -1,8 +1,8 @@
 from typing import Optional
 from fastapi import APIRouter, HTTPException
 
-from tracardi.domain.installation_status import SystemInstallationStatus
-from tracardi.service.installation import install_system
+from tracardi.install.domain.installation_status import SystemInstallationStatus
+from tracardi.install.service.installation import install_system
 from tracardi.config import tracardi
 from tracardi.domain.credentials import Credentials
 from tracardi.service.setup.setup_envs import get_system_envs

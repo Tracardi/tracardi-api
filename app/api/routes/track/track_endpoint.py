@@ -6,8 +6,8 @@ from fastapi import APIRouter, Request, status, HTTPException, Response
 from fastapi.responses import RedirectResponse
 
 from tracardi.service.ip_address import get_ip_address
-from tracardi.service.notation.dict_traverser import DictTraverser
-from tracardi.service.notation.dot_accessor import DotAccessor
+from tracardi.common.dot_notation.dict_traverser import DictTraverser
+from tracardi.common.dot_notation.dot_accessor import DotAccessor
 
 from app.api.routes.track.service.http import get_headers
 from tracardi.domain.entity import Entity, PrimaryEntity
@@ -15,9 +15,9 @@ from tracardi.domain.event_metadata import EventPayloadMetadata
 from tracardi.domain.payload.event_payload import EventPayload
 from tracardi.domain.time import Time
 from tracardi.domain.payload.tracker_payload import TrackerPayload
-from tracardi.exceptions.exception import UnauthorizedException, FieldTypeConflictException, \
+from tracardi.common.exception.exception import UnauthorizedException, FieldTypeConflictException, \
     EventValidationException, BlockedException, InvalidBotTrafficException
-from tracardi.exceptions.log_handler import get_logger
+from tracardi.common.logging.log_handler import get_logger
 from tracardi.service.track_event import track_event
 from tracardi.service.url_constructor import url_query_params_to_dict
 from tracardi.service.utils.hasher import hash_id

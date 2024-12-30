@@ -2,7 +2,7 @@ from typing import Optional
 from fastapi import APIRouter, Depends
 
 from tracardi.domain.enum.type_enum import TypeEnum
-from tracardi.exceptions.log_handler import get_logger
+from tracardi.common.logging.log_handler import get_logger
 from tracardi.service.setup.setup_resources import get_type_of_resources
 from tracardi.domain.resource import Resource
 from app.api.auth.permissions import Permissions

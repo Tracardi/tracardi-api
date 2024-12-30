@@ -11,7 +11,7 @@ from tracardi.config import tracardi
 from app.service.error_converter import convert_errors
 from tracardi.domain.config_validation_payload import ConfigValidationPayload
 from tracardi.domain.flow_action_plugin import FlowActionPlugin
-from tracardi.exceptions.log_handler import get_logger
+from tracardi.common.logging.log_handler import get_logger
 from tracardi.service.module_loader import is_coroutine
 from fastapi.encoders import jsonable_encoder
 from tracardi.service.module_loader import import_package, load_callable

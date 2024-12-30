@@ -7,7 +7,7 @@ from typing import Optional
 from tracardi.config import tracardi, memory_cache
 from tracardi.domain.event_to_profile import EventToProfile
 from tracardi.service.events import get_default_mappings_for
-from tracardi.service.string_manager import capitalize_event_type_id
+from tracardi.common.tools.string_manager import capitalize_event_type_id
 from tracardi.service.storage.mysql.interface import event_to_profile_dao
 
 router = APIRouter(

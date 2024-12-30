@@ -4,7 +4,7 @@ from typing import Optional
 
 from app.api.auth.token_memory import TokenMemory
 from tracardi.domain.user import User
-from tracardi.exceptions.log_handler import get_logger
+from tracardi.common.logging.log_handler import get_logger
 
 logger = get_logger(__name__)
 

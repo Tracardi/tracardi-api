@@ -1,10 +1,10 @@
 from tracardi.domain import ExtraInfo
-from tracardi.exceptions.log_handler import get_logger
+from tracardi.common.logging.log_handler import get_logger
 from tracardi.service.storage.mysql.service.user_service import UserService
 from ..auth.user_db import token2user
 from fastapi.security import OAuth2PasswordBearer
 from tracardi.domain.user import User
-from tracardi.exceptions.exception import LoginException
+from tracardi.common.exception.exception import LoginException
 
 
 _singleton = None

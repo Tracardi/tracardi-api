@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends
-from tracardi.exceptions.log_handler import get_logger
+from tracardi.common.logging.log_handler import get_logger
 from tracardi.service.events import get_predefined_event_types, \
     get_default_event_type_schema
 from app.api.auth.permissions import Permissions

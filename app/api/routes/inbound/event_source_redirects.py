@@ -3,7 +3,7 @@ from typing import Optional
 from fastapi import APIRouter, Depends
 
 from tracardi.domain.event_redirect import EventRedirect
-from tracardi.exceptions.log_handler import get_logger
+from tracardi.common.logging.log_handler import get_logger
 from app.api.auth.permissions import Permissions
 from tracardi.config import tracardi
 from tracardi.service.storage.mysql.interface import event_redirect_dao

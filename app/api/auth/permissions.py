@@ -3,7 +3,7 @@ from fastapi.security import OAuth2PasswordBearer
 
 from app.api.auth.user_db import token2user
 from tracardi.config import tracardi
-from tracardi.exceptions.log_handler import get_logger
+from tracardi.common.logging.log_handler import get_logger
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/user/token")
 
