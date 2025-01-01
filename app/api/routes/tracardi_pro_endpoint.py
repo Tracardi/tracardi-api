@@ -1,12 +1,12 @@
 from collections import OrderedDict
 from typing import Optional
+from pydantic import BaseModel
+
+from fastapi import APIRouter, Depends, HTTPException
+from app.api.auth.permissions import Permissions
 
 from tracardi.service.license import License
 from tracardi.service.storage.mysql.interface import resource_dao
-from fastapi import APIRouter, Depends, HTTPException
-from pydantic import BaseModel
-
-from app.api.auth.permissions import Permissions
 from tracardi.domain.pro_service_form_data import ProService
 from tracardi.service.plugin.domain.register import Plugin
 from tracardi.service.plugin.plugin_install import install_plugin
