@@ -5,7 +5,7 @@ pydantic==2.10.3
 aiofiles==22.1.0
 aioredis==2.0.1
 hiredis==2.2.3
-redis==4.3.4
+redis==5.2.1
 elasticsearch[async]==7.10.1
 prodict==0.8.18
 lark==1.1.2
