@@ -16,10 +16,6 @@ COPY app/requirements.txt .
 RUN pip install wheel
 RUN pip --default-timeout=240 install -r requirements.txt
 
-RUN pip show tracardi
-RUN pip list
-
-
 ## Copy application
 COPY app app/
 COPY uix uix/
