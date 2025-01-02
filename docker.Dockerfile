@@ -20,8 +20,8 @@ WORKDIR /src
 
 ## Copy application
 COPY app app/
-# Remove test page
 
+# Remove test page
 RUN rm -rf app/tracker/index.html
 RUN rm -rf app/tracker/index.css
 
@@ -37,6 +37,9 @@ COPY docs docs/
 
 RUN pip --default-timeout=240 install -r app/requirements.txt
 RUN pip --default-timeout=240 install -r defer/requirements.txt
+
+RUN pwd
+RUN ls -al
 
 # Start up
 
