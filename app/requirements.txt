@@ -16,7 +16,11 @@ alembic==1.13.1
 feedparser
 beautifulsoup4
 
-git+https://github.com/Tracardi/tracardi.git@1.1.x
+# Depends on
+# git+https://github.com/Tracardi/tracardi.git@1.1.x
+# git+https://github.com/Tracardi/deferpy.git@1.1.x
+
+# Old
 
 # opentelemetry-distro==0.45b0
 # opentelemetry-instrumentation-wsgi==0.45b0
