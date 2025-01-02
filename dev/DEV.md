@@ -99,3 +99,6 @@ docker run -p 8080:8080 \
 # Kafka
 
 docker run --rm --net=host landoop/fast-data-dev
+
+# Open Web UI
+docker run -d --network=host -v open-webui:/app/backend/data -e OLLAMA_BASE_URL=http://127.0.0.1:11434 --restart always ghcr.io/open-webui/open-webui:main
