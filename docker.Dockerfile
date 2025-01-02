@@ -43,11 +43,6 @@ RUN pip --default-timeout=240 install -r tracardi/requirements.txt
 RUN pip --default-timeout=240 install -r app/requirements.txt
 RUN pip --default-timeout=240 install -r defer/requirements.txt
 
-RUN pwd
-RUN ls -al
-RUN ls -al defer
-
-
 # Start up
 
 ENV VARIABLE_NAME="application"
