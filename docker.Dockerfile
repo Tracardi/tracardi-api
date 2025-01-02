@@ -3,6 +3,7 @@ MAINTAINER office@tracardi.com
 
 RUN apt-get update
 RUN apt-get install -y git
+RUN sudo apt install python3.11-dev
 
 # update pip
 RUN /usr/local/bin/python3 -m pip install --upgrade pip
