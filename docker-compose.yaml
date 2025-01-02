@@ -55,17 +55,6 @@ services:
     volumes:
       - mydata:/var/lib/mysql
 
-  worker:
-    image: tracardi/update-worker:1.2.x
-    environment:
-      ELASTIC_HOST: http://elasticsearch:9200
-      REDIS_HOST: redis://redis:6379
-      MYSQL_HOST: mysql
-    depends_on:
-      - redis
-      - elasticsearch
-      - mysql
-
   apm:
     image: tracardi/apm:1.2.x
     environment:
