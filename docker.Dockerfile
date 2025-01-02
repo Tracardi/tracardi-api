@@ -3,43 +3,37 @@ MAINTAINER office@tracardi.com
 
 RUN apt-get update
 RUN apt-get install -y git
-RUN sudo apt install python3.11-dev
+#RUN sudo apt install python3.11-dev
 
 # update pip
 RUN /usr/local/bin/python3 -m pip install --upgrade pip
+RUN pip install wheel
 
 # set the working directory in the container
-RUN mkdir app/
-WORKDIR /app
-
-## Install dependencies
-COPY app/requirements.txt .
-RUN pip install wheel
-RUN pip --default-timeout=240 install -r requirements.txt
-
-RUN pip show tracardi
-RUN pip list
-
+RUN mkdir src/
+WORKDIR /src
 
 ## Copy application
 COPY app app/
-COPY uix uix/
-
 # Remove test page
 
 RUN rm -rf app/tracker/index.html
 RUN rm -rf app/tracker/index.css
 
-WORKDIR /
+COPY uix uix/
+
+RUN pip --default-timeout=240 install -r app/requirements.txt
+
+# Prepare in CD from REPO tracardi/deferpy
+# +:defer => defer
+COPY defer defer/
 
 # Prepare in CD from REPO tracardi/doumentation
 # +:docs => docs
-
-COPY docs app/docs/
+COPY docs docs/
 
 # Start up
 
-WORKDIR /app
 ENV VARIABLE_NAME="application"
 
 # Set a default value for TAG_VERSION
