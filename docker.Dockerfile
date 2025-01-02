@@ -35,6 +35,11 @@ COPY defer defer/
 # +:docs => docs
 COPY docs docs/
 
+# Prepare in CD - from tracardi/tracardi
+# +:. => tracardi
+COPY tracardi/tracardi tracardi
+
+RUN pip --default-timeout=240 install -r tracardi/requirements.txt
 RUN pip --default-timeout=240 install -r app/requirements.txt
 RUN pip --default-timeout=240 install -r defer/requirements.txt
 
