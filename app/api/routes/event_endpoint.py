@@ -5,11 +5,9 @@ from fastapi import APIRouter, Depends, Response
 from tracardi.domain.enum.time_span import TimeSpan
 from tracardi.domain.event import Event
 from tracardi.service import events
-from tracardi.service.adapter.bigdata.adapter_selector import bd_elastic_adapter, bd_analytics_adapter, bd_gui_adapter
+from tracardi.service.adapter.bigdata.adapter_selector import bd_elastic_adapter, bd_analytics_adapter, bd_gui_adapter, \
+    bd_crud_event_adapter
 from tracardi.service.events import get_default_event_type_schema
-from tracardi.service.storage.elastic.interface.event import aggregate_events_by_type_and_source, \
-    count_events_in_db,  load_event_from_db, delete_event_from_db, \
-    load_events_by_profile_id
 from app.api.auth.permissions import Permissions
 
 from tracardi.config import tracardi
@@ -17,6 +15,7 @@ from tracardi.config import tracardi
 _elastic_adapter = bd_elastic_adapter()
 _analytics_adapter = bd_analytics_adapter()
 _bd_gui_adapter = bd_gui_adapter()
+_bd_crud_event_adapter = bd_crud_event_adapter()
 
 router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer", "maintainer"]))]
@@ -38,7 +37,7 @@ async def get_event_types():
     """
     Returns event types along with the event sources ids.
     """
-    return await aggregate_events_by_type_and_source()
+    return await _analytics_adapter.aggregate_events_by_type_and_source()
 
 
 @router.get("/events/refresh", tags=["event"], include_in_schema=tracardi.expose_gui_api)
@@ -59,8 +58,7 @@ async def events_flush_index():
 
 @router.get("/event/count", tags=["event"], include_in_schema=tracardi.expose_gui_api)
 async def count_events():
-    return await _elastic_adapter.core.count('event')
-    return await count_events_in_db()
+    return await _bd_crud_event_adapter.count_events_in_db()
 
 
 @router.get("/event/avg/requests", tags=["event"], include_in_schema=tracardi.expose_gui_api)
@@ -153,7 +151,7 @@ async def get_event(id: str, response: Response):
     """
     Returns event with given ID
     """
-    record: Optional[Event] = await load_event_from_db(id)
+    record: Optional[Event] = await _bd_crud_event_adapter.load_event_from_db(id)
 
     if record is None:
         response.status_code = 404
@@ -176,7 +174,7 @@ async def delete_event(id: str):
     """
     Deletes event with given ID
     """
-    return await delete_event_from_db(id)
+    return await _bd_crud_event_adapter.delete_event_from_db(id)
 
 
 @router.get("/event/for-source/{source_id}/by-type/{time_span}", tags=["event"],
@@ -213,7 +211,7 @@ async def get_events_for_session(session_id: str, profile_id: str, limit: int = 
 async def get_events_for_profile(profile_id: str, limit: int = 24):
     """ Load events for profile id """
 
-    return await load_events_by_profile_id(
+    return await _bd_gui_adapter.load_events_by_profile_id(
         profile_id,
         limit)
 
