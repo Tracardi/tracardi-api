@@ -20,7 +20,7 @@ from tracardi.common.exception.exception import UnauthorizedException, FieldType
 from tracardi.common.logging.log_handler import get_logger
 from tracardi.service.track_event import track_event
 from tracardi.service.url_constructor import url_query_params_to_dict
-from tracardi.service.utils.hasher import hash_id
+from tracardi.common.security.hashing.hasher import hash_id
 from tracardi.service.storage.mysql.interface import event_redirect_dao
 
 logger = get_logger(__name__)
