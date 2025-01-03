@@ -1,4 +1,4 @@
-from tracardi.service.adapter.bigdata.adapter_selector import bd_analytics_adapter, bd_elastic_adapter
+from tracardi.service.adapter.bigdata.adapter_selector import bd_analytics_adapter, bd_elastic_adapter, bd_gui_adapter
 from typing import List, Optional
 
 from fastapi import APIRouter
@@ -20,6 +20,8 @@ router = APIRouter(
 
 _analytics_adapter = bd_analytics_adapter()
 _elastic_adapter = bd_elastic_adapter()
+_gui_adapter = bd_gui_adapter()
+
 
 @router.get("/profile/count", tags=["profile"],
             include_in_schema=tracardi.expose_gui_api)
@@ -119,8 +121,8 @@ async def find_profiles_by_segments(segment_names: str, qualify: str):
         condition = 'should'
     else:
         condition = 'must'
-    records = await profile_db.load_profiles_by_segments(segment_names.split(','), condition=condition)
-    return records.dict()
+
+    return await _gui_adapter.load_profiles_by_segments(segment_names.split(','), condition=condition)
 
 
 @router.get('/profiles/top/modified', tags=['profile'], include_in_schema=tracardi.expose_gui_api)
