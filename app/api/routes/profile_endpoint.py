@@ -1,4 +1,5 @@
-from tracardi.service.adapter.bigdata.adapter_selector import bd_analytics_adapter, bd_elastic_adapter, bd_gui_adapter
+from tracardi.service.adapter.bigdata.adapter_selector import bd_analytics_adapter, bd_elastic_adapter, bd_gui_adapter, \
+    bd_crud_profile_adapter
 from typing import List, Optional
 
 from fastapi import APIRouter
@@ -21,6 +22,7 @@ router = APIRouter(
 _analytics_adapter = bd_analytics_adapter()
 _elastic_adapter = bd_elastic_adapter()
 _gui_adapter = bd_gui_adapter()
+_bd_crud_profile_adapter = bd_crud_profile_adapter()
 
 
 @router.get("/profile/count", tags=["profile"],
@@ -73,14 +75,12 @@ async def get_profile_by_id(profile_id: str, response: Response) -> Optional[dic
     """
 
     # This is acceptable - we see the profile from the database
-    record = await profile_db.load_by_id(profile_id)
+    result = await _bd_crud_profile_adapter.load_by_id(profile_id)
 
-    if record is None:
+    if result is None:
         response.status_code = 404
         return None
 
-    result = dict(record)
-    result['_meta'] = record.get_meta_data()
     return result
 
 

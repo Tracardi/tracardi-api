@@ -5,17 +5,18 @@ from fastapi import APIRouter, Depends, Response
 from tracardi.domain.enum.time_span import TimeSpan
 from tracardi.domain.event import Event
 from tracardi.service import events
-from tracardi.service.adapter.bigdata.adapter_selector import bd_elastic_adapter, bd_analytics_adapter
+from tracardi.service.adapter.bigdata.adapter_selector import bd_elastic_adapter, bd_analytics_adapter, bd_gui_adapter
 from tracardi.service.events import get_default_event_type_schema
 from tracardi.service.storage.elastic.interface.event import aggregate_events_by_type_and_source, \
     count_events_in_db,  load_event_from_db, delete_event_from_db, \
-    load_events_by_session_and_profile, load_events_by_profile_id
+    load_events_by_profile_id
 from app.api.auth.permissions import Permissions
 
 from tracardi.config import tracardi
 
 _elastic_adapter = bd_elastic_adapter()
 _analytics_adapter = bd_analytics_adapter()
+_bd_gui_adapter = bd_gui_adapter()
 
 router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer", "maintainer"]))]
@@ -201,7 +202,7 @@ async def get_for_source_grouped_by_tags_time(source_id: str, time_span: TimeSpa
             include_in_schema=tracardi.expose_gui_api,
             response_model=dict)
 async def get_events_for_session(session_id: str, profile_id: str, limit: int = 20):
-    return await load_events_by_session_and_profile(
+    return await _bd_gui_adapter.load_events_by_session_and_profile(
         profile_id.strip(),
         session_id.strip(),
         limit)
