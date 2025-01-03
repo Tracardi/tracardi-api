@@ -5,23 +5,21 @@ from fastapi import APIRouter, Depends, Response
 from tracardi.domain.enum.time_span import TimeSpan
 from tracardi.domain.event import Event
 from tracardi.service import events
-from tracardi.service.adapter.bigdata.adapter_selector import bd_elastic_adapter
+from tracardi.service.adapter.bigdata.adapter_selector import bd_elastic_adapter, bd_analytics_adapter
 from tracardi.service.events import get_default_event_type_schema
 from tracardi.service.storage.elastic.interface.event import aggregate_events_by_type_and_source, \
-    count_events_in_db, load_events_avg_requests, load_event_avg_process_time, \
-    aggregate_event_types_from_db, aggregate_event_tags_from_db, aggregate_event_statuses_from_db, \
-    aggregate_event_devices_geo_from_db, aggregate_event_os_names_from_db, aggregate_event_channels_from_db, \
-    aggregate_event_resolutions_from_db, aggregate_events_by_source_from_db, load_event_from_db, delete_event_from_db, \
-    aggregate_events_by_source_and_type, aggregate_events_by_source_and_tags, load_events_by_session_and_profile, \
-    load_events_by_profile_id
+    count_events_in_db,  load_event_from_db, delete_event_from_db, \
+    load_events_by_session_and_profile, load_events_by_profile_id
 from app.api.auth.permissions import Permissions
 
 from tracardi.config import tracardi
 
+_elastic_adapter = bd_elastic_adapter()
+_analytics_adapter = bd_analytics_adapter()
+
 router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer", "maintainer"]))]
 )
-_elastic_adapter = bd_elastic_adapter()
 
 
 def __format_time_buckets(row):
@@ -60,17 +58,18 @@ async def events_flush_index():
 
 @router.get("/event/count", tags=["event"], include_in_schema=tracardi.expose_gui_api)
 async def count_events():
+    return await _elastic_adapter.core.count('event')
     return await count_events_in_db()
 
 
 @router.get("/event/avg/requests", tags=["event"], include_in_schema=tracardi.expose_gui_api)
 async def average_events():
-    return await load_events_avg_requests()
+    return await _analytics_adapter.load_events_avg_requests()
 
 
 @router.get("/event/avg/process-time", tags=["event"], include_in_schema=tracardi.expose_gui_api)
 async def count_avg_process_time() -> dict:
-    return await load_event_avg_process_time()
+    return await _analytics_adapter.load_event_avg_process_time()
 
 
 @router.get("/events/metadata/type", tags=["event"], include_in_schema=tracardi.expose_gui_api)
@@ -86,7 +85,7 @@ async def aggregate_event_types():
     """
     Returns number of events grouped by type
     """
-    return await aggregate_event_types_from_db()
+    return await _analytics_adapter.aggregate_event_types_from_db()
 
 
 @router.get("/events/by_tag", tags=["event"], include_in_schema=tracardi.expose_gui_api)
@@ -94,7 +93,7 @@ async def aggregate_event_tags():
     """
     Returns number of events grouped by tags
     """
-    return await aggregate_event_tags_from_db()
+    return await _analytics_adapter.aggregate_event_tags_from_db()
 
 
 @router.get("/events/by_status", tags=["event"], include_in_schema=tracardi.expose_gui_api)
@@ -102,7 +101,7 @@ async def aggregate_event_statuses():
     """
     Returns number of events grouped by tags
     """
-    return await aggregate_event_statuses_from_db()
+    return await _analytics_adapter.aggregate_event_statuses_from_db()
 
 
 @router.get("/events/by_device_geo", tags=["event"], include_in_schema=tracardi.expose_gui_api)
@@ -110,7 +109,7 @@ async def aggregate_event_device_geo_location():
     """
     Returns number of events grouped by device location
     """
-    return await aggregate_event_devices_geo_from_db()
+    return await _analytics_adapter.aggregate_event_devices_geo_from_db()
 
 
 @router.get("/events/by_os_name", tags=["event"], include_in_schema=tracardi.expose_gui_api)
@@ -118,7 +117,7 @@ async def aggregate_event_device_by_os():
     """
     Returns number of events grouped by operation system name
     """
-    return await aggregate_event_os_names_from_db()
+    return await _analytics_adapter.aggregate_event_os_names_from_db()
 
 
 @router.get("/events/by_channel", tags=["event"], include_in_schema=tracardi.expose_gui_api)
@@ -126,7 +125,7 @@ async def aggregate_event_channels():
     """
     Returns number of events grouped by channels
     """
-    return await aggregate_event_channels_from_db()
+    return await _analytics_adapter.aggregate_event_channels_from_db()
 
 
 @router.get("/events/by_resolution", tags=["event"], include_in_schema=tracardi.expose_gui_api)
@@ -134,7 +133,7 @@ async def aggregate_event_resolution():
     """
     Returns number of events grouped by screen resolution
     """
-    return await aggregate_event_resolutions_from_db()
+    return await _analytics_adapter.aggregate_event_resolutions_from_db()
 
 
 @router.get("/events/by_source", tags=["event"], include_in_schema=tracardi.expose_gui_api)
@@ -142,7 +141,7 @@ async def aggregate_event_by_source(buckets_size: int = 30):
     """
     Returns number of events grouped by event source
     """
-    return await aggregate_events_by_source_from_db(buckets_size=buckets_size)
+    return await _analytics_adapter.aggregate_events_by_source_from_db(buckets_size=buckets_size)
 
 
 
@@ -186,7 +185,7 @@ async def get_for_source_grouped_by_type_time(source_id: str, time_span: TimeSpa
     """
     time_span: d - last day, w - last week, M - last month, y - last year
     """
-    return await aggregate_events_by_source_and_type(source_id, time_span)
+    return await _analytics_adapter.aggregate_events_by_source_and_type(source_id, time_span)
 
 
 @router.get("/event/for-source/{source_id}/by-tag/{time_span}", tags=["event"], include_in_schema=tracardi.expose_gui_api,
@@ -195,7 +194,7 @@ async def get_for_source_grouped_by_tags_time(source_id: str, time_span: TimeSpa
     """
     time_span: d - last day, w - last week, M - last month, y - last year, EventSourceAnalytics
     """
-    return await aggregate_events_by_source_and_tags(source_id, time_span)
+    return await _analytics_adapter.aggregate_events_by_source_and_tags(source_id, time_span)
 
 
 @router.get("/events/session/{session_id}/profile/{profile_id}", tags=["event"],

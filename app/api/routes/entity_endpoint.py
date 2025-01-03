@@ -1,5 +1,6 @@
 from elasticsearch.exceptions import NotFoundError
 from fastapi import APIRouter, Depends, HTTPException
+from tracardi.service.adapter.bigdata.adapter_selector import bd_elastic_adapter
 
 from tracardi.domain.entity_index_mapping import EntityIndexMapping
 from tracardi.service.storage.elastic.interface import raw as raw_db

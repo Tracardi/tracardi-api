@@ -1,3 +1,4 @@
+from tracardi.service.adapter.bigdata.adapter_selector import bd_analytics_adapter, bd_elastic_adapter
 from typing import List, Optional
 
 from fastapi import APIRouter
@@ -7,8 +8,6 @@ from fastapi.responses import Response
 from tracardi.domain.profile import Profile
 from tracardi.service.storage.driver.elastic import profile as profile_db
 from tracardi.service.storage.elastic.interface.collector.load.flat_profile import load_flat_profile
-from tracardi.service.storage.elastic.interface.profile import load_modified_top_profiles
-from tracardi.service.storage.elastic.interface.event import load_events_by_profile_and_field
 from tracardi.service.storage.index import Resource
 from tracardi.service.storage.elastic.interface.collector.mutation import profile as mutation_profile_db
 
@@ -19,11 +18,13 @@ router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer", "maintainer"]))]
 )
 
+_analytics_adapter = bd_analytics_adapter()
+_elastic_adapter = bd_elastic_adapter()
 
 @router.get("/profile/count", tags=["profile"],
             include_in_schema=tracardi.expose_gui_api)
 async def count_profiles():
-    return await profile_db.count()
+    return _elastic_adapter.core.count('profile')
 
 
 @router.get("/profile/duplicates/count", tags=["profile"],
@@ -31,7 +32,7 @@ async def count_profiles():
 async def count_profile_duplicates(id: str):
     flat_profile = await load_flat_profile(id)
     if flat_profile:
-        result = await profile_db.count_profile_duplicates(flat_profile.ids)
+        result = await _analytics_adapter.count_profile_duplicates(flat_profile.ids)
         return result.get("count", 0)
     return 0
 
@@ -50,7 +51,7 @@ async def refresh_profile():
     """
     Refreshes profile index
     """
-    return await profile_db.refresh()
+    return _elastic_adapter.core.refresh('profile')
 
 
 @router.get("/profiles/flash", tags=["profile"], include_in_schema=tracardi.expose_gui_api)
@@ -58,7 +59,7 @@ async def flash_profile():
     """
     Flashes profile index
     """
-    return await profile_db.flush()
+    return _elastic_adapter.core.flush('profile')
 
 
 @router.get("/profile/{profile_id}", tags=["profile"],
@@ -102,7 +103,7 @@ async def delete_profile_by_id(id: str, response: Response):
 
 @router.get("/profile/{profile_id}/by/{field}", tags=["profile"], include_in_schema=tracardi.expose_gui_api)
 async def profile_data_by(profile_id: str, field: str, table: bool = False):
-    return await load_events_by_profile_and_field(profile_id, field, table)
+    return await _analytics_adapter.load_events_by_profile_and_field(profile_id, field, table)
 
 
 @router.get("/profiles/{qualify}/segment/{segment_names}", tags=["profile"], include_in_schema=tracardi.expose_gui_api)
@@ -124,4 +125,4 @@ async def find_profiles_by_segments(segment_names: str, qualify: str):
 
 @router.get('/profiles/top/modified', tags=['profile'], include_in_schema=tracardi.expose_gui_api)
 async def load_top_profiles(limit: Optional[int] = 5):
-    return await load_modified_top_profiles(limit)
+    return await _analytics_adapter.load_modified_top_profiles(limit)
