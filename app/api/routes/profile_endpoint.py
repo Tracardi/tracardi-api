@@ -28,7 +28,7 @@ _bd_crud_profile_adapter = bd_crud_profile_adapter()
 @router.get("/profile/count", tags=["profile"],
             include_in_schema=tracardi.expose_gui_api)
 async def count_profiles():
-    return _elastic_adapter.core.count('profile')
+    return await _elastic_adapter.core.count('profile')
 
 
 @router.get("/profile/duplicates/count", tags=["profile"],
@@ -55,7 +55,7 @@ async def refresh_profile():
     """
     Refreshes profile index
     """
-    return _elastic_adapter.core.refresh('profile')
+    return await _elastic_adapter.core.refresh('profile')
 
 
 @router.get("/profiles/flash", tags=["profile"], include_in_schema=tracardi.expose_gui_api)
@@ -63,7 +63,7 @@ async def flash_profile():
     """
     Flashes profile index
     """
-    return _elastic_adapter.core.flush('profile')
+    return await _elastic_adapter.core.flush('profile')
 
 
 @router.get("/profile/{profile_id}", tags=["profile"],
