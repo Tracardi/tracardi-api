@@ -3,6 +3,7 @@ from hashlib import sha1
 from typing import Optional
 
 from app.api.auth.token_memory import TokenMemory
+from tracardi.config import tracardi
 from tracardi.domain.user import User
 from tracardi.common.logging.log_handler import get_logger
 
@@ -16,7 +17,7 @@ class TokenDb:
         self.salt = "fe-skd~jS(ADsd-9328r&aS5ZFGdaF-STREas4TA"
 
     def _get_token(self, user: User) -> str:
-        return sha1((user.id + self.salt).encode('utf-8')).hexdigest()
+        return sha1((tracardi.installation_token + user.id + self.salt).encode('utf-8')).hexdigest()
 
     def delete(self, token: str):
         del self._token_memory[token]

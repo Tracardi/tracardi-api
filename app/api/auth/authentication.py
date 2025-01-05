@@ -16,9 +16,9 @@ logger = get_logger(__name__)
 class Authentication:
 
     @staticmethod
-    async def _authorize(username, password) -> User:  # username exists
+    async def _authenticate(username, password) -> User:  # username exists
         logger.debug(
-            f"Authorizing {username}...",
+            f"Authenticating {username}...",
             extra=ExtraInfo.exact(
                 "Authentication",
                 class_name=Authentication.__name__,
@@ -84,7 +84,7 @@ class Authentication:
         return user
 
     async def login(self, email, password):
-        user = await self._authorize(email, password)
+        user = await self._authenticate(email, password)
 
         # save token, match token with user in token2user
         token = token2user.set(user)
