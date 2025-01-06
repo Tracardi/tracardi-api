@@ -1,12 +1,14 @@
 from fastapi import APIRouter, Depends, HTTPException
 from tracardi.config import tracardi
-from tracardi.service.storage.elastic.interface import raw as raw_db
+from tracardi.service.adapter.bigdata.adapter_selector import bd_raw_adapter
 from app.api.auth.permissions import Permissions
 from typing import Optional
 
 router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin"]))]
 )
+
+_bd_raw_adapter = bd_raw_adapter()
 
 
 @router.delete("/indices", tags=["index"], include_in_schema=tracardi.expose_gui_api)
@@ -15,7 +17,7 @@ async def delete_old_indices(db_version: str, codename: Optional[str] = None):
     if db_version == tracardi.version.db_version:
         raise HTTPException(status_code=409, detail="You cannot delete indices that are currently used.")
 
-    indices = await raw_db.indices()
+    indices = await _bd_raw_adapter.list_indices()
 
     # Test
     to_delete = [index for index in indices if index.startswith(
@@ -29,6 +31,6 @@ async def delete_old_indices(db_version: str, codename: Optional[str] = None):
 
     result = {}
     for alias in to_delete:
-        result[alias] = await raw_db.remove_index(alias)
+        result[alias] = await _bd_raw_adapter.remove_index(alias)
 
     return result

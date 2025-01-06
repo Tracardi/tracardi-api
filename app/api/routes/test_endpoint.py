@@ -4,6 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException
 
 from app.service.grouping import get_grouped_result
 from tracardi.domain.test import Test
+from tracardi.service.adapter.bigdata.adapter_selector import bd_raw_adapter
 from tracardi.service.adapter.cache_adaper_selector import cache_adapter
 from tracardi.service.storage.index import Resource
 from tracardi.service.storage.mysql.mapping.test_mapping import map_to_test
@@ -12,7 +13,6 @@ from tracardi.service.storage.elastic.driver.elastic_client import ElasticClient
 
 from app.api.auth.permissions import Permissions
 from tracardi.config import tracardi
-from tracardi.service.storage.elastic.interface import raw as raw_db
 from datetime import datetime
 
 router = APIRouter(
@@ -21,6 +21,7 @@ router = APIRouter(
 
 ts = TestService()
 _cache = cache_adapter()
+_bd_raw_adapter = bd_raw_adapter()
 
 @router.get("/test/redis", tags=["test"], include_in_schema=tracardi.expose_gui_api)
 async def ping_redis():
@@ -38,10 +39,10 @@ async def get_es_cluster_health():
     Tests connection between Elasticsearch and Tracardi by returning cluster info. Accessible for roles: "admin"
     """
 
-    health = await raw_db.health()
+    health = await _bd_raw_adapter.health()
     if not isinstance(health, dict):
         raise ConnectionError("Elasticsearch did not pass health check.")
-    settings = await raw_db.get_settings()
+    settings = await _bd_raw_adapter.get_settings()
     if settings:
         health['settings'] = settings
     return health

@@ -2,16 +2,19 @@ from fastapi import APIRouter, Depends
 
 from tracardi.config import mysql
 from tracardi.context import get_context
+from tracardi.service.adapter.bigdata.adapter_selector import bd_raw_adapter
 from tracardi.service.plugin.plugin_install import install_default_plugins
 from tracardi.service.storage.index import Resource
 from tracardi.service.storage.mysql.service.database_service import DatabaseService
 from tracardi.config import tracardi
 from app.api.auth.permissions import Permissions
-from tracardi.service.storage.elastic.interface import raw as raw_db
 
 router = APIRouter(
     dependencies=[Depends(Permissions(roles=["maintainer"]))]
 )
+
+_bd_raw_adapter = bd_raw_adapter()
+
 
 @router.get("/install/reset/{token}", tags=["installation"], include_in_schema=tracardi.expose_gui_api)
 async def reset_installation(token: str):
@@ -25,7 +28,7 @@ async def reset_installation(token: str):
     db_version = tracardi.version.db_version
     tenant = get_context().tenant
 
-    indices = await raw_db.indices()
+    indices = await _bd_raw_adapter.list_indices()
 
     # Test
     to_delete = [index for index in indices if index.startswith(
@@ -40,7 +43,7 @@ async def reset_installation(token: str):
     result = {}
     for alias in to_delete:
         try:
-            result[alias] = await raw_db.remove_index(alias)
+            result[alias] = await _bd_raw_adapter.remove_index(alias)
         except Exception:
             pass
 
@@ -63,19 +66,19 @@ async def reset_installation(token: str):
 
     for index in indices:
         try:
-            result[index] = await raw_db.remove_index(index)
+            result[index] = await _bd_raw_adapter.remove_index(index)
         except Exception:
             pass
 
     for alias in aliases:
         try:
-            result[alias] = await raw_db.remove_alias(alias)
+            result[alias] = await _bd_raw_adapter.remove_alias(alias)
         except Exception:
             pass
 
     for template in templates:
         try:
-            result[template] = await raw_db.remove_template(template)
+            result[template] = await _bd_raw_adapter.remove_template(template)
         except Exception:
             pass
     db = DatabaseService()

@@ -2,16 +2,15 @@ from fastapi import APIRouter, Depends, HTTPException
 
 from app.api.auth.permissions import Permissions
 from tracardi.config import tracardi
-from tracardi.service.adapter.bigdata.adapter_selector import bd_search_adapter
-from tracardi.service.storage.elastic.interface import raw as raw_db
-from tracardi.service.storage.elastic.driver.elastic_client import ElasticClient
-from tracardi.service.storage.elastic.interface.indices_manager import check_indices_mappings_consistency
+from tracardi.service.adapter.bigdata.adapter_selector import bd_search_adapter, bd_raw_adapter, bd_install_adapter
+
 
 router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin", "maintainer"]))]
 )
 _search_adapter = bd_search_adapter()
-
+_bd_raw_adapter = bd_raw_adapter()
+_bd_install_adapter = bd_install_adapter()
 
 @router.get("/storage/mapping/check", tags=["storage"], include_in_schema=tracardi.expose_gui_api,
             response_model=dict)
@@ -27,7 +26,7 @@ async def check_indices_mapping_consistency():
     any differences between the two mappings, it saves these
     differences in a dictionary. And, it returns the result dictionary at the end.
     """
-    return await check_indices_mappings_consistency()
+    return await _bd_install_adapter.check_indices_mappings_consistency()
 
 
 @router.get("/storage/mapping/{index}/metadata", tags=["storage"], include_in_schema=tracardi.expose_gui_api,
@@ -69,8 +68,7 @@ async def get_index_mapping(index: str):
     if tracardi.multi_tenant:
         raise HTTPException(status_code=405, detail="This operation is not allowed for multi-tenant server.")
 
-    mapping = await raw_db.get_mapping(index)
-    return mapping.get_field_names()
+    return _bd_raw_adapter.get_field_names_for_index(index)
 
 
 @router.get("/storage/task/{task_id}", tags=["storage"], include_in_schema=tracardi.expose_gui_api)
@@ -78,8 +76,7 @@ async def storage_task_status(task_id: str):
     """
     Returns the status of storage task.
     """
-
-    return await raw_db.task_status(task_id)
+    return await _bd_raw_adapter.task_status(task_id)
 
 
 @router.get("/storage/reindex/{source}/{destination}", tags=["storage"], include_in_schema=tracardi.expose_gui_api)
@@ -91,7 +88,7 @@ async def reindex_data(source: str, destination: str, wait_for_completion: bool 
     if tracardi.multi_tenant:
         raise HTTPException(status_code=405, detail="This operation is not allowed for multi-tenant server.")
 
-    return await raw_db.reindex(source, destination, wait_for_completion)
+    return await _bd_raw_adapter.client.reindex(source, destination, wait_for_completion)
 
 
 @router.delete("/storage/index/{index_name}", tags=["storage"], include_in_schema=tracardi.expose_gui_api)
@@ -103,5 +100,4 @@ async def delete_index(index_name: str):
     if tracardi.multi_tenant:
         raise HTTPException(status_code=405, detail="This operation is not allowed for multi-tenant server.")
 
-    es = ElasticClient.instance()
-    return await es.remove_index(index_name)
+    return await _bd_raw_adapter.client.remove_index(index_name)
