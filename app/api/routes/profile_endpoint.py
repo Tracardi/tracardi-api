@@ -7,7 +7,6 @@ from fastapi.responses import Response
 from tracardi.service.dependency import *
 from tracardi.domain.profile import Profile
 from tracardi.service.collector.load.flat_profile import load_flat_profile
-from tracardi.service.storage.index import Resource
 from tracardi.service.collector.mutation import profile as mutation_profile_db
 
 from app.api.auth.permissions import Permissions
@@ -86,7 +85,7 @@ async def delete_profile_by_id(id: str, response: Response):
     Deletes profile with given ID (str)
     """
     # Delete from all indices
-    index = Resource().get_index_constant("profile")
+    index = bd_raw_adapter.get_write_index("profile")
     result = await mutation_profile_db.delete_profile(id, index=index.get_multi_storage_alias())
 
     if result['deleted'] == 0:

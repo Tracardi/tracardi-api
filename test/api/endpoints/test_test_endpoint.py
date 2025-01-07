@@ -1,6 +1,6 @@
+from system.adapter.os.bigdata.elastic.installer.setup_indices import bd_raw_adapter
 from tracardi.context import ServerContext, Context
 
-from tracardi.service.storage.index import Resource
 from test.utils import Endpoint, get_test_tenant
 
 endpoint = Endpoint()
@@ -15,7 +15,7 @@ def _check_if_has_installed_indices():
 
         installed_indices = result.keys()
 
-        for name, resource in Resource().resources.items():
+        for name, resource in bd_raw_adapter.get_installed_resources():
             assert resource.get_write_index() in installed_indices
 
 

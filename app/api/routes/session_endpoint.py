@@ -4,7 +4,6 @@ from fastapi import Depends
 from fastapi.responses import Response
 from tracardi.domain.session import Session
 from tracardi.service.dependency import *
-from tracardi.service.storage.index import Resource
 from app.api.auth.permissions import Permissions
 from tracardi.config import tracardi
 
@@ -123,7 +122,7 @@ async def delete_session(id: str, response: Response):
     """
     Deletes session with given ID (str)
     """
-    index = Resource().get_index_constant('session')
+    index = bd_raw_adapter.get_write_index("profile")
     # Delete from all indices
     result = await bd_session_adapter.delete_session_from_db(id, index=index.get_multi_storage_alias())
 

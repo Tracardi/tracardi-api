@@ -4,7 +4,6 @@ from tracardi.config import mysql
 from tracardi.context import get_context
 from tracardi.service.dependency import *
 from tracardi.service.plugin.plugin_install import install_default_plugins
-from tracardi.service.storage.index import Resource
 from tracardi.service.storage.mysql.service.database_service import DatabaseService
 from tracardi.config import tracardi
 from app.api.auth.permissions import Permissions
@@ -47,10 +46,9 @@ async def reset_installation(token: str):
 
     # Remaining aliases, templates, etc
 
-    resource = Resource()
-    aliases = resource.list_aliases()
-    indices = resource.list_indices()
-    templates = resource.list_templates()
+    aliases = bd_raw_adapter.get_installed_aliases()
+    indices =  bd_raw_adapter.get_installed_indices()
+    templates = bd_raw_adapter.get_installed_templates()
 
     # Production
     for index in indices.copy():

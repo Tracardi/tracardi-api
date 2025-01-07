@@ -6,7 +6,7 @@ from test.api.endpoints.test_event_source_endpoint import _create_event_source
 from tracardi.context import ServerContext, Context
 
 from test.utils import Endpoint, get_test_tenant
-from tracardi.service.storage.index import Resource
+from tracardi.service.dependency import *
 
 endpoint = Endpoint()
 
@@ -16,7 +16,7 @@ def test_should_return_indices():
         response = endpoint.get("/debug/es/indices")
         result = response.json()
         assert response.status_code == 200
-        alias = Resource()['version'].get_write_index()
+        alias = bd_raw_adapter.get_write_index('version')
         assert alias in result.keys()
 
 
