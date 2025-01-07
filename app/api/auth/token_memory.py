@@ -1,4 +1,4 @@
-from tracardi.service.adapter.cache.cache_protocol import CacheProtocol
+from system.adapter.os.cache.cache_protocol import CacheProtocol
 from tracardi.service.adapter.cache_adaper_selector import cache_adapter
 from tracardi.common.singleton import Singleton
 from tracardi.service.storage.redis.collections import Collection
