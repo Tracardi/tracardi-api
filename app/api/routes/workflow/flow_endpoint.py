@@ -1,5 +1,5 @@
-from tracardi.service.adapter.bigdata.adapter_selector import bd_crud_event_adapter, bd_session_adapter
-from tracardi.service.storage.elastic.interface.collector.load.profile import load_profile
+from tracardi.service.dependency import *
+from tracardi.service.collector.load.profile import load_profile
 from tracardi.common.time.date import now_in_utc
 
 from datetime import datetime
@@ -31,8 +31,6 @@ from tracardi.service.storage.mysql.interface import workflow_trigger_dao
 router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin", "developer"]))]
 )
-_bd_crud_event_adapter = bd_crud_event_adapter()
-_bd_session_adapter = bd_session_adapter()
 
 
 async def _load_record(id: str) -> Optional[FlowRecord]:
@@ -251,7 +249,7 @@ async def debug_flow(flow: FlowGraph, event_id: Optional[str] = None):
 
     else:
         # TODO EOFE - End of FlatEvent
-        event: Event = await _bd_crud_event_adapter.load_event_from_db(event_id)
+        event: Event = await bd_crud_event_adapter.load_event_from_db(event_id)
 
         if event is None:
             raise ValueError(f"Could not find event id {event_id}.")
@@ -268,7 +266,7 @@ async def debug_flow(flow: FlowGraph, event_id: Optional[str] = None):
             profile = None
 
         if event.has_session():
-            session = await _bd_session_adapter.load_session_from_db(event.session.id)
+            session = await bd_session_adapter.load_session_from_db(event.session.id)
             if session is None:
                 raise ValueError(
                     f"Event id {event.id} points to session {event.session.id}, but it does not exists. "

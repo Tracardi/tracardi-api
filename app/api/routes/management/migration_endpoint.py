@@ -9,7 +9,7 @@ from app.api.auth.permissions import Permissions
 from tracardi.context import get_context
 from tracardi.domain.version import Version
 from tracardi.common.logging.log_handler import get_logger
-from tracardi.service.adapter.bigdata.adapter_selector import bd_raw_adapter, bd_install_adapter
+from tracardi.service.dependency import *
 from tracardi.domain.migration_payload import MigrationPayload
 from tracardi.process_engine.migration.migration_manager import MigrationManager, MigrationNotFoundException
 from tracardi.service.url_constructor import construct_elastic_url
@@ -23,8 +23,6 @@ router = APIRouter(
 
 logger = get_logger(__name__)
 _local_path = os.path.dirname(__file__)
-_bd_raw_adapter = bd_raw_adapter()
-_bd_install_adapter = bd_install_adapter()
 
 
 # todo can not find usages
@@ -41,7 +39,7 @@ async def check_migration_consistency(version: str):
 
     # If there are differences in local mapping settings and database mappings then this
     # function will list all the errors
-    mapping_errors = await _bd_install_adapter.check_indices_mappings_consistency()
+    mapping_errors = await bd_install_adapter.check_indices_mappings_consistency()
 
     # list of acceptable differences
     acceptable_differences = {
@@ -53,8 +51,8 @@ async def check_migration_consistency(version: str):
     }
 
     # Find differences in index counts between versions
-    current_version = {index: count async for index, count in _bd_raw_adapter.count_all_indices_by_alias()}
-    prev_version = {index: count async for index, count in _bd_raw_adapter.count_all_indices_by_alias()}
+    current_version = {index: count async for index, count in bd_raw_adapter.count_all_indices_by_alias()}
+    prev_version = {index: count async for index, count in bd_raw_adapter.count_all_indices_by_alias()}
 
     count_errors = defaultdict(list)
     for index, count in current_version.items():

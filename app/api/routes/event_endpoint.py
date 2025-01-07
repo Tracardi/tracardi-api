@@ -5,17 +5,11 @@ from fastapi import APIRouter, Depends, Response
 from tracardi.domain.enum.time_span import TimeSpan
 from tracardi.domain.event import Event
 from tracardi.service import events
-from tracardi.service.adapter.bigdata.adapter_selector import bd_elastic_adapter, bd_analytics_adapter, bd_gui_adapter, \
-    bd_crud_event_adapter
+from tracardi.service.dependency import *
 from tracardi.service.events import get_default_event_type_schema
 from app.api.auth.permissions import Permissions
 
 from tracardi.config import tracardi
-
-_elastic_adapter = bd_elastic_adapter()
-_analytics_adapter = bd_analytics_adapter()
-_bd_gui_adapter = bd_gui_adapter()
-_bd_crud_event_adapter = bd_crud_event_adapter()
 
 router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer", "maintainer"]))]
@@ -37,7 +31,7 @@ async def get_event_types():
     """
     Returns event types along with the event sources ids.
     """
-    return await _analytics_adapter.aggregate_events_by_type_and_source()
+    return await bd_analytics_adapter.aggregate_events_by_type_and_source()
 
 
 @router.get("/events/refresh", tags=["event"], include_in_schema=tracardi.expose_gui_api)
@@ -45,7 +39,7 @@ async def events_refresh_index():
     """
     Refreshes event index.
     """
-    return await _elastic_adapter.core.refresh('event')
+    return await bd_elastic_adapter.core.refresh('event')
 
 
 @router.get("/events/flush", tags=["event"], include_in_schema=tracardi.expose_gui_api)
@@ -53,22 +47,22 @@ async def events_flush_index():
     """
     Flushes event index.
     """
-    return await _elastic_adapter.core.flush('event')
+    return await bd_elastic_adapter.core.flush('event')
 
 
 @router.get("/event/count", tags=["event"], include_in_schema=tracardi.expose_gui_api)
 async def count_events():
-    return await _bd_crud_event_adapter.count_events_in_db()
+    return await bd_crud_event_adapter.count_events_in_db()
 
 
 @router.get("/event/avg/requests", tags=["event"], include_in_schema=tracardi.expose_gui_api)
 async def average_events():
-    return await _analytics_adapter.load_events_avg_requests()
+    return await bd_analytics_adapter.load_events_avg_requests()
 
 
 @router.get("/event/avg/process-time", tags=["event"], include_in_schema=tracardi.expose_gui_api)
 async def count_avg_process_time() -> dict:
-    return await _analytics_adapter.load_event_avg_process_time()
+    return await bd_analytics_adapter.load_event_avg_process_time()
 
 
 @router.get("/events/metadata/type", tags=["event"], include_in_schema=tracardi.expose_gui_api)
@@ -84,7 +78,7 @@ async def aggregate_event_types():
     """
     Returns number of events grouped by type
     """
-    return await _analytics_adapter.aggregate_event_types_from_db()
+    return await bd_analytics_adapter.aggregate_event_types_from_db()
 
 
 @router.get("/events/by_tag", tags=["event"], include_in_schema=tracardi.expose_gui_api)
@@ -92,7 +86,7 @@ async def aggregate_event_tags():
     """
     Returns number of events grouped by tags
     """
-    return await _analytics_adapter.aggregate_event_tags_from_db()
+    return await bd_analytics_adapter.aggregate_event_tags_from_db()
 
 
 @router.get("/events/by_status", tags=["event"], include_in_schema=tracardi.expose_gui_api)
@@ -100,7 +94,7 @@ async def aggregate_event_statuses():
     """
     Returns number of events grouped by tags
     """
-    return await _analytics_adapter.aggregate_event_statuses_from_db()
+    return await bd_analytics_adapter.aggregate_event_statuses_from_db()
 
 
 @router.get("/events/by_device_geo", tags=["event"], include_in_schema=tracardi.expose_gui_api)
@@ -108,7 +102,7 @@ async def aggregate_event_device_geo_location():
     """
     Returns number of events grouped by device location
     """
-    return await _analytics_adapter.aggregate_event_devices_geo_from_db()
+    return await bd_analytics_adapter.aggregate_event_devices_geo_from_db()
 
 
 @router.get("/events/by_os_name", tags=["event"], include_in_schema=tracardi.expose_gui_api)
@@ -116,7 +110,7 @@ async def aggregate_event_device_by_os():
     """
     Returns number of events grouped by operation system name
     """
-    return await _analytics_adapter.aggregate_event_os_names_from_db()
+    return await bd_analytics_adapter.aggregate_event_os_names_from_db()
 
 
 @router.get("/events/by_channel", tags=["event"], include_in_schema=tracardi.expose_gui_api)
@@ -124,7 +118,7 @@ async def aggregate_event_channels():
     """
     Returns number of events grouped by channels
     """
-    return await _analytics_adapter.aggregate_event_channels_from_db()
+    return await bd_analytics_adapter.aggregate_event_channels_from_db()
 
 
 @router.get("/events/by_resolution", tags=["event"], include_in_schema=tracardi.expose_gui_api)
@@ -132,7 +126,7 @@ async def aggregate_event_resolution():
     """
     Returns number of events grouped by screen resolution
     """
-    return await _analytics_adapter.aggregate_event_resolutions_from_db()
+    return await bd_analytics_adapter.aggregate_event_resolutions_from_db()
 
 
 @router.get("/events/by_source", tags=["event"], include_in_schema=tracardi.expose_gui_api)
@@ -140,8 +134,7 @@ async def aggregate_event_by_source(buckets_size: int = 30):
     """
     Returns number of events grouped by event source
     """
-    return await _analytics_adapter.aggregate_events_by_source_from_db(buckets_size=buckets_size)
-
+    return await bd_analytics_adapter.aggregate_events_by_source_from_db(buckets_size=buckets_size)
 
 
 @router.get("/event/{id}",
@@ -151,7 +144,7 @@ async def get_event(id: str, response: Response):
     """
     Returns event with given ID
     """
-    record: Optional[Event] = await _bd_crud_event_adapter.load_event_from_db(id)
+    record: Optional[Event] = await bd_crud_event_adapter.load_event_from_db(id)
 
     if record is None:
         response.status_code = 404
@@ -174,7 +167,7 @@ async def delete_event(id: str):
     """
     Deletes event with given ID
     """
-    return await _bd_crud_event_adapter.delete_event_from_db(id)
+    return await bd_crud_event_adapter.delete_event_from_db(id)
 
 
 @router.get("/event/for-source/{source_id}/by-type/{time_span}", tags=["event"],
@@ -184,26 +177,28 @@ async def get_for_source_grouped_by_type_time(source_id: str, time_span: TimeSpa
     """
     time_span: d - last day, w - last week, M - last month, y - last year
     """
-    return await _analytics_adapter.aggregate_events_by_source_and_type(source_id, time_span)
+    return await bd_analytics_adapter.aggregate_events_by_source_and_type(source_id, time_span)
 
 
-@router.get("/event/for-source/{source_id}/by-tag/{time_span}", tags=["event"], include_in_schema=tracardi.expose_gui_api,
+@router.get("/event/for-source/{source_id}/by-tag/{time_span}", tags=["event"],
+            include_in_schema=tracardi.expose_gui_api,
             response_model=list)
 async def get_for_source_grouped_by_tags_time(source_id: str, time_span: TimeSpan):
     """
     time_span: d - last day, w - last week, M - last month, y - last year, EventSourceAnalytics
     """
-    return await _analytics_adapter.aggregate_events_by_source_and_tags(source_id, time_span)
+    return await bd_analytics_adapter.aggregate_events_by_source_and_tags(source_id, time_span)
 
 
 @router.get("/events/session/{session_id}/profile/{profile_id}", tags=["event"],
             include_in_schema=tracardi.expose_gui_api,
             response_model=dict)
 async def get_events_for_session(session_id: str, profile_id: str, limit: int = 20):
-    return await _bd_gui_adapter.load_events_by_session_and_profile(
+    return await bd_gui_adapter.load_events_by_session_and_profile(
         profile_id.strip(),
         session_id.strip(),
         limit)
+
 
 @router.get("/events/profile/{profile_id}", tags=["event"],
             include_in_schema=tracardi.expose_gui_api,
@@ -211,7 +206,7 @@ async def get_events_for_session(session_id: str, profile_id: str, limit: int = 
 async def get_events_for_profile(profile_id: str, limit: int = 24):
     """ Load events for profile id """
 
-    return await _bd_gui_adapter.load_events_by_profile_id(
+    return await bd_gui_adapter.load_events_by_profile_id(
         profile_id,
         limit)
 
