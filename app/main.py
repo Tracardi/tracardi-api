@@ -4,10 +4,9 @@ import traceback
 from app.middleware.context import ContextRequestMiddleware
 from app.startup import app_lifespan
 from tracardi.service.adapter.logger.logger_adapter import log_format_adapter
-from tracardi.service.license import License, SCHEDULER, IDENTIFICATION, COMPLIANCE, RESHAPING, VALIDATOR, \
+from tracardi.service.license import License
+from tracardi.service.license_type import SCHEDULER, IDENTIFICATION, COMPLIANCE, RESHAPING, VALIDATOR, \
     LICENSE, MULTI_TENANT
-
-_local_dir = os.path.dirname(__file__)
 
 from starlette.responses import JSONResponse
 from time import time
@@ -93,6 +92,7 @@ if License.has_service(MULTI_TENANT):
     from com_tracardi.endpoint import tenant_install_endpoint
 
 logger = get_logger(__name__)
+_local_dir = os.path.dirname(__file__)
 
 tags_metadata = [
     {
