@@ -1,5 +1,5 @@
 from tracardi.service.adapter.bigdata.adapter_selector import bd_analytics_adapter, bd_elastic_adapter, bd_gui_adapter, \
-    bd_crud_profile_adapter
+    bd_crud_profile_adapter, bd_collector_adapter
 from typing import List, Optional
 
 from fastapi import APIRouter
@@ -7,7 +7,6 @@ from fastapi import Depends
 from fastapi.responses import Response
 
 from tracardi.domain.profile import Profile
-from tracardi.service.storage.driver.elastic import profile as profile_db
 from tracardi.service.storage.elastic.interface.collector.load.flat_profile import load_flat_profile
 from tracardi.service.storage.index import Resource
 from tracardi.service.storage.elastic.interface.collector.mutation import profile as mutation_profile_db
@@ -23,6 +22,7 @@ _analytics_adapter = bd_analytics_adapter()
 _elastic_adapter = bd_elastic_adapter()
 _gui_adapter = bd_gui_adapter()
 _bd_crud_profile_adapter = bd_crud_profile_adapter()
+_bd_collector_adapter = bd_collector_adapter()
 
 
 @router.get("/profile/count", tags=["profile"],
@@ -47,7 +47,7 @@ async def import_profiles(profiles: List[Profile]):
     """
     Saves given profiles (list of profiles) to database. Accessible by roles: "admin"
     """
-    return await profile_db.save_all(profiles)
+    return await _bd_collector_adapter.save_profiles(profiles)
 
 
 @router.get("/profiles/refresh", tags=["profile"], include_in_schema=tracardi.expose_gui_api)

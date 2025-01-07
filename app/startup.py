@@ -4,9 +4,9 @@ from contextlib import asynccontextmanager
 from datetime import datetime
 import sentry_sdk
 
+from tracardi.service.adapter.bigdata.adapter_selector import bd_install_adapter
 from tracardi.service.adapter.logger.logger_adapter import log_format_adapter
 from tracardi.service.cluster.settings import GlobalSettingsBroadcaster
-from tracardi.service.elastic.connection import wait_for_connection
 from tracardi.service.license import License
 from tracardi.service.storage.elastic.interface.client import elastic_close
 from tracardi.service.storage.mysql.service.mysql_installation import wait_for_mysql_connection
@@ -25,6 +25,9 @@ if License.has_license():
 logger = get_logger(__name__)
 
 _log_format_adapter = log_format_adapter()
+_bd_install_adapter = bd_install_adapter()
+
+
 api_ready = False
 
 async def app_starts():
@@ -40,7 +43,7 @@ async def app_starts():
 
     logger.info(f"Waiting for Elasticsearch...")
 
-    await wait_for_connection()
+    await _bd_install_adapter.wait_for_connection()
 
     if server.performance_tracking is not None:
         sentry_sdk.init(
