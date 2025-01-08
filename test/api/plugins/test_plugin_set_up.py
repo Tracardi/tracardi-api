@@ -177,18 +177,6 @@ async def test_should_set_up_plugin_start_action():
     await plugin.set_up({'debug': False, 'event_id': None, 'event_type': {'id': '', 'name': ''}, 'event_types': [], 'profile_less': False, 'properties': '{}', 'session_less': False})
 
 
-async def test_should_set_up_plugin_start_segmentation_action():
-    
-    module = import_package("tracardi.process_engine.action.v1.flow.start_segmentation.plugin")
-    plugin_class = load_callable(module, "StartSegmentationAction")
-    plugin = plugin_class()
-    plugin.node = Node(id="node-id", 
-                       name="test-node", 
-                       module="tracardi.process_engine.action.v1.flow.start_segmentation.plugin", 
-                       className="StartSegmentationAction")
-    await plugin.set_up({'profile_id': 'id'})
-
-
 async def test_should_set_up_plugin_property_exists_action():
     
     module = import_package("tracardi.process_engine.action.v1.flow.property_exists.plugin")
