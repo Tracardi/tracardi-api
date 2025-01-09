@@ -150,4 +150,3 @@ def test_source_rule_and_flow():
         assert endpoint.delete(f'/rule/{rule_id}').status_code in [200, 404]
         assert endpoint.delete(f'/event-source/{source_id}').status_code in [200, 404]
         assert endpoint.delete(f'/session/{session_id}').status_code in [200, 404]
-        assert endpoint.delete(f'/segment/{segment_id}').status_code in [200, 404]

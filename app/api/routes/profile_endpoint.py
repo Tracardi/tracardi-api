@@ -100,21 +100,21 @@ async def profile_data_by(profile_id: str, field: str, table: bool = False):
     return await bd_analytics_adapter.load_events_by_profile_and_field(profile_id, field, table)
 
 
-@router.get("/profiles/{qualify}/segment/{segment_names}", tags=["profile"], include_in_schema=tracardi.expose_gui_api)
-async def find_profiles_by_segments(segment_names: str, qualify: str):
-    """
-    Returns profiles in given segments.
-
-    Segment names is a string with segment names, like: segment1,segment2
-    Qualify takes any string like: any or all
-    """
-
-    if qualify.lower() == 'any':
-        condition = 'should'
-    else:
-        condition = 'must'
-
-    return await bd_gui_adapter.load_profiles_by_segments(segment_names.split(','), condition=condition)
+# @router.get("/profiles/{qualify}/segment/{segment_names}", tags=["profile"], include_in_schema=tracardi.expose_gui_api)
+# async def find_profiles_by_segments(segment_names: str, qualify: str):
+#     """
+#     Returns profiles in given segments.
+#
+#     Segment names is a string with segment names, like: segment1,segment2
+#     Qualify takes any string like: any or all
+#     """
+#
+#     if qualify.lower() == 'any':
+#         condition = 'should'
+#     else:
+#         condition = 'must'
+#
+#     return await bd_gui_adapter.load_profiles_by_segments(segment_names.split(','), condition=condition)
 
 
 @router.get('/profiles/top/modified', tags=['profile'], include_in_schema=tracardi.expose_gui_api)
