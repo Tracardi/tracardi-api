@@ -2,7 +2,6 @@ FROM python:3.11-slim-bullseye
 MAINTAINER office@tracardi.com
 
 RUN apt-get update && apt-get install -y --no-install-recommends git && apt-get purge -y --auto-remove && rm -rf /var/lib/apt/lists/*
-#RUN sudo apt install python3.11-dev
 
 # Virtual env
 ENV VIRTUAL_ENV=/opt/venv
@@ -53,6 +52,8 @@ ENV IMAGE_TAG=${IMAGE_TAG}
 ENV SERVER_LOGGING_LEVEL=info
 ENV PYTHONUNBUFFERED=1
 ENV PYTHONPATH="$VIRTUAL_ENV/bin:/src:$PYTHONPATH"
+
+WORKDIR /src
 
 #CMD ["uvicorn", "app.main:application", "--proxy-headers", "--host", "0.0.0.0",  "--port", "80", "--log-level", "${SERVER_LOGGING_LEVEL}"]
 CMD ["sh", "-c", "uvicorn app.main:application --proxy-headers --host 0.0.0.0 --port 80 --log-level $SERVER_LOGGING_LEVEL"]
