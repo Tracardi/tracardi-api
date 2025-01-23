@@ -39,7 +39,7 @@ COPY docs docs/
 # +:. => tracardi
 COPY tracardi/tracardi tracardi
 
-RUN ls -al
+RUN ls -al tracrdi
 
 RUN pip --default-timeout=240 install -r tracardi/requirements.txt
 RUN pip --default-timeout=240 install -r app/requirements.txt
@@ -55,6 +55,8 @@ ENV IMAGE_TAG=${IMAGE_TAG}
 ENV SERVER_LOGGING_LEVEL=info
 ENV PYTHONUNBUFFERED=1
 ENV PYTHONPATH="$VIRTUAL_ENV/bin:/src:$PYTHONPATH"
+
+WORKDIR /src
 
 #CMD ["uvicorn", "app.main:application", "--proxy-headers", "--host", "0.0.0.0",  "--port", "80", "--log-level", "${SERVER_LOGGING_LEVEL}"]
 CMD ["sh", "-c", "uvicorn app.main:application --proxy-headers --host 0.0.0.0 --port 80 --log-level $SERVER_LOGGING_LEVEL"]
