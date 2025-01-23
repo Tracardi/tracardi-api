@@ -2,7 +2,6 @@ FROM tiangolo/uvicorn-gunicorn-fastapi:python3.10
 MAINTAINER office@tracardi.com
 
 RUN apt-get update && apt-get install -y --no-install-recommends git && apt-get purge -y --auto-remove && rm -rf /var/lib/apt/lists/*
-#RUN sudo apt install python3.11-dev
 
 # Virtual env
 ENV VIRTUAL_ENV=/opt/venv
@@ -39,10 +38,6 @@ COPY docs docs/
 # +:. => tracardi
 COPY tracardi/tracardi tracardi
 
-RUN ls -al tracardi
-RUN ls -al app
-RUN ls -al uix
-
 RUN pip --default-timeout=240 install -r tracardi/requirements.txt
 RUN pip --default-timeout=240 install -r app/requirements.txt
 RUN pip --default-timeout=240 install -r defer/requirements.txt
@@ -58,7 +53,6 @@ ENV SERVER_LOGGING_LEVEL=info
 ENV PYTHONUNBUFFERED=1
 ENV PYTHONPATH="$VIRTUAL_ENV/bin:/src:$PYTHONPATH"
 
-RUN echo $PYTHONPATH
 WORKDIR /src
 
 #CMD ["uvicorn", "app.main:application", "--proxy-headers", "--host", "0.0.0.0",  "--port", "80", "--log-level", "${SERVER_LOGGING_LEVEL}"]
