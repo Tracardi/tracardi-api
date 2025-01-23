@@ -39,7 +39,7 @@ COPY docs docs/
 # +:. => tracardi
 COPY tracardi/tracardi tracardi
 
-RUN ls -al tracrdi
+RUN ls -al tracardi
 
 RUN pip --default-timeout=240 install -r tracardi/requirements.txt
 RUN pip --default-timeout=240 install -r app/requirements.txt
