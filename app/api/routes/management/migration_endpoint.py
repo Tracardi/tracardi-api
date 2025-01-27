@@ -9,9 +9,9 @@ from app.api.auth.permissions import Permissions
 from tracardi.context import get_context
 from tracardi.domain.version import Version
 from tracardi.common.logging.log_handler import get_logger
-from tracardi.service.dependency import *
 from tracardi.domain.migration_payload import MigrationPayload
 from tracardi.process_engine.migration.migration_manager import MigrationManager, MigrationNotFoundException
+from tracardi.service.dependency.adapters.big_data_adapter import bd_install_adapter
 from tracardi.service.url_constructor import construct_elastic_url
 from tracardi.config import elastic, tracardi
 
@@ -23,7 +23,7 @@ router = APIRouter(
 
 logger = get_logger(__name__)
 _local_path = os.path.dirname(__file__)
-
+_bd_install_adapter = bd_install_adapter()
 
 # todo can not find usages
 @router.get("/migration/check/from/{version}", tags=["migration"], include_in_schema=tracardi.expose_gui_api)
@@ -39,7 +39,7 @@ async def check_migration_consistency(version: str):
 
     # If there are differences in local mapping settings and database mappings then this
     # function will list all the errors
-    mapping_errors = await bd_install_adapter.check_indices_mappings_consistency()
+    mapping_errors = await _bd_install_adapter.check_indices_mappings_consistency()
 
     # list of acceptable differences
     acceptable_differences = {
