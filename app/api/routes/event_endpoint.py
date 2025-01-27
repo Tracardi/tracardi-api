@@ -39,7 +39,7 @@ async def events_refresh_index():
     """
     Refreshes event index.
     """
-    return await bd_elastic_adapter.core.refresh('event')
+    return await bd_event_adapter.refresh('event')
 
 
 @router.get("/events/flush", tags=["event"], include_in_schema=tracardi.expose_gui_api)
@@ -47,7 +47,7 @@ async def events_flush_index():
     """
     Flushes event index.
     """
-    return await bd_elastic_adapter.core.flush('event')
+    return await bd_event_adapter.flush('event')
 
 
 @router.get("/event/count", tags=["event"], include_in_schema=tracardi.expose_gui_api)
