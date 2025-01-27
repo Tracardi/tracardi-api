@@ -28,7 +28,7 @@ async def count_profiles():
 async def count_profile_duplicates(id: str):
     flat_profile = await load_flat_profile(id)
     if flat_profile:
-        result = await bd_analytics_adapter.count_profile_duplicates(flat_profile.ids)
+        result = await bd_profile_adapter.count_profile_duplicates(flat_profile.ids)
         return result.get("count", 0)
     return 0
 
@@ -39,7 +39,7 @@ async def import_profiles(profiles: List[Profile]):
     """
     Saves given profiles (list of profiles) to database. Accessible by roles: "admin"
     """
-    return await bd_collector_adapter.save_profiles(profiles)
+    return await bd_profile_adapter.save_profiles(profiles)
 
 
 @router.get("/profiles/refresh", tags=["profile"], include_in_schema=tracardi.expose_gui_api)
@@ -67,7 +67,7 @@ async def get_profile_by_id(profile_id: str, response: Response) -> Optional[dic
     """
 
     # This is acceptable - we see the profile from the database
-    result = await bd_crud_profile_adapter.load_by_id(profile_id)
+    result = await bd_profile_adapter.load_by_id(profile_id)
 
     if result is None:
         response.status_code = 404
@@ -97,26 +97,9 @@ async def delete_profile_by_id(id: str, response: Response):
 
 @router.get("/profile/{profile_id}/by/{field}", tags=["profile"], include_in_schema=tracardi.expose_gui_api)
 async def profile_data_by(profile_id: str, field: str, table: bool = False):
-    return await bd_analytics_adapter.load_events_by_profile_and_field(profile_id, field, table)
-
-
-# @router.get("/profiles/{qualify}/segment/{segment_names}", tags=["profile"], include_in_schema=tracardi.expose_gui_api)
-# async def find_profiles_by_segments(segment_names: str, qualify: str):
-#     """
-#     Returns profiles in given segments.
-#
-#     Segment names is a string with segment names, like: segment1,segment2
-#     Qualify takes any string like: any or all
-#     """
-#
-#     if qualify.lower() == 'any':
-#         condition = 'should'
-#     else:
-#         condition = 'must'
-#
-#     return await bd_gui_adapter.load_profiles_by_segments(segment_names.split(','), condition=condition)
+    return await bd_event_adapter.load_events_by_profile_and_field(profile_id, field, table)
 
 
 @router.get('/profiles/top/modified', tags=['profile'], include_in_schema=tracardi.expose_gui_api)
 async def load_top_profiles(limit: Optional[int] = 5):
-    return await bd_analytics_adapter.load_modified_top_profiles(limit)
+    return await bd_profile_adapter.load_modified_top_profiles(limit)

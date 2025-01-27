@@ -249,7 +249,7 @@ async def debug_flow(flow: FlowGraph, event_id: Optional[str] = None):
 
     else:
         # TODO EOFE - End of FlatEvent
-        event: Event = await bd_crud_event_adapter.load_event_from_db(event_id)
+        event: Event = await bd_event_adapter.load_event_from_db(event_id)
 
         if event is None:
             raise ValueError(f"Could not find event id {event_id}.")
