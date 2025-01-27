@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from tracardi.config import tracardi
-from tracardi.service.dependency import *
+from tracardi.service.dependency.adapters.big_data_adapter import *
 from app.api.auth.permissions import Permissions
 from typing import Optional
 

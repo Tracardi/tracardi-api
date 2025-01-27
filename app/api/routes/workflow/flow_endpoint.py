@@ -1,4 +1,4 @@
-from tracardi.service.dependency import *
+from tracardi.service.dependency.adapters.big_data_adapter import *
 from tracardi.service.collector.load.profile import load_profile
 from tracardi.common.time.date import now_in_utc
 

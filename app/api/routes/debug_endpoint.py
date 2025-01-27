@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 from tracardi.common.time.date import now_in_utc
 from tracardi.config import tracardi
-from tracardi.service.dependency import *
+from tracardi.service.dependency.adapters.big_data_adapter import *
 from app.api.auth.permissions import Permissions
 
 

@@ -2,13 +2,12 @@ from fastapi import APIRouter, Depends, HTTPException
 
 from app.api.auth.permissions import Permissions
 from tracardi.config import tracardi
-from tracardi.service.dependency.adapters.big_data_adapter import bd_install_adapter
+from tracardi.service.dependency.adapters.big_data_adapter import *
 
 router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin", "maintainer"]))]
 )
 
-_bd_install_adapter = bd_install_adapter()
 
 @router.get("/storage/mapping/check", tags=["storage"], include_in_schema=tracardi.expose_gui_api,
             response_model=dict)
@@ -24,7 +23,7 @@ async def check_indices_mapping_consistency():
     any differences between the two mappings, it saves these
     differences in a dictionary. And, it returns the result dictionary at the end.
     """
-    return await _bd_install_adapter.check_indices_mappings_consistency()
+    return await bd_install_adapter.check_indices_mappings_consistency()
 
 
 @router.get("/storage/mapping/{index}/metadata", tags=["storage"], include_in_schema=tracardi.expose_gui_api,

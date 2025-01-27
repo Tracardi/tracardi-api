@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException
 
 from app.service.grouping import get_grouped_result
 from tracardi.domain.test import Test
-from tracardi.service.dependency import *
+from tracardi.service.dependency.adapters.big_data_adapter import *
 from tracardi.service.adapter.cache_adaper_selector import cache_adapter
 from tracardi.service.storage.mysql.mapping.test_mapping import map_to_test
 from tracardi.service.storage.mysql.service.test_service import TestService

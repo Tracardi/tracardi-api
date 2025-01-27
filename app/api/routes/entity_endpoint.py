@@ -2,7 +2,7 @@ from elasticsearch.exceptions import NotFoundError
 from fastapi import APIRouter, Depends, HTTPException
 
 from tracardi.domain.entity_index_mapping import EntityIndexMapping
-from tracardi.service.dependency import *
+from tracardi.service.dependency.adapters.big_data_adapter import *
 from app.api.auth.permissions import Permissions
 from tracardi.config import tracardi
 

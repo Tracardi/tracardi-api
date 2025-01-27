@@ -6,7 +6,7 @@ from test.api.endpoints.test_event_source_endpoint import _create_event_source
 from tracardi.context import ServerContext, Context
 
 from test.utils import Endpoint, get_test_tenant
-from tracardi.service.dependency import *
+from tracardi.service.dependency.adapters.big_data_adapter import *
 
 endpoint = Endpoint()
 

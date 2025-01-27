@@ -6,7 +6,7 @@ import sentry_sdk
 
 from tracardi.service.adapter.logger.logger_adapter import log_format_adapter
 from tracardi.service.cluster.settings import GlobalSettingsBroadcaster
-from tracardi.service.dependency.adapters.big_data_adapter import bd_install_adapter
+from tracardi.service.dependency.adapters.big_data_adapter import *
 from tracardi.service.license import License
 from tracardi.service.storage.mysql.service.mysql_installation import wait_for_mysql_connection
 from tracardi.service.storage.redis.connection import wait_for_redis_connection
@@ -24,7 +24,6 @@ if License.has_license():
 logger = get_logger(__name__)
 
 _log_format_adapter = log_format_adapter()
-_bd_install_adapter = bd_install_adapter()
 
 api_ready = False
 
@@ -41,7 +40,7 @@ async def app_starts():
 
     logger.info(f"Waiting for Elasticsearch...")
 
-    await _bd_install_adapter.wait_for_connection()
+    await bd_install_adapter.wait_for_connection()
 
     if server.performance_tracking is not None:
         sentry_sdk.init(
@@ -114,7 +113,7 @@ async def app_starts():
     logger.info(f"EVENT_SOURCE_CACHE_TTL: {memory_cache.source_ttl}")
 
 async def app_shutdown():
-    await _bd_install_adapter.close()
+    await bd_install_adapter.close()
 
 
 @asynccontextmanager

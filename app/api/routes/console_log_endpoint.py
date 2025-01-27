@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 
 from app.api.auth.permissions import Permissions
 from tracardi.config import tracardi
-from tracardi.service.dependency import *
+from tracardi.service.dependency.adapters.big_data_adapter import *
 
 
 router = APIRouter()

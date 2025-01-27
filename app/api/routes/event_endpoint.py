@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, Response
 from tracardi.domain.enum.time_span import TimeSpan
 from tracardi.domain.event import Event
 from tracardi.service import events
-from tracardi.service.dependency import *
+from tracardi.service.dependency.adapters.big_data_adapter import *
 from tracardi.service.events import get_default_event_type_schema
 from app.api.auth.permissions import Permissions
 

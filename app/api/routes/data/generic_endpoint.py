@@ -3,7 +3,7 @@ from typing import Optional
 from fastapi import APIRouter
 from fastapi import Depends
 
-from tracardi.service.dependency import *
+from tracardi.service.dependency.adapters.big_data_adapter import *
 from tracardi.service.query.autocomplete import KQLAutocomplete
 from tracardi.domain.enum.indexes_histogram import IndexesHistogram
 from tracardi.domain.enum.indexes_search import IndexesSearch

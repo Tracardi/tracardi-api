@@ -3,7 +3,7 @@ from fastapi import APIRouter
 from fastapi import Depends
 from fastapi.responses import Response
 from tracardi.domain.session import Session
-from tracardi.service.dependency import *
+from tracardi.service.dependency.adapters.big_data_adapter import *
 from app.api.auth.permissions import Permissions
 from tracardi.config import tracardi
 

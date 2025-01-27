@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 
 from tracardi.config import mysql
 from tracardi.context import get_context
-from tracardi.service.dependency import *
+from tracardi.service.dependency.adapters.big_data_adapter import *
 from tracardi.service.plugin.plugin_install import install_default_plugins
 from tracardi.service.storage.mysql.service.database_service import DatabaseService
 from tracardi.config import tracardi

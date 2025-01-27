@@ -4,7 +4,7 @@ from fastapi import APIRouter
 from fastapi import Depends
 from fastapi.responses import Response
 
-from tracardi.service.dependency import *
+from tracardi.service.dependency.adapters.big_data_adapter import *
 from tracardi.domain.profile import Profile
 from tracardi.service.collector.load.flat_profile import load_flat_profile
 from tracardi.service.collector.mutation import profile as mutation_profile_db
