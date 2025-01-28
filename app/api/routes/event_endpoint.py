@@ -4,6 +4,7 @@ from datetime import datetime
 from fastapi import APIRouter, Depends, Response
 from tracardi.domain.enum.time_span import TimeSpan
 from tracardi.domain.event import Event
+from tracardi.domain.storage_results import StorageResults
 from tracardi.service import events
 from tracardi.service.dependency.adapters.big_data_adapter import *
 from tracardi.service.events import get_default_event_type_schema
@@ -202,7 +203,7 @@ async def get_events_for_session(session_id: str, profile_id: str, limit: int = 
 
 @router.get("/events/profile/{profile_id}", tags=["event"],
             include_in_schema=tracardi.expose_gui_api,
-            response_model=dict)
+            response_model=StorageResults)
 async def get_events_for_profile(profile_id: str, limit: int = 24):
     """ Load events for profile id """
 

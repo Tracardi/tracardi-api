@@ -8,7 +8,7 @@ from tracardi.service.dependency.adapters.big_data_adapter import *
 from tracardi.service.adapter.cache_adaper_selector import cache_adapter
 from tracardi.service.storage.mysql.mapping.test_mapping import map_to_test
 from tracardi.service.storage.mysql.service.test_service import TestService
-from tracardi.service.storage.elastic.driver.elastic_client import ElasticClient
+from system.adapter.os.bigdata.elastic.driver.elastic_client import ElasticClient
 
 from app.api.auth.permissions import Permissions
 from tracardi.config import tracardi
