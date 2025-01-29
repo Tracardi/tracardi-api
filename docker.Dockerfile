@@ -3,7 +3,10 @@ FROM python:3.11-slim-bullseye AS builder
 
 # Add build argument for GitHub token
 ARG GITHUB_TOKEN
-ENV VERSION="1.2.y"
+ARG IMAGE_TAG=unknown
+ARG VERSION="1.2.y"
+
+ENV VERSION=${VERSION}
 
 RUN echo ${VERSION}
 RUN pip install --upgrade pip
@@ -72,7 +75,6 @@ COPY --from=builder $VIRTUAL_ENV $VIRTUAL_ENV
 ENV VARIABLE_NAME="application"
 
 # Set a default value for TAG_VERSION
-ARG IMAGE_TAG=unknown
 ENV IMAGE_TAG=${IMAGE_TAG}
 ENV SERVER_LOGGING_LEVEL=warning
 ENV PYTHONPATH="$VIRTUAL_ENV/bin:/system:$PYTHONPATH"
