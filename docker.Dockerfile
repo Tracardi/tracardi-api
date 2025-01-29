@@ -3,8 +3,9 @@ FROM python:3.11-slim-bullseye AS builder
 
 # Add build argument for GitHub token
 ARG GITHUB_TOKEN
-ENV VERSION="1.3.x"
+ENV VERSION="1.2.y"
 
+RUN echo ${VERSION}
 RUN pip install --upgrade pip
 # Install git
 RUN apt-get update && apt-get install -y --no-install-recommends git build-essential && apt-get purge -y --auto-remove && rm -rf /var/lib/apt/lists/*
