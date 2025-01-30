@@ -16,10 +16,10 @@ router = APIRouter(
             dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer", "maintainer"]))],
             include_in_schema=tracardi.expose_gui_api)
 async def count_sessions_online():
-    result = await bd_session_adapter.count_sessions_online_in_db()
+    online_events_count, online_session_count = await bd_session_adapter.count_sessions_online_in_db()
     return {
-        "events": result.total,
-        "sessions": result.aggregations("sessions").get('value', 0)
+        "events": online_events_count,
+        "sessions": online_session_count
     }
 
 
@@ -62,7 +62,11 @@ async def get_sessions_by_resolution():
             dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer", "maintainer"]))],
             include_in_schema=tracardi.expose_gui_api)
 async def count_sessions_by_location():
-    return await bd_session_adapter.count_online_sessions_by_location_in_db()
+    events_count, tz_list = await bd_session_adapter.count_online_sessions_by_location_in_db()
+    return {
+            "events": events_count,
+            "tz": tz_list
+        }
 
 
 @router.get("/session/count", tags=["session"],
