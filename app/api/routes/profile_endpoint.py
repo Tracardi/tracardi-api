@@ -28,8 +28,7 @@ async def count_profiles():
 async def count_profile_duplicates(id: str):
     flat_profile = await load_flat_profile(id)
     if flat_profile:
-        result = await bd_profile_adapter.count_profile_duplicates(flat_profile.ids)
-        return result.get("count", 0)
+        return await bd_profile_adapter.count_profile_duplicates(flat_profile.ids)
     return 0
 
 
@@ -67,7 +66,7 @@ async def get_profile_by_id(profile_id: str, response: Response) -> Optional[dic
     """
 
     # This is acceptable - we see the profile from the database
-    result = await bd_profile_adapter.load_by_id(profile_id)
+    result = await bd_profile_adapter.load_by_id_as_dict(profile_id)
 
     if result is None:
         response.status_code = 404
