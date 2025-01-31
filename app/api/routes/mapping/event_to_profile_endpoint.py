@@ -35,6 +35,7 @@ async def get_event_to_profile_by_event_type(event_type: str):
 
     records = []
     build_in = get_default_mappings_for(event_type, "profile")
+
     if build_in is not None:
         build_in = EventToProfile(**{
             'id': str(uuid4()),
@@ -56,10 +57,10 @@ async def get_event_to_profile_by_event_type(event_type: str):
 
     records, total = await event_to_profile_dao.load_event_to_profile_mapping_by_type(event_type)
 
+    # Mutate the event_to_profile records
     if records:
         for event_to_profile in records:
             event_to_profile.build_in = False
-            records.append(event_to_profile)
 
     total = len(records)
 
