@@ -178,7 +178,7 @@ async def get_for_source_grouped_by_type_time(source_id: str, time_span: TimeSpa
     """
     time_span: d - last day, w - last week, M - last month, y - last year
     """
-    return await bd_event_adapter.aggregate_events_by_source_and_type(source_id, time_span)
+    return await bd_event_adapter.aggregate_events_by_source_and_type(source_id, time_span.value)
 
 
 @router.get("/event/for-source/{source_id}/by-tag/{time_span}", tags=["event"],
