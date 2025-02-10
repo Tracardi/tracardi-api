@@ -72,6 +72,6 @@ async def get_current_backend_version():
             "owner": "Tracardi",
             "company": "Tracardi",
             "expires": "Never",
-            "type": ["Open Source (MIT + Common Clause)"]
+            "type": "Open Source (MIT + Common Clause)"
         }
     return version
