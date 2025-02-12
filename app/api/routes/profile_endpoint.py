@@ -20,7 +20,7 @@ router = APIRouter(
 @router.get("/profile/count", tags=["profile"],
             include_in_schema=tracardi.expose_gui_api)
 async def count_profiles():
-    return await bd_profile_adapter.count('profile')
+    return await bd_profile_adapter.count()
 
 
 @router.get("/profile/duplicates/count", tags=["profile"],
@@ -46,7 +46,7 @@ async def refresh_profile():
     """
     Refreshes profile index
     """
-    return await bd_profile_adapter.refresh('profile')
+    return await bd_profile_adapter.refresh()
 
 
 @router.get("/profiles/flash", tags=["profile"], include_in_schema=tracardi.expose_gui_api)
@@ -54,7 +54,7 @@ async def flash_profile():
     """
     Flashes profile index
     """
-    return await bd_profile_adapter.flush('profile')
+    return await bd_profile_adapter.flush()
 
 
 @router.get("/profile/{profile_id}", tags=["profile"],
