@@ -4,6 +4,7 @@ from fastapi import APIRouter
 from fastapi import Depends
 from fastapi.responses import Response
 
+from tracardi.domain.storage_results import StorageResults
 from tracardi.service.dependency.adapters.big_data_adapter import *
 from tracardi.domain.profile import Profile
 from tracardi.service.collector.load.flat_profile import load_flat_profile
@@ -101,4 +102,9 @@ async def profile_data_by(profile_id: str, field: str, table: bool = False):
 
 @router.get('/profiles/top/modified', tags=['profile'], include_in_schema=tracardi.expose_gui_api)
 async def load_top_profiles(limit: Optional[int] = 5):
-    return await bd_profile_adapter.load_modified_top_profiles(limit)
+    result = await bd_profile_adapter.load_modified_top_profiles(limit)
+
+    return StorageResults(
+        total=len(result),
+        result=result
+    )
