@@ -2,6 +2,8 @@ from typing import Optional, List
 from fastapi import APIRouter
 from fastapi import Depends
 from fastapi.responses import Response
+
+from tracardi.domain.flat_session import FlatSession
 from tracardi.domain.session import Session
 from tracardi.service.dependency.adapters.big_data_adapter import *
 from app.api.auth.permissions import Permissions
@@ -95,11 +97,11 @@ async def session_refresh():
 @router.post("/sessions/import", tags=["session"],
              dependencies=[Depends(Permissions(roles=["admin", "developer"]))],
              include_in_schema=tracardi.expose_gui_api)
-async def import_profiles(sessions: List[Session]):
+async def import_profiles(flat_sessions: List[FlatSession]):
     """
     Adds given sessions to database
     """
-    return await bd_session_adapter.save_sessions_in_db(sessions)
+    return await bd_session_adapter.save_sessions_in_db(flat_sessions)
 
 
 @router.get("/session/{id}",
