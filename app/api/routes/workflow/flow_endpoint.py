@@ -266,17 +266,18 @@ async def debug_flow(flow: FlowGraph, event_id: Optional[str] = None):
             profile = None
 
         if event.has_session():
-            session = await bd_session_adapter.load_session_from_db(event.session.id)
-            if session is None:
+            flat_session = await bd_session_adapter.load_flat_session_from_db(event.session.id)
+            if flat_session is None:
                 raise ValueError(
                     f"Event id {event.id} points to session {event.session.id}, but it does not exists. "
                     f"Please retry in 15s.")
 
             event_session = EventSession(
-                id=session.id,
-                start=session.metadata.time.insert,
-                duration=session.metadata.time.duration
+                id=flat_session.id,
+                start=flat_session['metadata.time.insert'],
+                duration=flat_session['metadata.time.duration']
             )
+            session = Session(**flat_session)
         else:
             session = None
             event_session = None

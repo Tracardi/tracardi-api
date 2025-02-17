@@ -1,10 +1,8 @@
-from typing import Optional, List
+from typing import Optional
 from fastapi import APIRouter
 from fastapi import Depends
 from fastapi.responses import Response
 
-from tracardi.domain.flat_session import FlatSession
-from tracardi.domain.session import Session
 from tracardi.service.dependency.adapters.big_data_adapter import *
 from app.api.auth.permissions import Permissions
 from tracardi.config import tracardi
@@ -94,26 +92,15 @@ async def session_refresh():
     return await bd_session_adapter.flush_session_db()
 
 
-@router.post("/sessions/import", tags=["session"],
-             dependencies=[Depends(Permissions(roles=["admin", "developer"]))],
-             include_in_schema=tracardi.expose_gui_api)
-async def import_profiles(flat_sessions: List[FlatSession]):
-    """
-    Adds given sessions to database
-    """
-    return await bd_session_adapter.save_sessions_in_db(flat_sessions)
-
-
-@router.get("/session/{id}",
+@router.get("/session/{session_id}",
             tags=["session"],
             dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer"]))],
-            response_model=Optional[Session],
             include_in_schema=tracardi.expose_gui_api)
-async def get_session_by_id(id: str, response: Response):
+async def get_session_by_id(session_id: str, response: Response):
     """
     Returns session with given ID (str)
     """
-    result = await bd_session_adapter.load_session_from_db(id)
+    result = await bd_session_adapter.load_flat_session_from_db(session_id)
 
     if result is None:
         response.status_code = 404
@@ -143,17 +130,17 @@ async def delete_session(id: str, response: Response):
             dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer"]))],
             include_in_schema=tracardi.expose_gui_api)
 async def get_nth_last_session_for_profile(profile_id: str, n: Optional[int] = 0):
-    result = await bd_session_adapter.load_nth_last_session_for_profile(profile_id, n)
+    flat_session = await bd_session_adapter.load_nth_last_session_for_profile(profile_id, n)
 
-    if result is None:
+    if flat_session is None:
         return None
 
     return {
-        "id": result["id"],
-        "metadata": result["metadata"],
-        "context": result["context"],
-        "profile": result['profile'],
-        "device": result['device'],
-        "app": result['app'],
-        "os": result['os'],
+        "id": flat_session["id"],
+        "metadata": flat_session["metadata"],
+        "context": flat_session.get("context", {}),
+        "profile": flat_session.get_or_none('profile'),
+        "device": flat_session.get('device', {}),
+        "app": flat_session.get('app', {}),
+        "os": flat_session.get('os', {}),
     }
