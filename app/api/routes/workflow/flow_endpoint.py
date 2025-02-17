@@ -220,12 +220,12 @@ async def debug_flow(flow: FlowGraph, event_id: Optional[str] = None):
                                   insert=_now
                               )
                           ))
-        flat_session = FlatSession({
-            "id": "@debug-session-id",
-            "metadata.time.create": _now,
-            "metadata.time.insert": _now,
-            "metadata.time.timestamp": datetime.timestamp(_now)
-        })
+        flat_session = FlatSession.new(id="@debug-session-id") << [
+            ("metadata.time.create", _now),
+            ("metadata.time.insert", _now),
+            ("metadata.time.timestamp", datetime.timestamp(_now))
+        ]
+
         event_session = EventSession(
             id=flat_session.id,
             start=flat_session['metadata.time.insert'],

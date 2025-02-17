@@ -6,8 +6,7 @@ import requests
 from dotenv import load_dotenv
 
 from tracardi.config import tracardi
-from tracardi.domain.profile import Profile
-from tracardi.domain.session import Session, SessionMetadata
+from tracardi.domain.flat_session import FlatSession
 
 load_dotenv()
 
@@ -94,11 +93,11 @@ class Endpoint:
 
 def create_session(session_id, profile_id=None):
     if profile_id is not None:
-        session = Session(id=session_id, profile=Profile(id=profile_id), metadata=SessionMetadata())
+        session = FlatSession.new(id=session_id, profile_id=profile_id)
     else:
-        session = Session(id=session_id, metadata=SessionMetadata())
+        session = FlatSession.new(id=session_id)
 
-    session = json.loads(session.model_dump_json())
+    session = session.to_json()
 
     endpoint = Endpoint()
     response = endpoint.post("/sessions/import", data=[session])
