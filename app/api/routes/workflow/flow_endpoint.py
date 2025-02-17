@@ -1,3 +1,4 @@
+from tracardi.domain.flat_session import FlatSession
 from tracardi.service.dependency.adapters.big_data_adapter import *
 from tracardi.service.collector.load.profile import load_profile
 from tracardi.common.time.date import now_in_utc
@@ -22,7 +23,6 @@ from tracardi.domain.flow import Flow
 from tracardi.service.wf.domain.flow_graph import FlowGraph
 from tracardi.domain.flow import FlowRecord
 from tracardi.domain.profile import Profile
-from tracardi.domain.session import Session, SessionMetadata, SessionTime
 from app.api.auth.permissions import Permissions
 from tracardi.config import tracardi
 from tracardi.service.storage.mysql.interface import workflow_dao
@@ -220,20 +220,18 @@ async def debug_flow(flow: FlowGraph, event_id: Optional[str] = None):
                                   insert=_now
                               )
                           ))
-        session = Session(id="@debug-session-id",
-                          metadata=SessionMetadata(
-                              time=SessionTime(
-                                  create=_now,
-                                  insert=_now,
-                                  timestamp=datetime.timestamp(_now)
-                              )
-                          ))
+        flat_session = FlatSession({
+            "id": "@debug-session-id",
+            "metadata.time.create": _now,
+            "metadata.time.insert": _now,
+            "metadata.time.timestamp": datetime.timestamp(_now)
+        })
         event_session = EventSession(
-            id=session.id,
-            start=session.metadata.time.insert,
-            duration=session.metadata.time.duration
+            id=flat_session.id,
+            start=flat_session['metadata.time.insert'],
+            duration=flat_session['metadata.time.duration']
         )
-        session.set_new()
+        flat_session.set_new()
         source = Entity(id="@debug-source-id")
 
         event = Event(
@@ -277,9 +275,8 @@ async def debug_flow(flow: FlowGraph, event_id: Optional[str] = None):
                 start=flat_session['metadata.time.insert'],
                 duration=flat_session['metadata.time.duration']
             )
-            session = Session(**flat_session)
         else:
-            session = None
+            flat_session = None
             event_session = None
 
     tracker_payload = TrackerPayload(
@@ -302,7 +299,7 @@ async def debug_flow(flow: FlowGraph, event_id: Optional[str] = None):
 
     ux = []
 
-    flow_invoke_result = await workflow.invoke(flow, event, profile, session, ux, debug=True)
+    flow_invoke_result = await workflow.invoke(flow, event, profile, flat_session, ux, debug=True)
 
     profile_save_result = None
 
