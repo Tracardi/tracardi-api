@@ -1,4 +1,6 @@
-from fastapi import APIRouter, Depends
+from typing import Optional
+
+from fastapi import APIRouter, Depends, HTTPException
 
 from tracardi.config import mysql
 from tracardi.context import get_context
@@ -12,8 +14,8 @@ router = APIRouter(
     dependencies=[Depends(Permissions(roles=["maintainer"]))]
 )
 
-
-@router.get("/install/reset/{token}", tags=["installation"], include_in_schema=tracardi.expose_gui_api)
+# Not in GUI
+@router.get("/install/reset/{token}", tags=["maintenance"], include_in_schema=tracardi.expose_gui_api)
 async def reset_installation(token: str):
     """
     Resets installation
@@ -74,7 +76,7 @@ async def reset_installation(token: str):
 
     for template in templates:
         try:
-            result[template] = await bd_raw_adapter.remove_template(template)
+            result[template] = await bd_internal_adapter.remove_template(template)
         except Exception:
             pass
     db = DatabaseService()
@@ -83,6 +85,32 @@ async def reset_installation(token: str):
     return result
 
 
-@router.get("/install/plugins", tags=["installation"], include_in_schema=tracardi.expose_gui_api)
+@router.get("/install/plugins", tags=["maintenance"], include_in_schema=tracardi.expose_gui_api)
 async def install_plugins():
     return await install_default_plugins()
+
+
+# Not used in GUI, for maintained only
+@router.delete("/indices", tags=["maintenance"], include_in_schema=tracardi.expose_gui_api)
+async def delete_old_indices(db_version: str, codename: Optional[str] = None):
+
+    if db_version == tracardi.version.db_version:
+        raise HTTPException(status_code=409, detail="You cannot delete indices that are currently used.")
+
+    indices = await bd_raw_adapter.list_indices()
+
+    # Test
+    to_delete = [index for index in indices if index.startswith(
+        f"{db_version}.{codename}.tracardi-"
+    )]
+
+    # Production
+    for index in indices :
+        if index.startswith(f"prod-{db_version}.{codename}.tracardi-"):
+            to_delete.append(index)
+
+    result = {}
+    for alias in to_delete:
+        result[alias] = await bd_raw_adapter.remove_index(alias)
+
+    return result

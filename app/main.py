@@ -22,7 +22,7 @@ from app.api.routes.consent import customer_endpoint, consent_type_endpoint
 from app.api.routes.mapping import event_mapping_endpoint, event_to_profile_endpoint
 from app.api.routes.data import generic_endpoint
 from app.api.routes.management import health_endpoint, info_endpoint, maintanace_endpoint, \
-    migration_endpoint, delete_indices_endpoint, configuration_endpoint
+    migration_endpoint, configuration_endpoint
 from app.api.routes.install import install_endpoint
 from app.api.routes.outbound import destination_endpoint
 from app.api.routes.inbound import bridge_endpoint, event_source_endpoint, event_source_redirects
@@ -232,7 +232,6 @@ application.include_router(user_account_endpoint.router)
 application.include_router(install_endpoint.router)
 application.include_router(import_endpoint.router)
 application.include_router(task_endpoint.router)
-application.include_router(delete_indices_endpoint.router)
 application.include_router(migration_endpoint.router)
 application.include_router(report_endpoint.router)
 application.include_router(event_reshaping_schema_endpoint.router)
