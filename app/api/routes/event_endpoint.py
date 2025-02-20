@@ -53,7 +53,7 @@ async def events_flush_index():
 
 @router.get("/event/count", tags=["event"], include_in_schema=tracardi.expose_gui_api)
 async def count_events():
-    return await bd_event_adapter.count_events_in_db()
+    return await bd_event_adapter.count()
 
 
 @router.get("/event/avg/requests", tags=["event"], include_in_schema=tracardi.expose_gui_api)
