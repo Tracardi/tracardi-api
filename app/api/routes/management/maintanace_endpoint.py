@@ -1,6 +1,4 @@
-from typing import Optional
-
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 
 from tracardi.config import mysql
 from tracardi.context import get_context
