@@ -67,11 +67,11 @@ async def count_avg_process_time() -> dict:
 
 
 @router.get("/events/metadata/type", tags=["event"], include_in_schema=tracardi.expose_gui_api)
-async def event_types(query: str = None, limit: int = 1000):
+async def event_types(limit: int = 1000):
     """
     Returns event types
     """
-    return await events.get_event_types(query, limit)
+    return await events.get_event_types(limit)
 
 
 @router.get("/events/by_type", tags=["event"], include_in_schema=tracardi.expose_gui_api)
