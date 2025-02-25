@@ -60,7 +60,6 @@ else:
     event_validator_endpoint = get_router(prefix="/event-validator")
 
 if License.has_service(LICENSE):
-    from com_tracardi.endpoint import field_update_log_endpoint
     from com_tracardi.endpoint import event_data_compliance_endpoint
     from com_tracardi.endpoint import deploy_endpoint
 
@@ -248,7 +247,6 @@ application.include_router(customer_endpoint.router)
 application.include_router(event_to_profile_endpoint.router)
 application.include_router(event_type_predefined.router)
 application.include_router(setting_endpoint.router)
-application.include_router(field_update_log_endpoint.router)
 application.include_router(cache_endpoint.router)
 application.include_router(deploy_endpoint.router)
 application.include_router(subscription_endpoint.router)
