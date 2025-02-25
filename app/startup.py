@@ -38,7 +38,7 @@ async def app_starts():
 
     wait_for_redis_connection()
 
-    logger.info(f"Waiting for Elasticsearch...")
+    logger.info(f"Waiting for Database...")
 
     await bd_install_adapter.wait_for_connection()
 

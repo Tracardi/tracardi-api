@@ -186,8 +186,7 @@ async def get_events_for_session(session_id: str, profile_id: str, limit: int = 
 
 
 @router.get("/events/profile/{profile_id}", tags=["event"],
-            include_in_schema=tracardi.expose_gui_api,
-            response_model=StorageResults)
+            include_in_schema=tracardi.expose_gui_api)
 async def get_events_for_profile(profile_id: str, limit: int = 24):
     """ Load events for profile id """
 
