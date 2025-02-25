@@ -42,20 +42,6 @@ async def get_index_mapping_metadata(index: str, filter: str = None):
     return {"result": result, "total": len(result)}
 
 
-@router.get("/storage/mapping/{index}/metadata/type/{field_types}", tags=["storage"],
-            include_in_schema=tracardi.expose_gui_api,
-            response_model=dict)
-async def get_index_mapping_metadata(index: str, field_types: str):
-    """
-    Returns fields with given field types of given index (str). Field types, eg. text, keyword
-    """
-    # TODO not used in GUI - check
-    field_types = field_types.split(',')
-    fields = await bd_search_adapter.get_columns_with_give_type(index, field_types)
-
-    return {"result": fields, "total": len(fields)}
-
-
 @router.get("/storage/mapping/{index}", tags=["storage"], include_in_schema=tracardi.expose_gui_api,
             response_model=list)
 async def get_index_mapping(index: str):
