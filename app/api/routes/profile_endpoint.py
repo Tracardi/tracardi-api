@@ -97,7 +97,7 @@ async def delete_profile_by_id(id: str, response: Response):
 
 @router.get("/profile/{profile_id}/by/{field}", tags=["profile"], include_in_schema=tracardi.expose_gui_api)
 async def profile_data_by(profile_id: str, field: str, table: bool = False):
-    return await bd_event_adapter.load_events_by_profile_and_field(profile_id, field, table)
+    return await bd_event_adapter.aggregate_profile_events_by_field(profile_id, field, table)
 
 
 @router.get('/profiles/top/modified', tags=['profile'], include_in_schema=tracardi.expose_gui_api)

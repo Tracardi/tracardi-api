@@ -27,14 +27,6 @@ def __format_time_buckets(row):
         }
 
 
-@router.get("/events/by-type/by-source", tags=["event"], include_in_schema=tracardi.expose_gui_api)
-async def get_event_types():
-    """
-    Returns event types along with the event sources ids.
-    """
-    return await bd_event_adapter.aggregate_events_by_type_and_source()
-
-
 @router.get("/events/refresh", tags=["event"], include_in_schema=tracardi.expose_gui_api)
 async def events_refresh_index():
     """
@@ -89,7 +81,7 @@ async def aggregate_event_tags():
     """
     return await bd_event_adapter.aggregate_event_tags_from_db()
 
-
+# Currently not used
 @router.get("/events/by_status", tags=["event"], include_in_schema=tracardi.expose_gui_api)
 async def aggregate_event_statuses():
     """
@@ -105,7 +97,7 @@ async def aggregate_event_device_geo_location():
     """
     return await bd_event_adapter.aggregate_event_devices_geo_from_db()
 
-
+# Currently not used
 @router.get("/events/by_os_name", tags=["event"], include_in_schema=tracardi.expose_gui_api)
 async def aggregate_event_device_by_os():
     """
@@ -128,14 +120,6 @@ async def aggregate_event_resolution():
     Returns number of events grouped by screen resolution
     """
     return await bd_event_adapter.aggregate_event_resolutions_from_db()
-
-
-@router.get("/events/by_source", tags=["event"], include_in_schema=tracardi.expose_gui_api)
-async def aggregate_event_by_source(buckets_size: int = 30):
-    """
-    Returns number of events grouped by event source
-    """
-    return await bd_event_adapter.aggregate_events_by_source_from_db(buckets_size=buckets_size)
 
 
 @router.get("/event/{id}",
