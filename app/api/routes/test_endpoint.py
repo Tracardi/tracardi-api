@@ -31,52 +31,6 @@ async def ping_redis():
         raise ConnectionError("Redis did not respond.")
 
 
-@router.get("/test/elasticsearch", tags=["test"], include_in_schema=tracardi.expose_gui_api)
-async def get_es_cluster_health():
-    """
-    Tests connection between Elasticsearch and Tracardi by returning cluster info. Accessible for roles: "admin"
-    """
-
-    health = await bd_raw_adapter.health()
-    if not isinstance(health, dict):
-        raise ConnectionError("Elasticsearch did not pass health check.")
-    settings = await bd_raw_adapter.get_settings()
-    if settings:
-        health['settings'] = settings
-    return health
-
-
-@router.get("/test/elasticsearch/indices", tags=["test"], include_in_schema=tracardi.expose_gui_api)
-async def get_es_indices():
-    """
-    Returns list of indices in elasticsearch cluster. Accessible for roles: "admin"
-    """
-
-    if tracardi.multi_tenant:
-        raise HTTPException(status_code=405, detail="This section is not allowed for multi-tenant server.")
-
-    resource_aliases = bd_raw_adapter.get_installed_aliases()
-
-    es = ElasticClient.instance()
-    result = await es.list_indices()
-    output = {}
-    for key in result:
-
-        if key[0] == '.':
-            continue
-
-        current_index_aliases = list(result[key]["aliases"].keys())
-
-        index = result[key]
-        index["settings"]["index"]["creation_date"] = \
-            datetime.utcfromtimestamp(int(result[key]["settings"]["index"]["creation_date"]) // 1000)
-        index["connected"] = bool(set(current_index_aliases).intersection(resource_aliases))
-        index["head"] = len(current_index_aliases) != 1 or not current_index_aliases[0].endswith('.prev')
-
-        output[key] = index
-
-    return output
-
 @router.get("/test/{id}", tags=["deployment"], include_in_schema=tracardi.expose_gui_api)
 async def get_test(id: str):
     record = await ts.load_by_id(id)
@@ -104,26 +58,3 @@ async def delete_test(id: str):
     Deletes test from the database
     """
     return await ts.delete_by_id(id)
-
-
-@router.get("/es/shards/unassigned", tags=["report"], include_in_schema=tracardi.expose_gui_api)
-async def shards(index: str):
-    client = ElasticClient.instance()
-    shards =  await client.shards()
-
-    unassigned = [shard for shard in shards if shard["state"] == "UNASSIGNED"]
-
-    result = []
-    for shard in unassigned:
-        response = await client.cluster.allocation_explain(
-            body={
-                "index": shard['index'],
-                "shard": shard['shard'],
-                "primary": shard['prirep'] == 'p'
-            }
-        )
-        result.append({
-            "shard": shard,
-            "info": response
-        })
-    return result
