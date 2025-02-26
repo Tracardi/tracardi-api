@@ -37,7 +37,7 @@ mysql -h localhost -P 3306 --protocol=tcp -u root -p
 
 docker run -it \
 -p 6650:6650 \
--p 8080:8080 \
+-p 8060:8080 \
 apachepulsar/pulsar:3.3.0 \
 bin/pulsar standalone
 
