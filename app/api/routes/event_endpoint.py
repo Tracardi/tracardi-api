@@ -175,9 +175,9 @@ async def get_events_for_profile(profile_id: str, limit: int = 24):
         limit)
 
 
-@router.get("/event/type/{event_type}/schema", tags=["event"],
+@router.get("/event/type/{event_type}/schema/{entity_name}", tags=["event"],
             include_in_schema=tracardi.expose_gui_api)
-async def get_event_type_data_schema(event_type: str):
+async def get_event_type_data_schema(event_type: str, entity_name: str):
     """Gets pre-defined event type data schema"""
 
-    return get_default_event_type_schema(event_type)
+    return get_default_event_type_schema(event_type, entity_name)

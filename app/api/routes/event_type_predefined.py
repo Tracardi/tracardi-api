@@ -16,7 +16,7 @@ router = APIRouter(
             tags=["event-type"],
             include_in_schema=tracardi.expose_gui_api)
 async def get_build_in_event_type(id: str = None):
-    return get_default_event_type_schema(event_type=id)
+    return get_default_event_type_schema(event_type=id, entity_name='customer')
 
 
 @router.get("/event-types/build-in/by_type",

@@ -23,7 +23,3 @@ async def get_entity_index_mapping(index: str):
     except NotFoundError as e:
         return HTTPException(status_code=404, detail=str(e))
 
-
-@router.get("/entity/count", tags=["entity"], include_in_schema=tracardi.expose_gui_api)
-async def entity_count(query: dict = None):
-    return await bd_entity_adapter.count(query)
