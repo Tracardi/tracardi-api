@@ -38,10 +38,10 @@ mysql -h localhost -P 3306 --protocol=tcp -u root -p
 docker run -it \
 -p 6650:6650 \
 -p 8080:8080 \
-apachepulsar/pulsar:3.3.0 \
+apachepulsar/pulsar:3.4.0 \
 bin/pulsar standalone
 
-# Starrock
+# Starrocks
 
 docker run -p 9030:9030 -p 8030:8030 -p 8040:8040 -it starrocks/allin1-ubuntu
 
