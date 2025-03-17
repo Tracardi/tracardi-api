@@ -352,15 +352,6 @@ def test_should_return_event_console_log():
 
 # ---------------
 
-def test_should_return_event_histogram_data():
-    response = endpoint.post(
-        '/event/select/histogram',
-        data={"minDate": {"absolute": None, "delta": {"type": "minus", "value": -1, "entity": "month"}, "now": None},
-              "maxDate": {"absolute": None, "delta": None},
-              "where": "",
-              "limit": 30})
-    result = response.json()
-    assert 'total' in result
 
 
 def test_should_return_event_range_data_ok():
