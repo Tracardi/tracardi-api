@@ -375,7 +375,7 @@ methods but in one test. Do not forget to put: with ServerContext(Context(produc
 
 ```python
 from tracardi.domain.consent_field_compliance import EventDataCompliance
-from tracardi.common.logging.log_handler import get_logger
+from lib.common.logging.log_handler import get_logger
 from tracardi.service.storage.mysql.mapping.event_data_compliance_mapping import map_to_event_data_compliance_table
 from tracardi.service.storage.mysql.schema.table import EventDataComplianceTable
 from tracardi.service.storage.mysql.utils.select_result import SelectResult
