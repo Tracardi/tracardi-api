@@ -1,4 +1,4 @@
-from tracardi.service.tracardi_http_client import HttpClient
+from lib.connector.http.http_client import HttpClient
 from test.utils import Endpoint
 import asyncio
 
