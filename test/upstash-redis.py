@@ -3,8 +3,8 @@ import base64
 import msgpack
 
 from tracardi.context import ServerContext, Context
-from system.adapter.os.cache.redis.redis_cache_adapter import RedisCacheAdapter
-from system.adapter.os.cache.upstash.upstash_redis_cache_adapter import UpStashRedisCacheAdapter
+from system.adapter.cache.redis.redis_cache_adapter import RedisCacheAdapter
+from system.adapter.cache.upstash.upstash_redis_cache_adapter import UpStashRedisCacheAdapter
 
 v = msgpack.packb(("xxx"))
 encoded_string = base64.b64encode(v).decode('utf-8')
