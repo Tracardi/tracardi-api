@@ -1,6 +1,6 @@
 from uuid import uuid4
 
-from api.gui.auth.user_db import TokenDb
+from api.endpoint.gui import TokenDb
 from tracardi.context import ServerContext, Context
 from tracardi.domain.user import User
 
