@@ -39,20 +39,20 @@ This is the example of a service class dependency:
 ```python
 from typing import List
 from tracardi.domain.bridge import Bridge
-from tracardi.service.storage.mysql.mapping.bridge_mapping import map_to_bridge_table
-from tracardi.service.storage.mysql.schema.table import BridgeTable
+from system.adapter.metadata.mysql.mapping.bridge_mapping import map_to_bridge_table
+from system.adapter.metadata.mysql.schema.table import BridgeTable
 from typing import Optional, Type, Any
 
 from sqlalchemy.dialects.mysql import insert
-from tracardi.service.storage.mysql.engine import AsyncMySqlEngine
+from system.adapter.metadata.mysql.engine import AsyncMySqlEngine
 from sqlalchemy.future import select
 from sqlalchemy import and_, delete, inspect, update, Column, Table, text, Select
 from sqlalchemy.sql import func
 
 
-from tracardi.service.storage.mysql.schema.table import Base, tenant_only_context_filter
-from tracardi.service.storage.mysql.schema.table import tenant_and_mode_context_filter
-from tracardi.service.storage.mysql.utils.select_result import SelectResult
+from system.adapter.metadata.mysql.schema.table import Base, tenant_only_context_filter
+from system.adapter.metadata.mysql.schema.table import tenant_and_mode_context_filter
+from system.adapter.metadata.mysql.utils.select_result import SelectResult
 
 def where_tenant_and_mode_context(table, *clauses):
     return and_(tenant_and_mode_context_filter(table), *clauses)
@@ -342,7 +342,7 @@ from uuid import uuid4
 
 from tracardi.context import ServerContext, Context
 from tracardi.domain.bridge import Bridge
-from tracardi.service.storage.mysql.service.bridge_service import BridgeService
+from system.adapter.metadata.mysql.service.bridge_service import BridgeService
 
 
 @pytest.mark.asyncio
@@ -376,11 +376,11 @@ methods but in one test. Do not forget to put: with ServerContext(Context(produc
 ```python
 from tracardi.domain.consent_field_compliance import EventDataCompliance
 from lib.common.logging.log_handler import get_logger
-from tracardi.service.storage.mysql.mapping.event_data_compliance_mapping import map_to_event_data_compliance_table
-from tracardi.service.storage.mysql.schema.table import EventDataComplianceTable
-from tracardi.service.storage.mysql.utils.select_result import SelectResult
-from tracardi.service.storage.mysql.service.table_service import TableService
-from tracardi.service.storage.mysql.service.table_filtering import where_tenant_and_mode_context
+from system.adapter.metadata.mysql.mapping.event_data_compliance_mapping import map_to_event_data_compliance_table
+from system.adapter.metadata.mysql.schema.table import EventDataComplianceTable
+from system.adapter.metadata.mysql.utils.select_result import SelectResult
+from system.adapter.metadata.mysql.service.table_service import TableService
+from system.adapter.metadata.mysql.service.table_filtering import where_tenant_and_mode_context
 
 logger = get_logger(__name__)
 

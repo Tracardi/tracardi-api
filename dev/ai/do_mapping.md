@@ -29,8 +29,8 @@ And here is the mapping
 from tracardi.context import get_context
 from tracardi.domain.bridge import Bridge
 from tracardi.service.plugin.domain.register import Form
-from tracardi.service.storage.mysql.schema.table import BridgeTable
-from tracardi.service.storage.mysql.utils.serilizer import from_model, to_model
+from system.adapter.metadata.mysql.schema.table import BridgeTable
+from system.adapter.metadata.mysql.utils.serilizer import from_model, to_model
 
 
 def map_to_bridge_table(bridge: Bridge) -> BridgeTable:

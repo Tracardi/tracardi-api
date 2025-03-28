@@ -6,11 +6,11 @@ import logging
 from tracardi.config import tracardi
 from tracardi.domain.bridge import Bridge
 from lib.common.logging.log_handler import get_logger
-from tracardi.service.storage.mysql.mapping.bridge_mapping import map_to_bridge_table
-from tracardi.service.storage.mysql.schema.table import BridgeTable
-from tracardi.service.storage.mysql.utils.select_result import SelectResult
-from tracardi.service.storage.mysql.service.table_service import where_tenant_and_mode_context
-from tracardi.service.storage.mysql.service.table_filtering import where_tenant_and_mode_context
+from system.adapter.metadata.mysql.mapping.bridge_mapping import map_to_bridge_table
+from system.adapter.metadata.mysql.schema.table import BridgeTable
+from system.adapter.metadata.mysql.utils.select_result import SelectResult
+from system.adapter.metadata.mysql.service.table_service import where_tenant_and_mode_context
+from system.adapter.metadata.mysql.service.table_filtering import where_tenant_and_mode_context
 
 logger = get_logger(__name__)
 
