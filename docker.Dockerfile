@@ -4,7 +4,7 @@ FROM python:3.11-slim-bullseye AS builder
 # Add build argument for GitHub token
 ARG GITHUB_TOKEN
 ARG IMAGE_TAG=unknown
-ARG VERSION="2.0.x"
+ARG VERSION="2.0.y"
 
 ENV VERSION=${VERSION}
 
