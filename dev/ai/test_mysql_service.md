@@ -82,7 +82,7 @@ class TableService:
         self.engine = self.client.get_engine_for_database()
 
     async def exists(self, table_name: str) -> bool:
-        local_session = self.client.get_session(self.engine)
+        local_session = self.client.get_session()
 
         async with local_session() as session:
             async with session.begin():
@@ -147,7 +147,7 @@ class TableService:
         )
 
     async def _load_by_id(self, table: Type[Base], primary_id: str, server_context:bool=True) -> SelectResult:
-        local_session = self.client.get_session(self.engine)
+        local_session = self.client.get_session()
 
         where = where_with_context(table, server_context, table.id == primary_id)
 
@@ -163,7 +163,7 @@ class TableService:
 
 
     async def _field_filter(self, table: Type[Base], field: Column, value, server_context:bool=True) -> SelectResult:
-        local_session = self.client.get_session(self.engine)
+        local_session = self.client.get_session()
 
         where = where_with_context(table, server_context, field == value)
 
@@ -185,7 +185,7 @@ class TableService:
                             distinct: bool = False,
                             one_record:bool=False) -> SelectResult:
 
-        local_session = self.client.get_session(self.engine)
+        local_session = self.client.get_session()
         async with local_session() as session:
             # Start a new transaction
             async with session.begin():
@@ -206,7 +206,7 @@ class TableService:
                 return SelectResult(result.scalars().all())
 
     async def _insert(self, table: Type[Base]) -> Optional[str]:
-        local_session = self.client.get_session(self.engine)
+        local_session = self.client.get_session()
         async with local_session() as session:
             async with session.begin():
                 session.add(table)
@@ -214,7 +214,7 @@ class TableService:
                 return table.id
 
     async def _update_by_id(self, table: Type[Base], primary_id: str, new_data: dict, server_context:bool=True) -> Optional[str]:
-        local_session = self.client.get_session(self.engine)
+        local_session = self.client.get_session()
         where = where_with_context(table, server_context,table.id == primary_id)
 
         async with local_session() as session:
@@ -229,7 +229,7 @@ class TableService:
                 return primary_id
 
     async def _update_query(self, table: Type[Base], where, new_data: dict):
-        local_session = self.client.get_session(self.engine)
+        local_session = self.client.get_session()
         async with local_session() as session:
             async with session.begin():
                 stmt = (
@@ -242,7 +242,7 @@ class TableService:
                 return None
 
     async def _replace(self, table: Type[Base], instance: Base) -> Optional[str]:
-        local_session = self.client.get_session(self.engine)
+        local_session = self.client.get_session()
         async with local_session() as session:
             async with session.begin():
                 # Convert the SQLAlchemy instance to a dictionary
@@ -259,7 +259,7 @@ class TableService:
 
     async def _insert_if_none(self, table: Type[Base], data, server_context:bool=True) -> Optional[str]:
 
-        local_session = self.client.get_session(self.engine)
+        local_session = self.client.get_session()
         where = where_with_context(table, server_context,table.id == data.id)
 
         async with local_session() as session:
@@ -286,7 +286,7 @@ class TableService:
 
         where = where_with_context(table, server_context, table.id == primary_id)
 
-        local_session = self.client.get_session(self.engine)
+        local_session = self.client.get_session()
         async with local_session() as session:
             async with session.begin():
                 await session.execute(
@@ -297,7 +297,7 @@ class TableService:
 
     async def _delete_query(self, table: Type[Base], where):
 
-        local_session = self.client.get_session(self.engine)
+        local_session = self.client.get_session()
         async with local_session() as session:
             async with session.begin():
                 await session.execute(
