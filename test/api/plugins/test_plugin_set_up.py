@@ -1277,30 +1277,6 @@ async def test_should_set_up_plugin_previous_event_getter():
     await plugin.set_up({'event_type': {'id': '@current', 'name': '@current'}, 'offset': -1})
 
 
-async def test_should_set_up_plugin_previous_session_action():
-    
-    module = import_package("tracardi.process_engine.action.v1.internal.get_prev_session.plugin")
-    plugin_class = load_callable(module, "PreviousSessionAction")
-    plugin = plugin_class()
-    plugin.node = Node(id="node-id", 
-                       name="test-node", 
-                       module="tracardi.process_engine.action.v1.internal.get_prev_session.plugin", 
-                       className="PreviousSessionAction")
-    await plugin.set_up({'offset': -1})
-
-
-async def test_should_set_up_plugin_add_empty_session_action():
-    
-    module = import_package("tracardi.process_engine.action.v1.internal.add_empty_session.plugin")
-    plugin_class = load_callable(module, "AddEmptySessionAction")
-    plugin = plugin_class()
-    plugin.node = Node(id="node-id", 
-                       name="test-node", 
-                       module="tracardi.process_engine.action.v1.internal.add_empty_session.plugin", 
-                       className="AddEmptySessionAction")
-    await plugin.set_up({})
-
-
 async def test_should_set_up_plugin_create_response_action():
     
     module = import_package("tracardi.process_engine.action.v1.internal.add_response.plugin")
