@@ -1,14 +1,14 @@
 from uuid import uuid4
 from test.utils import Endpoint, get_test_tenant
 from tracardi.context import Context, ServerContext
-from tracardi.process_engine.action.v1.connectors.api_call.model.configuration import RemoteCallConfiguration
+from wf.plugin.v1.connectors.api_call.model.configuration import RemoteCallConfiguration
 
 with ServerContext(Context(production=False, tenant=get_test_tenant())):
     from tracardi.domain.resource import ResourceCredentials
-    from tracardi.service.wf.domain.node import Node
+    from wf.domain.node import Node
     from test.api.endpoints.test_resource import create_resource
 
-    from tracardi.process_engine.action.v1.connectors.api_call.plugin import RemoteCallAction
+    from wf.plugin.v1.connectors.api_call.plugin import RemoteCallAction
     from tracardi.service.plugin.service.plugin_runner import run_plugin
 
     endpoint = Endpoint()

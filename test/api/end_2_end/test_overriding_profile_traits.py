@@ -1,15 +1,15 @@
 from uuid import uuid4
 
-from tracardi.process_engine.action.v1.flow.start.start_action import StartAction
+from wf.plugin.v1.flow.start.start_action import StartAction
 
-from tracardi.process_engine.action.v1.increase_views_action import IncreaseViewsAction
+from wf.plugin.v1.increase_views_action import IncreaseViewsAction
 from tracardi.domain.flow import Flow
-from tracardi.process_engine.action.v1.end_action import EndAction
-from tracardi.process_engine.action.v1.increase_visits_action import IncreaseVisitsAction
-from tracardi.process_engine.action.v1.traits.append_trait_action import AppendTraitAction
-from tracardi.process_engine.action.v1.traits.copy_trait_action import CopyTraitAction
+from wf.plugin.v1.end_action import EndAction
+from wf.plugin.v1.increase_visits_action import IncreaseVisitsAction
+from wf.plugin.v1.traits.append_trait_action import AppendTraitAction
+from wf.plugin.v1.traits.copy_trait_action import CopyTraitAction
 from test.api.endpoints.test_event_source_endpoint import _create_event_source
-from tracardi.service.wf.service.builders import action
+from wf.service.builders import action
 from test.utils import Endpoint
 
 endpoint = Endpoint()

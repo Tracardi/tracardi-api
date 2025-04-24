@@ -18,7 +18,7 @@ from test.api.plugins.test_all_endpoints import _load_plugin_registry_metadata
 from tracardi.service.module_loader import load_callable, import_package
 from tracardi.domain.resource import Resource, ResourceCredentials
 from tracardi.service.module_loader import load_callable, import_package
-from tracardi.service.wf.domain.node import Node
+from wf.domain.node import Node
 """
 for module_name, class_name, test_template in _yield_module_class():
     print(module_name, class_name)

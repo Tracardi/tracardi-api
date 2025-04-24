@@ -57,7 +57,7 @@ def test_should_all_plugins_not_fail_on_init():
 
 
 async def test_should_set_up_plugin():
-    module_name = "tracardi.process_engine.action.v1.traits.copy_trait_action"
+    module_name = "wf.plugin.v1.traits.copy_trait_action"
     class_name = "CopyTraitAction"
     module = import_package(module_name)
     plugin_class = load_callable(module, class_name)

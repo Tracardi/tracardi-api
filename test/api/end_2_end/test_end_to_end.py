@@ -1,11 +1,11 @@
 from uuid import uuid4
 
-from tracardi.process_engine.action.v1.flow.start.start_action import StartAction
-from tracardi.process_engine.action.v1.increase_views_action import IncreaseViewsAction
+from wf.plugin.v1.flow.start.start_action import StartAction
+from wf.plugin.v1.increase_views_action import IncreaseViewsAction
 from tracardi.domain.flow import Flow
 from test.api.endpoints.test_event_source_endpoint import _create_event_source
-from tracardi.process_engine.action.v1.operations.update_profile_action import UpdateProfileAction
-from tracardi.service.wf.service.builders import action
+from wf.plugin.v1.operations.update_profile_action import UpdateProfileAction
+from wf.service.builders import action
 from test.utils import Endpoint
 
 endpoint = Endpoint()

@@ -46,4 +46,4 @@ def test_should_install_system_plugins():
     result = response.json()
     assert 'registered' in result
     assert isinstance(result['registered'], list)
-    assert 'tracardi.process_engine.action.v1.flow.start.start_action' in result['registered']
+    assert 'wf.plugin.v1.flow.start.start_action' in result['registered']
