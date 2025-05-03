@@ -9,7 +9,7 @@ with ServerContext(Context(production=False, tenant=get_test_tenant())):
     from test.api.endpoints.test_resource import create_resource
 
     from wf.plugin.v1.connectors.api_call.plugin import RemoteCallAction
-    from tracardi.service.plugin.service.plugin_runner import run_plugin
+    from test.tracardi.os.unit.plugins.utils.plugin_runner import run_plugin
 
     endpoint = Endpoint()
 

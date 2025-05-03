@@ -7,7 +7,7 @@ from requests import Response
 from tracardi.domain.flow_action_plugin import FlowActionPlugin
 from tracardi.domain.metadata import Metadata
 from tracardi.domain.time import Time
-from tracardi.service.plugin.domain.register import Plugin, Spec, MetaData
+from wf.domain.plugin.register import Plugin, Spec, MetaData
 from test.utils import Endpoint
 
 endpoint = Endpoint()

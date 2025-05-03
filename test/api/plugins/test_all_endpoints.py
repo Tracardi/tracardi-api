@@ -2,8 +2,8 @@ from typing import Tuple, Union, Iterator
 
 from tracardi.domain.settings import Settings
 from tracardi.service.module_loader import load_callable, import_package
-from tracardi.service.plugin.domain.register import Plugin
-from tracardi.service.plugin.runner import ActionRunner
+from wf.domain.plugin.register import Plugin
+from wf.service.runner import ActionRunner
 from tracardi.service.setup.domain.plugin_metadata import PluginMetadata
 from tracardi.service.setup.setup_plugins import installed_plugins, test_plugins
 

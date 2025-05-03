@@ -2,7 +2,7 @@ import json
 from uuid import uuid4
 
 from tracardi.domain.flow_action_plugin import FlowActionPlugin
-from tracardi.service.plugin.domain.register import Plugin, MetaData, Spec
+from wf.domain.plugin.register import Plugin, MetaData, Spec
 from test.utils import Endpoint
 
 endpoint = Endpoint()

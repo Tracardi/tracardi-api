@@ -28,7 +28,7 @@ And here is the mapping
 ```python
 from tracardi.context import get_context
 from tracardi.domain.bridge import Bridge
-from tracardi.service.plugin.domain.register import Form
+from wf.domain.plugin.register import Form
 from system.adapter.metadata.mysql.schema.table import BridgeTable
 from system.adapter.metadata.mysql.utils.serilizer import from_model, to_model
 
