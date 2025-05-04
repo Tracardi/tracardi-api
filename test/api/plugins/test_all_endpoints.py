@@ -5,7 +5,7 @@ from tracardi.service.module_loader import load_callable, import_package
 from wf.domain.plugin.register import Plugin
 from wf.service.runner import ActionRunner
 from tracardi.service.setup.domain.plugin_metadata import PluginMetadata
-from tracardi.service.setup.setup_plugins import installed_plugins, test_plugins
+from wf.install.setup_plugins import installed_plugins, test_plugins
 
 
 def _load_plugin_registry_metadata(plugin_module) -> Plugin:

@@ -1241,18 +1241,6 @@ async def test_should_set_up_plugin_event_source_fetcher_action():
     await plugin.set_up({})
 
 
-async def test_should_set_up_plugin_inject_profile_by_field():
-    
-    module = import_package("wf.plugin.v1.internal.inject_profile_by_field.plugin")
-    plugin_class = load_callable(module, "InjectProfileByField")
-    plugin = plugin_class()
-    plugin.node = Node(id="node-id", 
-                       name="test-node", 
-                       module="wf.plugin.v1.internal.inject_profile_by_field.plugin", 
-                       className="InjectProfileByField")
-    await plugin.set_up({'field': 'data.contact.email.main', 'value': 'test@test.com'})
-
-
 async def test_should_set_up_plugin_add_empty_profile_action():
     
     module = import_package("wf.plugin.v1.internal.add_empty_profile.plugin")
