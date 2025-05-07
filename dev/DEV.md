@@ -36,6 +36,7 @@ mysql -h localhost -P 3306 --protocol=tcp -u root -p
 # Pulsar
 
 docker run -it \
+-m 3g \
 -p 6650:6650 \
 -p 8080:8080 \
 apachepulsar/pulsar:3.3.0 \
