@@ -1,0 +1,80 @@
+http:
+  enabled: true
+  address: 0.0.0.0:4195
+  root_path: /bento
+  debug_endpoints: false
+  cert_file: ""
+  key_file: ""
+  cors:
+    enabled: false
+    allowed_origins: []
+  basic_auth:
+    enabled: false
+    realm: restricted
+    username: ""
+    password_hash: ""
+    algorithm: sha256
+    salt: ""
+input:
+  pulsar:
+    url: pulsar://localhost:6650 # No default (required)
+    topics: ["persistent://tracardi-2.0.y/system/collectors"] # No default (optional)
+    topics_pattern: "" # No default (optional)
+    subscription_name: "bento" # No default (required)
+    subscription_type: shared
+    tls:
+      root_cas_file: ""
+    auth:
+      oauth2:
+        enabled: false
+        audience: ""
+        issuer_url: ""
+        private_key_file: ""
+      token:
+        enabled: false
+        token: ""
+buffer:
+  none: {}
+pipeline:
+  threads: -1
+  processors:
+    - mapping: |
+        root.headers = this.headers.parse_json()
+        root.observations = this.observations.parse_json()
+        root.context = this.context.parse_json()
+output:
+  stdout: {}
+input_resources: []
+processor_resources: []
+output_resources: []
+cache_resources: []
+rate_limit_resources: []
+logger:
+  level: INFO
+  format: logfmt
+  add_timestamp: false
+  level_name: level
+  timestamp_name: time
+  message_name: msg
+  static_fields:
+    '@service': bento
+  file:
+    path: ""
+    rotate: false
+    rotate_max_age_days: 0
+  log_all_errors: false
+metrics:
+  prometheus: {}
+  mapping: ""
+tracer:
+  none: {}
+shutdown_delay: 0s
+shutdown_timeout: 20s
+error_handling:
+  strategy: none
+  log:
+    enabled: false
+    add_payload: false
+    sampling_ratio: 1
+tests: []
+
