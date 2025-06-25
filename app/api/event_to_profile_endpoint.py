@@ -7,6 +7,7 @@ from typing import Optional
 from tracardi.config import tracardi
 from tracardi.domain.event_to_profile import EventToProfile
 from tracardi.service.events import get_default_mappings_for
+from tracardi.service.storage.mysql.mapping.event_to_profile_mapping import map_to_event_to_profile
 from tracardi.service.string_manager import capitalize_event_type_id
 from tracardi.service.storage.mysql.interface import event_to_profile_dao
 
@@ -87,7 +88,7 @@ async def get_event_to_profile_by_event_type_id(id: str):
         raise HTTPException(status_code=404,
                             detail=f"Event to profile coping schema for id {id} not found.")
 
-    return record
+    return record.map_to_object(map_to_event_to_profile)
 
 
 @router.delete("/event-to-profile/{id}", tags=["event-type"], include_in_schema=tracardi.expose_gui_api)
