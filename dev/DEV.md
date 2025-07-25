@@ -35,7 +35,10 @@ mysql -h localhost -P 3306 --protocol=tcp -u root -p
 
 # Pulsar
 
+# Pulsar
 docker run -it \
+--memory=3g \
+-e PULSAR_MEM="-Xms512m -Xmx512m -XX:MaxDirectMemorySize=512m" \
 -p 6650:6650 \
 -p 8080:8080 \
 apachepulsar/pulsar:3.3.0 \
