@@ -49,9 +49,7 @@ async def get_extension_services(query: Optional[str] = "", category: Optional[s
             "services": OrderedDict(sorted(services.items()))
         }
 
-    return {
-        "services": {}
-    }
+    raise HTTPException(status_code=402, detail="No license. This is licensed feature.")
 
 
 @router.get("/tpro/plugin/{module}", tags=["tpro"], include_in_schema=tracardi.expose_gui_api)
