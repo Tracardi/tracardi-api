@@ -13,7 +13,7 @@ uvicorn app.main:application --reload --host 0.0.0.0 --port 8686 --ssl-keyfile s
 gunicorn -b 0.0.0.0:443 --keyfile ssl/key.pem --certfile ssl/cert.pem -k uvicorn.workers.UvicornWorker app.main:application
 
 # Run local Kibana
-docker run -p 5601:5601 -m 4g -e ELASTICSEARCH_HOSTS=http://192.168.1.110:9201 docker.elastic.co/kibana/kibana:7.13.2
+docker run -p 5601:5601 --name kibana -m 4g -e ELASTICSEARCH_HOSTS=http://192.168.1.106:9200 docker.elastic.co/kibana/kibana:7.13.2
 docker run -p 5601:5601 -m 4g \
 -e ELASTICSEARCH_HOSTS="https://192.168.1.110:9201" \
 -e ELASTICSEARCH_USERNAME=elastic \
