@@ -87,8 +87,7 @@ async def get_event_to_profile_by_event_type_id(id: str):
     if not record:
         raise HTTPException(status_code=404,
                             detail=f"Event to profile coping schema for id {id} not found.")
-
-    return record.map_to_object(map_to_event_to_profile)
+    return record
 
 
 @router.delete("/event-to-profile/{id}", tags=["event-type"], include_in_schema=tracardi.expose_gui_api)
