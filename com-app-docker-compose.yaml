@@ -1,5 +1,26 @@
 version: "3.7"
 name: tracardi-app
+
+x-license: &license
+  LICENSE: "paste-you-license-here"
+
+x-api-config: &api-config
+  ELASTIC_HOST: http://elasticsearch:9200
+  REDIS_HOST: redis://redis:6379
+  PULSAR_HOST: pulsar://pulsar:6650
+  MYSQL_HOST: mysql
+  LOGGING_LEVEL: "info"
+  DEMO: "no"
+  MULTI_TENANT: "no"
+  MULTI_TENANT_MANAGER_URL: "http://tracardi-tms"
+  MULTI_TENANT_MANAGER_API_KEY: "604e5043-a28f-4b4d-baa7-13eb196e7537"
+  ENABLE_VISIT_ENDED: "yes"
+  ENABLE_WORKFLOW: "yes"
+  ENABLE_PROFILE_DESTINATIONS: "yes"
+  ENABLE_EVENT_DESTINATIONS: "yes"
+  ENABLE_FIELD_UPDATE_LOG: "yes"
+  AUTO_PROFILE_MERGING: "1234567890-qwertyuiopasdfghjkl"
+
 services:
 
   tracardi-apm:
@@ -13,8 +34,9 @@ services:
       MYSQL_HOST: mysql
       LOGGING_LEVEL: "info"
       AUTO_PROFILE_MERGING: "1234567890-qwertyuiopasdfghjkl"
-      LICENSE: ${API_LICENSE}
       MODE: "worker"
+      <<: *license
+
     networks:
       - tracardi-network
 
@@ -23,24 +45,10 @@ services:
     container_name: tracardi-private-api
     restart: always
     environment:
-      ELASTIC_HOST: http://elasticsearch:9200
-      REDIS_HOST: redis://redis:6379
-      PULSAR_HOST: pulsar://pulsar:6650
-      MYSQL_HOST: mysql
-      LOGGING_LEVEL: "info"
-      DEMO: "yes"
       PRODUCTION: "no"
       EXPOSE_GUI_API: "yes"
-      MULTI_TENANT: "yes"
-      MULTI_TENANT_MANAGER_URL: "http://tracardi-tms"
-      MULTI_TENANT_MANAGER_API_KEY: "604e5043-a28f-4b4d-baa7-13eb196e7537"
-      ENABLE_VISIT_ENDED: "yes"
-      ENABLE_WORKFLOW: "yes"
-      ENABLE_PROFILE_DESTINATIONS: "yes"
-      ENABLE_EVENT_DESTINATIONS: "yes"
-      ENABLE_FIELD_UPDATE_LOG: "yes"
-      AUTO_PROFILE_MERGING: "1234567890-qwertyuiopasdfghjkl"
-      LICENSE: ${API_LICENSE}
+      <<: *api-config
+      <<: *license
     ports:
       - 8686:80
     networks:
@@ -56,23 +64,10 @@ services:
     container_name: tracardi-public-api
     restart: always
     environment:
-      ELASTIC_HOST: http://elasticsearch:9200
-      REDIS_HOST: redis://redis:6379
-      PULSAR_HOST: pulsar://pulsar:6650
-      MYSQL_HOST: mysql
-      LOGGING_LEVEL: "info"
       PRODUCTION: "yes"
       EXPOSE_GUI_API: "no"
-      MULTI_TENANT: "yes"
-      MULTI_TENANT_MANAGER_URL: "http://tracardi-tms"
-      MULTI_TENANT_MANAGER_API_KEY: "604e5043-a28f-4b4d-baa7-13eb196e7537"
-      ENABLE_VISIT_ENDED: "yes"
-      ENABLE_WORKFLOW: "yes"
-      ENABLE_PROFILE_DESTINATIONS: "yes"
-      ENABLE_EVENT_DESTINATIONS:  "yes"
-      ENABLE_FIELD_UPDATE_LOG: "yes"
-      LICENSE: ${API_LICENSE}
-      AUTO_PROFILE_MERGING: "1234567890-qwertyuiopasdfghjkl"
+      <<: *api-config
+      <<: *license
     ports:
       - 8585:80
     networks:
@@ -87,22 +82,10 @@ services:
     image: tracardi/background-worker:1.1.10
     container_name: background
     environment:
-      ELASTIC_HOST: http://elasticsearch:9200
-      REDIS_HOST: redis://redis:6379
-      PULSAR_HOST: pulsar://pulsar:6650
-      MYSQL_HOST: mysql
-      LOGGING_LEVEL: "info"
       PRODUCTION: "yes"
       EXPOSE_GUI_API: "no"
-      MULTI_TENANT: "yes"
-      MULTI_TENANT_MANAGER_URL: "http://tracardi-tms:8383"
-      MULTI_TENANT_MANAGER_API_KEY: "604e5043-a28f-4b4d-baa7-13eb196e7537"
-      ENABLE_VISIT_ENDED: "yes"
-      ENABLE_WORKFLOW: "yes"
-      ENABLE_PROFILE_DESTINATIONS: "yes"
-      ENABLE_EVENT_DESTINATIONS:  "yes"
-      ENABLE_FIELD_UPDATE_LOG: "yes"
-      LICENSE: ${API_LICENSE}
+      <<: *api-config
+      <<: *license
     networks:
       - tracardi-network
     depends_on:
@@ -141,16 +124,16 @@ services:
     depends_on:
       - tracardi-private-api
 
-  worker:
-    image: tracardi/update-worker:1.1.10
-    container_name: upgrade-worker
-    environment:
-      ELASTIC_HOST: http://elasticsearch:9200
-      REDIS_HOST: redis://redis
-      PULSAR_HOST: pulsar://pulsar:6650
-      MYSQL_HOST: mysql
-    networks:
-      - tracardi-network
+#  worker:
+#    image: tracardi/update-worker:1.1.10
+#    container_name: upgrade-worker
+#    environment:
+#      ELASTIC_HOST: http://elasticsearch:9200
+#      REDIS_HOST: redis://redis
+#      PULSAR_HOST: pulsar://pulsar:6650
+#      MYSQL_HOST: mysql
+#    networks:
+#      - tracardi-network
 
 networks:
   tracardi-network:
