@@ -26,10 +26,10 @@ docker run -p 9200:9200 -p 9300:9300 -m 8g -e "discovery.type=single-node" -v "/
 docker run --name elastic -p 9200:9200 -p 9300:9300 -m 2g -e "discovery.type=single-node" -e ES_JAVA_OPTS="-Xms512m -Xmx512m" docker.elastic.co/elasticsearch/elasticsearch:7.13.2
 
 # Run local redis
-docker run -p 6379:6379 redis redis-server
+docker run --name redis -p 6379:6379 redis redis-server
 
 # Run local mysql
-docker run -e MYSQL_ROOT_PASSWORD=root  -p 3306:3306 mysql:8.4.2
+docker run -e MYSQL_ROOT_PASSWORD=root --name mysql -p 3306:3306 mysql:8.4.2
 mysql -h localhost -P 3306 --protocol=tcp -u root -p root test
 mysql -h localhost -P 3306 --protocol=tcp -u root -p 
 
@@ -57,15 +57,13 @@ docker run -p 8787:80 -e API_URL=//127.0.0.1:8686 -e TRACK_DEBUG="yes" tracardi/
 docker run -e ARANGO_NO_AUTH=1 -p 8529:8529 arangodb
 
 # Run local API
-docker run -p 18686:80 \
--e OTEL_SDK_DISABLED=false \
--e OTEL_EXPORTER_OTLP_ENDPOINT=http://192.168.1.110:4317 \
--e ELASTIC_HOST=http://192.168.1.110:9200 \
--e REDIS_HOST=redis://192.168.1.110:6379 \
--e MYSQL_HOST=192.168.1.110 \
--e PULSAR_HOST=pulsar://192.168.1.110:6650 \
+docker run -p 8686:80 \
+-e ELASTIC_HOST=http://192.168.0.116:9200 \
+-e REDIS_HOST=redis://192.168.0.116:6379 \
+-e MYSQL_HOST=192.168.0.116 \
+-e PULSAR_HOST=pulsar://192.168.0.116:6650 \
 -e LOGGING_LEVEL=info \
-tracardi/tracardi-api:1.0.1
+tracardi/tracardi-api:1.1.4
 
 # Rabbit mq
 

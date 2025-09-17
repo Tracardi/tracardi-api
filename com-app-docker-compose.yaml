@@ -1,8 +1,9 @@
 version: "3.7"
+name: tracardi-app
 services:
 
   tracardi-apm:
-    image: tracardi/apm:1.0.0
+    image: tracardi/apm:1.1.10
     container_name: tracardi-apm
     restart: always
     environment:
@@ -18,7 +19,7 @@ services:
       - tracardi-network
 
   tracardi-private-api:
-    image: tracardi/com-tracardi-api:1.0.0
+    image: tracardi/com-tracardi-api:1.1.10
     container_name: tracardi-private-api
     restart: always
     environment:
@@ -51,7 +52,7 @@ services:
       - mysql
 
   tracardi-public-api:
-    image: tracardi/com-tracardi-api:1.0.0
+    image: tracardi/com-tracardi-api:1.1.10
     container_name: tracardi-public-api
     restart: always
     environment:
@@ -83,7 +84,7 @@ services:
       - mysql
 
   tracardi-background-worker:
-    image: tracardi/background-worker:1.0.0
+    image: tracardi/background-worker:1.1.10
     container_name: background
     environment:
       ELASTIC_HOST: http://elasticsearch:9200
@@ -110,28 +111,28 @@ services:
       - pulsar
       - mysql
 
-  tracardi-tms:
-    image: tracardi/tms:1.0.0
-    container_name: tms
-    restart: always
-    environment:
-      MYSQL_HOST: mysql
-      MYSQL_USERNAME: "root"
-      MYSQL_PASSWORD: "root"
-      LOGGING_LEVEL: "info"
-      LICENSE: ${API_LICENSE}
-      API_KEY: "604e5043-a28f-4b4d-baa7-13eb196e7537"
-      SECRET: "a28f-4b4d-baa7-13eb196e7537604e5043"
-    networks:
-      - tracardi-network
-    depends_on:
-      - mysql
-    ports:
-      - 8383:80
+#  tracardi-tms:
+#    image: tracardi/tms:1.1.10
+#    container_name: tms
+#    restart: always
+#    environment:
+#      MYSQL_HOST: mysql
+#      MYSQL_USERNAME: "root"
+#      MYSQL_PASSWORD: "root"
+#      LOGGING_LEVEL: "info"
+#      LICENSE: ${API_LICENSE}
+#      API_KEY: "604e5043-a28f-4b4d-baa7-13eb196e7537"
+#      SECRET: "a28f-4b4d-baa7-13eb196e7537604e5043"
+#    networks:
+#      - tracardi-network
+#    depends_on:
+#      - mysql
+#    ports:
+#      - 8383:80
 
 
   tracardi-gui:
-    image: tracardi/tracardi-gui:1.0.0
+    image: tracardi/tracardi-com-gui:1.1.10
     container_name: tracardi-gui
     ports:
       - 8787:80
@@ -141,7 +142,7 @@ services:
       - tracardi-private-api
 
   worker:
-    image: tracardi/update-worker:1.0.0
+    image: tracardi/update-worker:1.1.10
     container_name: upgrade-worker
     environment:
       ELASTIC_HOST: http://elasticsearch:9200
