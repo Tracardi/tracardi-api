@@ -95,7 +95,10 @@ async def list_resources():
             dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer"]))],
             include_in_schema=tracardi.expose_gui_api)
 async def list_resources_by_type(query: str = None, limit: int = 200):
-    resources, total = await mysql.resource_dao.load_all_resources(search=query, limit=limit)
+    resources, _ = await mysql.resource_dao.load_all_resources(search=query, limit=limit)
+
+    total = await mysql.resource_dao.count_resources(query)
+
     return {
         "total": total,
         "grouped": {"Resources": resources}

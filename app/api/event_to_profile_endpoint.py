@@ -106,7 +106,8 @@ async def list_events_to_profiles_by_tag(query: str = None, start: Optional[int]
     Lists events to profiles coping schema by tag, according to given start (int), limit (int) and query (str)
     """
 
-    records, total = await event_to_profile_dao.load_all_event_to_profile_mapping(search=query, limit=limit, offset=start)
+    records, _ = await event_to_profile_dao.load_all_event_to_profile_mapping(search=query, limit=limit, offset=start)
+    total = await event_to_profile_dao.count_event_to_profile_mapping(query)
 
     return {
         "total": total,

@@ -28,10 +28,11 @@ async def list_event_sources(query: str = None):
     Lists all event sources that match given query (str) parameter
     """
 
-    records, count = await event_source_dao.load_all_event_sources(query, limit=500)
+    records, _ = await event_source_dao.load_all_event_sources(query, limit=500)
+    total = await event_source_dao.count_sources(query)
 
     return {
-        "total": count,
+        "total": total,
         "grouped": {
             "Event sources": records
         }

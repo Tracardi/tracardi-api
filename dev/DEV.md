@@ -44,6 +44,18 @@ docker run -it \
 apachepulsar/pulsar:3.3.0 \
 bin/pulsar standalone
 
+
+docker run -it \
+--name pulsar \
+--memory=3g \
+-e PULSAR_MEM="-Xms512m -Xmx512m -XX:MaxDirectMemorySize=512m" \
+-p 6650:6650 \
+-p 8080:8080 \
+--mount source=pulsardata,target=/pulsar/data \
+--mount source=pulsarconf,target=/pulsar/conf \
+apachepulsar/pulsar:4.1.1 \
+bin/pulsar standalone
+
 # Starrock
 
 docker run -p 9030:9030 -p 8030:8030 -p 8040:8040 -itd \

@@ -18,7 +18,7 @@ def get_result_dict(records: SelectResult, mapping, filter: Callable=None):
     }
 
 
-def get_grouped_result(label: str, records: SelectResult, mapping):
+def get_grouped_result(label: str, records: SelectResult, mapping, total:int=None):
 
     result = list(records.map_to_objects(mapping))
     if not result:
@@ -28,7 +28,7 @@ def get_grouped_result(label: str, records: SelectResult, mapping):
         }
 
     return {
-        "total": records.count(),
+        "total": total if isinstance(total, int) else records.count(),
         "grouped": {
             label: result
         }

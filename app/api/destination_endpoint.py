@@ -48,7 +48,8 @@ async def get_destinations_type_list():
 @router.get("/destinations/by_tag", tags=["destination"], response_model=dict,
             include_in_schema=tracardi.expose_gui_api)
 async def get_destinations(query: str = None, start: int = 0, limit: int = 100) -> dict:
-    destinations, total = await mysql.destination_dao.load_all_destinations(query, start, limit)
+    destinations, _ = await mysql.destination_dao.load_all_destinations(query, start, limit)
+    total = await mysql.destination_dao.count_destinations(query)
 
     return {
         "total": total,
@@ -74,4 +75,3 @@ async def delete_destination_by_id(id: str):
             include_in_schema=tracardi.expose_gui_api)
 async def list_destination_resources():
     return await mysql.resource_dao.list_resources_with_destinations()
-
