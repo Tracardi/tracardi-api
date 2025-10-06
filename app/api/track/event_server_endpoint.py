@@ -101,7 +101,7 @@ async def track(tracker_payload: TrackerPayload, request: Request, response: Res
                           get_ip_address(request),
                           allowed_bridges=['rest'])
 
-    if result and result.get('errors', []):
+    if isinstance(result, dict) and result.get('errors', []):
         response.status_code = 226
 
     passed_time = time() - start
