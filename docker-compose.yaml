@@ -2,7 +2,7 @@ version: "3.7"
 services:
 
   tracardi-api:
-    image: tracardi/tracardi-api:1.1.3
+    image: tracardi/tracardi-api:1.1.6
     restart: on-failure
     environment:
       ELASTIC_HOST: http://elasticsearch:9200
@@ -20,7 +20,7 @@ services:
       - mysql
 
   tracardi-gui:
-    image: tracardi/tracardi-gui:1.1.2
+    image: tracardi/tracardi-gui:1.1.6
     ports:
       - 8787:80
     depends_on:
