@@ -80,11 +80,11 @@ async def event_types(query: str = None, limit: int = 1000):
 
 
 @router.get("/events/by_type", tags=["event"], include_in_schema=tracardi.expose_gui_api)
-async def aggregate_event_types():
+async def aggregate_event_types(profile_id: Optional[str] = None, start_range: Optional[str] = None, buckets_size:Optional[int]=None):
     """
     Returns number of events grouped by type
     """
-    return await aggregate_event_types_from_db()
+    return await aggregate_event_types_from_db(profile_id, start_range, buckets_size)
 
 
 @router.get("/events/by_tag", tags=["event"], include_in_schema=tracardi.expose_gui_api)
@@ -143,7 +143,6 @@ async def aggregate_event_by_source(buckets_size: int = 30):
     return await aggregate_events_by_source_from_db(buckets_size=buckets_size)
 
 
-
 @router.get("/event/{id}",
             dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer"]))],
             tags=["event"], include_in_schema=tracardi.expose_gui_api)
@@ -187,7 +186,8 @@ async def get_for_source_grouped_by_type_time(source_id: str, time_span: TimeSpa
     return await aggregate_events_by_source_and_type(source_id, time_span)
 
 
-@router.get("/event/for-source/{source_id}/by-tag/{time_span}", tags=["event"], include_in_schema=tracardi.expose_gui_api,
+@router.get("/event/for-source/{source_id}/by-tag/{time_span}", tags=["event"],
+            include_in_schema=tracardi.expose_gui_api,
             response_model=list)
 async def get_for_source_grouped_by_tags_time(source_id: str, time_span: TimeSpan):
     """
@@ -204,6 +204,7 @@ async def get_events_for_session(session_id: str, profile_id: str, limit: int = 
         profile_id.strip(),
         session_id.strip(),
         limit)
+
 
 @router.get("/events/profile/{profile_id}", tags=["event"],
             include_in_schema=tracardi.expose_gui_api,
