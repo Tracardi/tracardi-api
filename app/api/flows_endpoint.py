@@ -3,7 +3,7 @@ from typing import Optional
 from fastapi import APIRouter
 from fastapi import Depends
 from tracardi.service.storage.mysql.map_to_named_entity import map_to_named_entity
-from tracardi.service.storage.mysql.mapping.workflow_mapping import map_to_workflow_record, map_to_workflow_record_meta
+from tracardi.service.storage.mysql.mapping.workflow_mapping import map_to_workflow_record_meta
 from tracardi.service.storage.mysql.service.workflow_service import WorkflowService
 from .auth.permissions import Permissions
 from tracardi.config import tracardi

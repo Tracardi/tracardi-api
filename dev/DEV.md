@@ -25,6 +25,18 @@ docker.elastic.co/kibana/kibana:7.13.2
 docker run -p 9200:9200 -p 9300:9300 -m 8g -e "discovery.type=single-node" -v "/opt/esdata:/usr/share/elasticsearch/data" docker.elastic.co/elasticsearch/elasticsearch:7.13.2
 docker run --name elastic -p 9200:9200 -p 9300:9300 -m 2g -e "discovery.type=single-node" -e ES_JAVA_OPTS="-Xms512m -Xmx512m" docker.elastic.co/elasticsearch/elasticsearch:7.13.2
 
+docker run --name elastic-8 \
+-p 9200:9200 -p 9300:9300 \
+-m 2g \
+-e "discovery.type=single-node" \
+-e ES_JAVA_OPTS="-Xms512m -Xmx512m" \
+-e xpack.security.enabled=false \
+-e xpack.security.http.ssl.enabled=false \
+-e xpack.security.transport.ssl.enabled=false \
+docker.elastic.co/elasticsearch/elasticsearch:8.19.5
+
+
+
 # Run local redis
 docker run --name redis -p 6379:6379 redis redis-server
 
