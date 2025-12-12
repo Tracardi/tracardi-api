@@ -207,13 +207,14 @@ async def get_events_for_session(session_id: str, profile_id: str, limit: int = 
 
 @router.get("/events/profile/{profile_id}/event_type/{event_type}", tags=["event"],
             include_in_schema=tracardi.expose_gui_api)
-async def get_events_for_session(event_type: str, profile_id: str, limit: Optional[int] = 1, simple:Optional[bool] = False):
+async def get_events_for_session(event_type: str, profile_id: str, response: Response, limit: Optional[int] = 1, simple:Optional[bool] = False):
     events = await load_events_by_profile_and_event_type(
         profile_id.strip(),
         event_type.strip(),
         limit)
 
     if events is None:
+        response.status_code = 404
         return []
 
     if simple:
