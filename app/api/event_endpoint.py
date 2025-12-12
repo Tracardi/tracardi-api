@@ -12,7 +12,7 @@ from tracardi.service.storage.elastic.interface.event import aggregate_events_by
     aggregate_event_devices_geo_from_db, aggregate_event_os_names_from_db, aggregate_event_channels_from_db, \
     aggregate_event_resolutions_from_db, aggregate_events_by_source_from_db, load_event_from_db, delete_event_from_db, \
     aggregate_events_by_source_and_type, aggregate_events_by_source_and_tags, load_events_by_session_and_profile, \
-    load_events_by_profile_id
+    load_events_by_profile_id, load_events_by_profile_and_event_type
 from .auth.permissions import Permissions
 
 from tracardi.config import tracardi
@@ -204,6 +204,26 @@ async def get_events_for_session(session_id: str, profile_id: str, limit: int = 
         profile_id.strip(),
         session_id.strip(),
         limit)
+
+@router.get("/events/profile/{profile_id}/event_type/{event_type}", tags=["event"],
+            include_in_schema=tracardi.expose_gui_api)
+async def get_events_for_session(event_type: str, profile_id: str, limit: Optional[int] = 1, simple:Optional[bool] = False):
+    events = await load_events_by_profile_and_event_type(
+        profile_id.strip(),
+        event_type.strip(),
+        limit)
+
+    if events is None:
+        return []
+
+    if simple:
+        return [{
+            "id": event.id,
+            "type": event.type,
+            "time": event.metadata.time
+        } for event in events]
+
+    return events
 
 
 @router.get("/events/profile/{profile_id}", tags=["event"],
