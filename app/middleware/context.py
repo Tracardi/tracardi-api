@@ -1,5 +1,7 @@
 from typing import Optional
 
+from starlette.responses import JSONResponse
+
 from tracardi.version import version
 from tracardi.context import Context, ServerContext
 from starlette.types import ASGIApp, Receive, Scope, Send
@@ -74,7 +76,15 @@ class ContextRequestMiddleware:
             await self.app(scope, receive, send)
             return
 
-        context_object = _get_context_object(scope)
+        try:
+            context_object = _get_context_object(scope)
+        except OSError as e:
+            logger.warning(str(e), extra=ExtraInfo.build("context-middleware", object=self))
+            # Stop the request here with a direct response
+            response = JSONResponse({"detail": f"Unknown tenant context. {str(e)}"}, status_code=401)
+            await response(scope, receive, send)
+            return  # Do NOT call self.app; request ends here
+
         with ServerContext(context_object) as cm:
             if scope.get('method', None) != "options":
                 token = _get_header_value(scope, 'authorization')
