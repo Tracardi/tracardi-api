@@ -1,6 +1,8 @@
 from json import JSONDecodeError
 from fastapi import APIRouter, Request, HTTPException
 from tracardi.config import tracardi
+from tracardi.domain.event import Event
+from tracardi.service.storage.driver.elastic.event import get_last_event
 
 router = APIRouter()
 api_ready = False
@@ -69,3 +71,18 @@ async def delete_healthcheck(r: Request):
         return await r.body()
 
 
+@router.get("/healthcheck/event/ts", tags=["health"],
+            include_in_schema=tracardi.expose_gui_api)
+async def get_events_for_session():
+    result = await get_last_event()
+
+    if result is None:
+        return []
+
+    events = result.to_domain_objects(Event)
+
+    return [{
+            "id": event.id,
+            "type": event.type,
+            "time": event.metadata.time.insert
+        } for event in events]

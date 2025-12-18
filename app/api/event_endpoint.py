@@ -80,7 +80,8 @@ async def event_types(query: str = None, limit: int = 1000):
 
 
 @router.get("/events/by_type", tags=["event"], include_in_schema=tracardi.expose_gui_api)
-async def aggregate_event_types(profile_id: Optional[str] = None, start_range: Optional[str] = None, buckets_size:Optional[int]=None):
+async def aggregate_event_types(profile_id: Optional[str] = None, start_range: Optional[str] = None,
+                                buckets_size: Optional[int] = None):
     """
     Returns number of events grouped by type
     """
@@ -205,9 +206,11 @@ async def get_events_for_session(session_id: str, profile_id: str, limit: int = 
         session_id.strip(),
         limit)
 
+
 @router.get("/events/profile/{profile_id}/event_type/{event_type}", tags=["event"],
             include_in_schema=tracardi.expose_gui_api)
-async def get_events_for_session(event_type: str, profile_id: str, response: Response, limit: Optional[int] = 1, simple:Optional[bool] = False):
+async def get_events_for_session(event_type: str, profile_id: str, response: Response, limit: Optional[int] = 1,
+                                 simple: Optional[bool] = False):
     events = await load_events_by_profile_and_event_type(
         profile_id.strip(),
         event_type.strip(),
