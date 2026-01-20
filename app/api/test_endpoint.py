@@ -1,6 +1,6 @@
 from typing import Optional
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 
 from app.service.grouping import get_grouped_result
 from tracardi.domain.test import Test
@@ -15,6 +15,33 @@ from tracardi.config import tracardi
 from tracardi.service.storage.elastic.interface import raw as raw_db
 from datetime import datetime
 
+# Localhost-only dependency for health checks
+async def localhost_only(request: Request):
+    """
+    Ensures the request comes from localhost only.
+    Health check endpoints should only be accessible from localhost for security.
+    """
+    client_host = request.client.host if request.client else None
+    
+    # Allow localhost, 127.0.0.1, and ::1 (IPv6 localhost)
+    allowed_hosts = {"localhost", "127.0.0.1", "::1", "::ffff:127.0.0.1"}
+    
+    if client_host not in allowed_hosts:
+        raise HTTPException(
+            status_code=403,
+            detail=f"Health endpoints are only accessible from localhost. Your IP: {client_host}"
+        )
+    
+    return True
+
+# Health check router - NO authentication, NO tenant required, localhost-only
+health_router = APIRouter(
+    prefix="/health",
+    tags=["health"],
+    dependencies=[Depends(localhost_only)]
+)
+
+# Regular test router - requires authentication
 router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin", "maintainer", "developer"]))]
 )
@@ -22,10 +49,122 @@ router = APIRouter(
 ts = TestService()
 
 
+@health_router.get("/redis", include_in_schema=True)
+async def health_check_redis():
+    """
+    Health check for Redis connection.
+    
+    - **Localhost only**: Only accessible from 127.0.0.1
+    - **No authentication required**
+    - **No tenant ID required**
+    
+    Returns:
+        - 200 OK if Redis is healthy
+        - 500 if Redis connection fails
+    """
+    try:
+        client = RedisClient()
+        pong = client.ping()
+        if pong is not True:
+            raise ConnectionError("Redis did not respond.")
+        return {"status": "healthy", "service": "redis"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Redis health check failed: {str(e)}")
+
+
+@health_router.get("/elasticsearch", include_in_schema=True)
+async def health_check_elasticsearch():
+    """
+    Health check for Elasticsearch connection.
+    
+    - **Localhost only**: Only accessible from 127.0.0.1
+    - **No authentication required**
+    - **No tenant ID required**
+    
+    Returns:
+        - 200 OK with cluster health if Elasticsearch is healthy
+        - 500 if Elasticsearch connection fails
+    """
+    try:
+        health = await raw_db.health()
+        if not isinstance(health, dict):
+            raise ConnectionError("Elasticsearch did not pass health check.")
+        return {
+            "status": "healthy",
+            "service": "elasticsearch",
+            "cluster_status": health.get("status"),
+            "details": health
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Elasticsearch health check failed: {str(e)}")
+
+
+@health_router.get("", include_in_schema=True)
+@health_router.get("/", include_in_schema=True)
+async def health_check_all():
+    """
+    Combined health check for all services.
+    
+    - **Localhost only**: Only accessible from 127.0.0.1
+    - **No authentication required**
+    - **No tenant ID required**
+    
+    Returns:
+        - 200 OK with status of all services
+        - 207 Multi-Status if some services are unhealthy
+    """
+    results = {
+        "redis": {"status": "unknown"},
+        "elasticsearch": {"status": "unknown"}
+    }
+    
+    overall_healthy = True
+    
+    # Check Redis
+    try:
+        client = RedisClient()
+        pong = client.ping()
+        if pong is True:
+            results["redis"] = {"status": "healthy"}
+        else:
+            results["redis"] = {"status": "unhealthy", "error": "No pong response"}
+            overall_healthy = False
+    except Exception as e:
+        results["redis"] = {"status": "unhealthy", "error": str(e)}
+        overall_healthy = False
+    
+    # Check Elasticsearch
+    try:
+        health = await raw_db.health()
+        if isinstance(health, dict):
+            results["elasticsearch"] = {
+                "status": "healthy",
+                "cluster_status": health.get("status")
+            }
+        else:
+            results["elasticsearch"] = {"status": "unhealthy", "error": "Invalid health response"}
+            overall_healthy = False
+    except Exception as e:
+        results["elasticsearch"] = {"status": "unhealthy", "error": str(e)}
+        overall_healthy = False
+    
+    response_data = {
+        "overall_status": "healthy" if overall_healthy else "degraded",
+        "services": results
+    }
+    
+    # Return 200 if all healthy, 207 if some are unhealthy
+    status_code = 200 if overall_healthy else 207
+    
+    return response_data
+
+
+# Keep original authenticated endpoints for backward compatibility
 @router.get("/test/redis", tags=["test"], include_in_schema=tracardi.expose_gui_api)
 async def ping_redis():
     """
     Tests connection between Redis instance and Tracardi instance. Accessible for roles: "admin"
+    **Deprecated**: Use /health/redis for monitoring purposes
     """
     client = RedisClient()
     pong = client.ping()
@@ -37,6 +176,7 @@ async def ping_redis():
 async def get_es_cluster_health():
     """
     Tests connection between Elasticsearch and Tracardi by returning cluster info. Accessible for roles: "admin"
+    **Deprecated**: Use /health/elasticsearch for monitoring purposes
     """
     health = await raw_db.health()
     if not isinstance(health, dict):
