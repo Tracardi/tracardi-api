@@ -11,7 +11,6 @@ from tracardi.service.cluster.settings import GlobalSettingsBroadcaster
 from tracardi.service.elastic.connection import wait_for_connection
 from tracardi.service.license import License, SCHEDULER, IDENTIFICATION, COMPLIANCE, RESHAPING, VALIDATOR, \
     LICENSE, MULTI_TENANT
-from tracardi.service.logging.formater import CustomFormatter
 from tracardi.service.storage.elastic.interface.client import elastic_close
 from tracardi.service.storage.mysql.service.mysql_installation import wait_for_mysql_connection
 from tracardi.service.storage.redis.driver.redis_client import wait_for_redis_connection
@@ -259,6 +258,7 @@ application.include_router(health_endpoint.router)
 application.include_router(session_endpoint.router)
 application.include_router(plugins_endpoint.router)
 application.include_router(test_endpoint.router)
+application.include_router(test_endpoint.health_router)
 application.include_router(settings_endpoint.router)
 application.include_router(consent_type_endpoint.router)
 application.include_router(info_endpoint.router)
