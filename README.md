@@ -144,12 +144,6 @@ We are grateful for any assistance that contributes to the popularity of TRACARD
 
 You can support us on [Open Collective](https://www.opencollective.com/tracardi-cdp)
 
-## 👇 Referral programs
-
-You can support us via referral programs by purchasing a service from the following link(s)
-
-[![DigitalOcean Referral Badge](https://web-platforms.sfo2.digitaloceanspaces.com/WWW/Badge%203.svg)](https://www.digitalocean.com/?refcode=882eb4bf23be&utm_campaign=Referral_Invite&utm_medium=Referral_Program&utm_source=badge)
-
 ## 👇 License
 
 TRACARDI is available under [MIT with Common Clause](https://github.com/Tracardi/tracardi/blob/master/LICENSE.md) license.
