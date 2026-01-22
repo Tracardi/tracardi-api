@@ -134,6 +134,9 @@ async def load_top_profiles(limit: Optional[int] = 5):
 
 @router.get('/profile/merge/{profile_id}', tags=['profile'], include_in_schema=tracardi.expose_gui_api)
 async def identify_and_merge_profile(profile_id: str, profile_pk: Optional[str] = None):
+
+    profile_id = profile_id.strip()
+
     record = await profile_db.load_by_id(profile_id)
 
     if record is None:
