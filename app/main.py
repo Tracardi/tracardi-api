@@ -6,6 +6,7 @@ from datetime import datetime
 import sentry_sdk
 
 from app.middleware.context import ContextRequestMiddleware
+from fastapi.openapi.utils import get_openapi
 from tracardi.service.adapter.logger.logger_adapter import log_format_adapter
 from tracardi.service.cluster.settings import GlobalSettingsBroadcaster
 from tracardi.service.elastic.connection import wait_for_connection
@@ -203,6 +204,42 @@ application = FastAPI(
         "email": "office@tracardi.com",
     }
 )
+
+def custom_openapi():
+    if application.openapi_schema:
+        return application.openapi_schema
+
+    openapi_schema = get_openapi(
+        title=application.title,
+        version=application.version,
+        description=application.description,
+        routes=application.routes,
+    )
+
+    # Ensure components exist
+    components = openapi_schema.setdefault("components", {})
+    parameters = components.setdefault("parameters", {})
+
+    # Define X-Context header
+    parameters["X-Context"] = {
+        "name": "X-Context",
+        "in": "header",
+        "required": False,
+        "schema": {"type": "string", "default": "staging"},
+        "description": "Optional execution context",
+    }
+
+    # Attach header to all paths/operations
+    for path in openapi_schema["paths"].values():
+        for operation in path.values():
+            operation.setdefault("parameters", []).append({
+                "$ref": "#/components/parameters/X-Context"
+            })
+
+    application.openapi_schema = openapi_schema
+    return application.openapi_schema
+
+application.openapi = custom_openapi
 
 application.add_middleware(ContextRequestMiddleware)
 
