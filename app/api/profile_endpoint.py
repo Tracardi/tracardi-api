@@ -1,10 +1,13 @@
 from typing import List, Optional
 
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 from fastapi import Depends
 from fastapi.responses import Response
 
+from com_tracardi.service.merging.facade import NO_DUPLICATES
 from tracardi.domain.profile import Profile
+from tracardi.exceptions.log_handler import get_logger
+from tracardi.service.merging.deduplication import deduplicate
 from tracardi.service.storage.driver.elastic import profile as profile_db
 from tracardi.service.storage.elastic.interface.collector.load.flat_profile import load_flat_profile
 from tracardi.service.storage.elastic.interface.profile import load_modified_top_profiles
@@ -14,6 +17,8 @@ from tracardi.service.storage.elastic.interface.collector.mutation import profil
 
 from .auth.permissions import Permissions
 from tracardi.config import tracardi
+
+logger = get_logger(__name__)
 
 router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer", "maintainer"]))]
@@ -125,3 +130,34 @@ async def find_profiles_by_segments(segment_names: str, qualify: str):
 @router.get('/profiles/top/modified', tags=['profile'], include_in_schema=tracardi.expose_gui_api)
 async def load_top_profiles(limit: Optional[int] = 5):
     return await load_modified_top_profiles(limit)
+
+
+@router.get('/profile/merge/{profile_id}', tags=['profile'], include_in_schema=tracardi.expose_gui_api)
+async def identify_and_merge_profile(profile_id: str, profile_pk: Optional[str] = None):
+
+    profile_id = profile_id.strip()
+
+    record = await profile_db.load_by_id(profile_id)
+
+    if record is None:
+        raise HTTPException(status_code=404, detail=f"Profile with ID {profile_id} not found.")
+
+    profile = record.to_entity(Profile)
+
+    try:
+        status = await deduplicate(profile, profile_pk)
+        if profile_pk:
+            if status == NO_DUPLICATES:
+                # No duplicates but we need also to set PK
+                profile.primary_id = profile_pk
+                await profile_db.save(profile, refresh_after_save=True)
+
+        record = await profile_db.load_by_id(profile.id)
+
+        result = dict(record)
+        result['_meta'] = record.get_meta_data()
+        return result
+
+    except Exception as e:
+        logger.error(str(e))
+        raise HTTPException(status_code=500, detail=f"Error while merging profile {str(e)}")

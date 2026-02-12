@@ -12,7 +12,7 @@ from tracardi.service.storage.elastic.interface.event import aggregate_events_by
     aggregate_event_devices_geo_from_db, aggregate_event_os_names_from_db, aggregate_event_channels_from_db, \
     aggregate_event_resolutions_from_db, aggregate_events_by_source_from_db, load_event_from_db, delete_event_from_db, \
     aggregate_events_by_source_and_type, aggregate_events_by_source_and_tags, load_events_by_session_and_profile, \
-    load_events_by_profile_id, load_events_by_profile_and_event_type
+    load_events_by_profile_id, load_events_by_profile_and_event_type, load_events_by_profile_primary_id
 from .auth.permissions import Permissions
 
 from tracardi.config import tracardi
@@ -239,6 +239,31 @@ async def get_events_for_profile(profile_id: str, limit: int = 24):
     return await load_events_by_profile_id(
         profile_id,
         limit)
+
+
+@router.get("/events/profile_pid/{profile_pid}", tags=["event"],
+            include_in_schema=tracardi.expose_gui_api,
+            response_model=[])
+async def get_events_for_profile(profile_pid: str, limit: int = 100):
+    """
+    Fetches events associated with a given profile primary ID.
+
+    This endpoint retrieves a list of events linked to a specific profile PID.
+    The number of events returned can be controlled using the `limit` parameter.
+    It is exposed as a GUI-accessible API.
+
+    Args:
+        profile_pid: The primary ID of the profile for which events will be retrieved.
+        limit: The maximum number of events to fetch. Defaults to 100.
+
+    Returns:
+        A dictionary containing the retrieved events.
+
+    Raises:
+        Any exceptions occurring during the event retrieval process.
+    """
+
+    return await load_events_by_profile_primary_id(profile_pid, limit)
 
 
 @router.get("/event/type/{event_type}/schema", tags=["event"],
