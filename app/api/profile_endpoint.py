@@ -40,7 +40,11 @@ async def count_profile_duplicates(id: str):
     flat_profile = await load_flat_profile(id)
     if flat_profile:
         result = await profile_db.count_profile_duplicates(flat_profile.ids)
-        return result.get("count", 0)
+        duplicates = result.get("count", 0)
+        if duplicates == 1:
+            return 0
+        else:
+            return duplicates
     return 0
 
 
