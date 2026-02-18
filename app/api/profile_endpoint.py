@@ -140,12 +140,9 @@ async def load_top_profiles(limit: Optional[int] = 5):
 
 
 @router.get('/profile/merge/{profile_id}', tags=['profile'], include_in_schema=tracardi.expose_gui_api)
-async def identify_and_merge_profile(profile_id: str, profile_pk: Optional[str] = None,
-                                     send_as_event_to_destination: Optional[str] = None,
-                                     source_id: Optional[str] = ''):
+async def identify_and_merge_profile(profile_id: str, profile_pk: Optional[str] = None):
 
     profile_id = profile_id.strip()
-    source_id = source_id.strip()
 
     record = await profile_db.load_by_id(profile_id)
 
@@ -167,22 +164,21 @@ async def identify_and_merge_profile(profile_id: str, profile_pk: Optional[str] 
         result = dict(record)
         result['_meta'] = record.get_meta_data()
 
-        if send_as_event_to_destination:
-            logger.info(f"Sending event {send_as_event_to_destination} to event destination.")
-            await start_bulk_events_destination_worker(
-                FlatEvents([
-                    FlatEvent({
-                        "type": send_as_event_to_destination,
-                        "source": {"id":source_id},
-                        "properties": {}
-                    })
-                ]),
-                FlatProfile(result),
-                False,
-                metadata={
-                    "source": "collector",
-                    "mode": "async"
+        logger.info(f"Sending event `merged` to event destination.")
+        await start_bulk_events_destination_worker(
+            FlatEvents([
+                FlatEvent({
+                    "type": 'merged',
+                    "source": {"id": tracardi.internal_source},
+                    "properties": {}
                 })
+            ]),
+            FlatProfile(result),
+            False,
+            metadata={
+                "source": "collector",
+                "mode": "async"
+            })
 
         return result
 
