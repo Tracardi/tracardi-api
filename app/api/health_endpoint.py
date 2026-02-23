@@ -1,5 +1,7 @@
 from json import JSONDecodeError
-from fastapi import APIRouter, Request, HTTPException
+from fastapi import APIRouter, Request, HTTPException, Response
+from prometheus_client import generate_latest, CONTENT_TYPE_LATEST
+
 from tracardi.config import tracardi
 from tracardi.domain.event import Event
 from tracardi.service.storage.driver.elastic.event import get_last_event
@@ -86,3 +88,9 @@ async def get_events_for_session():
             "type": event.type,
             "time": event.metadata.time.insert
         } for event in events]
+
+
+if tracardi.enable_prometheus:
+    @router.get("/metrics", tags=['monitoring'])
+    def metrics():
+        return Response(generate_latest(), media_type=CONTENT_TYPE_LATEST)

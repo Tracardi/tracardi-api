@@ -5,6 +5,7 @@ import traceback
 from datetime import datetime
 import sentry_sdk
 
+from app.api.prometheus.metrics import REQUEST_COUNT, REQUEST_LATENCY
 from app.middleware.context import ContextRequestMiddleware
 from fastapi.openapi.utils import get_openapi
 from tracardi.service.adapter.logger.logger_adapter import log_format_adapter
@@ -430,6 +431,19 @@ async def add_process_time_header(request: Request, call_next):
         response.headers["X-Process-Time"] = str(process_time)
         if 'x-context' in request.headers:
             response.headers["X-Context"] = request.headers.get('x-context')
+
+        # Prometheus metrics
+        if tracardi.enable_prometheus:
+            if request.url.path == '/track':
+                REQUEST_COUNT.labels(
+                    method=request.method,
+                    endpoint=request.url.path,
+                    status_code=response.status_code,
+                ).inc()
+
+                REQUEST_LATENCY.labels(
+                    endpoint=request.url.path
+                ).observe(process_time)
 
         return response
 

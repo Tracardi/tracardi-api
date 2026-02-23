@@ -16,6 +16,8 @@ alembic==1.13.1
 feedparser
 beautifulsoup4
 
+prometheus-client==0.24.0
+
 # Depends on
 # git+https://github.com/Tracardi/tracardi.git@1.1.x
 # git+https://github.com/Tracardi/deferpy.git@1.1.x
