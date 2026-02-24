@@ -36,6 +36,17 @@ docker run --name elastic-8 \
 docker.elastic.co/elasticsearch/elasticsearch:8.19.5
 
 
+docker run --name elastic-9 \
+-p 9200:9200 -p 9300:9300 \
+-m 2g \
+-e "discovery.type=single-node" \
+-e ES_JAVA_OPTS="-Xms512m -Xmx512m" \
+-e xpack.security.enabled=false \
+-e xpack.security.http.ssl.enabled=false \
+-e xpack.security.transport.ssl.enabled=false \
+docker.elastic.co/elasticsearch/elasticsearch:9.3.0
+
+
 
 # Run local redis
 docker run --name redis -p 6379:6379 redis redis-server
