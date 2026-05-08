@@ -9,8 +9,12 @@ from tracardi.domain.enum.indexes_histogram import IndexesHistogram
 from tracardi.domain.enum.indexes_search import IndexesSearch
 from tracardi.domain.sql_query import SqlQuery
 from tracardi.domain.time_range_query import DatetimeRangePayload
+from tracardi.exceptions.log_handler import get_logger
 from .auth.permissions import Permissions
 from tracardi.config import tracardi
+
+
+logger = get_logger(__name__)
 
 router = APIRouter(
     dependencies=[Depends(Permissions(roles=["admin", "developer", "marketer", "maintainer"]))]
@@ -29,7 +33,7 @@ async def autocomplete_kql(index: IndexesSearch, query: Optional[str] = ""):
             "current": current
         }
     except Exception as e:
-        print(e)
+        logger.info(f"Could not AUTOCOMPLETE TQL. Filtering probably not complete could not parse TQL for autocompletion. This is normal. Details: {e}")
         return []
 
 
