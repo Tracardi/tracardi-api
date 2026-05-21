@@ -52,7 +52,7 @@ async def get_destinations(query: str = None, start: int = 0, limit: int = 200) 
     total = await mysql.destination_dao.count_destinations(query)
 
     return {
-        "total": total,
+        "total": max([total, len(destinations)]),
         "grouped": {
             "Destinations": destinations
         }

@@ -32,7 +32,7 @@ async def list_event_sources(query: str = None):
     total = await event_source_dao.count_sources(query)
 
     return {
-        "total": total,
+        "total": max([total, len(records)]),
         "grouped": {
             "Event sources": records
         }

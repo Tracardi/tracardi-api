@@ -100,7 +100,7 @@ async def list_resources_by_type(query: str = None, limit: int = 200):
     total = await mysql.resource_dao.count_resources(query)
 
     return {
-        "total": total,
+        "total": max([len(resources), total]),
         "grouped": {"Resources": resources}
     }
 

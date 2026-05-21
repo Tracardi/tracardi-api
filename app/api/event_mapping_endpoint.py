@@ -100,7 +100,7 @@ async def list_event_type_mappings_by_tag(query: str = None, start: Optional[int
     records, total = await event_mapping_dao.load_all(search=query, limit=limit, offset=start)
 
     return {
-        "total": total,
+        "total": max([total, len(records)]),
         "grouped": {
             "Event mappings": records
         }

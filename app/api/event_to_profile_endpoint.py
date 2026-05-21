@@ -110,7 +110,7 @@ async def list_events_to_profiles_by_tag(query: str = None, start: Optional[int]
     total = await event_to_profile_dao.count_event_to_profile_mapping(query)
 
     return {
-        "total": total,
+        "total": max([total, len(records)]),
         "grouped": {
             "Mappings": records
         }
