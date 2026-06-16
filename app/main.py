@@ -69,7 +69,8 @@ from app.api import (
     github_endpoint,
     maintanace_endpoint,
     feed_endpoint,
-    event_source_redirects
+    event_source_redirects,
+    identity_resolution_endpoint
 )
 from app.api.track import event_server_endpoint
 from tracardi.config import tracardi
@@ -336,6 +337,7 @@ application.include_router(github_endpoint.router)
 application.include_router(maintanace_endpoint.router)
 application.include_router(queue_endpoint.router)
 application.include_router(feed_endpoint.router)
+application.include_router(identity_resolution_endpoint.router)
 # application.include_router(enhancer_endpoint.router)
 
 if tracardi.enable_audiences:
