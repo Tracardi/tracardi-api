@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends
 
 from tracardi.config import mysql
+from tracardi.constant import PRODUCTION_INDEX_PREFIX
 from tracardi.context import get_context
 from tracardi.service.plugin.plugin_install import install_default_plugins
 from tracardi.service.storage.index import Resource
@@ -33,9 +34,10 @@ async def reset_installation(token: str):
     )]
 
     # Production
-    for index in indices :
-        if index.startswith(f"prod-{db_version}.{tenant}.tracardi-"):
-            to_delete.append(index)
+    if PRODUCTION_INDEX_PREFIX:
+        for index in indices :
+            if index.startswith(f"{PRODUCTION_INDEX_PREFIX}{db_version}.{tenant}.tracardi-"):
+                to_delete.append(index)
 
     result = {}
     for alias in to_delete:
@@ -52,14 +54,15 @@ async def reset_installation(token: str):
     templates = resource.list_templates()
 
     # Production
-    for index in indices.copy():
-        indices.add(f"prod-{index}")
+    if PRODUCTION_INDEX_PREFIX:
+        for index in indices.copy():
+            indices.add(f"{PRODUCTION_INDEX_PREFIX}{index}")
 
-    for alias in aliases.copy():
-        aliases.add(f"prod-{alias}")
+        for alias in aliases.copy():
+            aliases.add(f"{PRODUCTION_INDEX_PREFIX}{alias}")
 
-    for template in templates.copy():
-        templates.add(f"prod-{template}")
+        for template in templates.copy():
+            templates.add(f"{PRODUCTION_INDEX_PREFIX}{template}")
 
     for index in indices:
         try:

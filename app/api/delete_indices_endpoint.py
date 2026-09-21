@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from tracardi.config import tracardi
+from tracardi.constant import PRODUCTION_INDEX_PREFIX
 from tracardi.service.storage.elastic.interface import raw as raw_db
 from .auth.permissions import Permissions
 from typing import Optional
@@ -23,9 +24,10 @@ async def delete_old_indices(db_version: str, codename: Optional[str] = None):
     )]
 
     # Production
-    for index in indices :
-        if index.startswith(f"prod-{db_version}.{codename}.tracardi-"):
-            to_delete.append(index)
+    if PRODUCTION_INDEX_PREFIX:
+        for index in indices :
+            if index.startswith(f"{PRODUCTION_INDEX_PREFIX}{db_version}.{codename}.tracardi-"):
+                to_delete.append(index)
 
     result = {}
     for alias in to_delete:
