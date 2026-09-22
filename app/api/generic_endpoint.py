@@ -26,6 +26,8 @@ router = APIRouter(
 async def _check_log_index_enabled(index_value: str):
     if index_value == "log" and not (tracardi.save_logs and await is_save_logs_on()):
         raise HTTPException(status_code=404, detail="Logs are disabled.")
+    if index_value == "entity" and not tracardi.enable_entities:
+        raise HTTPException(status_code=404, detail="Entities are disabled via ENABLE_ENTITIES setting.")
 
 
 @router.get("/{index}/query/autocomplete",

@@ -14,12 +14,16 @@ router = APIRouter(
 
 @router.post("/entity/{index}", tags=["entity"], include_in_schema=tracardi.expose_gui_api)
 async def create_entity_index(index: str, mapping: EntityIndexMapping):
+    if not tracardi.enable_entities:
+        raise HTTPException(status_code=404, detail="Entities are disabled via ENABLE_ENTITIES setting.")
     index = f"entity-{index}"
     return await raw_db.create_index(index, mapping.model_dump(by_alias=True))
 
 
 @router.get("/entity/{index}/mapping", tags=["entity"], include_in_schema=tracardi.expose_gui_api)
 async def get_entity_index_mapping(index: str):
+    if not tracardi.enable_entities:
+        raise HTTPException(status_code=404, detail="Entities are disabled via ENABLE_ENTITIES setting.")
     try:
         index = f"entity-{index}"
         return await raw_db.get_mapping(index)
@@ -29,4 +33,6 @@ async def get_entity_index_mapping(index: str):
 
 @router.get("/entity/count", tags=["entity"], include_in_schema=tracardi.expose_gui_api)
 async def entity_count(query: dict = None):
+    if not tracardi.enable_entities:
+        raise HTTPException(status_code=404, detail="Entities are disabled via ENABLE_ENTITIES setting.")
     return await entity_db.count(query)
